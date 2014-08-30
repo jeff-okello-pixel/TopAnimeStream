@@ -1,0 +1,140 @@
+package com.aniblitz;
+
+
+import java.util.HashMap;
+import java.util.Locale;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.preference.PreferenceManager;
+
+import com.aniblitz.NetworkChangeReceiver.NetworkEvent;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+public class App extends Application implements NetworkEvent {
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+	private int networkConnection;
+	public static Locale locale;
+	public static ImageLoader imageLoader;
+	private static Connection connection;
+	public static boolean isPro = false;
+	private static Context context;
+    public enum TrackerName {
+        APP_TRACKER, // Tracker used only in this app.
+        GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
+        ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
+    }
+    
+    synchronized Tracker getTracker(TrackerName trackerId) {
+    	  if (!mTrackers.containsKey(trackerId)) {
+	    	  GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+	    	  Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(R.xml.app_tracker)
+	    	  : (trackerId == TrackerName.GLOBAL_TRACKER) ? analytics.newTracker("UA-42435534-3")
+	    	  : analytics.newTracker("");
+	    	  mTrackers.put(trackerId, t);
+    	  }
+    	  return mTrackers.get(trackerId);
+    }
+    public static Context getContext(){
+        return context;
+    }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        context = this;
+        NetworkChangeReceiver.SetEvent(this);
+        networkConnection = NetworkUtil.getConnectivityStatus(this);
+        
+        // Create global configuration and initialize ImageLoader with this configuration
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+        .cacheInMemory(true)
+        .build();
+        
+        ImageLoaderConfiguration imgConfig = new ImageLoaderConfiguration.Builder(getApplicationContext())
+        .defaultDisplayImageOptions(defaultOptions)
+        .build();
+
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(imgConfig);
+        
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        Configuration configMirror = new Configuration(config);
+        String lang = settings.getString("prefLanguage", "");
+        
+        if(lang.equals("1"))
+        	lang = "en";
+        else if(lang.equals("2"))
+        	lang = "fr";
+        else if(lang.equals("4"))
+        	lang = "es";
+        if (! "".equals(lang) && ! configMirror.locale.getLanguage().equals(lang))
+        {
+            locale = new Locale(lang);
+            Locale.setDefault(locale);
+            configMirror.locale = locale;
+            getBaseContext().getResources().updateConfiguration(configMirror, getBaseContext().getResources().getDisplayMetrics());
+        }
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+    	Configuration configMirror = new Configuration(newConfig);
+        super.onConfigurationChanged(configMirror);
+        if (locale != null)
+        {
+        	configMirror.locale = locale;
+            Locale.setDefault(locale);
+            getBaseContext().getResources().updateConfiguration(configMirror, getBaseContext().getResources().getDisplayMetrics());
+        }
+    }
+	@Override
+	public void WifiConnected() {
+		networkConnection = NetworkUtil.TYPE_WIFI;
+		IsNetworkConnected();
+	}
+	@Override
+	public void MobileConnected() {
+		networkConnection = NetworkUtil.TYPE_MOBILE;
+		IsNetworkConnected();
+	}
+	@Override
+	public void EthernetConnected() {
+		networkConnection = NetworkUtil.TYPE_ETHERNET;
+		IsNetworkConnected();
+	}
+	@Override
+	public void NotConnected() {
+		networkConnection = NetworkUtil.TYPE_NOT_CONNECTED;
+		IsNetworkConnected();
+	}
+	public boolean IsNetworkConnected()
+	{
+		if(networkConnection == NetworkUtil.TYPE_WIFI || networkConnection == NetworkUtil.TYPE_MOBILE || networkConnection == NetworkUtil.TYPE_ETHERNET)
+		{
+			//Connected
+			if(connection != null)
+				connection.ConnectionChanged(1);
+			return true;
+		}
+		//Not connected
+		if(connection != null)
+			connection.ConnectionChanged(0);
+		return false;
+	}
+   
+    static public void SetEvent(Connection event)
+    {
+    	connection = event;
+    }
+	 public interface Connection {
+	        public void ConnectionChanged(int connectionType);
+	 }
+}

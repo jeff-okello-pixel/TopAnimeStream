@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+		<ImageView 
+			    android:layout_width="match_parent"
+			    android:scaleType="centerCrop"
+			    android:layout_height="180dp"
+			    android:id="@+id/imgBackdrop"/>
+	    <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+			    android:id="@+id/tabs"
+			    android:layout_below="@id/imgBackdrop"
+			    android:layout_width="match_parent"
+			    android:layout_height="48dp" />
+		<android.support.v4.view.ViewPager
+			    android:id="@+id/pager"
+			    android:layout_below="@id/tabs"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"/> 
+</RelativeLayout>

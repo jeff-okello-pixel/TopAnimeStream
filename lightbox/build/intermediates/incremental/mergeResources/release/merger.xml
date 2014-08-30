@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res" >
+            <file
+                name="ic_launcher"
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-hdpi\ic_launcher.png"
+                qualifiers="hdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-ldpi\ic_launcher.png"
+                qualifiers="ldpi-v4"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-mdpi\ic_launcher.png"
+                qualifiers="mdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-xhdpi\ic_launcher.png"
+                qualifiers="xhdpi-v4"
+                type="drawable" />
+            <file
+                name="lightbox_dialog"
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\layout\lightbox_dialog.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="main"
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\layout\main.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\values\colors.xml"
+                qualifiers="" >
+                <color name="translucent" >#00000000
+                </color>
+                <color name="translucent_black" >#44000000
+                </color>
+            </file>
+            <file
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\values\strings.xml"
+                qualifiers="" >
+                <string name="app_name" >LightBox
+                </string>
+                <string name="hello" >Hello World, MainActivity!
+                </string>
+            </file>
+            <file
+                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\values\styles.xml"
+                qualifiers="" >
+
+                <style
+                    name="lightbox_dialog"
+                    parent="@android:style/Theme.Translucent.NoTitleBar" >
+                    <item name="android:windowAnimationStyle">
+@style/dialog_animation
+                    </item>
+                    <item name="android:background">
+@color/translucent_black
+                    </item>
+                </style>
+
+                <style name="dialog_animation" >
+                    <item name="android:windowEnterAnimation">
+@android:anim/fade_in
+                    </item>
+                    <item name="android:windowExitAnimation">
+@android:anim/fade_out
+                    </item>
+                </style>
+            </file>
+        </source>
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\build\generated\res\rs\release" />
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\build\generated\res\generated\release" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\release\res" />
+    </dataSet>
+
+</merger>

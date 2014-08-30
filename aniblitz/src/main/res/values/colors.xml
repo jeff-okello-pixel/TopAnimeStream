@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <color name="drawerNoShadow">#00000000</color>
+        <color name="transparent">#00000000</color>
+        <color name="blackTab">#333333</color>
+        <color name="greenTab">#55a73d</color>
+        <color name="blueTab">#245169</color>
+        <color name="orangeTab">#ff8500</color>
+        <color name="redTab">#e14d4d</color>
+        <color name="translucent_black">#44000000</color>
+  		<color name="translucent">#00000000</color>
+  		<color name="blueDrawer">#D9245169</color>
+  		
+  		<drawable name="black">#000000</drawable>
+  		<drawable name="red">#e14d4d</drawable>
+  		<drawable name="nocolor">#00000000</drawable>
+  		
+</resources>

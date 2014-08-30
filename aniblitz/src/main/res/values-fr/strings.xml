@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Aniblitz</string>
+    <string name="search_hint">Rechercher</string>
+    <string name="app_label">Aniblitz</string>
+    <string name="image_host_path">http://lanbox.ca/ImageHost/</string>
+    <!-- Menu actions -->
+    <string name="action_favorite">Ajouter au favories</string>
+    <string name="action_settings">Configuration</string>
+    <string name="action_buypro">Acheter aniblitz pro</string>
+    <string name="action_rate">Rate the app</string>
+    <string name="action_share">Partager</string>
+    <string name="action_show_as_list">Show as list</string>
+    <string name="action_show_as_grid">Show as grid</string>
+    <string name="title_search_widget">Recherche</string>
+    <string name="no_connection">Aucune connection</string>
+    <string name="no_result">Aucun résultat</string>
+    <string name="no_episodes">Aucune épisode sur cet onglet</string>
+    <string name="title_activity_anime_search">AnimeSearchActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="no_favorite">Vous n\'avez pas de favorie</string>
+    <string name="empty_history">Votre historique est vide</string>
+    <string name="remove_favorite">Supprimer des favories</string>
+    <string name="back_again">Appuyer de nouveau sur retour pour quitter</string>
+    <string name="cancel">Annuler</string>
+    <string name="episode">Épisode: </string>
+    <!-- Titles -->
+	<string name="title_alert_languages">Choississez votre langage préféré</string>
+	<string name="title_favorites">Favories</string>
+	<string name="title_history">Historique</string>
+	<string name="title_providers">Fournisseurs</string>
+	
+	<!-- Loadings -->
+	<string name="loading_anime_list">Chargment des animes...</string>
+	<string name="loading_episode_list">Chargement des épisodes...</string>
+	<string name="loading_video">Chargment du video...</string>
+    <!-- Tabs -->
+    <string name="tab_all">Tous</string>
+    <string name="tab_serie">Série</string>
+    <string name="tab_movie">Film</string>
+    <string name="tab_cartoon">Dessin animé</string>
+    <string name="tab_dubbed">Doublé</string>
+    <string name="tab_subbed">Sous-Titré</string>
+    
+    <!-- Information toasts -->
+    <string name="toast_add_favorite">Ajouter au favories</string>
+    <string name="toast_remove_favorite">Supprimer des favories</string>    
+        
+    <!-- Error messages -->
+    <string name="error_loading_animes">An error has occurred while loading the animes</string>
+    <string name="error_loading_video">An error has occurred while loading the video</string>
+    <string name="error_loading_sources">An error has occurred while loading the sources</string>
+    <string name="error_loading_episodes">An error has occurred while loading the episodes</string>
+    <string name="error_loading_mirrors">An error has occurred while loading the mirrors</string>
+    <string name="error_loading_providers">An error has occurred while loading the providers</string>
+    
+    <!-- Menu drawer -->
+    <string name="menu_favorites">Favories</string>
+    <string name="menu_history">Historique</string>
+    <string name="menu_share">Partager</string>
+    <string name="menu_settings">Configuration</string>      
+     
+    <string-array name="menu_drawer">
+        <item>Favories</item>
+        <item>Historique</item>
+        <item>Partager</item>
+        <item>Configuration</item>
+    </string-array>
+</resources>
