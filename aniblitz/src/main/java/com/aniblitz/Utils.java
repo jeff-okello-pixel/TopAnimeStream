@@ -176,24 +176,26 @@ public class Utils {
 
 					return null;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return null;
 				}
 
-			    return "Success";
 			}     
 			    
 		    @Override
 		    protected void onPostExecute(String result)
 		    {
+                Utils.dismissBusyDialog(busyDialog);
 		    	if(result == null)
 		    	{
-		    		Toast.makeText(act, r.getString(R.string.error_loading_video) , Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(mirror.getSource()));
+                    act.startActivity(i);
+		    		//Toast.makeText(act, r.getString(R.string.error_loading_video) , Toast.LENGTH_LONG).show();
 
 		    		return;
 		    	}
 
-		    	Utils.dismissBusyDialog(busyDialog);
+
 		    	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
 		    	intent.setDataAndType(Uri.parse(result), "video/*");
 		    	act.startActivity(Intent.createChooser(intent, "Complete action using"));

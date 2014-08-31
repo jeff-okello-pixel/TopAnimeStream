@@ -34,7 +34,7 @@
 	<!-- Loadings -->
 	<string name="loading_anime_list">Chargment des animes...</string>
 	<string name="loading_episode_list">Chargement des épisodes...</string>
-	<string name="loading_video">Chargment du video...</string>
+	<string name="loading_video">Chargement du video...</string>
     <!-- Tabs -->
     <string name="tab_all">Tous</string>
     <string name="tab_serie">Série</string>
