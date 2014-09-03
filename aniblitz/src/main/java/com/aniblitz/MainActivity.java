@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		
 		
 		viewPager = (ViewPager)findViewById(R.id.pager);
-		viewPager.setOffscreenPageLimit(3);
+		viewPager.setOffscreenPageLimit(1);
 		mAdapter = new PagerAdapter(getSupportFragmentManager());
 		viewPager.setAdapter(mAdapter);
 		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -166,7 +166,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		String languageId = prefs.getString("prefLanguage", "0");
 		if(languageId.equals("0"))
 		{
-			final CharSequence[] items = { "English", "Français", "Español" };
+			final CharSequence[] items = { getString(R.string.language_english), getString(R.string.language_french), getString(R.string.language_spanish) };
 	     	final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
 	     	alertBuilder.setTitle(r.getString(R.string.title_alert_languages));
 	     	alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
@@ -221,22 +221,22 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    	{
 	    		//All
 	    		case 0:
-	    			allFragment = AnimeListFragment.newInstance("All");
+	    			allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all));
 	    			setFragmentAnimes();
 	    			return allFragment;
 		    	//Serie
 		    	case 1:
-		    		serieFragment = AnimeListFragment.newInstance("Serie");
+		    		serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie));
 		    		setFragmentAnimes();
 		    		return serieFragment;
 		    	//Movie
 		    	case 2:
-		    		movieFragment = AnimeListFragment.newInstance("Movie");
+		    		movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
 		    		setFragmentAnimes();
 		    		return movieFragment;
 		    	//Cartoon
 		    	case 3:
-		    		cartoonFragment = AnimeListFragment.newInstance("Cartoon");
+		    		cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon));
 		    		setFragmentAnimes();
 		    		return cartoonFragment;
 	    	}
@@ -300,18 +300,19 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 
 			@Override
 			public boolean onQueryTextChange(String query) {
-				/*
+
 				for(AnimeListAdapter adapter:animeAdapters)
 				{
 					adapter.getFilter().filter(query);
-				}*/
+				}
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
+                /*
 				MenuItemCompat.collapseActionView(menuItem);
-				searchView.setQuery("", false);
+				searchView.setQuery("", false);*/
 				return false;
 			}
 			 
@@ -404,12 +405,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			    	if(App.isPro)
 			    	{
 				    	sendIntent.putExtra(Intent.EXTRA_TEXT,
-					    	    "https://play.google.com/store/apps/details?id=com.flixtor.pro");
+					    	    "https://play.google.com/store/apps/details?id=com.aniblitz.pro");
 			    	}
 			    	else
 			    	{
 			    	sendIntent.putExtra(Intent.EXTRA_TEXT,
-			    	    "https://play.google.com/store/apps/details?id=com.flixtor");
+			    	    "https://play.google.com/store/apps/details?id=com.aniblitz");
 			    	}
 			    	sendIntent.setType("text/plain");
 			    	startActivity(sendIntent);
@@ -484,25 +485,25 @@ private class AnimeTask extends AsyncTask<Void, Void, String> {
 		AnimeListAdapter adapter = null;
     	if(allFragment != null)
     	{
-    		adapter = allFragment.setAnimes(animes, "All");
+    		adapter = allFragment.setAnimes(animes, getString(R.string.tab_all));
     		if(adapter != null)
     			animeAdapters.add(adapter);
     	}
     	if(serieFragment != null)
     	{
-    		adapter = serieFragment.setAnimes(animes, "Serie");
+    		adapter = serieFragment.setAnimes(animes, getString(R.string.tab_serie));
     		if(adapter != null)
     			animeAdapters.add(adapter);
     	}
     	if(movieFragment != null)
     	{
-    		adapter = movieFragment.setAnimes(animes, "Movie");
+    		adapter = movieFragment.setAnimes(animes, getString(R.string.tab_movie));
     		if(adapter != null)
     			animeAdapters.add(adapter);
     	}
     	if(cartoonFragment != null)
     	{
-    		adapter = cartoonFragment.setAnimes(animes, "Cartoon");
+    		adapter = cartoonFragment.setAnimes(animes, getString(R.string.tab_cartoon));
     		if(adapter != null)
     			animeAdapters.add(adapter);
     	}

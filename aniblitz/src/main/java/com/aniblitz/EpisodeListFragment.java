@@ -46,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aniblitz.adapters.EpisodeListAdapter;
-import com.aniblitz.interfaces.ProviderFragmentCoordinator;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Provider;
@@ -189,7 +188,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 			providers.add(mirror.getProvider().getName());	
 		}
 		 
-		ProviderFragmentCoordinator providerFragmentCoordinator = (ProviderFragmentCoordinator) getActivity();
+		EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
 		providerFragmentCoordinator.onEpisodeSelected(mirrors);
 		/*
 		final CharSequence[] items = providers.toArray(new CharSequence[providers.size()]);

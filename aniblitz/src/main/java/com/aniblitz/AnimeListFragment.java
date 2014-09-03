@@ -69,11 +69,11 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 		if(animes != null && animes.size() > 0)
 		{
 			filteredAnimes = new ArrayList<Anime>();
-			if(fragmentName.equals("All"))
+			if(fragmentName.equals(getString(R.string.tab_all)))
 			{
 		    	filteredAnimes = animes;
 			}
-			else if(fragmentName.equals("Serie"))
+			else if(fragmentName.equals(getString(R.string.tab_serie)))
 			{
 		    	for(Anime anime:animes)
 		    	{
@@ -83,7 +83,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 		    		}
 		    	}
 			}
-			else if(fragmentName.equals("Movie"))
+			else if(fragmentName.equals(getString(R.string.tab_movie)))
 			{
 		    	for(Anime anime:animes)
 		    	{
@@ -94,7 +94,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 		    			
 		    	}
 			}
-			else if(fragmentName.equals("Cartoon"))
+			else if(fragmentName.equals(getString(R.string.tab_cartoon)))
 			{
 		    	for(Anime anime:animes)
 		    	{

@@ -1,54 +1,26 @@
 package com.aniblitz;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.SectionIndexer;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aniblitz.interfaces.EpisodesLoadedEvent;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
-import com.aniblitz.models.Provider;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent{
+public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent {
 
 	public boolean hasResults = false;
 	private ArrayList<Episode> filteredEpisodes;
@@ -167,6 +139,8 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 	public void onEpisodesLoaded(ArrayList<Episode> episodes, String animeName, String animeDescription, String animePoster) {
 		setFragmentEpisodes(episodes, animeName, animeDescription, animePoster);
 		
-	} 
-
+	}
+    public interface ProviderFragmentCoordinator {
+        void onEpisodeSelected(ArrayList<Mirror> mirrors);
+    }
 }

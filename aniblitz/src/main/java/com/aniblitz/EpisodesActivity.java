@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import com.aniblitz.MainActivity.PagerAdapter;
 import com.aniblitz.interfaces.EpisodesLoadedEvent;
-import com.aniblitz.interfaces.ProviderFragmentCoordinator;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
@@ -41,7 +40,7 @@ import android.widget.Toast;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
-public class EpisodesActivity extends ActionBarActivity implements ProviderFragmentCoordinator {
+public class EpisodesActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
 	private ListView listViewEpisodes;
 	private ArrayList<Episode> episodes;
 	public ArrayList<String> mItems;
