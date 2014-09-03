@@ -74,11 +74,11 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	Preference prefLanguage = findPreference("prefLanguage");
     	String languageId = prefs.getString("prefLanguage", "1");
-    	String language = "English";
+    	String language = getString(R.string.language_english);
     	if(languageId.equals("2"))
-    		language = "Français";
+    		language = getString(R.string.language_french);
     	else if(languageId.equals("4"))
-    		language = "Español";
+    		language = getString(R.string.language_spanish);
     	prefLanguage.setSummary(language);
     }
 
