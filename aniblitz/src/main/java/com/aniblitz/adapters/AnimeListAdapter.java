@@ -7,13 +7,17 @@ import com.aniblitz.App;
 import com.aniblitz.R;
 import com.aniblitz.Utils;
 import com.aniblitz.models.Anime;
+import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.Genre;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,18 +29,19 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 
-public class AnimeListAdapter extends BaseAdapter implements SectionIndexer, Filterable  {
+public class AnimeListAdapter extends BaseAdapter{
 	private final Context context;
 	private ArrayList<Anime> values;
 	private Resources re;
 	private Activity act;
 	private ViewHolder holder;
 	private ArrayList<Anime> origData;
-	private static String sections = "#abcdefghijklmnopqrstuvwxyz";
+    private SharedPreferences prefs;
 	App app;
 	
 	public AnimeListAdapter(Context context, ArrayList<Anime> values) {
@@ -46,6 +51,7 @@ public class AnimeListAdapter extends BaseAdapter implements SectionIndexer, Fil
 		this.act = (Activity)context;
 		this.origData = values;
 		app = ((App)context.getApplicationContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 	public void update()
 	{
@@ -67,16 +73,36 @@ public class AnimeListAdapter extends BaseAdapter implements SectionIndexer, Fil
 			holder = new ViewHolder();
 			holder.txtName = (TextView) vi.findViewById(R.id.txtName);
 			holder.txtGenres = (TextView) vi.findViewById(R.id.txtGenres);
+            holder.rtbRating = (RatingBar) vi.findViewById(R.id.rtbRating);
 			holder.txtDescription = (TextView)vi.findViewById(R.id.txtDescription);
 			holder.imgPoster = (ImageView) vi.findViewById(R.id.imgPoster);
 			vi.setTag(holder);
 		}else {
             holder = (ViewHolder) vi.getTag();
         }
+
+        holder.rtbRating.setRating((float)Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
 		holder.txtName.setText(anime.getName());
 		holder.txtGenres.setText(anime.getGenresFormatted());
 		holder.txtDescription.setText(anime.getDescription());
 		holder.imgPoster.setImageResource(android.R.color.transparent);
+
+        String language = prefs.getString("prefLanguage", "1");
+        for(AnimeInformation animeInfo : anime.getAnimeInformations())
+        {
+            if(String.valueOf(animeInfo.getLanguageId()).equals(language))
+            {
+                if(animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
+                    holder.txtDescription.setText(animeInfo.getOverview());
+                else if(animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
+                    holder.txtDescription.setText(animeInfo.getDescription());
+                else
+                    holder.txtDescription.setVisibility(View.GONE);
+
+                break;
+
+            }
+        }
 		App.imageLoader.displayImage(anime.getPosterPath("185"), holder.imgPoster);
 
 		return vi;
@@ -84,6 +110,7 @@ public class AnimeListAdapter extends BaseAdapter implements SectionIndexer, Fil
 	  static class ViewHolder {
 	        TextView txtName;
 	        TextView txtGenres;
+            RatingBar rtbRating;
 	        TextView txtDescription;
 	        ImageView imgPoster;
 	    }
@@ -101,71 +128,5 @@ public class AnimeListAdapter extends BaseAdapter implements SectionIndexer, Fil
 	public long getItemId(int position) {
 		return 0;
 	}
-	@Override
-	public Object[] getSections() {
-		String[] sectionsArr = new String[sections.length()];
-		for (int i=0; i < sections.length(); i++)
-		  sectionsArr[i] = "" + sections.charAt(i);
-		  return sectionsArr;
-	}
-	@Override
-	public int getPositionForSection(int sectionIndex) {
-		for (int i=0; i < this.getCount(); i++) {
-	      String item = this.getItem(i).getName().toLowerCase();
-	      
-	      if(sections.charAt(sectionIndex) == '#')
-	      {
-	    	if(i < 10)
-	    	{
-			    if (item.charAt(0) == sections.charAt(sectionIndex) || Utils.isNumeric(String.valueOf(item.charAt(0))) || item.charAt(0) == '.')
-			    {
-			    	return i;
-			    }
-	    	}
-	      }
-	      if (item.charAt(0) == sections.charAt(sectionIndex))
-	          return i;
-		}
-		return 0;
-	}
-	@Override
-	public int getSectionForPosition(int position) {
-		return 0;
-	}
-	@Override
-	public Filter getFilter(){
-	   return new Filter(){
 
-		     @Override
-		     protected FilterResults performFiltering(CharSequence constraint) {
-		             constraint = constraint.toString().toLowerCase();
-		             FilterResults result = new FilterResults();
-	
-		                if (constraint != null && constraint.toString().length() > 0) {
-		                  List<Anime> founded = new ArrayList<Anime>();
-		                        for(Anime item: origData){
-		                            if(item.getName().toLowerCase().contains(constraint)){
-		                                founded.add(item);
-		                            }
-		                    }
-		                        result.values = founded;
-		                        result.count = founded.size();
-		                    }else {
-		                        result.values = origData;
-		                        result.count = origData.size();
-		                    }
-		            return result;
-	
-	
-		    }
-		    @Override
-		    protected void publishResults(CharSequence constraint, FilterResults results) {
-			    values = (ArrayList<Anime>)results.values;
-			    notifyDataSetChanged();
-	
-		    }
-
-	    };
-	   
-	}
 }

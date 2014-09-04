@@ -1,36 +1,30 @@
 package com.aniblitz;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.aniblitz.R;
-
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.SectionIndexer;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.models.Anime;
-import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Mirror;
 public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
@@ -41,28 +35,21 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	public boolean hasResults = false;
 	private GridView gridView;
 	private ArrayList<Anime> animes;
-	private ArrayList<Anime> filteredAnimes;
-	private ArrayList<AnimeSource> animeSources;
+    private ProgressBar progressBarLoadMore;
     private String fragmentName;
 	private Resources r;
-	int index = 0;
 	App app;
 	public Dialog busyDialog;
 	public ArrayList<Mirror> mirrors;
 	public int animeId;
-	public AlertDialog alertProviders;
-	private int animeSourceId;
-	public AlertDialog alertType;
-	public AnimeListFragment()
+    private SharedPreferences prefs;
+    private AnimeTask task;
+    private AnimeListAdapter adapter;
+
+    public AnimeListFragment()
 	{
 
 	}
-    public void clear()
-    {
-        this.animes = new ArrayList<Anime>();
-        this.filteredAnimes = new ArrayList<Anime>();
-        this.animeSources = new ArrayList<AnimeSource>();
-    }
 
 	public static AnimeListFragment newInstance(String fragmentName) {
 		AnimeListFragment ttFrag = new AnimeListFragment();
@@ -71,76 +58,25 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	    ttFrag.setArguments(args);
 	    return ttFrag;
 	}
-	public AnimeListAdapter setAnimes(final ArrayList<Anime> animes, String fragmentName)
-	{
-		if(animes != null && animes.size() > 0)
-		{
-            if(this.getActivity() != null)
-            {
-                filteredAnimes = new ArrayList<Anime>();
-                if(fragmentName.equals(getString(R.string.tab_all)))
-                {
-                    filteredAnimes = animes;
-                }
-                else if(fragmentName.equals(getString(R.string.tab_serie)))
-                {
-                    for(Anime anime:animes)
-                    {
-                        if(!anime.isCartoon() && !anime.isMovie())
-                        {
-                            filteredAnimes.add(anime);
-                        }
-                    }
-                }
-                else if(fragmentName.equals(getString(R.string.tab_movie)))
-                {
-                    for(Anime anime:animes)
-                    {
-                        if(anime.isMovie())
-                        {
-                            filteredAnimes.add(anime);
-                        }
-
-                    }
-                }
-                else if(fragmentName.equals(getString(R.string.tab_cartoon)))
-                {
-                    for(Anime anime:animes)
-                    {
-                        if(anime.isCartoon())
-                        {
-                            filteredAnimes.add(anime);
-                        }
-                    }
-                }
-
-				AnimeListAdapter adapter = new AnimeListAdapter(this.getActivity(), filteredAnimes);
-				gridView.setAdapter(adapter);
-				return adapter;
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        fragmentName = this.getArguments().getString("fragmentName");
-		app = (App)getActivity().getApplication();
-		
+
 	}
 	 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-		
+        fragmentName = this.getArguments().getString("fragmentName");
+        app = (App)getActivity().getApplication();
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
     public void onResume() {
     	super.onResume();
-        AnimeListAdapter adapter = new AnimeListAdapter(this.getActivity(), ((FragmentEvent)getActivity()).onFragmentResumed(fragmentName));
-        gridView.setAdapter(adapter);
+
     }
     @Override
     public void onPause() {
@@ -149,7 +85,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Anime anime = filteredAnimes.get(position);
+		Anime anime = animes.get(position);
 		animeId = anime.getAnimeId();
 		if(!anime.isMovie())
 		{
@@ -171,57 +107,127 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
         r = getResources();
         fragmentName = getArguments().getString("fragmentName");
+        progressBarLoadMore = (ProgressBar)rootView.findViewById(R.id.progressBarLoadMore);
         gridView = (GridView)rootView.findViewById(R.id.gridView);
         gridView.setFastScrollEnabled(true);
         gridView.setOnItemClickListener(this);
-		
+        gridView.setScrollingCacheEnabled(false);
+
+        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if(app.IsNetworkConnected())
+                {
+                    int lastInScreen = firstVisibleItem + visibleItemCount;
+
+                    if ((lastInScreen >= totalItemCount - 6) && !(isLoading)) {
+                        if(hasResults)
+                        {
+                            currentSkip += currentLimit;
+                            loadmore = true;
+
+                            task = new AnimeTask();
+                            AsyncTaskTools.execute(task);
+                        }
+                        else if(task == null)
+                        {
+                            loadmore = false;
+                            task = new AnimeTask();
+                            currentSkip = 0;
+                            AsyncTaskTools.execute(task);
+                        }
+                    }
+                }
+            }
+        });
         return rootView;
     }
+    private class AnimeTask extends AsyncTask<Void, Void, String> {
 
-private class ContentAdapter extends ArrayAdapter<String> implements SectionIndexer {
-    	
-    	private String mSections = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    	
-		public ContentAdapter(Context context, int textViewResourceId,
-				List<String> objects) {
-			super(context, textViewResourceId, objects);
-		}
+        public AnimeTask()
+        {
 
-		@Override
-		public int getPositionForSection(int section) {
-			// If there is no item for current section, previous section will be selected
-			for (int i = section; i >= 0; i--) {
-				for (int j = 0; j < getCount(); j++) {
-					if (i == 0) {
-						// For numeric section
-						for (int k = 0; k <= 9; k++) {
-							if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(k)))
-								return j;
-						}
-					} else {
-						if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(mSections.charAt(i))))
-							return j;
-					}
-				}
-			}
-			return 0;
-		}
+        }
+        private String URL;
 
-		@Override
-		public int getSectionForPosition(int position) {
-			return 0;
-		}
+        @Override
+        protected void onPreExecute()
+        {
+            progressBarLoadMore.setVisibility(View.VISIBLE);
+            isLoading = true;
+            animes = new ArrayList<Anime>();
+            busyDialog = Utils.showBusyDialog(r.getString(R.string.loading_anime_list), getActivity());
+            try {
+                URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby("OriginalName").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").skip(currentSkip).top(currentLimit).build();
+            } catch (MalformedURLException e) {
+                this.cancel(true);
+                this.onPostExecute(null);
+            }
+        };
+        @Override
+        protected String doInBackground(Void... params)
+        {
 
-		@Override
-		public Object[] getSections() {
-			String[] sections = new String[mSections.length()];
-			for (int i = 0; i < mSections.length(); i++)
-				sections[i] = String.valueOf(mSections.charAt(i));
-			return sections;
-		}
-    }
-    public interface FragmentEvent
-    {
-        ArrayList<Anime> onFragmentResumed(String fragmentName);
+            JSONObject json = Utils.GetJson(URL);
+            JSONArray animeArray = new JSONArray();
+
+            try {
+                animeArray = json.getJSONArray("value");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            for(int i = 0;i<animeArray.length();i++)
+            {
+                JSONObject animeJson;
+                try {
+                    animeJson = animeArray.getJSONObject(i);
+                    animes.add(new Anime(animeJson));
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+            return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if(result == null)
+                Toast.makeText(getActivity(), r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
+            else
+            {
+
+                if(loadmore)
+                {
+                    ArrayList<Anime> listAnime = new ArrayList<Anime>(animes);
+                    for(Anime anime : listAnime)
+                    {
+                        adapter.add(anime);
+                    }
+                    adapter.update();
+                }
+                else
+                {
+                    adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), animes);
+                    gridView.setAdapter(adapter);
+                }
+
+
+            }
+            isLoading = false;
+            progressBarLoadMore.setVisibility(View.GONE);
+            Utils.dismissBusyDialog(busyDialog);
+        }
+
     }
 }

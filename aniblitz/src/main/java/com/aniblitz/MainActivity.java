@@ -1,11 +1,6 @@
 package com.aniblitz;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,14 +12,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -45,13 +38,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.adapters.MenuArrayAdapter;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener, AnimeListFragment.FragmentEvent {
+public class MainActivity extends ActionBarActivity implements OnItemClickListener{
 
 	private DrawerLayout mDrawerLayout;
 	private boolean firstTime;
@@ -75,7 +66,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	private AnimeListFragment cartoonFragment;
 	private Dialog busyDialog;
 	private SharedPreferences prefs;
-	private ArrayList<AnimeListAdapter> animeAdapters;
 	private AlertDialog alertLanguages;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +73,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		r = getResources();
-		animeAdapters = new ArrayList<AnimeListAdapter>();
 		animes = new ArrayList<Anime>();
 		mItems = new ArrayList<String>();
 		
@@ -105,33 +94,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 
 		    @Override
 		    public void onPageSelected(int position) {
-                /*
-                if(allFragment != null)
-                    allFragment.clear();
-                if(serieFragment != null)
-                    serieFragment.clear();
-                if(movieFragment != null)
-                    movieFragment.clear();
-                if(cartoonFragment != null)
-                    cartoonFragment.clear();
-                String title = null;
-                switch(position)
-                {
-                    case 0:
-                        title = getString(R.string.tab_all);
-                        break;
-                    case 1:
-                        title = getString(R.string.tab_serie);
-                        break;
-                    case 2:
-                        title = getString(R.string.tab_movie);
-                        break;
-                    case 3:
-                        title = getString(R.string.tab_cartoon);
-                        break;
 
-                }
-                ((AnimeListFragment)((PagerAdapter)viewPager.getAdapter()).getItem(position)).setAnimes(animes, title);*/
 		    }
 		 
 		    @Override
@@ -210,7 +173,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 							break;
 					}
 					editor.commit();
-					(new AnimeTask()).execute();
 	     	    }
 	     	});
 
@@ -222,7 +184,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	            public boolean onKey(DialogInterface arg0, int keyCode,
 	                    KeyEvent event) {
 	                if (keyCode == KeyEvent.KEYCODE_BACK) {
-	                	(new AnimeTask()).execute();
 	                    alertLanguages.dismiss();
 	                }
 	                return true;
@@ -230,52 +191,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	        });
 	     	alertLanguages.show();
 		}
-		else
-		{
-			(new AnimeTask()).execute();
-		}
 	}
 
-    @Override
-    public ArrayList<Anime> onFragmentResumed(String fragmentName) {
-        ArrayList<Anime> filteredAnimes = new ArrayList<Anime>();
-        if(fragmentName.equals(getString(R.string.tab_all)))
-        {
-            filteredAnimes = animes;
-        }
-        else if(fragmentName.equals(getString(R.string.tab_serie)))
-        {
-            for(Anime anime:animes)
-            {
-                if(!anime.isCartoon() && !anime.isMovie())
-                {
-                    filteredAnimes.add(anime);
-                }
-            }
-        }
-        else if(fragmentName.equals(getString(R.string.tab_movie)))
-        {
-            for(Anime anime:animes)
-            {
-                if(anime.isMovie())
-                {
-                    filteredAnimes.add(anime);
-                }
-
-            }
-        }
-        else if(fragmentName.equals(getString(R.string.tab_cartoon)))
-        {
-            for(Anime anime:animes)
-            {
-                if(anime.isCartoon())
-                {
-                    filteredAnimes.add(anime);
-                }
-            }
-        }
-        return filteredAnimes;
-    }
 
     public class PagerAdapter extends FragmentStatePagerAdapter {
 	    public PagerAdapter(FragmentManager fm) {
@@ -363,19 +280,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 
 			@Override
 			public boolean onQueryTextChange(String query) {
-
-				for(AnimeListAdapter adapter:animeAdapters)
-				{
-					adapter.getFilter().filter(query);
-				}
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
-                /*
+
 				MenuItemCompat.collapseActionView(menuItem);
-				searchView.setQuery("", false);*/
+				searchView.setQuery("", false);
 				return false;
 			}
 			 
@@ -484,92 +396,5 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			}
 
 	}
-private class AnimeTask extends AsyncTask<Void, Void, String> {
-		
-		public AnimeTask()
-		{
 
-		}
-		private final String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/Animes?$format=json&$expand=AnimeSources,Genres,AnimeInformations&$filter=AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
-		
-		@Override
-	    protected void onPreExecute()
-	    {
-			busyDialog = Utils.showBusyDialog(r.getString(R.string.loading_anime_list), MainActivity.this);
-	    };      
-	    @Override
-	    protected String doInBackground(Void... params)
-	    {   
-	    	
-	    	JSONObject json = Utils.GetJson(URL);
-	    	JSONArray animeArray = new JSONArray();
-	    	
-	    	try {
-	    		animeArray = json.getJSONArray("value");
-			} catch (Exception e) {
-                e.printStackTrace();
-				return null;
-			}
-	    	for(int i = 0;i<animeArray.length();i++)
-	    	{
-	    		JSONObject animeJson;
-				try {
-					animeJson = animeArray.getJSONObject(i);
-		    		animes.add(new Anime(animeJson));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-	    	}
-		    return "Success";
-		}     
-		    
-	    @Override
-	    protected void onPostExecute(String result)
-	    {
-	    	if(result == null)
-	    	{
-	    		Toast.makeText(MainActivity.this, r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
-	    	}
-	    	Collections.sort(animes, new Comparator<Anime>() {
-	            public int compare(Anime a1, Anime a2) {
-	                return a1.getName().toLowerCase().compareTo(a2.getName().toLowerCase());
-	            }
-	        });
-
-	    	setFragmentAnimes();
-	    	Utils.dismissBusyDialog(busyDialog);
-	    }
-	
-	}
-	private void setFragmentAnimes()
-	{
-		animeAdapters.clear();
-        AnimeListAdapter adapter = null;
-    	if(allFragment != null)
-    	{
-    		adapter = allFragment.setAnimes(animes, getString(R.string.tab_all));
-    		if(adapter != null)
-    			animeAdapters.add(adapter);
-    	}
-    	if(serieFragment != null)
-    	{
-    		adapter = serieFragment.setAnimes(animes, getString(R.string.tab_serie));
-    		if(adapter != null)
-    			animeAdapters.add(adapter);
-    	}
-    	if(movieFragment != null)
-    	{
-    		adapter = movieFragment.setAnimes(animes, getString(R.string.tab_movie));
-    		if(adapter != null)
-    			animeAdapters.add(adapter);
-    	}
-    	if(cartoonFragment != null)
-    	{
-    		adapter = cartoonFragment.setAnimes(animes, getString(R.string.tab_cartoon));
-    		if(adapter != null)
-    			animeAdapters.add(adapter);
-    	}
-	}
 }
