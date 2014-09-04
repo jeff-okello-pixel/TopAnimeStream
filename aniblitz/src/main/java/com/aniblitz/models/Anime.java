@@ -32,6 +32,7 @@ public class Anime implements Parcelable  {
 	private ArrayList<Genre> genres;
 	private ArrayList <AnimeInformation> animeInformations;
 	private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
+    private ArrayList<Theme> themes;
 	public Anime() {
 		super();
 	}
@@ -61,6 +62,14 @@ public class Anime implements Parcelable  {
             animeInformations = new ArrayList<AnimeInformation>(Arrays.asList(resultAnimeInformationArray));
         }
 
+        Parcelable[] parcelableThemeArray = in.readParcelableArray(Theme.class.getClassLoader());
+        Theme[] resultThemeArray = null;
+        if (parcelableThemeArray != null)
+        {
+            resultThemeArray = Arrays.copyOf(parcelableThemeArray, parcelableThemeArray.length, Theme[].class);
+            themes = new ArrayList<Theme>(Arrays.asList(resultThemeArray));
+        }
+
 		AnimeId = in.readInt();
 		Description = in.readString();
 		StatusId = in.readInt();
@@ -84,6 +93,7 @@ public class Anime implements Parcelable  {
 			episodes = new ArrayList<Episode>();
 			genres = new ArrayList<Genre>();
             animeInformations = new ArrayList<AnimeInformation>();
+            themes = new ArrayList<Theme>();
 			this.setAnimeId(!animeJson.isNull("AnimeId") ? animeJson.getInt("AnimeId") : 0);
 			this.setStatusId(!animeJson.isNull("StatusId") ? animeJson.getInt("StatusId") : 0);
 			this.setAddedDate(!animeJson.isNull("AddedDate") ? animeJson.getString("AddedDate") : null);
@@ -124,6 +134,15 @@ public class Anime implements Parcelable  {
 					episodes.add(new Episode(jsonEpisodes.getJSONObject(i)));
 				}
 			}
+
+            if(!animeJson.isNull("Themes"))
+            {
+                JSONArray jsonThemes = animeJson.getJSONArray("Themes");
+                for(int i = 0; i < jsonThemes.length(); i++)
+                {
+                    themes.add(new Theme(jsonThemes.getJSONObject(i)));
+                }
+            }
 		
 		}
 		catch(JSONException e)
@@ -139,7 +158,10 @@ public class Anime implements Parcelable  {
 	public ArrayList<Genre> getGenres() {
 		return genres;
 	}
-
+    public ArrayList<Theme> getThemes()
+    {
+        return this.themes;
+    }
 	public void setGenres(ArrayList<Genre> genres) {
 		this.genres = genres;
 	}
@@ -292,15 +314,20 @@ public class Anime implements Parcelable  {
 			genres = new ArrayList<Genre>();
         if(animeInformations == null)
             animeInformations = new ArrayList<AnimeInformation>();
+        if(themes == null)
+            themes = new ArrayList<Theme>();
 
 	    Parcelable[] parcelableEpisodeArray = new Parcelable[episodes.size()];
-	    dest.writeParcelableArray(episodes.toArray(parcelableEpisodeArray),flags);
+	    dest.writeParcelableArray(episodes.toArray(parcelableEpisodeArray), flags);
 	    
 	    Parcelable[] parcelableGenreArray = new Parcelable[genres.size()];
-	    dest.writeParcelableArray(genres.toArray(parcelableGenreArray),flags);
+	    dest.writeParcelableArray(genres.toArray(parcelableGenreArray), flags);
 
         Parcelable[] parcelableAnimeInformationArray = new Parcelable[animeInformations.size()];
 	    dest.writeParcelableArray(animeInformations.toArray(parcelableAnimeInformationArray), flags);
+
+        Parcelable[] parcelableThemeArray = new Parcelable[themes.size()];
+        dest.writeParcelableArray(themes.toArray(parcelableThemeArray), flags);
 
         dest.writeInt(AnimeId);
         dest.writeString(Description);
