@@ -40,10 +40,10 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	public boolean loadmore = false;
 	public boolean hasResults = false;
 	private GridView gridView;
-	private String fragmentName;
 	private ArrayList<Anime> animes;
 	private ArrayList<Anime> filteredAnimes;
 	private ArrayList<AnimeSource> animeSources;
+    private String fragmentName;
 	private Resources r;
 	int index = 0;
 	App app;
@@ -57,6 +57,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	{
 
 	}
+    public void clear()
+    {
+        this.animes = new ArrayList<Anime>();
+        this.filteredAnimes = new ArrayList<Anime>();
+        this.animeSources = new ArrayList<AnimeSource>();
+    }
+
 	public static AnimeListFragment newInstance(String fragmentName) {
 		AnimeListFragment ttFrag = new AnimeListFragment();
 	    Bundle args = new Bundle();
@@ -68,44 +75,45 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	{
 		if(animes != null && animes.size() > 0)
 		{
-			filteredAnimes = new ArrayList<Anime>();
-			if(fragmentName.equals(getString(R.string.tab_all)))
-			{
-		    	filteredAnimes = animes;
-			}
-			else if(fragmentName.equals(getString(R.string.tab_serie)))
-			{
-		    	for(Anime anime:animes)
-		    	{
-		    		if(!anime.isCartoon() && !anime.isMovie())
-		    		{
-		    			filteredAnimes.add(anime);
-		    		}
-		    	}
-			}
-			else if(fragmentName.equals(getString(R.string.tab_movie)))
-			{
-		    	for(Anime anime:animes)
-		    	{
-		    		if(anime.isMovie())
-		    		{
-		    			filteredAnimes.add(anime);
-		    		}
-		    			
-		    	}
-			}
-			else if(fragmentName.equals(getString(R.string.tab_cartoon)))
-			{
-		    	for(Anime anime:animes)
-		    	{
-		    		if(anime.isCartoon())
-		    		{
-		    			filteredAnimes.add(anime);
-		    		}
-		    	}
-			}
-			if(this.getActivity() != null)
-			{		  
+            if(this.getActivity() != null)
+            {
+                filteredAnimes = new ArrayList<Anime>();
+                if(fragmentName.equals(getString(R.string.tab_all)))
+                {
+                    filteredAnimes = animes;
+                }
+                else if(fragmentName.equals(getString(R.string.tab_serie)))
+                {
+                    for(Anime anime:animes)
+                    {
+                        if(!anime.isCartoon() && !anime.isMovie())
+                        {
+                            filteredAnimes.add(anime);
+                        }
+                    }
+                }
+                else if(fragmentName.equals(getString(R.string.tab_movie)))
+                {
+                    for(Anime anime:animes)
+                    {
+                        if(anime.isMovie())
+                        {
+                            filteredAnimes.add(anime);
+                        }
+
+                    }
+                }
+                else if(fragmentName.equals(getString(R.string.tab_cartoon)))
+                {
+                    for(Anime anime:animes)
+                    {
+                        if(anime.isCartoon())
+                        {
+                            filteredAnimes.add(anime);
+                        }
+                    }
+                }
+
 				AnimeListAdapter adapter = new AnimeListAdapter(this.getActivity(), filteredAnimes);
 				gridView.setAdapter(adapter);
 				return adapter;
@@ -117,6 +125,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        fragmentName = this.getArguments().getString("fragmentName");
 		app = (App)getActivity().getApplication();
 		
 	}
@@ -130,6 +139,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onResume() {
     	super.onResume();
+        AnimeListAdapter adapter = new AnimeListAdapter(this.getActivity(), ((FragmentEvent)getActivity()).onFragmentResumed(fragmentName));
+        gridView.setAdapter(adapter);
     }
     @Override
     public void onPause() {
@@ -208,5 +219,9 @@ private class ContentAdapter extends ArrayAdapter<String> implements SectionInde
 				sections[i] = String.valueOf(mSections.charAt(i));
 			return sections;
 		}
+    }
+    public interface FragmentEvent
+    {
+        ArrayList<Anime> onFragmentResumed(String fragmentName);
     }
 }

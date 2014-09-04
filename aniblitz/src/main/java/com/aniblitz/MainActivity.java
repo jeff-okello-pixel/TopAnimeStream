@@ -25,6 +25,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -50,7 +51,7 @@ import com.aniblitz.adapters.MenuArrayAdapter;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener{
+public class MainActivity extends ActionBarActivity implements OnItemClickListener, AnimeListFragment.FragmentEvent {
 
 	private DrawerLayout mDrawerLayout;
 	private boolean firstTime;
@@ -104,9 +105,33 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 
 		    @Override
 		    public void onPageSelected(int position) {
-		        // on changing the page
-		        // make respected tab selected
-		       // actionbar.setSelectedNavigationItem(position);
+                /*
+                if(allFragment != null)
+                    allFragment.clear();
+                if(serieFragment != null)
+                    serieFragment.clear();
+                if(movieFragment != null)
+                    movieFragment.clear();
+                if(cartoonFragment != null)
+                    cartoonFragment.clear();
+                String title = null;
+                switch(position)
+                {
+                    case 0:
+                        title = getString(R.string.tab_all);
+                        break;
+                    case 1:
+                        title = getString(R.string.tab_serie);
+                        break;
+                    case 2:
+                        title = getString(R.string.tab_movie);
+                        break;
+                    case 3:
+                        title = getString(R.string.tab_cartoon);
+                        break;
+
+                }
+                ((AnimeListFragment)((PagerAdapter)viewPager.getAdapter()).getItem(position)).setAnimes(animes, title);*/
 		    }
 		 
 		    @Override
@@ -210,7 +235,49 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			(new AnimeTask()).execute();
 		}
 	}
-	public class PagerAdapter extends FragmentPagerAdapter {
+
+    @Override
+    public ArrayList<Anime> onFragmentResumed(String fragmentName) {
+        ArrayList<Anime> filteredAnimes = new ArrayList<Anime>();
+        if(fragmentName.equals(getString(R.string.tab_all)))
+        {
+            filteredAnimes = animes;
+        }
+        else if(fragmentName.equals(getString(R.string.tab_serie)))
+        {
+            for(Anime anime:animes)
+            {
+                if(!anime.isCartoon() && !anime.isMovie())
+                {
+                    filteredAnimes.add(anime);
+                }
+            }
+        }
+        else if(fragmentName.equals(getString(R.string.tab_movie)))
+        {
+            for(Anime anime:animes)
+            {
+                if(anime.isMovie())
+                {
+                    filteredAnimes.add(anime);
+                }
+
+            }
+        }
+        else if(fragmentName.equals(getString(R.string.tab_cartoon)))
+        {
+            for(Anime anime:animes)
+            {
+                if(anime.isCartoon())
+                {
+                    filteredAnimes.add(anime);
+                }
+            }
+        }
+        return filteredAnimes;
+    }
+
+    public class PagerAdapter extends FragmentStatePagerAdapter {
 	    public PagerAdapter(FragmentManager fm) {
 	        super(fm);
 	    }
@@ -222,22 +289,18 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    		//All
 	    		case 0:
 	    			allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all));
-	    			setFragmentAnimes();
 	    			return allFragment;
 		    	//Serie
 		    	case 1:
 		    		serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie));
-		    		setFragmentAnimes();
 		    		return serieFragment;
 		    	//Movie
 		    	case 2:
 		    		movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
-		    		setFragmentAnimes();
 		    		return movieFragment;
 		    	//Cartoon
 		    	case 3:
 		    		cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon));
-		    		setFragmentAnimes();
 		    		return cartoonFragment;
 	    	}
 	    	return null;
@@ -444,6 +507,7 @@ private class AnimeTask extends AsyncTask<Void, Void, String> {
 	    	try {
 	    		animeArray = json.getJSONArray("value");
 			} catch (Exception e) {
+                e.printStackTrace();
 				return null;
 			}
 	    	for(int i = 0;i<animeArray.length();i++)
@@ -482,7 +546,7 @@ private class AnimeTask extends AsyncTask<Void, Void, String> {
 	private void setFragmentAnimes()
 	{
 		animeAdapters.clear();
-		AnimeListAdapter adapter = null;
+        AnimeListAdapter adapter = null;
     	if(allFragment != null)
     	{
     		adapter = allFragment.setAnimes(animes, getString(R.string.tab_all));
