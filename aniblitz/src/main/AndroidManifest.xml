@@ -45,7 +45,7 @@
             android:label="Favorites" >
         </activity>
         <activity
-            android:name="com.aniblitz.ProviderActivity"
+            android:name=".EpisodeDetailsActivity"
             android:label="Providers" >
         </activity>
         <activity

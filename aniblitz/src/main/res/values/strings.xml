@@ -63,6 +63,7 @@
     <string name="language_english">English</string>
     <string name="language_french">Français</string>
     <string name="language_spanish">Español</string>
+    <string name="error_loading_episode_details">Error loading episode details</string>
 
     <string-array name="menu_drawer">
         <item>Favorites</item>

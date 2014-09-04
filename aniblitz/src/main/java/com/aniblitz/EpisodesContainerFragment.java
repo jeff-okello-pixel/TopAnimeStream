@@ -141,6 +141,6 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 		
 	}
     public interface ProviderFragmentCoordinator {
-        void onEpisodeSelected(ArrayList<Mirror> mirrors);
+        void onEpisodeSelected(Episode episode, String type);
     }
 }

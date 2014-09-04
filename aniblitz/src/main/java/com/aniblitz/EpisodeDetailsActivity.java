@@ -1,8 +1,6 @@
 package com.aniblitz;
 
-import java.util.ArrayList;
-
-import com.aniblitz.models.Mirror;
+import com.aniblitz.models.Episode;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -14,35 +12,44 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class ProviderActivity extends ActionBarActivity {
+public class EpisodeDetailsActivity extends ActionBarActivity {
 
 	private int animeId;
 	private Resources r;
 	private SharedPreferences prefs;
-	private ArrayList<Mirror> mirrors;
+	private Episode episode;
+    private String type;
 	private ProviderListFragment providerListFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_providers);
+		setContentView(R.layout.activity_episode_details);
 		r = getResources();
 		animeId = getIntent().getIntExtra("AnimeId", 0);
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + r.getString(R.string.title_providers) + "</font>"));
+
 		Bundle bundle = getIntent().getExtras();
-		mirrors = bundle.getParcelableArrayList("Mirrors");
+        episode = (Episode)bundle.getParcelable("Episode");
+        type = bundle.getString("Type");
 		
-		if(mirrors == null)
+		if(episode == null)
 		{
-			Toast.makeText(this, r.getString(R.string.error_loading_providers), Toast.LENGTH_LONG).show();
+			Toast.makeText(this, getString(R.string.error_loading_episode_details), Toast.LENGTH_LONG).show();
 			finish();
 		}
-		
+        String episodeName;
+        if(episode.getEpisodeName() != null && !episode.getEpisodeName().equals(""))
+            episodeName = episode.getEpisodeName();
+        else
+            episodeName = getString(R.string.episode) + episode.getEpisodeNumber();
+
+        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + episodeName + "</font>"));
+
 		providerListFragment = (ProviderListFragment) getSupportFragmentManager().findFragmentById(R.id.providerListFragment);
 		
-		providerListFragment.setProviders(mirrors);
+		providerListFragment.setProviders(episode.getMirrors(), type);
 	}
 	
 	@Override

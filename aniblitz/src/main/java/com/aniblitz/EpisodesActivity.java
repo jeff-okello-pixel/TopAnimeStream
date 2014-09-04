@@ -1,26 +1,17 @@
 package com.aniblitz;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aniblitz.MainActivity.PagerAdapter;
 import com.aniblitz.interfaces.EpisodesLoadedEvent;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
-import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-import com.aniblitz.R;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.app.Dialog;
 import android.content.Intent;
@@ -28,16 +19,12 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 public class EpisodesActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
@@ -201,7 +188,7 @@ private class AnimeEpisodesTask extends AsyncTask<Void, Void, String> {
     		App.imageLoader.displayImage(anime.getBackdropPath("500"), imgBackdrop);
 	}
 	@Override
-	public void onEpisodeSelected(ArrayList<Mirror> mirrors) {
+	public void onEpisodeSelected(Episode episode, String type) {
 		/*
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		ProviderListFragment providerListFragment = (ProviderListFragment) fragmentManager.findFragmentById(R.id.providerListFragment);
@@ -211,8 +198,9 @@ private class AnimeEpisodesTask extends AsyncTask<Void, Void, String> {
 		}
 		else
 		{*/
-			Intent intent = new Intent(this, ProviderActivity.class);
-			intent.putParcelableArrayListExtra("Mirrors", mirrors);
+			Intent intent = new Intent(this, EpisodeDetailsActivity.class);
+            intent.putExtra("Episode", episode);
+            intent.putExtra("Type", type);
 			startActivity(intent);
 		//}
 		

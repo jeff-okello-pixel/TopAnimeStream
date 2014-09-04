@@ -13,9 +13,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +41,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 	App app;
 	private ListView listView;
 	private ArrayList<Mirror> mirrors;
+    private SharedPreferences prefs;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,7 +52,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-		
+		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -76,9 +79,30 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 		(new Utils.GetMp4(mirrors.get(position), getActivity())).execute();
 	}
 	
-	public void setProviders(ArrayList<Mirror> mirrors)
+	public void setProviders(ArrayList<Mirror> lstMirror, String type)
 	{
-		this.mirrors = mirrors;
+        mirrors = new ArrayList<Mirror>();
+        final ArrayList<String> providers = new ArrayList<String>();
+        for(Mirror mirror:lstMirror)
+        {
+            if(String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+            {
+                if(type.equals("Dubbed"))
+                {
+                    if(mirror.getAnimeSource().isSubbed())
+                        continue;
+                }
+                else if(type.equals("Subbed"))
+                {
+                    if(!mirror.getAnimeSource().isSubbed())
+                        continue;
+                }
+
+            }
+            else
+                continue;
+            mirrors.add(mirror);
+        }
 		listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
 	}
 

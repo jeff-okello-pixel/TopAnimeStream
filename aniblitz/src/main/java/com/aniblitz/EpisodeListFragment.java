@@ -164,32 +164,10 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		final Episode episode = filteredEpisodes.get(position);
-		final ArrayList<String> providers = new ArrayList<String>();
-		final ArrayList<Mirror> mirrors = new ArrayList<Mirror>();
-		for(Mirror mirror:episode.getMirrors())
-		{
-			if(String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-			{
-				if(fragmentName.equals("Dubbed"))
-				{
-					if(mirror.getAnimeSource().isSubbed())
-						continue;
-				}
-				else if(fragmentName.equals("Subbed"))
-				{
-					if(!mirror.getAnimeSource().isSubbed())
-						continue;
-				}
 
-			}
-			else
-				continue;
-			mirrors.add(mirror);
-			providers.add(mirror.getProvider().getName());	
-		}
 		 
 		EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
-		providerFragmentCoordinator.onEpisodeSelected(mirrors);
+		providerFragmentCoordinator.onEpisodeSelected(episode, fragmentName);
 		/*
 		final CharSequence[] items = providers.toArray(new CharSequence[providers.size()]);
      	final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(EpisodeListFragment.this.getActivity());
