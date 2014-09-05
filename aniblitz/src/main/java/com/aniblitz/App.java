@@ -19,7 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class App extends Application implements NetworkEvent {
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
-	private int networkConnection;
+	public static int networkConnection;
 	public static Locale locale;
 	public static ImageLoader imageLoader;
 	private static Connection connection;
@@ -95,29 +95,22 @@ public class App extends Application implements NetworkEvent {
             getBaseContext().getResources().updateConfiguration(configMirror, getBaseContext().getResources().getDisplayMetrics());
         }
     }
-	@Override
-	public void WifiConnected() {
-		networkConnection = NetworkUtil.TYPE_WIFI;
-		IsNetworkConnected();
-	}
-	@Override
-	public void MobileConnected() {
-		networkConnection = NetworkUtil.TYPE_MOBILE;
-		IsNetworkConnected();
-	}
-	@Override
-	public void EthernetConnected() {
-		networkConnection = NetworkUtil.TYPE_ETHERNET;
-		IsNetworkConnected();
-	}
+
 	@Override
 	public void NotConnected() {
 		networkConnection = NetworkUtil.TYPE_NOT_CONNECTED;
 		IsNetworkConnected();
 	}
-	public boolean IsNetworkConnected()
+
+    @Override
+    public void InternetConnected(int type) {
+        networkConnection = type;
+        IsNetworkConnected();
+    }
+
+    static public boolean IsNetworkConnected()
 	{
-		if(networkConnection == NetworkUtil.TYPE_WIFI || networkConnection == NetworkUtil.TYPE_MOBILE || networkConnection == NetworkUtil.TYPE_ETHERNET)
+		if(networkConnection != NetworkUtil.TYPE_NOT_CONNECTED)
 		{
 			//Connected
 			if(connection != null)

@@ -42,7 +42,7 @@ import com.aniblitz.adapters.MenuArrayAdapter;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener{
+public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection {
 
 	private DrawerLayout mDrawerLayout;
 	private boolean firstTime;
@@ -50,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	private ListView listView;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private boolean doubleBackToExitPressedOnce;
+    private TextView txtNoConnection;
 	private MenuItem menuItem;
 	private ArrayList<String> mItems;
 	private MenuItem menuShowAsGrid;
@@ -77,8 +78,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		mItems = new ArrayList<String>();
 		
 		tabTitles = new String[] {r.getString(R.string.tab_all), r.getString(R.string.tab_serie), r.getString(R.string.tab_movie), r.getString(R.string.tab_cartoon)};
-		
-		
+
+        txtNoConnection = (TextView)findViewById(R.id.txtNoConnection);
 		viewPager = (ViewPager)findViewById(R.id.pager);
 		viewPager.setOffscreenPageLimit(1);
 		mAdapter = new PagerAdapter(getSupportFragmentManager());
@@ -191,8 +192,34 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	        });
 	     	alertLanguages.show();
 		}
+
+        App.SetEvent(this);
+        setPagerVisibility(App.networkConnection);
 	}
 
+
+    @Override
+    public void ConnectionChanged(int connectionType) {
+        setPagerVisibility(connectionType);
+    }
+
+    private void setPagerVisibility(int connectionType)
+    {
+        if(connectionType != NetworkUtil.TYPE_NOT_CONNECTED)
+        {
+            //connected
+            txtNoConnection.setVisibility(View.GONE);
+            viewPager.setVisibility(View.VISIBLE);
+            tabs.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            //not connected
+            txtNoConnection.setVisibility(View.VISIBLE);
+            viewPager.setVisibility(View.GONE);
+            tabs.setVisibility(View.GONE);
+        }
+    }
 
     public class PagerAdapter extends FragmentStatePagerAdapter {
 	    public PagerAdapter(FragmentManager fm) {

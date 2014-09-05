@@ -17,13 +17,9 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 		        	event.NotConnected();
 		        	break;
 		        case 1:
-		        	event.WifiConnected();
-		        	break;
 		        case 2:
-		        	event.MobileConnected();
-		        	break;
 		        case 3:
-		        	event.EthernetConnected();
+		        	event.InternetConnected(status);
 		        	break;
 	        }
     	}
@@ -33,10 +29,8 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     	NetworkChangeReceiver.event = event;
     }
 	 public interface NetworkEvent {
-	        public void WifiConnected();
-	        public void MobileConnected();
-	        public void EthernetConnected();
 	        public void NotConnected();
+            public void InternetConnected(int type);
 	        
 	 }
 }
