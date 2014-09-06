@@ -168,22 +168,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 		 
 		EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
 		providerFragmentCoordinator.onEpisodeSelected(episode, fragmentName);
-		/*
-		final CharSequence[] items = providers.toArray(new CharSequence[providers.size()]);
-     	final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(EpisodeListFragment.this.getActivity());
-     	alertBuilder.setTitle("Choose a provider");
-     	alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-     	    public void onClick(DialogInterface dialog, int item) {
-				(new Utils.GetMp4(mirrors.get(item), getActivity())).execute();
-     	    }
-     	});
-     	alertProviders = alertBuilder.create();
-     	alertProviders.show();
-     	Intent intent = new Intent(getActivity(),ProviderActivity.class);
-     	Bundle bundle = new Bundle();
-     	bundle.putParcelableArrayList("Mirrors", mirrors);
-     	intent.putExtras(bundle);
-     	startActivity(intent);*/
 		
 	}
 	@Override
@@ -219,48 +203,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         outState.putString("animePoster", animePoster);
         
         super.onSaveInstanceState(outState);
-    }
-private class ContentAdapter extends ArrayAdapter<String> implements SectionIndexer {
-    	
-    	private String mSections = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    	
-		public ContentAdapter(Context context, int textViewResourceId,
-				List<String> objects) {
-			super(context, textViewResourceId, objects);
-		}
-
-		@Override
-		public int getPositionForSection(int section) {
-			// If there is no item for current section, previous section will be selected
-			for (int i = section; i >= 0; i--) {
-				for (int j = 0; j < getCount(); j++) {
-					if (i == 0) {
-						// For numeric section
-						for (int k = 0; k <= 9; k++) {
-							if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(k)))
-								return j;
-						}
-					} else {
-						if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(mSections.charAt(i))))
-							return j;
-					}
-				}
-			}
-			return 0;
-		}
-
-		@Override
-		public int getSectionForPosition(int position) {
-			return 0;
-		}
-
-		@Override
-		public Object[] getSections() {
-			String[] sections = new String[mSections.length()];
-			for (int i = 0; i < mSections.length(); i++)
-				sections[i] = String.valueOf(mSections.charAt(i));
-			return sections;
-		}
     }
 
 }

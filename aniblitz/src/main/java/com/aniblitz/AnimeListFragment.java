@@ -152,6 +152,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         return rootView;
     }
     private class AnimeTask extends AsyncTask<Void, Void, String> {
+        private ArrayList<Anime> newAnimes = new ArrayList<Anime>();
 
         public AnimeTask()
         {
@@ -201,7 +202,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 JSONObject animeJson;
                 try {
                     animeJson = animeArray.getJSONObject(i);
-                    animes.add(new Anime(animeJson));
+                    newAnimes.add(new Anime(animeJson));
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -222,8 +223,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
                 if(loadmore)
                 {
-                    ArrayList<Anime> listAnime = new ArrayList<Anime>(animes);
-                    for(Anime anime : listAnime)
+                    for(Anime anime : newAnimes)
                     {
                         adapter.add(anime);
                     }

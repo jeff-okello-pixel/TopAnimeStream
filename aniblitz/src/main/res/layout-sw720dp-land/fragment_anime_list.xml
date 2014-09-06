@@ -13,7 +13,7 @@
         android:padding="2dp" />
     <GridView
         android:id="@+id/gridView"
-        android:numColumns="2"
+        android:numColumns="3"
         android:fadingEdge="none"
         android:overScrollMode="never"
         android:layout_above="@id/progressBarLoadMore"
