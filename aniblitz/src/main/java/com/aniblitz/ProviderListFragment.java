@@ -52,7 +52,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
     }
 
     @Override
@@ -69,6 +69,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             Bundle savedInstanceState) { 
         final View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
         r = getResources();
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		listView = (ListView)rootView.findViewById(R.id.listView);
 		listView.setOnItemClickListener(this);
 		

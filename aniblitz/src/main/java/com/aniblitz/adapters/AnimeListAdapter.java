@@ -37,7 +37,6 @@ import android.widget.TextView;
 public class AnimeListAdapter extends BaseAdapter{
 	private final Context context;
 	private ArrayList<Anime> values;
-	private Resources re;
 	private Activity act;
 	private ViewHolder holder;
 	private ArrayList<Anime> origData;
@@ -47,7 +46,6 @@ public class AnimeListAdapter extends BaseAdapter{
 	public AnimeListAdapter(Context context, ArrayList<Anime> values) {
 		this.context = context;
 		this.values = values;
-		this.re = this.context.getResources();
 		this.act = (Activity)context;
 		this.origData = values;
 		app = ((App)context.getApplicationContext());
@@ -80,11 +78,12 @@ public class AnimeListAdapter extends BaseAdapter{
 		}else {
             holder = (ViewHolder) vi.getTag();
         }
-
-        holder.rtbRating.setRating((float)Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
+        if(anime.getRating() != null)
+            holder.rtbRating.setRating((float)Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
 		holder.txtName.setText(anime.getName());
 		holder.txtGenres.setText(anime.getGenresFormatted());
-		holder.txtDescription.setText(anime.getDescription());
+        if(holder.txtGenres.getText().equals(""))
+            holder.txtGenres.setVisibility(View.GONE);
 		holder.imgPoster.setImageResource(android.R.color.transparent);
 
         String language = prefs.getString("prefLanguage", "1");
@@ -93,9 +92,9 @@ public class AnimeListAdapter extends BaseAdapter{
             if(String.valueOf(animeInfo.getLanguageId()).equals(language))
             {
                 if(animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
-                    holder.txtDescription.setText(animeInfo.getOverview());
+                    holder.txtDescription.setText(animeInfo.getOverview().trim());
                 else if(animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
-                    holder.txtDescription.setText(animeInfo.getDescription());
+                    holder.txtDescription.setText(animeInfo.getDescription().trim());
                 else
                     holder.txtDescription.setVisibility(View.GONE);
 

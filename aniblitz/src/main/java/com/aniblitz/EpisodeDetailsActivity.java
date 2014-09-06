@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class EpisodeDetailsActivity extends ActionBarActivity {
@@ -18,6 +20,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 	private Resources r;
 	private SharedPreferences prefs;
 	private Episode episode;
+    private ImageView imgScreenshot;
     private String type;
 	private ProviderListFragment providerListFragment;
 	@Override
@@ -39,6 +42,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 			Toast.makeText(this, getString(R.string.error_loading_episode_details), Toast.LENGTH_LONG).show();
 			finish();
 		}
+        imgScreenshot = (ImageView)findViewById(R.id.imgScreenshot);
         String episodeName;
         if(episode.getEpisodeName() != null && !episode.getEpisodeName().equals(""))
             episodeName = episode.getEpisodeName();
@@ -46,7 +50,10 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             episodeName = getString(R.string.episode) + episode.getEpisodeNumber();
 
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + episodeName + "</font>"));
-
+        if(episode.getScreenshot() != null && !episode.getScreenshot().equals(""))
+            App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(),imgScreenshot);
+        else
+            imgScreenshot.setVisibility(View.GONE);
 		providerListFragment = (ProviderListFragment) getSupportFragmentManager().findFragmentById(R.id.providerListFragment);
 		
 		providerListFragment.setProviders(episode.getMirrors(), type);

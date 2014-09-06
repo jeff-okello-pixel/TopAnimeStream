@@ -70,7 +70,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         super.onActivityCreated(savedInstanceState);
         fragmentName = this.getArguments().getString("fragmentName");
         app = (App)getActivity().getApplication();
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
     }
 
     @Override
@@ -105,7 +105,9 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) { 
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
+        animes = new ArrayList<Anime>();
         fragmentName = getArguments().getString("fragmentName");
         progressBarLoadMore = (ProgressBar)rootView.findViewById(R.id.progressBarLoadMore);
         gridView = (GridView)rootView.findViewById(R.id.gridView);
@@ -162,11 +164,19 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            animes = new ArrayList<Anime>();
-            busyDialog = Utils.showBusyDialog(r.getString(R.string.loading_anime_list), getActivity());
             try {
-                URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby("OriginalName").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").skip(currentSkip).top(currentLimit).build();
-            } catch (MalformedURLException e) {
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby("OriginalName").skip(currentSkip).top(currentLimit);
+                String filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
+                if(fragmentName.equals(getString(R.string.tab_cartoon)))
+                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
+                else if(fragmentName.equals(getString(R.string.tab_movie)))
+                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20true";
+                else if(fragmentName.equals(getString(R.string.tab_serie)))
+                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20false";
+                URL = wcfCall.filter(filter).build();
+
+            } catch (Exception e) {
+                e.printStackTrace();
                 this.cancel(true);
                 this.onPostExecute(null);
             }
@@ -184,8 +194,10 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 e.printStackTrace();
                 return null;
             }
+            hasResults = false;
             for(int i = 0;i<animeArray.length();i++)
             {
+                hasResults = true;
                 JSONObject animeJson;
                 try {
                     animeJson = animeArray.getJSONObject(i);
@@ -196,6 +208,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 }
 
             }
+
             return "Success";
         }
 
@@ -226,7 +239,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             }
             isLoading = false;
             progressBarLoadMore.setVisibility(View.GONE);
-            Utils.dismissBusyDialog(busyDialog);
         }
 
     }

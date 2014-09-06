@@ -47,6 +47,9 @@
 		        android:id="@+id/txtDescription"
 			    android:focusable="false"
 			    android:paddingLeft="5dp"
+                android:textSize="10sp"
+                android:ellipsize="end"
+                android:maxLines="5"
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"/>
         

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class WcfDataServiceUtility {
     String dataServiceUrl;
     ArrayList<String> queries;
-    public WcfDataServiceUtility(String url) throws MalformedURLException {
+    public WcfDataServiceUtility(String url) {
         if(url.lastIndexOf("/") != url.length())
             url += "/";
 
@@ -20,7 +20,7 @@ public class WcfDataServiceUtility {
         queries = new ArrayList<String>();
     }
 
-    public WcfDataServiceUtility getTable(String tableName) throws MalformedURLException {
+    public WcfDataServiceUtility getTable(String tableName)  {
         dataServiceUrl = this.dataServiceUrl + tableName;
         return this;
     }
