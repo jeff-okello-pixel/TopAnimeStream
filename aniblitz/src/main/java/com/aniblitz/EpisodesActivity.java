@@ -43,7 +43,7 @@ public class EpisodesActivity extends ActionBarActivity implements EpisodesConta
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_anime_episodes);
+		setContentView(R.layout.activity_episodes);
 		r = getResources();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		db = new SQLiteHelper(this);

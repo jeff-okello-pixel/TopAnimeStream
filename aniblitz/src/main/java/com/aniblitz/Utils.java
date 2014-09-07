@@ -506,6 +506,12 @@ public class Utils {
     	}
     	return String.format(new String(new char[terms.toArray().length]).replace("\0", "%s" + " ").replaceFirst("(.*)" + " " + "$","$1"), terms.toArray()).replace("+", "+" + key + ":");
     }
+    public static void restartActivity(Activity act) {
+        Intent intent = act.getIntent();
+        act.finish();
+        act.startActivity(intent);
+        act.overridePendingTransition(0, 0);
+    }
 
 	public static Dialog showBusyDialog(String message, Activity act) {
 		Dialog busyDialog = new Dialog(act, R.style.lightbox_dialog);

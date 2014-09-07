@@ -1,0 +1,40 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+   	    <ListView 
+   	        android:id="@+id/left_drawer"
+        	android:paddingTop="10dp"
+        	android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:scrollbars="none"
+            android:background="@color/blueDrawer"
+            android:divider="@android:color/transparent"
+    		android:dividerHeight="8dp"/>
+   	    
+	    <TextView 
+		    android:id="@+id/txtNoConnection"
+		    android:textSize="20sp"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerInParent="true"
+		    android:visibility="gone"
+		    android:text="@string/no_connection"/>
+	        
+	    <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+		    android:id="@+id/tabs"
+		    android:layout_width="match_parent"
+		    android:layout_height="48dp"
+		    android:layout_toRightOf="@id/left_drawer" />
+	    
+		<android.support.v4.view.ViewPager
+		    android:id="@+id/pager"
+		    android:layout_below="@id/tabs"
+		    android:layout_toRightOf="@id/left_drawer"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"/> 
+	
+
+
+</RelativeLayout>

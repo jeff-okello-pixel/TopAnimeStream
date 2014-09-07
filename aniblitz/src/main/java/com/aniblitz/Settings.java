@@ -66,6 +66,11 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals("prefLanguage")) {
+            app.setLocale();
+            App.languageChanged = true;
+            Utils.restartActivity(this);
+        }
 		SetSummary();
     }
 

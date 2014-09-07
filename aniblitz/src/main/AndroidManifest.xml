@@ -24,7 +24,7 @@
 
         <activity
             android:name="com.aniblitz.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="locale|layoutDirection"
             android:label="@string/app_name" >
             <meta-data
                 android:name="android.app.default_searchable"
@@ -38,22 +38,27 @@
         </activity>
         <activity
             android:name="com.aniblitz.Settings"
+            android:configChanges="locale|layoutDirection"
             android:label="Settings" >
         </activity>
         <activity
             android:name="com.aniblitz.FavoriteActivity"
+            android:configChanges="locale|layoutDirection"
             android:label="Favorites" >
         </activity>
         <activity
             android:name=".EpisodeDetailsActivity"
+            android:configChanges="locale|layoutDirection"
             android:label="Providers" >
         </activity>
         <activity
             android:name="com.aniblitz.HistoryActivity"
+            android:configChanges="locale|layoutDirection"
             android:label="History" >
         </activity>
         <activity
             android:name="com.aniblitz.AnimeSearchActivity"
+            android:configChanges="locale|layoutDirection"
             android:label="@string/title_activity_anime_search"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -67,11 +72,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.aniblitz.EpisodesActivity">
-        </activity>
-        <activity
-            android:name="com.aniblitz.AnimeSourcesActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" >
+            android:name="com.aniblitz.EpisodesActivity"
+            android:configChanges="locale|layoutDirection">
         </activity>
     </application>
 

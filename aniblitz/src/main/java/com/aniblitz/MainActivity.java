@@ -67,6 +67,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	private AnimeListFragment cartoonFragment;
 	private Dialog busyDialog;
 	private SharedPreferences prefs;
+    private App app;
 	private AlertDialog alertLanguages;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,36 +79,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		mItems = new ArrayList<String>();
 		
 		tabTitles = new String[] {r.getString(R.string.tab_all), r.getString(R.string.tab_serie), r.getString(R.string.tab_movie), r.getString(R.string.tab_cartoon)};
-
+        app = (App)getApplication();
         txtNoConnection = (TextView)findViewById(R.id.txtNoConnection);
 		viewPager = (ViewPager)findViewById(R.id.pager);
-		viewPager.setOffscreenPageLimit(1);
-		mAdapter = new PagerAdapter(getSupportFragmentManager());
-		viewPager.setAdapter(mAdapter);
-		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-		tabs.setViewPager(viewPager);
-		tabs.setDividerColor(r.getColor(R.color.blueTab));
-		tabs.setUnderlineColor(r.getColor(R.color.blueTab));
-		//tabs.setTextColor(Color.parseColor("#55a73d"));
-		tabs.setIndicatorColor(r.getColor(R.color.blueTab));
-		tabs.setTabBackground("background_tab_darkblue");
-		tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			 
-		    @Override
-		    public void onPageSelected(int position) {
-
-		    }
-		 
-		    @Override
-		    public void onPageScrolled(int arg0, float arg1, int arg2) {
-		    }
-		 
-		    @Override
-		    public void onPageScrollStateChanged(int arg0) {
-		    }
-		});
-		
-
+        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
 		
 		if(savedInstanceState != null)
 		{
@@ -149,9 +124,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         }
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        /*
         Editor editor = prefs.edit();
         editor.clear();
-        editor.commit();
+        editor.commit();*/
 		String languageId = prefs.getString("prefLanguage", "0");
 		if(languageId.equals("0"))
 		{
@@ -174,6 +150,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 							break;
 					}
 					editor.commit();
+                    app.setLocale();
+                    Utils.restartActivity(MainActivity.this);
 	     	    }
 	     	});
 
@@ -186,17 +164,35 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	                    KeyEvent event) {
 	                if (keyCode == KeyEvent.KEYCODE_BACK) {
 	                    alertLanguages.dismiss();
+                        SetViewPager();
 	                }
 	                return true;
 	            }
 	        });
 	     	alertLanguages.show();
 		}
+        else
+        {
+            SetViewPager();
+        }
 
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
 	}
 
+    private void SetViewPager()
+    {
+        viewPager.setOffscreenPageLimit(1);
+        mAdapter = new PagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(mAdapter);
+
+        tabs.setViewPager(viewPager);
+        tabs.setDividerColor(r.getColor(R.color.blueTab));
+        tabs.setUnderlineColor(r.getColor(R.color.blueTab));
+        //tabs.setTextColor(Color.parseColor("#55a73d"));
+        tabs.setIndicatorColor(r.getColor(R.color.blueTab));
+        tabs.setTabBackground("background_tab_darkblue");
+    }
 
     @Override
     public void ConnectionChanged(int connectionType) {
@@ -424,4 +420,16 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
 	}
 
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(App.languageChanged)
+        {
+            App.languageChanged = false;
+            Utils.restartActivity(this);
+        }
+
+    }
 }

@@ -35,7 +35,7 @@ public final class R {
 		public static final int mediacontroller_time_total = 0x7f0a0065;
 	}
 	public static final class layout {
-		public static final int mediacontroller = 0x7f030026;
+		public static final int mediacontroller = 0x7f030027;
 	}
 	public static final class raw {
 		public static final int libarm = 0x7f060000;

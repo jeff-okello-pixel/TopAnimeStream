@@ -24,6 +24,7 @@ public class App extends Application implements NetworkEvent {
 	public static ImageLoader imageLoader;
 	private static Connection connection;
 	public static boolean isPro = false;
+    public static boolean languageChanged = false;
 	private static Context context;
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
@@ -62,19 +63,24 @@ public class App extends Application implements NetworkEvent {
 
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(imgConfig);
-        
+
+        setLocale();
+
+    }
+    public void setLocale()
+    {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         Configuration config = getBaseContext().getResources().getConfiguration();
         Configuration configMirror = new Configuration(config);
         String lang = settings.getString("prefLanguage", "");
-        
+
         if(lang.equals("1"))
-        	lang = "en";
+            lang = "en";
         else if(lang.equals("2"))
-        	lang = "fr";
+            lang = "fr";
         else if(lang.equals("4"))
-        	lang = "es";
+            lang = "es";
         if (! "".equals(lang) && ! configMirror.locale.getLanguage().equals(lang))
         {
             locale = new Locale(lang);
