@@ -4,6 +4,7 @@
     <string name="app_name">Aniblitz</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Aniblitz</string>
+    <string name="anime_service_path">http://lanbox.ca/AnimeServices/AnimeDataService.svc/</string>
     <string name="image_host_path">http://lanbox.ca/ImageHost/</string>
     <!-- Menu actions -->
     <string name="action_favorite">Add to favorite</string>
@@ -26,15 +27,15 @@
     <string name="cancel">Cancel</string>
     <string name="episode">Episode: </string>
     <!-- Titles -->
-	<string name="title_alert_languages">Choose your preferred language</string>
-	<string name="title_favorites">Favorites</string>
-	<string name="title_history">History</string>
-	<string name="title_providers">Providers</string>
-	
-	<!-- Loadings -->
-	<string name="loading_anime_list">Loading anime list...</string>
-	<string name="loading_episode_list">Loading episode list...</string>
-	<string name="loading_video">Loading video...</string>
+    <string name="title_alert_languages">Choose your preferred language</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="title_history">History</string>
+    <string name="title_providers">Providers</string>
+
+    <!-- Loadings -->
+    <string name="loading_anime_list">Loading anime list...</string>
+    <string name="loading_episode_list">Loading episode list...</string>
+    <string name="loading_video">Loading video...</string>
     <!-- Tabs -->
     <string name="tab_all">All</string>
     <string name="tab_serie">Serie</string>
@@ -42,11 +43,11 @@
     <string name="tab_cartoon">Cartoon</string>
     <string name="tab_dubbed">Dubbed</string>
     <string name="tab_subbed">Subbed</string>
-    
+
     <!-- Information toasts -->
     <string name="toast_add_favorite">Added to favorites</string>
-    <string name="toast_remove_favorite">Removed from favorites</string>    
-        
+    <string name="toast_remove_favorite">Removed from favorites</string>
+
     <!-- Error messages -->
     <string name="error_loading_animes">An error has occurred while loading the animes</string>
     <string name="error_loading_video">An error has occurred while loading the video</string>
@@ -54,7 +55,7 @@
     <string name="error_loading_episodes">An error has occurred while loading the episodes</string>
     <string name="error_loading_mirrors">An error has occurred while loading the mirrors</string>
     <string name="error_loading_providers">An error has occurred while loading the providers</string>
-    
+
     <!-- Menu drawer -->
     <string name="menu_favorites">Favorites</string>
     <string name="menu_history">History</string>
@@ -63,7 +64,10 @@
     <string name="language_english">English</string>
     <string name="language_french">Français</string>
     <string name="language_spanish">Español</string>
+    <string name="episodes_of">Episodes of </string>
     <string name="error_loading_episode_details">Error loading episode details</string>
+    <string name="loading_anime_details">Loading anime details</string>
+    <string name="error_loading_anime_details">Error loading anime details</string>
 
     <string-array name="menu_drawer">
         <item>Favorites</item>
@@ -71,4 +75,7 @@
         <item>Share</item>
         <item>Settings</item>
     </string-array>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

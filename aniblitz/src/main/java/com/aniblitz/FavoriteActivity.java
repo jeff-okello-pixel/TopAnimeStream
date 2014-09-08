@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.models.Anime;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,7 +63,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
 			animeId = anime.getAnimeId();
 			if(!anime.isMovie())
 			{
-				Intent intent = new Intent(this,EpisodesActivity.class);
+				Intent intent = new Intent(this,AnimeDetailsActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putParcelable("Anime", anime);
 				intent.putExtras(bundle);

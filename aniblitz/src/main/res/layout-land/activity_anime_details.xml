@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <fragment
+        class="com.aniblitz.AnimeDetailsFragment"
+        android:layout_weight="1"
+        android:id="@+id/animeDetailsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@color/blueTab"></View>
+    <fragment
+        class="com.aniblitz.EpisodesContainerFragment"
+        android:layout_weight="1"
+        android:id="@+id/episodeListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -25,6 +25,11 @@ public class WcfDataServiceUtility {
         return this;
     }
 
+    public WcfDataServiceUtility getTableSpecificRow(String tableName, int id, boolean isLong)  {
+        dataServiceUrl = this.dataServiceUrl + tableName + "(" + id + (isLong ? "L" : "") + ")";
+        return this;
+    }
+
     public WcfDataServiceUtility formatJson(){
         this.format("json");
         return this;

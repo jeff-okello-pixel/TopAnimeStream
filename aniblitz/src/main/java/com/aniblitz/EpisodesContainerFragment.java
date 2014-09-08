@@ -11,16 +11,18 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.aniblitz.interfaces.EpisodesLoadedEvent;
+import com.aniblitz.interfaces.MovieLoadedEvent;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent {
+public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent, MovieLoadedEvent {
 
 	public boolean hasResults = false;
 	private ArrayList<Episode> filteredEpisodes;
@@ -29,8 +31,10 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 	private ViewPager viewPager;
 	private PagerAdapter mAdapter;
 	private PagerSlidingTabStrip tabs;
-	private EpisodeListFragment subbedFragment;
-	private EpisodeListFragment dubbedFragment;
+	private EpisodeListFragment subbedEpisodeFragment;
+	private EpisodeListFragment dubbedEpisodeFragment;
+    private ProviderListFragment subbedProviderFragment;
+    private ProviderListFragment dubbedProviderFragment;
 	private int animeId;
 	private ArrayList<Mirror> mirrors;
 	private Resources r;
@@ -41,11 +45,25 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 
 	private void setFragmentEpisodes(ArrayList<Episode> episodes, String animeName, String animeDescription, String animePoster)
 	{
-		if(subbedFragment != null)
-			subbedFragment.setEpisodes(episodes, "Subbed", animeName, animeDescription, animePoster);
-		if(dubbedFragment != null)
-			dubbedFragment.setEpisodes(episodes, "Dubbed", animeName, animeDescription, animePoster);
+		if(subbedEpisodeFragment != null)
+            subbedEpisodeFragment.setEpisodes(episodes, "Subbed", animeName, animeDescription, animePoster);
+		if(dubbedEpisodeFragment != null)
+            dubbedEpisodeFragment.setEpisodes(episodes, "Dubbed", animeName, animeDescription, animePoster);
 	}
+    private void setFragmentProviders(ArrayList<Mirror> mirrors)
+    {
+        subbedProviderFragment = new ProviderListFragment();
+        dubbedProviderFragment = new ProviderListFragment();
+
+        FragmentManager fm = getChildFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(subbedEpisodeFragment.getId(),subbedProviderFragment);
+        ft.replace(dubbedEpisodeFragment.getId(), dubbedProviderFragment);
+        ft.commit();
+
+        subbedProviderFragment.setProviders(mirrors, "Subbed");
+        dubbedProviderFragment.setProviders(mirrors, "Dubbed");
+    }
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -104,23 +122,26 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 		});
         return rootView;
     }
-	public class PagerAdapter extends FragmentPagerAdapter {
+
+
+
+    public class PagerAdapter extends FragmentPagerAdapter {
 		    public PagerAdapter(FragmentManager fm) {
 		        super(fm);
 		    }
 	
 		    @Override
 		    public Fragment getItem(int index) {
-		    	switch(index)
-		    	{
-		    		//Subbed
-		    		case 0:
-			    		subbedFragment = EpisodeListFragment.newInstance("Subbed");
-			    		return subbedFragment;
-		    		//Dubbed
-		    		case 1:
-		    			dubbedFragment = EpisodeListFragment.newInstance("Dubbed");
-		    			return dubbedFragment;
+                    switch(index)
+                    {
+                        //Subbed
+                        case 0:
+                            subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed");
+                            return subbedEpisodeFragment;
+                        //Dubbed
+                        case 1:
+                            dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed");
+                            return dubbedEpisodeFragment;
 	
 		    	}
 		    	return null;
@@ -140,6 +161,10 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 		setFragmentEpisodes(episodes, animeName, animeDescription, animePoster);
 		
 	}
+    @Override
+    public void onMovieLoaded(ArrayList<Mirror> mirrors) {
+        setFragmentProviders(mirrors);
+    }
     public interface ProviderFragmentCoordinator {
         void onEpisodeSelected(Episode episode, String type);
     }

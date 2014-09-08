@@ -1,9 +1,6 @@
 package com.aniblitz;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,38 +9,31 @@ import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
 
-import com.aniblitz.R;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.text.Html;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 public class AnimeSearchActivity extends ActionBarActivity implements OnItemClickListener {
@@ -154,7 +144,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 			animeId = anime.getAnimeId();
 			if(!anime.isMovie())
 			{
-				Intent intent = new Intent(this,EpisodesActivity.class);
+				Intent intent = new Intent(this,AnimeDetailsActivity.class);
 		     	Bundle bundle = new Bundle();
 		     	bundle.putParcelable("Anime", anime);
 		     	intent.putExtras(bundle);

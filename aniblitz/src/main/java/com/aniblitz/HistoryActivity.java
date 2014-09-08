@@ -3,14 +3,10 @@ package com.aniblitz;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.adapters.HistoryListAdapter;
 import com.aniblitz.models.Anime;
-import com.aniblitz.models.Episode;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -23,10 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class HistoryActivity extends ActionBarActivity implements OnItemClickListener{
 	private ListView listView;
@@ -67,7 +61,7 @@ public class HistoryActivity extends ActionBarActivity implements OnItemClickLis
 			animeId = anime.getAnimeId();
 			if(!anime.isMovie())
 			{
-				Intent intent = new Intent(this,EpisodesActivity.class);
+				Intent intent = new Intent(this,AnimeDetailsActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putParcelable("Anime", anime);
 				intent.putExtras(bundle);

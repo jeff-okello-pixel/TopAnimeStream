@@ -72,7 +72,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.aniblitz.EpisodesActivity"
+            android:name=".AnimeDetailsActivity"
             android:configChanges="locale|layoutDirection">
         </activity>
     </application>

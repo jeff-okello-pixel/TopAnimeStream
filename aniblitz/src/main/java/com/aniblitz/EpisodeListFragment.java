@@ -201,7 +201,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         outState.putString("animeName", animeName);
         outState.putString("animeDescription", animeDescription);
         outState.putString("animePoster", animePoster);
-        
         super.onSaveInstanceState(outState);
     }
 

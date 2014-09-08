@@ -72,9 +72,20 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		listView = (ListView)rootView.findViewById(R.id.listView);
 		listView.setOnItemClickListener(this);
-		
+		if(savedInstanceState != null)
+        {
+            this.mirrors = savedInstanceState.getParcelableArrayList("mirrors");
+            listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+        }
         return rootView;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("mirrors", mirrors);
+        super.onSaveInstanceState(outState);
+    }
+
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		(new Utils.GetMp4(mirrors.get(position), getActivity())).execute();

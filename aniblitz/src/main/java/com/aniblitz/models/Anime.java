@@ -31,6 +31,7 @@ public class Anime implements Parcelable  {
 	private ArrayList<Episode> episodes;
 	private ArrayList<Genre> genres;
 	private ArrayList <AnimeInformation> animeInformations;
+    private ArrayList<AnimeSource> animeSources;
 	private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
     private ArrayList<Theme> themes;
 	public Anime() {
@@ -70,6 +71,14 @@ public class Anime implements Parcelable  {
             themes = new ArrayList<Theme>(Arrays.asList(resultThemeArray));
         }
 
+        Parcelable[] parcelableAnimeSourceArray = in.readParcelableArray(AnimeSource.class.getClassLoader());
+        AnimeSource[] resultAnimeSourceArray = null;
+        if (parcelableAnimeSourceArray != null)
+        {
+            resultAnimeSourceArray = Arrays.copyOf(parcelableAnimeSourceArray, parcelableAnimeSourceArray.length, AnimeSource[].class);
+            animeSources = new ArrayList<AnimeSource>(Arrays.asList(resultAnimeSourceArray));
+        }
+
 		AnimeId = in.readInt();
 		Description = in.readString();
 		StatusId = in.readInt();
@@ -90,6 +99,7 @@ public class Anime implements Parcelable  {
 	{
 		try
 		{
+            animeSources = new ArrayList<AnimeSource>();
 			episodes = new ArrayList<Episode>();
 			genres = new ArrayList<Genre>();
             animeInformations = new ArrayList<AnimeInformation>();
@@ -107,7 +117,7 @@ public class Anime implements Parcelable  {
 			this.setSourceUrl(!animeJson.isNull("SourceUrl") ? animeJson.getString("SourceUrl") : null);
 			this.setIsMovie(!animeJson.isNull("IsMovie") ? animeJson.getBoolean("IsMovie") : false);
 			this.setCartoon(!animeJson.isNull("IsCartoon") ? animeJson.getBoolean("IsCartoon") : false);
-			
+
 			if(!animeJson.isNull("AnimeInformations"))
 			{
 				JSONArray jsonAnimeInformations = animeJson.getJSONArray("AnimeInformations");
@@ -134,7 +144,14 @@ public class Anime implements Parcelable  {
 					episodes.add(new Episode(jsonEpisodes.getJSONObject(i)));
 				}
 			}
-
+            if(!animeJson.isNull("AnimeSources"))
+            {
+                JSONArray jsonAnimeSources = animeJson.getJSONArray("AnimeSources");
+                for(int i = 0; i < jsonAnimeSources.length(); i++)
+                {
+                    animeSources.add(new AnimeSource(jsonAnimeSources.getJSONObject(i)));
+                }
+            }
             if(!animeJson.isNull("Themes"))
             {
                 JSONArray jsonThemes = animeJson.getJSONArray("Themes");
@@ -150,8 +167,16 @@ public class Anime implements Parcelable  {
 			
 		}
 	}
-	
-	public ArrayList<AnimeInformation> getAnimeInformations()
+
+    public ArrayList<AnimeSource> getAnimeSources() {
+        return animeSources;
+    }
+
+    public void setAnimeSources(ArrayList<AnimeSource> animeSources) {
+        this.animeSources = animeSources;
+    }
+
+    public ArrayList<AnimeInformation> getAnimeInformations()
     {
         return this.animeInformations;
     }
@@ -316,6 +341,8 @@ public class Anime implements Parcelable  {
             animeInformations = new ArrayList<AnimeInformation>();
         if(themes == null)
             themes = new ArrayList<Theme>();
+        if(animeSources == null)
+            animeSources = new ArrayList<AnimeSource>();
 
 	    Parcelable[] parcelableEpisodeArray = new Parcelable[episodes.size()];
 	    dest.writeParcelableArray(episodes.toArray(parcelableEpisodeArray), flags);
@@ -328,6 +355,9 @@ public class Anime implements Parcelable  {
 
         Parcelable[] parcelableThemeArray = new Parcelable[themes.size()];
         dest.writeParcelableArray(themes.toArray(parcelableThemeArray), flags);
+
+        Parcelable[] parcelableAnimeSourceArray = new Parcelable[animeSources.size()];
+        dest.writeParcelableArray(animeSources.toArray(parcelableAnimeSourceArray), flags);
 
         dest.writeInt(AnimeId);
         dest.writeString(Description);

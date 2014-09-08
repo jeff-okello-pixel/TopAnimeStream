@@ -1,6 +1,5 @@
 package com.aniblitz;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -87,18 +86,12 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 			long id) {
 		Anime anime = animes.get(position);
 		animeId = anime.getAnimeId();
-		if(!anime.isMovie())
-		{
-			Intent intent = new Intent(this.getActivity(),EpisodesActivity.class);
-	     	Bundle bundle = new Bundle();
-	     	bundle.putParcelable("Anime", anime);
-	     	intent.putExtras(bundle);
-			startActivity(intent);
-		}
-		else
-		{
-			(new Utils.MirrorsTask(this.getActivity(),animeId)).execute();
-		}
+
+        Intent intent = new Intent(this.getActivity(),AnimeDetailsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Anime", anime);
+        intent.putExtras(bundle);
+        startActivity(intent);
 		
 	}
 	@Override
@@ -166,7 +159,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
             try {
-                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby("OriginalName").skip(currentSkip).top(currentLimit);
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby("OriginalName").skip(currentSkip).top(currentLimit);
                 String filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
                 if(fragmentName.equals(getString(R.string.tab_cartoon)))
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
