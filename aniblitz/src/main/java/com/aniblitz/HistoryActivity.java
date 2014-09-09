@@ -59,18 +59,11 @@ public class HistoryActivity extends ActionBarActivity implements OnItemClickLis
 				long id) {
 			Anime anime = animes.get(position);
 			animeId = anime.getAnimeId();
-			if(!anime.isMovie())
-			{
-				Intent intent = new Intent(this,AnimeDetailsActivity.class);
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("Anime", anime);
-				intent.putExtras(bundle);
-				startActivity(intent);
-			}
-			else
-			{
-				(new Utils.MirrorsTask(this,animeId)).execute();
-			}
+            Intent intent = new Intent(this,AnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", anime);
+            intent.putExtras(bundle);
+            startActivity(intent);
 			
 		}
 		

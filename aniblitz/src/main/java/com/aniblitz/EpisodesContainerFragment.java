@@ -21,8 +21,9 @@ import com.aniblitz.interfaces.EpisodesLoadedEvent;
 import com.aniblitz.interfaces.MovieLoadedEvent;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
+import com.aniblitz.models.Provider;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent, MovieLoadedEvent {
+public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent {
 
 	public boolean hasResults = false;
 	private ArrayList<Episode> filteredEpisodes;
@@ -50,10 +51,10 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 		if(dubbedEpisodeFragment != null)
             dubbedEpisodeFragment.setEpisodes(episodes, "Dubbed", animeName, animeDescription, animePoster);
 	}
-    private void setFragmentProviders(ArrayList<Mirror> mirrors)
+    private void setFragmentProviders()
     {
-        subbedProviderFragment = new ProviderListFragment();
-        dubbedProviderFragment = new ProviderListFragment();
+        subbedProviderFragment = ProviderListFragment.newInstance("Subbed", mirrors);
+        dubbedProviderFragment = ProviderListFragment.newInstance("Dubbed", mirrors);
 
         FragmentManager fm = getChildFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -61,8 +62,7 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
         ft.replace(dubbedEpisodeFragment.getId(), dubbedProviderFragment);
         ft.commit();
 
-        subbedProviderFragment.setProviders(mirrors, "Subbed");
-        dubbedProviderFragment.setProviders(mirrors, "Dubbed");
+
     }
 	
 	@Override
@@ -124,7 +124,6 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
     }
 
 
-
     public class PagerAdapter extends FragmentPagerAdapter {
 		    public PagerAdapter(FragmentManager fm) {
 		        super(fm);
@@ -161,10 +160,7 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 		setFragmentEpisodes(episodes, animeName, animeDescription, animePoster);
 		
 	}
-    @Override
-    public void onMovieLoaded(ArrayList<Mirror> mirrors) {
-        setFragmentProviders(mirrors);
-    }
+
     public interface ProviderFragmentCoordinator {
         void onEpisodeSelected(Episode episode, String type);
     }

@@ -30,8 +30,10 @@ public class Mirror implements Parcelable {
 	{
 		try
 		{
-			this.AnimeSource = new AnimeSource(!jsonMirror.isNull("AnimeSource") ? jsonMirror.getJSONObject("AnimeSource") : null);
-			this.provider = new Provider(!jsonMirror.isNull("Provider") ? jsonMirror.getJSONObject("Provider") : null);
+            if(!jsonMirror.isNull("AnimeSource"))
+			    this.AnimeSource = new AnimeSource(jsonMirror.getJSONObject("AnimeSource"));
+            if(!jsonMirror.isNull("Provider"))
+			    this.provider = new Provider(jsonMirror.getJSONObject("Provider"));
 			this.MirrorId = !jsonMirror.isNull("MirrorId") ? jsonMirror.getInt("MirrorId") : 0;
 			this.EpisodeId = !jsonMirror.isNull("EpisodeId") ? jsonMirror.getInt("EpisodeId") : 0;
 			this.AnimeSourceId = !jsonMirror.isNull("AnimeSourceId") ? jsonMirror.getInt("AnimeSourceId") : 0;

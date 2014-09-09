@@ -29,7 +29,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.preference.PreferenceManager;
 
-public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
+public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator{
 	private ListView listViewEpisodes;
 	private ArrayList<Episode> episodes;
 	public ArrayList<String> mItems;
@@ -64,13 +64,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 			Toast.makeText(this, r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
 			finish();
 		}
-        //is a movie and the activity has no state
-        if(anime.isMovie() && savedInstanceState == null)
-        {
-            AsyncTaskTools.execute(new LoadProvidersTask());
-        }
+
         //is not a movie and the activity has no state
-        else if (!anime.isMovie() && savedInstanceState == null) {
+        if (!anime.isMovie() && savedInstanceState == null) {
         	(new AnimeEpisodesTask()).execute();
         }
         else
@@ -131,7 +127,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 		return true;
 	}
-private class AnimeEpisodesTask extends AsyncTask<Void, Void, String> {
+
+
+    private class AnimeEpisodesTask extends AsyncTask<Void, Void, String> {
 		
 		public AnimeEpisodesTask()
 		{
@@ -195,62 +193,7 @@ private class AnimeEpisodesTask extends AsyncTask<Void, Void, String> {
             intent.putExtra("Type", type);
 			startActivity(intent);
 	}
-    public class LoadProvidersTask extends AsyncTask<Void, Void, String> {
-        private String URL;
-        private ArrayList<Mirror> mirrors;
-        private Dialog busyDialog;
 
-        @Override
-        protected void onPreExecute()
-        {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
-            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTableSpecificRow("AnimeSources",anime.getAnimeSources().get(0).getAnimeSourceId(),false).formatJson().expand("Mirrors/Provider").build();
-
-        };
-        @Override
-        protected String doInBackground(Void... params)
-        {
-
-            JSONObject json = Utils.GetJson(URL);
-            JSONArray mirrorArray = new JSONArray();
-            try {
-                mirrors = new ArrayList<Mirror>();
-                mirrorArray = json.getJSONArray("Mirrors");
-            } catch (JSONException e) {
-                return null;
-            }
-            for(int i = 0;i<mirrorArray.length();i++)
-            {
-                try {
-                    mirrors.add(new Mirror(mirrorArray.getJSONObject(i)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-            return "Success";
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            if(result == null)
-            {
-                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
-                return;
-            }
-            else
-            {
-                MovieLoadedEvent event = (MovieLoadedEvent) getSupportFragmentManager().findFragmentById(R.id.episodeListFragment);
-                event.onMovieLoaded(mirrors);
-            }
-
-            Utils.dismissBusyDialog(busyDialog);
-
-
-        }
-
-    }
 
 
 }

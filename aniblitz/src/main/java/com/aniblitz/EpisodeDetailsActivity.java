@@ -56,7 +56,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             imgScreenshot.setVisibility(View.GONE);
 		providerListFragment = (ProviderListFragment) getSupportFragmentManager().findFragmentById(R.id.providerListFragment);
 		
-		providerListFragment.setProviders(episode.getMirrors(), type);
+		providerListFragment.setProviders(episode.getMirrors(), type, prefs.getString("prefLanguage", "1"));
 	}
 	
 	@Override

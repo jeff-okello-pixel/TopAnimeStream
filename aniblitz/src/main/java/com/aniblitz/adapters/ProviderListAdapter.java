@@ -31,17 +31,11 @@ import android.widget.TextView;
 public class ProviderListAdapter extends BaseAdapter  {
 	private final Context context;
 	private ArrayList<Mirror> values;
-	private Resources re;
-	private Activity act;
 	private ViewHolder holder;
-	App app;
 	
 	public ProviderListAdapter(Context context, ArrayList<Mirror> values) {
 		this.context = context;
 		this.values = values;
-		this.re = this.context.getResources();
-		this.act = (Activity)context;
-		app = ((App)context.getApplicationContext());
 	}
 	public void update()
 	{
