@@ -13,6 +13,7 @@ import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -25,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.preference.PreferenceManager;
@@ -35,18 +37,18 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	public ArrayList<String> mItems;
 	private Dialog busyDialog;
 	private Anime anime;
-
+    private LinearLayout layAnimeDetails;
 	private MenuItem menuFavorite;
 	private Resources r;
 	private SharedPreferences prefs;
 	private SQLiteHelper db;
-    private ProviderListFragment providerListFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_anime_details);
+        layAnimeDetails = (LinearLayout) findViewById(R.id.layAnimeDetails);
 		r = getResources();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		db = new SQLiteHelper(this);
@@ -67,7 +69,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         //is not a movie and the activity has no state
         if (!anime.isMovie() && savedInstanceState == null) {
-        	(new AnimeEpisodesTask()).execute();
+
         }
         else
         {
@@ -76,6 +78,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
 
         FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(layAnimeDetails.getId(),EpisodesContainerFragment.newInstance(anime.isMovie() ? "providers" : "episodes", anime));
+        ft.commit();
         AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment)fm.findFragmentById(R.id.animeDetailsFragment);
         if(animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
@@ -129,63 +134,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	}
 
 
-    private class AnimeEpisodesTask extends AsyncTask<Void, Void, String> {
-		
-		public AnimeEpisodesTask()
-		{
 
-		}
-		private final String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/Episodes()?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")&$expand=Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations&$format=json";
-		
-		@Override
-	    protected void onPreExecute()
-	    {
-			busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
-	    };      
-	    @Override
-	    protected String doInBackground(Void... params)
-	    {   
-	    	
-	    	JSONObject json = Utils.GetJson(URL);
-	    	JSONArray episodesArray = new JSONArray();
-
-	    	try {
-	    		episodesArray = json.getJSONArray("value");
-			} catch (Exception e) {
-				return null;
-			}
-	    	for(int i = 0;i<episodesArray.length();i++)
-	    	{
-	    		JSONObject episodeJson;
-				try {
-					episodeJson = episodesArray.getJSONObject(i);
-					Episode episode = new Episode(episodeJson);
-					
-					episodes.add(episode);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-	    	}
-		    return "Success";
-		}     
-		    
-	    @Override
-	    protected void onPostExecute(String result)
-	    {
-	    	if(result == null)
-	    	{
-	    		Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
-	    		finish();
-	    		return;
-	    	}
-	    	EpisodesLoadedEvent event = (EpisodesLoadedEvent) getSupportFragmentManager().findFragmentById(R.id.episodeListFragment);
-	    	event.onEpisodesLoaded(episodes, anime.getName(), anime.getDescription(), anime.getPosterPath(null));
-	        Utils.dismissBusyDialog(busyDialog);
-	    }
-	
-	}
 	@Override
 	public void onEpisodeSelected(Episode episode, String type) {
 			Intent intent = new Intent(this, EpisodeDetailsActivity.class);

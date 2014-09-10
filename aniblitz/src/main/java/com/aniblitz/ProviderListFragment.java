@@ -42,22 +42,27 @@ import com.aniblitz.models.Mirror;
 public class ProviderListFragment extends Fragment implements OnItemClickListener {
 
 	private Resources r;
-	App app;
-	private ListView listView;
-	private ArrayList<Mirror> mirrors;
+    App app;
+    private ListView listView;
+    private int animeSourceId;
     private SharedPreferences prefs;
-    private String type;
-	@Override
+    private ArrayList<Mirror> mirrors;
+    private TextView txtNoProvider;
+    private String type; //subbed dubbed
+    private ArrayList<Mirror> filteredMirrors;
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		app = (App)getActivity().getApplication();
+        animeSourceId = getArguments().getInt("animeSourceId");
         type = getArguments().getString("type");
-		mirrors = getArguments().getParcelableArrayList("mirrors");
+        mirrors = getArguments().getParcelableArrayList("mirrors");
 	}
-    public static ProviderListFragment newInstance(String type, ArrayList<Mirror> mirrors) {
+    public static ProviderListFragment newInstance(int animeSourceId, ArrayList<Mirror> mirrors, String type) {
         ProviderListFragment frag = new ProviderListFragment();
 
         Bundle args = new Bundle();
+        args.putInt("animeSourceId", animeSourceId);
         args.putString("type", type);
         args.putParcelableArrayList("mirrors", mirrors);
         frag.setArguments(args);
@@ -82,18 +87,48 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) { 
         final View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
-        r = getResources();
-
+        filteredMirrors = new ArrayList<Mirror>();
+        txtNoProvider = (TextView) rootView.findViewById(R.id.txtNoProvider);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		listView = (ListView)rootView.findViewById(R.id.listView);
 		listView.setOnItemClickListener(this);
 		if(savedInstanceState != null)
         {
             this.mirrors = savedInstanceState.getParcelableArrayList("mirrors");
-            listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+            //listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
         }
         else
         {
-            AsyncTaskTools.execute(new LoadProvidersTask());
+            if(animeSourceId != -1) //is a movie
+            {
+                txtNoProvider.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+                AsyncTaskTools.execute(new LoadProvidersTask());
+            }
+            else if(!mirrors.isEmpty())//is not a movie
+            {
+                txtNoProvider.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+                String language = prefs.getString("prefLanguage", "1");
+                for(Mirror mirror: mirrors)
+                {
+                    if(!String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(language))
+                        continue;
+
+                    if(type.equals("Subbed"))
+                        if (mirror.getAnimeSource().isSubbed())
+                            filteredMirrors.add(mirror);
+                    else
+                        if (!mirror.getAnimeSource().isSubbed())
+                            filteredMirrors.add(mirror);
+                }
+                listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
+            }
+            else//is a movie, but there's no provider in this tab
+            {
+                txtNoProvider.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
+            }
         }
         return rootView;
     }
@@ -118,8 +153,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         protected void onPreExecute()
         {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
-            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTableSpecificRow("AnimeSources",anime.getAnimeSources().get(0).getAnimeSourceId(),false).formatJson().expand("Mirrors/Provider,Mirrors/AnimeSource").build();
-
+            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTableSpecificRow("AnimeSources", animeSourceId,false).formatJson().expand("Mirrors/Provider").build();
         };
         @Override
         protected String doInBackground(Void... params)
@@ -151,33 +185,10 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             if(result == null)
             {
                 Toast.makeText(getActivity(), getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
-                return;
             }
             else
             {
-                ArrayList<Mirror> filteredMirrors = new ArrayList<Mirror>();
-                for(Mirror mirror:mirrors)
-                {
-                    if(String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                    {
-                        if(type.equals("Dubbed"))
-                        {
-                            if(mirror.getAnimeSource().isSubbed())
-                                continue;
-                        }
-                        else if(type.equals("Subbed"))
-                        {
-                            if(!mirror.getAnimeSource().isSubbed())
-                                continue;
-                        }
-
-                    }
-                    else
-                        continue;
-                    filteredMirrors.add(mirror);
-                }
-                if(listView != null)
-                    listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
+                listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
             }
 
             Utils.dismissBusyDialog(busyDialog);

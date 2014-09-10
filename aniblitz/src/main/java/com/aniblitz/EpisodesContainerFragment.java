@@ -17,13 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aniblitz.interfaces.EpisodesLoadedEvent;
-import com.aniblitz.interfaces.MovieLoadedEvent;
+import com.aniblitz.models.Anime;
+import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Provider;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-public class EpisodesContainerFragment extends Fragment implements EpisodesLoadedEvent {
+public class EpisodesContainerFragment extends Fragment{
 
 	public boolean hasResults = false;
 	private ArrayList<Episode> filteredEpisodes;
@@ -39,37 +39,27 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 	private int animeId;
 	private ArrayList<Mirror> mirrors;
 	private Resources r;
-	int index = 0;
+    private String type;
+    private Anime anime;
 	App app;
 	public Dialog busyDialog;
 	private SharedPreferences prefs;
 
-	private void setFragmentEpisodes(ArrayList<Episode> episodes, String animeName, String animeDescription, String animePoster)
-	{
-		if(subbedEpisodeFragment != null)
-            subbedEpisodeFragment.setEpisodes(episodes, "Subbed", animeName, animeDescription, animePoster);
-		if(dubbedEpisodeFragment != null)
-            dubbedEpisodeFragment.setEpisodes(episodes, "Dubbed", animeName, animeDescription, animePoster);
-	}
-    private void setFragmentProviders()
-    {
-        subbedProviderFragment = ProviderListFragment.newInstance("Subbed", mirrors);
-        dubbedProviderFragment = ProviderListFragment.newInstance("Dubbed", mirrors);
-
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(subbedEpisodeFragment.getId(),subbedProviderFragment);
-        ft.replace(dubbedEpisodeFragment.getId(), dubbedProviderFragment);
-        ft.commit();
-
-
+    public static EpisodesContainerFragment newInstance(String type, Anime anime) {
+        EpisodesContainerFragment frag = new EpisodesContainerFragment();
+        Bundle args = new Bundle();
+        args.putString("type", type);
+        args.putParcelable("anime", anime);
+        frag.setArguments(args);
+        return frag;
     }
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		app = (App)getActivity().getApplication();
-		
+		type = getArguments().getString("type");
+        anime = getArguments().getParcelable("anime");
+
 	}
 
     @Override
@@ -131,16 +121,49 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 	
 		    @Override
 		    public Fragment getItem(int index) {
+                    String language = prefs.getString("prefLanguage", "1");
                     switch(index)
                     {
                         //Subbed
                         case 0:
-                            subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed");
-                            return subbedEpisodeFragment;
+                            if(type.equals("episodes")) {
+                                subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(), anime.getPosterPath("500"));
+                                return subbedEpisodeFragment;
+                            }
+                            else
+                            {
+                                for(AnimeSource animeSource: anime.getAnimeSources())
+                                {
+                                    if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
+                                    {
+                                        subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), new ArrayList<Mirror>(), "Subbed");
+                                        return subbedProviderFragment;
+                                    }
+                                }
+
+                                subbedProviderFragment = ProviderListFragment.newInstance(-1, new ArrayList<Mirror>(), "Subbed");
+                                return subbedProviderFragment;
+
+                            }
                         //Dubbed
                         case 1:
-                            dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed");
-                            return dubbedEpisodeFragment;
+                            if(type.equals("episodes")) {
+                                dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(), anime.getPosterPath("500"));
+                                return dubbedEpisodeFragment;
+                            }
+                            else
+                            {
+                                for(AnimeSource animeSource: anime.getAnimeSources())
+                                {
+                                    if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
+                                    {
+                                        dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), new ArrayList<Mirror>(), "Dubbed");
+                                        return dubbedProviderFragment;
+                                    }
+                                }
+                                dubbedProviderFragment = ProviderListFragment.newInstance(-1, new ArrayList<Mirror>(), "Dubbed");
+                                return dubbedProviderFragment;
+                            }
 	
 		    	}
 		    	return null;
@@ -155,11 +178,6 @@ public class EpisodesContainerFragment extends Fragment implements EpisodesLoade
 		        return tabTitles.length;
 		    }
 		}
-	@Override
-	public void onEpisodesLoaded(ArrayList<Episode> episodes, String animeName, String animeDescription, String animePoster) {
-		setFragmentEpisodes(episodes, animeName, animeDescription, animePoster);
-		
-	}
 
     public interface ProviderFragmentCoordinator {
         void onEpisodeSelected(Episode episode, String type);

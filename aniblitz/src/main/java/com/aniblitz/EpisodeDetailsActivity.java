@@ -5,6 +5,8 @@ import com.aniblitz.models.Episode;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
@@ -54,9 +56,10 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(),imgScreenshot);
         else
             imgScreenshot.setVisibility(View.GONE);
-		providerListFragment = (ProviderListFragment) getSupportFragmentManager().findFragmentById(R.id.providerListFragment);
-		
-		providerListFragment.setProviders(episode.getMirrors(), type, prefs.getString("prefLanguage", "1"));
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.layEpisodeDetails,ProviderListFragment.newInstance(-1, episode.getMirrors(), type));
+        ft.commit();
 	}
 	
 	@Override

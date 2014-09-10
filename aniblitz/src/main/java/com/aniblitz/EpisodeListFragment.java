@@ -11,6 +11,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -46,6 +47,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aniblitz.adapters.EpisodeListAdapter;
+import com.aniblitz.interfaces.EpisodesLoadedEvent;
+import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Provider;
@@ -72,73 +75,18 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 	{
 
 	}
-	public static EpisodeListFragment newInstance(String fragmentName) {
+	public static EpisodeListFragment newInstance(String fragmentName, int animeId, String animeName, String animeDescription, String animePoster) {
 		EpisodeListFragment ttFrag = new EpisodeListFragment();
 	    Bundle args = new Bundle();
 	    args.putString("fragmentName", fragmentName);
+        args.putInt("animeId", animeId);
+        args.putString("animeName", animeName);
+        args.putString("animeDescription", animeDescription);
+        args.putString("animePoster", animePoster);
 	    ttFrag.setArguments(args);
 	    return ttFrag;
 	}
-	public void setEpisodes(final ArrayList<Episode> episodes, String fragmentName, String animeName, String animeDescription, String animePoster)
-	{
-		this.episodes = episodes;
-		this.fragmentName = fragmentName;
-		this.animeName = animeName;
-		this.animeDescription = animeDescription;
-		this.animePoster = animePoster;
-		if(episodes != null && episodes.size() > 0)
-		{
-			filteredEpisodes = new ArrayList<Episode>();
-			if(fragmentName.equals("Dubbed"))
-			{
-		    	for(Episode episode:episodes)
-		    	{
-		    		for(Mirror mirror : episode.getMirrors())
-		    		{
-		    			if(!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-		    			{
-		    				filteredEpisodes.add(episode);
-		    				break;
-		    			}
-		    		}
-		    		
-		    	}
-			}
-			else if(fragmentName.equals("Subbed"))
-			{
-		    	for(Episode episode:episodes)
-		    	{
-		    		for(Mirror mirror : episode.getMirrors())
-		    		{
-		    			if(mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-		    			{
-		    				filteredEpisodes.add(episode);
-		    				break;
-		    			}
-		    		}
-		    		
-		    	}
-			}
-			
-			if(this.getActivity() != null)
-			{
-				if(filteredEpisodes.size() == 0)
-				{
-					listView.setFastScrollEnabled(false);
-					txtNoEpisode.setVisibility(View.VISIBLE);
-				}
-				else
-				{
-					txtNoEpisode.setVisibility(View.GONE);
-				}
 
-		        listView.setAdapter(new EpisodeListAdapter(this.getActivity(), filteredEpisodes, animeName, animeDescription, animePoster));
-			}
-		}
-	}
-	
-
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -175,8 +123,14 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             Bundle savedInstanceState) { 
 		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
-        r = getResources();
-        fragmentName = getArguments().getString("fragmentName");
+        Bundle bundle = getArguments();
+        episodes = new ArrayList<Episode>();
+        fragmentName = bundle.getString("fragmentName");
+        animeId = bundle.getInt("animeId");
+        animeDescription = bundle.getString("animeDescription");
+        animeName = bundle.getString("animeName");
+        animePoster = bundle.getString("animePoster");
+
         txtNoEpisode = (TextView)rootView.findViewById(R.id.txtNoEpisode);
 		listView = (ListView)rootView.findViewById(R.id.listView);
 		listView.setFastScrollEnabled(true);
@@ -184,24 +138,131 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 		
 		  if (savedInstanceState != null) 
 		  {
-			  this.episodes = savedInstanceState.getParcelableArrayList("episodes");
-			  filteredEpisodes = this.episodes;
+			  filteredEpisodes = savedInstanceState.getParcelableArrayList("filteredEpisodes");
 			  this.animeName = savedInstanceState.getString("animeName");
 			  this.animeDescription = savedInstanceState.getString("animeDescription");
 			  this.animePoster = savedInstanceState.getString("animePoster");
 			  listView.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster));
-	      } 
+	      }
+          else
+          {
+              AsyncTaskTools.execute(new EpisodesTask());
+          }
 
 		return rootView;
     }
-	
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("episodes", episodes);
-        outState.putString("animeName", animeName);
-        outState.putString("animeDescription", animeDescription);
-        outState.putString("animePoster", animePoster);
-        super.onSaveInstanceState(outState);
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            outState.putParcelableArrayList("filteredEpisodes", filteredEpisodes);
+            outState.putString("animeName", animeName);
+            outState.putString("animeDescription", animeDescription);
+            outState.putString("animePoster", animePoster);
+            super.onSaveInstanceState(outState);
     }
 
+    private class EpisodesTask extends AsyncTask<Void, Void, String> {
+
+        public EpisodesTask()
+        {
+
+        }
+        private final String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/Episodes()?$filter=AnimeId%20eq%20" + animeId + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")&$expand=Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations&$format=json";
+
+        @Override
+        protected void onPreExecute()
+        {
+            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
+        };
+        @Override
+        protected String doInBackground(Void... params)
+        {
+
+            JSONObject json = Utils.GetJson(URL);
+            JSONArray episodesArray = new JSONArray();
+
+            try {
+                episodesArray = json.getJSONArray("value");
+            } catch (JSONException e) {
+                return null;
+            }
+            for(int i = 0;i<episodesArray.length();i++)
+            {
+                JSONObject episodeJson;
+                try {
+                    episodeJson = episodesArray.getJSONObject(i);
+                    Episode episode = new Episode(episodeJson);
+
+                    episodes.add(episode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+            }
+            return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if(result == null)
+            {
+                Toast.makeText(getActivity(), r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                if(episodes != null && episodes.size() > 0)
+                {
+                    filteredEpisodes = new ArrayList<Episode>();
+                    if(fragmentName.equals("Dubbed"))
+                    {
+                        for(Episode episode:episodes)
+                        {
+                            for(Mirror mirror : episode.getMirrors())
+                            {
+                                if(!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+                                {
+                                    filteredEpisodes.add(episode);
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+                    else if(fragmentName.equals("Subbed"))
+                    {
+                        for(Episode episode:episodes)
+                        {
+                            for(Mirror mirror : episode.getMirrors())
+                            {
+                                if(mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+                                {
+                                    filteredEpisodes.add(episode);
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+
+                    if(filteredEpisodes.size() == 0)
+                    {
+                        listView.setFastScrollEnabled(false);
+                        txtNoEpisode.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        txtNoEpisode.setVisibility(View.GONE);
+                    }
+
+                    listView.setAdapter(new EpisodeListAdapter(getActivity(), filteredEpisodes, animeName, animeDescription, animePoster));
+
+                }
+            }
+
+            Utils.dismissBusyDialog(busyDialog);
+        }
+
+    }
 }

@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layEpisodeDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,11 +9,6 @@
         android:scaleType="centerCrop"
         android:layout_height="180dp"
         android:id="@+id/imgScreenshot"/>
-	<fragment 
-	    class="com.aniblitz.ProviderListFragment"
-	    android:id="@+id/providerListFragment"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"/>
 
 </LinearLayout>
 
