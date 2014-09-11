@@ -158,6 +158,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
     public void setEpisodes(ArrayList<Episode> episodes)
     {
+        this.episodes = episodes;
         if(episodes.size() == 0)
         {
             listView.setFastScrollEnabled(false);
