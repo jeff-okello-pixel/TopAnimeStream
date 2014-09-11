@@ -58,7 +58,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 	private ListView listView;
 	private String fragmentName;
 	private ArrayList<Episode> episodes;
-	private ArrayList<Episode> filteredEpisodes;
 	private TextView txtNoEpisode;
 	private AlertDialog alertProviders;
 	private int animeId;
@@ -111,7 +110,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		final Episode episode = filteredEpisodes.get(position);
+		final Episode episode = episodes.get(position);
 
 		 
 		EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
@@ -138,131 +137,39 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 		
 		  if (savedInstanceState != null) 
 		  {
-			  filteredEpisodes = savedInstanceState.getParcelableArrayList("filteredEpisodes");
+			  episodes = savedInstanceState.getParcelableArrayList("episodes");
 			  this.animeName = savedInstanceState.getString("animeName");
 			  this.animeDescription = savedInstanceState.getString("animeDescription");
 			  this.animePoster = savedInstanceState.getString("animePoster");
 			  listView.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster));
 	      }
-          else
-          {
-              AsyncTaskTools.execute(new EpisodesTask());
-          }
 
 		return rootView;
     }
 
         @Override
         public void onSaveInstanceState(Bundle outState) {
-            outState.putParcelableArrayList("filteredEpisodes", filteredEpisodes);
+            outState.putParcelableArrayList("episodes", episodes);
             outState.putString("animeName", animeName);
             outState.putString("animeDescription", animeDescription);
             outState.putString("animePoster", animePoster);
             super.onSaveInstanceState(outState);
     }
 
-    private class EpisodesTask extends AsyncTask<Void, Void, String> {
-
-        public EpisodesTask()
+    public void setEpisodes(ArrayList<Episode> episodes)
+    {
+        if(episodes.size() == 0)
         {
-
+            listView.setFastScrollEnabled(false);
+            txtNoEpisode.setVisibility(View.VISIBLE);
         }
-        private final String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/Episodes()?$filter=AnimeId%20eq%20" + animeId + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")&$expand=Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations&$format=json";
-
-        @Override
-        protected void onPreExecute()
+        else
         {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
-        };
-        @Override
-        protected String doInBackground(Void... params)
-        {
-
-            JSONObject json = Utils.GetJson(URL);
-            JSONArray episodesArray = new JSONArray();
-
-            try {
-                episodesArray = json.getJSONArray("value");
-            } catch (JSONException e) {
-                return null;
-            }
-            for(int i = 0;i<episodesArray.length();i++)
-            {
-                JSONObject episodeJson;
-                try {
-                    episodeJson = episodesArray.getJSONObject(i);
-                    Episode episode = new Episode(episodeJson);
-
-                    episodes.add(episode);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-
-            }
-            return "Success";
+            txtNoEpisode.setVisibility(View.GONE);
         }
 
-        @Override
-        protected void onPostExecute(String result)
-        {
-            if(result == null)
-            {
-                Toast.makeText(getActivity(), r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                if(episodes != null && episodes.size() > 0)
-                {
-                    filteredEpisodes = new ArrayList<Episode>();
-                    if(fragmentName.equals("Dubbed"))
-                    {
-                        for(Episode episode:episodes)
-                        {
-                            for(Mirror mirror : episode.getMirrors())
-                            {
-                                if(!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                                {
-                                    filteredEpisodes.add(episode);
-                                    break;
-                                }
-                            }
-
-                        }
-                    }
-                    else if(fragmentName.equals("Subbed"))
-                    {
-                        for(Episode episode:episodes)
-                        {
-                            for(Mirror mirror : episode.getMirrors())
-                            {
-                                if(mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                                {
-                                    filteredEpisodes.add(episode);
-                                    break;
-                                }
-                            }
-
-                        }
-                    }
-
-                    if(filteredEpisodes.size() == 0)
-                    {
-                        listView.setFastScrollEnabled(false);
-                        txtNoEpisode.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
-                        txtNoEpisode.setVisibility(View.GONE);
-                    }
-
-                    listView.setAdapter(new EpisodeListAdapter(getActivity(), filteredEpisodes, animeName, animeDescription, animePoster));
-
-                }
-            }
-
-            Utils.dismissBusyDialog(busyDialog);
-        }
-
+        listView.setAdapter(new EpisodeListAdapter(getActivity(), episodes, animeName, animeDescription, animePoster));
     }
+
+
 }

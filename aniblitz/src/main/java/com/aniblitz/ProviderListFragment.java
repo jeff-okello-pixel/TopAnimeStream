@@ -94,8 +94,14 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 		listView.setOnItemClickListener(this);
 		if(savedInstanceState != null)
         {
-            this.mirrors = savedInstanceState.getParcelableArrayList("mirrors");
-            //listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+            mirrors = savedInstanceState.getParcelableArrayList("mirrors");
+            if(mirrors != null)
+                listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+            else
+            {
+                txtNoProvider.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
+            }
         }
         else
         {
@@ -135,7 +141,12 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("mirrors", mirrors);
+        if(animeSourceId != -1)
+            outState.putParcelableArrayList("mirrors", mirrors);
+        else if(!mirrors.isEmpty())
+            outState.putParcelableArrayList("mirrors", filteredMirrors);
+        else
+            outState.putParcelableArrayList("mirrors", null);
         super.onSaveInstanceState(outState);
     }
 

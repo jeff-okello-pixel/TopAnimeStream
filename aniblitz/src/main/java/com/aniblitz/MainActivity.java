@@ -53,8 +53,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private TextView txtNoConnection;
 	private MenuItem menuItem;
 	private ArrayList<String> mItems;
-	private MenuItem menuShowAsGrid;
-	private MenuItem menuShowAsList;
+    private MenuItem menuSortAz;
+    private MenuItem menuSortZa;
 	private ArrayList<Anime> animes;
     private PagerAdapter mAdapter;
     private Resources r;
@@ -288,7 +288,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		menuItem=menu.findItem(R.id.search_widget);
-
+		menuItem=menu.findItem(R.id.search_widget);
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 	    final SearchView searchView = (SearchView)MenuItemCompat.getActionView(menu.findItem(R.id.search_widget));
 	    TextView textView = (TextView) searchView.findViewById(R.id.search_src_text);
@@ -337,9 +337,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
-		menuShowAsGrid = menu.findItem(R.id.action_show_as_grid);      
-		menuShowAsList = menu.findItem(R.id.action_show_as_list);
-		
+        menuSortAz = menu.findItem(R.id.action_sortaz);
+        menuSortZa = menu.findItem(R.id.action_sortza);
 	    return true;
 	}
 	@Override
@@ -347,22 +346,18 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 switch (item.getItemId()) {
 			    case android.R.id.home:
 			    	if(!drawerIsOpened)
-			    	{
 			    		mDrawerLayout.openDrawer(listView);
-			    	}
 			    	else
-			    	{
 			    		mDrawerLayout.closeDrawer(listView);
-			    	}
 			    	break;
-			    case R.id.action_show_as_grid:
-			    	menuShowAsGrid.setVisible(false);
-			    	menuShowAsList.setVisible(true);
-			    	break;
-			    case R.id.action_show_as_list:
-			    	menuShowAsList.setVisible(false);
-			    	menuShowAsGrid.setVisible(true);
-			    break;
+                case R.id.action_sortaz:
+                    menuSortAz.setVisible(false);
+                    menuSortZa.setVisible(true);
+                    break;
+                case R.id.action_sortza:
+                    menuSortAz.setVisible(true);
+                    menuSortZa.setVisible(false);
+                    break;
 			    case R.id.action_settings:
 			    	startActivity(new Intent(MainActivity.this,Settings.class));
 			    	break;

@@ -67,11 +67,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 			finish();
 		}
 
-        //is not a movie and the activity has no state
-        if (!anime.isMovie() && savedInstanceState == null) {
-
-        }
-        else
+        if(savedInstanceState != null)
         {
             anime = savedInstanceState.getParcelable("anime");
 
