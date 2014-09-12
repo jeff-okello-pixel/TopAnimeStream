@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class EpisodeDetailsActivity extends ActionBarActivity {
@@ -58,7 +59,11 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             imgScreenshot.setVisibility(View.GONE);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.layEpisodeDetails,ProviderListFragment.newInstance(-1, episode.getMirrors(), type));
+        ProviderListFragment frag = ProviderListFragment.newInstance(-1, episode.getMirrors(), type);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+        params.weight = 1;
+        frag.getView().setLayoutParams(params);
+        ft.add(R.id.layEpisodeDetails, frag);
         ft.commit();
 	}
 	
