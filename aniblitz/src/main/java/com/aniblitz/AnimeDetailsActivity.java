@@ -75,7 +75,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(layAnimeDetails.getId(),EpisodesContainerFragment.newInstance(anime.isMovie() ? "providers" : "episodes", anime));
+        ft.add(layAnimeDetails.getId(),EpisodesContainerFragment.newInstance(anime));
         ft.commit();
         AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment)fm.findFragmentById(R.id.animeDetailsFragment);
         if(animeDetailsFragment != null)

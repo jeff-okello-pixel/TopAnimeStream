@@ -47,17 +47,15 @@ public class EpisodesContainerFragment extends Fragment{
     private ProviderListFragment dubbedProviderFragment;
 	private ArrayList<Mirror> mirrors;
 	private Resources r;
-    private String type;
     private Anime anime;
     private ArrayList<Episode> episodes;
 	App app;
 	public Dialog busyDialog;
 	private SharedPreferences prefs;
 
-    public static EpisodesContainerFragment newInstance(String type, Anime anime) {
+    public static EpisodesContainerFragment newInstance(Anime anime) {
         EpisodesContainerFragment frag = new EpisodesContainerFragment();
         Bundle args = new Bundle();
-        args.putString("type", type);
         args.putParcelable("anime", anime);
         frag.setArguments(args);
         return frag;
@@ -66,7 +64,6 @@ public class EpisodesContainerFragment extends Fragment{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		app = (App)getActivity().getApplication();
-		type = getArguments().getString("type");
         anime = getArguments().getParcelable("anime");
 
 	}
@@ -119,7 +116,8 @@ public class EpisodesContainerFragment extends Fragment{
 		    public void onPageScrollStateChanged(int arg0) {
 		    }
 		});
-        AsyncTaskTools.execute(new EpisodesTask());
+        if(!anime.isMovie())
+            AsyncTaskTools.execute(new EpisodesTask());
         return rootView;
     }
 
@@ -136,7 +134,7 @@ public class EpisodesContainerFragment extends Fragment{
                     {
                         //Subbed
                         case 0:
-                            if(type.equals("episodes")) {
+                            if(!anime.isMovie()) {
                                 subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(), anime.getPosterPath("500"));
                                 return subbedEpisodeFragment;
                             }
@@ -157,7 +155,7 @@ public class EpisodesContainerFragment extends Fragment{
                             }
                         //Dubbed
                         case 1:
-                            if(type.equals("episodes")) {
+                            if(!anime.isMovie()) {
                                 dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(), anime.getPosterPath("500"));
                                 return dubbedEpisodeFragment;
                             }
