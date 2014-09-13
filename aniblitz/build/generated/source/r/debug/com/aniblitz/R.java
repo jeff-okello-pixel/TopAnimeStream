@@ -1553,10 +1553,10 @@ containing a value of this type.
         public static final int imgBackdrop=0x7f0a005c;
         public static final int imgFullScreen=0x7f0a0055;
         public static final int imgPoster=0x7f0a006b;
-        public static final int imgScreenshot=0x7f0a0053;
+        public static final int imgScreenshot=0x7f0a0052;
         public static final int imgWatched=0x7f0a0071;
         public static final int layAnimeDetails=0x7f0a004e;
-        public static final int layEpisodeDetails=0x7f0a0052;
+        public static final int layEpisodeDetails=0x7f0a0053;
         public static final int left_drawer=0x7f0a005b;
         public static final int listMode=0x7f0a0001;
         public static final int listView=0x7f0a0051;

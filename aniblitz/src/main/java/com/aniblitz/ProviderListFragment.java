@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -95,6 +96,8 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 		if(savedInstanceState != null)
         {
             mirrors = savedInstanceState.getParcelableArrayList("mirrors");
+            filteredMirrors = mirrors;
+            animeSourceId = savedInstanceState.getInt("animeSourceId");
             if(mirrors != null)
                 listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
             else
@@ -147,6 +150,9 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             outState.putParcelableArrayList("mirrors", filteredMirrors);
         else
             outState.putParcelableArrayList("mirrors", null);
+
+        outState.putInt("animeSourceId", animeSourceId);
+
         super.onSaveInstanceState(outState);
     }
 

@@ -141,7 +141,13 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 			  this.animeName = savedInstanceState.getString("animeName");
 			  this.animeDescription = savedInstanceState.getString("animeDescription");
 			  this.animePoster = savedInstanceState.getString("animePoster");
-			  listView.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster));
+              if(episodes != null && episodes.size() > 0)
+			    listView.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster));
+              else
+              {
+                  listView.setVisibility(View.GONE);
+                  txtNoEpisode.setVisibility(View.VISIBLE);
+              }
 	      }
 
 		return rootView;

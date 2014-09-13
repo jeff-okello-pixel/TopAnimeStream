@@ -9,5 +9,12 @@
         android:scaleType="centerCrop"
         android:layout_height="180dp"
         android:id="@+id/imgScreenshot"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/layEpisodeDetails"
+        android:layout_height="wrap_content">
+
+    </FrameLayout>
 </LinearLayout>
 

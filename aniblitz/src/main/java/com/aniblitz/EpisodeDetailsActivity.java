@@ -57,14 +57,16 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(),imgScreenshot);
         else
             imgScreenshot.setVisibility(View.GONE);
+
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ProviderListFragment frag = ProviderListFragment.newInstance(-1, episode.getMirrors(), type);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
-        params.weight = 1;
-        frag.getView().setLayoutParams(params);
-        ft.add(R.id.layEpisodeDetails, frag);
-        ft.commit();
+        providerListFragment = (ProviderListFragment)fm.findFragmentByTag("providerFragment");
+        if(providerListFragment == null) {
+
+            FragmentTransaction ft = fm.beginTransaction();
+            providerListFragment = ProviderListFragment.newInstance(-1, episode.getMirrors(), type);
+            ft.add(R.id.layEpisodeDetails, providerListFragment, "providerFragment");
+            ft.commit();
+        }
 	}
 	
 	@Override

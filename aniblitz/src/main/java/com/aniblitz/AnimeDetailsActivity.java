@@ -42,6 +42,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	private Resources r;
 	private SharedPreferences prefs;
 	private SQLiteHelper db;
+    private EpisodesContainerFragment episodeContainerFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 		anime = bundle.getParcelable("Anime");
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episodes_of) + anime.getName() + "</font>"));
+		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episodes_of) + " " + anime.getName() + "</font>"));
 
 		if(anime == null || anime.getAnimeId() == 0)
 		{
@@ -74,12 +75,16 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
 
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(layAnimeDetails.getId(),EpisodesContainerFragment.newInstance(anime));
-        ft.commit();
+        episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
+        if(episodeContainerFragment == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+            ft.commit();
+        }
         AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment)fm.findFragmentById(R.id.animeDetailsFragment);
         if(animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
+
 
 	}
     @Override
