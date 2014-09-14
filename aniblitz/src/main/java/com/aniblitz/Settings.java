@@ -2,6 +2,7 @@ package com.aniblitz;
 
 import java.util.Locale;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -9,7 +10,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -27,7 +27,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         app = (App) this.getApplication();
         
         this.addPreferencesFromResource(R.xml.settings);
-      
         setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.action_settings) + "</font>"));
 
 		  

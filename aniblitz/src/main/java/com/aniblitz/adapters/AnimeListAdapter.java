@@ -106,6 +106,11 @@ public class AnimeListAdapter extends BaseAdapter{
 
 		return vi;
 	}
+    public void clear()
+    {
+        values.clear();
+        notifyDataSetChanged();
+    }
 	  static class ViewHolder {
 	        TextView txtName;
 	        TextView txtGenres;

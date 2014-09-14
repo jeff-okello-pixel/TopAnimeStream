@@ -10,8 +10,11 @@ import org.json.JSONObject;
 import com.aniblitz.App;
 import com.aniblitz.R;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 
 public class Anime implements Parcelable  {
 	private int AnimeId;
@@ -180,7 +183,24 @@ public class Anime implements Parcelable  {
     {
         return this.animeInformations;
     }
-	public ArrayList<Genre> getGenres() {
+    public AnimeInformation getAnimeInformation(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        for(AnimeInformation info:this.animeInformations)
+        {
+            if(String.valueOf(info.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+                return info;
+        }
+
+        return null;
+
+    }
+
+    public void setAnimeInformations(ArrayList<AnimeInformation> animeInformations) {
+        this.animeInformations = animeInformations;
+    }
+
+    public ArrayList<Genre> getGenres() {
 		return genres;
 	}
     public ArrayList<Theme> getThemes()
@@ -282,6 +302,19 @@ public class Anime implements Parcelable  {
 	public void setIsMovie(boolean isMovie) {
 		IsMovie = isMovie;
 	}
+    public String getRelativePosterPath(String size)
+    {
+        if(PosterPath == null)
+            return null;
+
+        if(size == null || size.equals(""))
+            return PosterPath;
+
+        String imageName = PosterPath.substring(PosterPath.lastIndexOf("/") + 1);
+        imageName = "w" + size + "_" + imageName;
+        String fullPosterPath = PosterPath.substring(0, PosterPath.lastIndexOf("/") + 1) + imageName;
+        return fullPosterPath;
+    }
 	public String getPosterPath(String size) {
 		if(PosterPath == null)
 			return null;

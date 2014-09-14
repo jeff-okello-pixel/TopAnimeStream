@@ -36,6 +36,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	private ArrayList<Anime> animes;
     private ProgressBar progressBarLoadMore;
     private String fragmentName;
+    public boolean isDesc;
 	private Resources r;
 	App app;
 	public Dialog busyDialog;
@@ -50,10 +51,11 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
 	}
 
-	public static AnimeListFragment newInstance(String fragmentName) {
+	public static AnimeListFragment newInstance(String fragmentName, boolean isDesc) {
 		AnimeListFragment ttFrag = new AnimeListFragment();
 	    Bundle args = new Bundle();
 	    args.putString("fragmentName", fragmentName);
+        args.putBoolean("isDesc", isDesc);
 	    ttFrag.setArguments(args);
 	    return ttFrag;
 	}
@@ -94,14 +96,35 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         startActivity(intent);
 		
 	}
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        outState.putBoolean("isDesc", isDesc);
+        super.onSaveInstanceState(outState);
+
+    }
+    public void refresh()
+    {
+        currentSkip = 0;
+        adapter.clear();
+        loadmore = false;
+        isDesc = ((MainActivity)getActivity()).isDesc;
+        AsyncTaskTools.execute(new AnimeTask());
+    }
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) { 
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
+        isDesc = ((MainActivity)getActivity()).isDesc;
+        /*
+        if(savedInstanceState != null)
+            isDesc = savedInstanceState.getBoolean("isDesc");
+        else
+            isDesc = getArguments().getBoolean("isDesc");*/
         animes = new ArrayList<Anime>();
         fragmentName = getArguments().getString("fragmentName");
+
         progressBarLoadMore = (ProgressBar)rootView.findViewById(R.id.progressBarLoadMore);
         gridView = (GridView)rootView.findViewById(R.id.gridView);
         gridView.setFastScrollEnabled(true);
@@ -158,8 +181,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            try {
-                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby("OriginalName").skip(currentSkip).top(currentLimit);
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby(isDesc ? "OriginalName%20desc" : "OriginalName").skip(currentSkip).top(currentLimit);
                 String filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
                 if(fragmentName.equals(getString(R.string.tab_cartoon)))
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
@@ -168,12 +190,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 else if(fragmentName.equals(getString(R.string.tab_serie)))
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20false";
                 URL = wcfCall.filter(filter).build();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                this.cancel(true);
-                this.onPostExecute(null);
-            }
         };
         @Override
         protected String doInBackground(Void... params)
@@ -209,29 +225,29 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         @Override
         protected void onPostExecute(String result)
         {
-            if(result == null)
-                Toast.makeText(getActivity(), r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
-            else
-            {
-
-                if(loadmore)
-                {
-                    for(Anime anime : newAnimes)
-                    {
-                        adapter.add(anime);
+            try {
+                if (result == null) {
+                    Toast.makeText(getActivity(), r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
+                } else {
+                    if (loadmore) {
+                        for (Anime anime : newAnimes) {
+                            adapter.add(anime);
+                        }
+                        adapter.update();
+                    } else {
+                        adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), animes);
+                        gridView.setAdapter(adapter);
                     }
-                    adapter.update();
-                }
-                else
-                {
-                    adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), animes);
-                    gridView.setAdapter(adapter);
-                }
 
 
+                }
+                isLoading = false;
+                progressBarLoadMore.setVisibility(View.GONE);
             }
-            isLoading = false;
-            progressBarLoadMore.setVisibility(View.GONE);
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
     }

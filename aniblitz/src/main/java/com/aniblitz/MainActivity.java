@@ -55,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	private ArrayList<String> mItems;
     private MenuItem menuSortAz;
     private MenuItem menuSortZa;
+    public boolean isDesc = false;
 	private ArrayList<Anime> animes;
     private PagerAdapter mAdapter;
     private Resources r;
@@ -87,6 +88,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		if(savedInstanceState != null)
 		{
 			drawerIsOpened = savedInstanceState.getBoolean("drawerIsOpened");
+            isDesc = savedInstanceState.getBoolean("isDesc");
+            allFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "allFragment");
+            serieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "serieFragment");
+            movieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "movieFragment");
+            cartoonFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "cartoonFragment");
 		}
 		
 		ActionBar actionBar = getSupportActionBar();
@@ -228,19 +234,19 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    	{
 	    		//All
 	    		case 0:
-	    			allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all));
+	    			allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all), isDesc);
 	    			return allFragment;
 		    	//Serie
 		    	case 1:
-		    		serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie));
+		    		serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), isDesc);
 		    		return serieFragment;
 		    	//Movie
 		    	case 2:
-		    		movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
+		    		movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), isDesc);
 		    		return movieFragment;
 		    	//Cartoon
 		    	case 3:
-		    		cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon));
+		    		cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon), isDesc);
 		    		return cartoonFragment;
 	    	}
 	    	return null;
@@ -281,8 +287,20 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    }
 	@Override
 	protected void onSaveInstanceState (Bundle outState) {
-	    outState.putBoolean("drawerIsOpened",drawerIsOpened);
+	    outState.putBoolean("drawerIsOpened", drawerIsOpened);
+        outState.putBoolean("isDesc", isDesc);
+        if(allFragment != null && allFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState,"allFragment", allFragment);
+        if(serieFragment != null && serieFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, "serieFragment", serieFragment);
+        if(movieFragment != null && movieFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, "movieFragment", movieFragment);
+        if(cartoonFragment != null && cartoonFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, "cartoonFragment", cartoonFragment);
 	    super.onSaveInstanceState(outState);
+
+
+
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -339,6 +357,17 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	{
         menuSortAz = menu.findItem(R.id.action_sortaz);
         menuSortZa = menu.findItem(R.id.action_sortza);
+
+        if(isDesc)
+        {
+            menuSortAz.setVisible(true);
+            menuSortZa.setVisible(false);
+        }
+        else
+        {
+            menuSortAz.setVisible(false);
+            menuSortZa.setVisible(true);
+        }
 	    return true;
 	}
 	@Override
@@ -353,10 +382,20 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 case R.id.action_sortaz:
                     menuSortAz.setVisible(false);
                     menuSortZa.setVisible(true);
-                    break;
+                    isDesc = false;
+                    refreshFragment(allFragment, isDesc);
+                    refreshFragment(serieFragment, isDesc);
+                    refreshFragment(movieFragment, isDesc);
+                    refreshFragment(cartoonFragment, isDesc);
+                 break;
                 case R.id.action_sortza:
                     menuSortAz.setVisible(true);
                     menuSortZa.setVisible(false);
+                    isDesc = true;
+                    refreshFragment(allFragment, isDesc);
+                    refreshFragment(serieFragment, isDesc);
+                    refreshFragment(movieFragment, isDesc);
+                    refreshFragment(cartoonFragment, isDesc);
                     break;
 			    case R.id.action_settings:
 			    	startActivity(new Intent(MainActivity.this,Settings.class));
@@ -364,6 +403,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 }
 	    return true;
 	}
+    public void refreshFragment(AnimeListFragment frag, boolean isDesc)
+    {
+        if(frag != null)
+        {
+            if(frag.isAdded())
+                frag.refresh();
+        }
+    }
 	@Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {

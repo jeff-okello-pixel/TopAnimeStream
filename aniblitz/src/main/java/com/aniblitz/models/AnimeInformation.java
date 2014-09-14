@@ -27,6 +27,11 @@ public class AnimeInformation implements Parcelable {
 		SourceUrl = sourceUrl;
 		Overview = overview;
 	}
+    public AnimeInformation(int LanguageId, String Overview)
+    {
+        this.setLanguageId(LanguageId);
+        this.setOverview(Overview);
+    }
 	public AnimeInformation(JSONObject animeInformationsJson) {
 		try
 		{

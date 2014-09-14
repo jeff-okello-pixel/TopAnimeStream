@@ -93,7 +93,7 @@ public class EpisodesContainerFragment extends Fragment{
         final View rootView = inflater.inflate(R.layout.fragment_episodes, container, false);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
         {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
             rootView.setLayoutParams(params);
         }
         r = getResources();
@@ -124,11 +124,17 @@ public class EpisodesContainerFragment extends Fragment{
 		    public void onPageScrollStateChanged(int arg0) {
 		    }
 		});
+
         if(!anime.isMovie() && savedInstanceState == null)
             AsyncTaskTools.execute(new EpisodesTask());
         return rootView;
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+
+    }
 
     public class PagerAdapter extends FragmentPagerAdapter {
 		    public PagerAdapter(FragmentManager fm) {

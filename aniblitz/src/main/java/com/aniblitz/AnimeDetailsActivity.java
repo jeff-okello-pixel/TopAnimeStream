@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.aniblitz.interfaces.EpisodesLoadedEvent;
 import com.aniblitz.interfaces.MovieLoadedEvent;
 import com.aniblitz.models.Anime;
+import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 
@@ -125,7 +126,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 				else
 				{
 					menuFavorite.setIcon(R.drawable.ic_favorite);
-					db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getPosterPath(null), anime.getGenresFormatted(), anime.getDescription(), Integer.valueOf(prefs.getString("prefLanguage", "1")));
+                    AnimeInformation info = anime.getAnimeInformation(this);
+					db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(),String.valueOf(anime.getRating()), Integer.valueOf(prefs.getString("prefLanguage", "1")));
 					Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
 				}
 			break;

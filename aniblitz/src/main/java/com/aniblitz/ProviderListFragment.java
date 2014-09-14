@@ -146,7 +146,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     public void onSaveInstanceState(Bundle outState) {
         if(animeSourceId != -1)
             outState.putParcelableArrayList("mirrors", mirrors);
-        else if(!mirrors.isEmpty())
+        else if(mirrors != null && !mirrors.isEmpty())
             outState.putParcelableArrayList("mirrors", filteredMirrors);
         else
             outState.putParcelableArrayList("mirrors", null);
@@ -163,7 +163,6 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {
         private String URL;
-        private ArrayList<Mirror> mirrors;
         private Dialog busyDialog;
 
         @Override

@@ -30,13 +30,13 @@
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\imageloaderlibrary\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="b29422ce8638fbf1e725d9102e0089211800f296"/>
+        sha1="a7ca2094f285851e837e5759ee5ab12c64be92de"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-839700b1466038119621ba4f6dce90400e23b20b.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\initActivity\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="75decc4f2537678b91a6315513032bb1dd757668"/>
+        sha1="bce19244cdb7b48d3fbdd0d668815e395b67f05c"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\jsoup-1.7.3-9bac01800b612c7a8f80691602e9c0bfbe3ba53a.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\libs\jsoup-1.7.3.jar"
@@ -48,7 +48,7 @@
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\librarytabstrip\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="8db3930691b44cfa705166a6ee1a97e679d2f66c"/>
+        sha1="b943647ad9ac8b8b2aaf522c57a2469d2b4f25a6"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-4386c0a942bd2ff5d2ec529b3b364a4ca3ead520.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"

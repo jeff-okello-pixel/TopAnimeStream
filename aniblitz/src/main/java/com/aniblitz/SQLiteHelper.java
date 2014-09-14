@@ -9,11 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.aniblitz.models.Anime;
+import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Genre;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "AnimeDB";
 
     private static final String TABLE_FAVORITES = "favorites";
@@ -25,13 +26,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_POSTER = "poster";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_GENRES = "genres";
+    private static final String KEY_RATING = "rating";
     
-    //Colums for watched
+    //Columns for watched
     private static final String KEY_EPISODEID = "episodeId";
     private static final String KEY_EPISODENUMBER = "episodeNumber";
     private static final String KEY_LANGUAGEID = "languageId";
     
-    private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_LANGUAGEID};
+    private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_RATING, KEY_LANGUAGEID};
     private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_LANGUAGEID};
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION); 
@@ -45,6 +47,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		KEY_POSTER + " TEXT, "+
         		KEY_DESCRIPTION + " TEXT, " +
         		KEY_GENRES + " TEXT, " +
+                KEY_RATING + " TEXT, " +
         		KEY_LANGUAGEID + " TEXT)";
         db.execSQL(CREATE_FAVORITES_TABLE);
         
@@ -66,7 +69,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
     
-    public void addFavorite(int animeId, String name, String poster, String genres, String description, int languageId){
+    public void addFavorite(int animeId, String name, String poster, String genres, String description, String rating, int languageId){
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -75,6 +78,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_POSTER, poster);
         values.put(KEY_GENRES, genres);
         values.put(KEY_DESCRIPTION, description);
+        values.put(KEY_RATING, rating);
         values.put(KEY_LANGUAGEID, languageId);
         db.insert(TABLE_FAVORITES,
                 null, //nullColumnHack
@@ -114,7 +118,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		anime.setAnimeId(Integer.valueOf(cursor.getString(0)));
         		anime.setName(cursor.getString(1));
         		anime.setPosterPath(cursor.getString(2));
-        		anime.setDescription(cursor.getString(3));
+                ArrayList<AnimeInformation> animeInfos = new ArrayList<AnimeInformation>();
+                animeInfos.add(new AnimeInformation(Integer.valueOf(languageId), cursor.getString(3)));
+                anime.setAnimeInformations(animeInfos);
         		ArrayList<Genre> genres = new ArrayList<Genre>();
         		String[] genreArray = cursor.getString(4).split(", ");
         		for(String genreStr:genreArray)
@@ -124,6 +130,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         			genres.add(genre);
         		}
         		anime.setGenres(genres);
+                anime.setRating(Double.valueOf(cursor.getString(5)));
         		animes.add(anime);
         		cursor.moveToNext();
         	}
