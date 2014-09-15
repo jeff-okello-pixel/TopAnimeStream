@@ -8,38 +8,38 @@ package com.google.android.gms;
 
 public final class R {
 	public static final class attr {
-		public static final int adSize = 0x7f010059;
-		public static final int adSizes = 0x7f01005a;
-		public static final int adUnitId = 0x7f01005b;
-		public static final int buyButtonAppearance = 0x7f010091;
-		public static final int buyButtonHeight = 0x7f01008e;
-		public static final int buyButtonText = 0x7f010090;
-		public static final int buyButtonWidth = 0x7f01008f;
-		public static final int cameraBearing = 0x7f010060;
-		public static final int cameraTargetLat = 0x7f010061;
-		public static final int cameraTargetLng = 0x7f010062;
-		public static final int cameraTilt = 0x7f010063;
-		public static final int cameraZoom = 0x7f010064;
-		public static final int environment = 0x7f01008b;
-		public static final int fragmentMode = 0x7f01008d;
-		public static final int fragmentStyle = 0x7f01008c;
-		public static final int mapType = 0x7f01005f;
-		public static final int maskedWalletDetailsBackground = 0x7f010094;
-		public static final int maskedWalletDetailsButtonBackground = 0x7f010096;
-		public static final int maskedWalletDetailsButtonTextAppearance = 0x7f010095;
-		public static final int maskedWalletDetailsHeaderTextAppearance = 0x7f010093;
-		public static final int maskedWalletDetailsLogoImageType = 0x7f010098;
-		public static final int maskedWalletDetailsLogoTextColor = 0x7f010097;
-		public static final int maskedWalletDetailsTextAppearance = 0x7f010092;
-		public static final int theme = 0x7f01008a;
-		public static final int uiCompass = 0x7f010065;
-		public static final int uiRotateGestures = 0x7f010066;
-		public static final int uiScrollGestures = 0x7f010067;
-		public static final int uiTiltGestures = 0x7f010068;
-		public static final int uiZoomControls = 0x7f010069;
-		public static final int uiZoomGestures = 0x7f01006a;
-		public static final int useViewLifecycle = 0x7f01006b;
-		public static final int zOrderOnTop = 0x7f01006c;
+		public static final int adSize = 0x7f01005d;
+		public static final int adSizes = 0x7f01005e;
+		public static final int adUnitId = 0x7f01005f;
+		public static final int buyButtonAppearance = 0x7f010096;
+		public static final int buyButtonHeight = 0x7f010093;
+		public static final int buyButtonText = 0x7f010095;
+		public static final int buyButtonWidth = 0x7f010094;
+		public static final int cameraBearing = 0x7f010064;
+		public static final int cameraTargetLat = 0x7f010065;
+		public static final int cameraTargetLng = 0x7f010066;
+		public static final int cameraTilt = 0x7f010067;
+		public static final int cameraZoom = 0x7f010068;
+		public static final int environment = 0x7f010090;
+		public static final int fragmentMode = 0x7f010092;
+		public static final int fragmentStyle = 0x7f010091;
+		public static final int mapType = 0x7f010063;
+		public static final int maskedWalletDetailsBackground = 0x7f010099;
+		public static final int maskedWalletDetailsButtonBackground = 0x7f01009b;
+		public static final int maskedWalletDetailsButtonTextAppearance = 0x7f01009a;
+		public static final int maskedWalletDetailsHeaderTextAppearance = 0x7f010098;
+		public static final int maskedWalletDetailsLogoImageType = 0x7f01009d;
+		public static final int maskedWalletDetailsLogoTextColor = 0x7f01009c;
+		public static final int maskedWalletDetailsTextAppearance = 0x7f010097;
+		public static final int theme = 0x7f01008f;
+		public static final int uiCompass = 0x7f010069;
+		public static final int uiRotateGestures = 0x7f01006a;
+		public static final int uiScrollGestures = 0x7f01006b;
+		public static final int uiTiltGestures = 0x7f01006c;
+		public static final int uiZoomControls = 0x7f01006d;
+		public static final int uiZoomGestures = 0x7f01006e;
+		public static final int useViewLifecycle = 0x7f01006f;
+		public static final int zOrderOnTop = 0x7f010070;
 	}
 	public static final class color {
 		public static final int common_action_bar_splitter = 0x7f09000d;
@@ -99,8 +99,8 @@ public final class R {
 		public static final int ic_plusone_small_off_client = 0x7f020092;
 		public static final int ic_plusone_standard_off_client = 0x7f020093;
 		public static final int ic_plusone_tall_off_client = 0x7f020094;
-		public static final int powered_by_google_dark = 0x7f02009e;
-		public static final int powered_by_google_light = 0x7f02009f;
+		public static final int powered_by_google_dark = 0x7f0200af;
+		public static final int powered_by_google_light = 0x7f0200b0;
 	}
 	public static final class id {
 		public static final int book_now = 0x7f0a0022;
@@ -128,12 +128,12 @@ public final class R {
 		public static final int google_play_services_version = 0x7f0c0001;
 	}
 	public static final class string {
-		public static final int auth_client_needs_enabling_title = 0x7f0d006f;
-		public static final int auth_client_needs_installation_title = 0x7f0d0070;
-		public static final int auth_client_needs_update_title = 0x7f0d0071;
-		public static final int auth_client_play_services_err_notification_msg = 0x7f0d0072;
-		public static final int auth_client_requested_by_msg = 0x7f0d0073;
-		public static final int auth_client_using_bad_version_title = 0x7f0d0074;
+		public static final int auth_client_needs_enabling_title = 0x7f0d0075;
+		public static final int auth_client_needs_installation_title = 0x7f0d0076;
+		public static final int auth_client_needs_update_title = 0x7f0d0077;
+		public static final int auth_client_play_services_err_notification_msg = 0x7f0d0078;
+		public static final int auth_client_requested_by_msg = 0x7f0d0079;
+		public static final int auth_client_using_bad_version_title = 0x7f0d007a;
 		public static final int common_google_play_services_enable_button = 0x7f0d001d;
 		public static final int common_google_play_services_enable_text = 0x7f0d001e;
 		public static final int common_google_play_services_enable_title = 0x7f0d001f;
@@ -159,22 +159,22 @@ public final class R {
 		public static final int common_google_play_services_update_title = 0x7f0d0033;
 		public static final int common_signin_button_text = 0x7f0d0034;
 		public static final int common_signin_button_text_long = 0x7f0d0035;
-		public static final int pre_release_do_not_ship = 0x7f0d005b;
-		public static final int wallet_buy_button_place_holder = 0x7f0d006e;
+		public static final int pre_release_do_not_ship = 0x7f0d0061;
+		public static final int wallet_buy_button_place_holder = 0x7f0d0074;
 	}
 	public static final class style {
 		public static final int Theme_IAPTheme = 0x7f0e004a;
-		public static final int WalletFragmentDefaultButtonTextAppearance = 0x7f0e004b;
-		public static final int WalletFragmentDefaultDetailsHeaderTextAppearance = 0x7f0e004c;
-		public static final int WalletFragmentDefaultDetailsTextAppearance = 0x7f0e004d;
-		public static final int WalletFragmentDefaultStyle = 0x7f0e004e;
+		public static final int WalletFragmentDefaultButtonTextAppearance = 0x7f0e004d;
+		public static final int WalletFragmentDefaultDetailsHeaderTextAppearance = 0x7f0e004e;
+		public static final int WalletFragmentDefaultDetailsTextAppearance = 0x7f0e004f;
+		public static final int WalletFragmentDefaultStyle = 0x7f0e0050;
 	}
 	public static final class styleable {
-		public static final int[] AdsAttrs = { 0x7f010059, 0x7f01005a, 0x7f01005b };
+		public static final int[] AdsAttrs = { 0x7f01005d, 0x7f01005e, 0x7f01005f };
 		public static final int AdsAttrs_adSize = 0;
 		public static final int AdsAttrs_adSizes = 1;
 		public static final int AdsAttrs_adUnitId = 2;
-		public static final int[] MapAttrs = { 0x7f01005f, 0x7f010060, 0x7f010061, 0x7f010062, 0x7f010063, 0x7f010064, 0x7f010065, 0x7f010066, 0x7f010067, 0x7f010068, 0x7f010069, 0x7f01006a, 0x7f01006b, 0x7f01006c };
+		public static final int[] MapAttrs = { 0x7f010063, 0x7f010064, 0x7f010065, 0x7f010066, 0x7f010067, 0x7f010068, 0x7f010069, 0x7f01006a, 0x7f01006b, 0x7f01006c, 0x7f01006d, 0x7f01006e, 0x7f01006f, 0x7f010070 };
 		public static final int MapAttrs_cameraBearing = 1;
 		public static final int MapAttrs_cameraTargetLat = 2;
 		public static final int MapAttrs_cameraTargetLng = 3;
@@ -189,12 +189,12 @@ public final class R {
 		public static final int MapAttrs_uiZoomGestures = 11;
 		public static final int MapAttrs_useViewLifecycle = 12;
 		public static final int MapAttrs_zOrderOnTop = 13;
-		public static final int[] WalletFragmentOptions = { 0x7f01008a, 0x7f01008b, 0x7f01008c, 0x7f01008d };
+		public static final int[] WalletFragmentOptions = { 0x7f01008f, 0x7f010090, 0x7f010091, 0x7f010092 };
 		public static final int WalletFragmentOptions_environment = 1;
 		public static final int WalletFragmentOptions_fragmentMode = 3;
 		public static final int WalletFragmentOptions_fragmentStyle = 2;
 		public static final int WalletFragmentOptions_theme = 0;
-		public static final int[] WalletFragmentStyle = { 0x7f01008e, 0x7f01008f, 0x7f010090, 0x7f010091, 0x7f010092, 0x7f010093, 0x7f010094, 0x7f010095, 0x7f010096, 0x7f010097, 0x7f010098 };
+		public static final int[] WalletFragmentStyle = { 0x7f010093, 0x7f010094, 0x7f010095, 0x7f010096, 0x7f010097, 0x7f010098, 0x7f010099, 0x7f01009a, 0x7f01009b, 0x7f01009c, 0x7f01009d };
 		public static final int WalletFragmentStyle_buyButtonAppearance = 3;
 		public static final int WalletFragmentStyle_buyButtonHeight = 0;
 		public static final int WalletFragmentStyle_buyButtonText = 2;

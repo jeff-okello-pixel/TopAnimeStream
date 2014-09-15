@@ -27,14 +27,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_GENRES = "genres";
     private static final String KEY_RATING = "rating";
+    private static final String KEY_BACKDROP = "backdrop";
     
     //Columns for watched
     private static final String KEY_EPISODEID = "episodeId";
     private static final String KEY_EPISODENUMBER = "episodeNumber";
     private static final String KEY_LANGUAGEID = "languageId";
     
-    private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_RATING, KEY_LANGUAGEID};
-    private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_LANGUAGEID};
+    private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_RATING, KEY_BACKDROP, KEY_LANGUAGEID};
+    private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_BACKDROP, KEY_LANGUAGEID};
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION); 
     }
@@ -48,6 +49,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		KEY_DESCRIPTION + " TEXT, " +
         		KEY_GENRES + " TEXT, " +
                 KEY_RATING + " TEXT, " +
+                KEY_BACKDROP + " TEXT, " +
         		KEY_LANGUAGEID + " TEXT)";
         db.execSQL(CREATE_FAVORITES_TABLE);
         
@@ -58,6 +60,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		KEY_DESCRIPTION + " TEXT, " +
         		KEY_EPISODEID + " TEXT, " +
         		KEY_EPISODENUMBER + " TEXT, " +
+                KEY_BACKDROP + " TEXT, " +
         		KEY_LANGUAGEID + " TEXT)";
         db.execSQL(CREATE_WATCHED_TABLE);
     }
@@ -69,7 +72,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
     
-    public void addFavorite(int animeId, String name, String poster, String genres, String description, String rating, int languageId){
+    public void addFavorite(int animeId, String name, String poster, String genres, String description, String rating, String backdrop, int languageId){
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -80,6 +83,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_DESCRIPTION, description);
         values.put(KEY_RATING, rating);
         values.put(KEY_LANGUAGEID, languageId);
+        values.put(KEY_BACKDROP, backdrop);
         db.insert(TABLE_FAVORITES,
                 null, //nullColumnHack
                 values);
@@ -131,6 +135,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		}
         		anime.setGenres(genres);
                 anime.setRating(Double.valueOf(cursor.getString(5)));
+                anime.setBackdropPath(cursor.getString(6));
         		animes.add(anime);
         		cursor.moveToNext();
         	}
@@ -167,7 +172,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return false;
     }
     
-    public void addWatched(int animeId, String name, String poster, String description, int episodeId, String episodeNumber, int languageId){
+    public void addWatched(int animeId, String name, String poster, String description, int episodeId, String episodeNumber, String backdrop, int languageId){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_ANIMEID, String.valueOf(animeId));
@@ -176,7 +181,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_DESCRIPTION, description);
         values.put(KEY_EPISODEID, String.valueOf(episodeId));
         values.put(KEY_EPISODENUMBER, episodeNumber);
-        values.put(KEY_LANGUAGEID, languageId);
+        values.put(KEY_EPISODENUMBER, episodeNumber);
+        values.put(KEY_BACKDROP, backdrop);
         db.insert(TABLE_WATCHED,
                 null, //nullColumnHack
                 values);
@@ -222,6 +228,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		ArrayList<Episode> episodes = new ArrayList<Episode>();
         		episodes.add(episode);
         		anime.setEpisodes(episodes);
+                anime.setBackdropPath(cursor.getString(6));
         		animes.add(anime);
         		cursor.moveToNext();
         	}

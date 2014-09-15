@@ -17,15 +17,15 @@ public final class R {
 		public static final int mediacontroller_button = 0x7f02009a;
 		public static final int mediacontroller_pause = 0x7f02009b;
 		public static final int mediacontroller_play = 0x7f02009c;
-		public static final int scrubber_control_disabled_holo = 0x7f0200a5;
-		public static final int scrubber_control_focused_holo = 0x7f0200a6;
-		public static final int scrubber_control_normal_holo = 0x7f0200a7;
-		public static final int scrubber_control_pressed_holo = 0x7f0200a8;
-		public static final int scrubber_control_selector_holo = 0x7f0200a9;
-		public static final int scrubber_primary_holo = 0x7f0200aa;
-		public static final int scrubber_progress_horizontal_holo_dark = 0x7f0200ab;
-		public static final int scrubber_secondary_holo = 0x7f0200ac;
-		public static final int scrubber_track_holo_dark = 0x7f0200ad;
+		public static final int scrubber_control_disabled_holo = 0x7f0200b6;
+		public static final int scrubber_control_focused_holo = 0x7f0200b7;
+		public static final int scrubber_control_normal_holo = 0x7f0200b8;
+		public static final int scrubber_control_pressed_holo = 0x7f0200b9;
+		public static final int scrubber_control_selector_holo = 0x7f0200ba;
+		public static final int scrubber_primary_holo = 0x7f0200bb;
+		public static final int scrubber_progress_horizontal_holo_dark = 0x7f0200bc;
+		public static final int scrubber_secondary_holo = 0x7f0200bd;
+		public static final int scrubber_track_holo_dark = 0x7f0200be;
 	}
 	public static final class id {
 		public static final int mediacontroller_file_name = 0x7f0a0069;
@@ -46,14 +46,14 @@ public final class R {
 		public static final int VideoView_error_text_unknown = 0x7f0d0002;
 		public static final int VideoView_error_title = 0x7f0d0003;
 		public static final int mediacontroller_play_pause = 0x7f0d004b;
-		public static final int permission_group_tools_description = 0x7f0d0055;
-		public static final int permission_group_tools_label = 0x7f0d0056;
-		public static final int permission_receive_messages_description = 0x7f0d0057;
-		public static final int permission_receive_messages_label = 0x7f0d0058;
-		public static final int permission_write_providers_description = 0x7f0d0059;
-		public static final int permission_write_providers_label = 0x7f0d005a;
-		public static final int vitamio_init_decoders = 0x7f0d006c;
-		public static final int vitamio_library_app_name = 0x7f0d006d;
+		public static final int permission_group_tools_description = 0x7f0d005b;
+		public static final int permission_group_tools_label = 0x7f0d005c;
+		public static final int permission_receive_messages_description = 0x7f0d005d;
+		public static final int permission_receive_messages_label = 0x7f0d005e;
+		public static final int permission_write_providers_description = 0x7f0d005f;
+		public static final int permission_write_providers_label = 0x7f0d0060;
+		public static final int vitamio_init_decoders = 0x7f0d0072;
+		public static final int vitamio_library_app_name = 0x7f0d0073;
 	}
 	public static final class style {
 		public static final int MediaController_SeekBar = 0x7f0e0008;

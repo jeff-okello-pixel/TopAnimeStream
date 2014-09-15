@@ -40,9 +40,10 @@ public class EpisodeListAdapter extends BaseAdapter{
 	private String animeName;
 	private String animeDescription;
 	private String animePoster;
+    private String animeBackdrop;
 	App app;
 	
-	public EpisodeListAdapter(Context context, ArrayList<Episode> values, String animeName, String animeDescription, String animePoster) {
+	public EpisodeListAdapter(Context context, ArrayList<Episode> values, String animeName, String animeDescription, String animePoster, String animeBackdrop) {
 		this.context = context;
 		this.values = values;
 		this.re = this.context.getResources();

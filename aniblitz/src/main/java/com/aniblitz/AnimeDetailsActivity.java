@@ -127,7 +127,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 				{
 					menuFavorite.setIcon(R.drawable.ic_favorite);
                     AnimeInformation info = anime.getAnimeInformation(this);
-					db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(),String.valueOf(anime.getRating()), Integer.valueOf(prefs.getString("prefLanguage", "1")));
+					db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(),String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), Integer.valueOf(prefs.getString("prefLanguage", "1")));
 					Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
 				}
 			break;

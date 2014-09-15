@@ -342,6 +342,18 @@ public class Anime implements Parcelable  {
 	public void setReleaseDate(String releaseDate) {
 		ReleaseDate = releaseDate;
 	}
+    public String getRelativeBackdropPath(String size) {
+        if(BackdropPath == null)
+            return null;
+
+        if(size == null || size.equals(""))
+            return BackdropPath;
+
+        String imageName = BackdropPath.substring(BackdropPath.lastIndexOf("/") + 1);
+        imageName = "w" + size + "_" + imageName;
+        String fullPosterPath = BackdropPath.substring(0, BackdropPath.lastIndexOf("/") + 1) + imageName;
+        return fullPosterPath;
+    }
 	public String getBackdropPath(String size) {
 		if(BackdropPath == null)
 			return null;
