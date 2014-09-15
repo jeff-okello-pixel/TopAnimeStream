@@ -98,8 +98,8 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             mirrors = savedInstanceState.getParcelableArrayList("mirrors");
             filteredMirrors = mirrors;
             animeSourceId = savedInstanceState.getInt("animeSourceId");
-            if(mirrors != null)
-                listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+            if(filteredMirrors != null)
+                listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
             else
             {
                 txtNoProvider.setVisibility(View.VISIBLE);
@@ -158,7 +158,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		(new Utils.GetMp4(mirrors.get(position), getActivity())).execute();
+		(new Utils.GetMp4(filteredMirrors.get(position), getActivity())).execute();
 	}
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {

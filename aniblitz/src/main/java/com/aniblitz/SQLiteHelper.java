@@ -14,7 +14,7 @@ import com.aniblitz.models.Episode;
 import com.aniblitz.models.Genre;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "AnimeDB";
 
     private static final String TABLE_FAVORITES = "favorites";
@@ -82,8 +82,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_GENRES, genres);
         values.put(KEY_DESCRIPTION, description);
         values.put(KEY_RATING, rating);
-        values.put(KEY_LANGUAGEID, languageId);
         values.put(KEY_BACKDROP, backdrop);
+        values.put(KEY_LANGUAGEID, languageId);
         db.insert(TABLE_FAVORITES,
                 null, //nullColumnHack
                 values);
@@ -183,6 +183,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_EPISODENUMBER, episodeNumber);
         values.put(KEY_EPISODENUMBER, episodeNumber);
         values.put(KEY_BACKDROP, backdrop);
+        values.put(KEY_LANGUAGEID, String.valueOf(languageId));
         db.insert(TABLE_WATCHED,
                 null, //nullColumnHack
                 values);

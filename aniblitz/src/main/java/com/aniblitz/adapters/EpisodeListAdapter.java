@@ -54,6 +54,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 		this.animeName = animeName;
 		this.animeDescription = animeDescription;
 		this.animePoster = animePoster;
+        this.animeBackdrop = animeBackdrop;
 	}
 	public void update()
 	{
@@ -131,7 +132,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 				}
 				else
 				{
-					sqlite.addWatched(episode.getAnimeId(), animeName, animePoster, animeDescription, episode.getEpisodeId(), episode.getEpisodeNumber(), Integer.valueOf(prefs.getString("prefLanguage", "1")));
+					sqlite.addWatched(episode.getAnimeId(), animeName, animePoster, animeDescription, episode.getEpisodeId(), episode.getEpisodeNumber(), animeBackdrop, Integer.valueOf(prefs.getString("prefLanguage", "1")));
 					v.setBackgroundColor(Color.parseColor("#D9245169"));
 					imgView.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
 				}
