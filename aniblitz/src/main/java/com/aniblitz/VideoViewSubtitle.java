@@ -51,9 +51,7 @@ import android.widget.Toast;
 public class VideoViewSubtitle extends Activity {
 
 	private String path = null;
-	private String subtitle_path = null;
 	private VideoView mVideoView;
-	private TextView mSubtitleView;
 	private long mPosition = 0;
 	private RelativeLayout.LayoutParams paramsNotFullscreen;    
 	private Handler mHideHandler = new Handler();
@@ -98,9 +96,7 @@ public class VideoViewSubtitle extends Activity {
 			Toast.makeText(this, "Could not find the video to play", Toast.LENGTH_LONG).show();
 			finish();
 		}
-		subtitle_path = bundle.getString("subtitlePath");
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		mSubtitleView = (TextView) findViewById(R.id.subtitle_view);
 		
 		mVideoView.setVideoPath(path);
 
@@ -112,7 +108,7 @@ public class VideoViewSubtitle extends Activity {
 			public boolean onError(MediaPlayer mp, int what, int extra) {
 				Builder alert = new AlertDialog.Builder(VideoViewSubtitle.this);
 				alert.setTitle("Error");
-				alert.setMessage("The video cannot be played, let it download a bit more and try again.");
+				alert.setMessage("The video cannot be played, please try another provider.");
 				alert.setPositiveButton("OK",new OnClickListener() {
 					
 					@Override
@@ -131,18 +127,11 @@ public class VideoViewSubtitle extends Activity {
 			public void onPrepared(MediaPlayer mediaPlayer) {
 				// optional need Vitamio 4.0
 				mediaPlayer.setPlaybackSpeed(1.0f);
-				if(subtitle_path != null)
-				{
-					mVideoView.addTimedTextSource(subtitle_path);
-					mVideoView.setTimedTextShown(true);
-				}
+
 
 			}
 		});
-		if(subtitle_path != null)
-		{
 
-		}
 		
 	}
 	private void hideSystemUi() {
