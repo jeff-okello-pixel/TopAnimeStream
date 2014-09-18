@@ -79,5 +79,8 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_provider">No provider in this tab</string>
+    <string name="play_phone">Play on phone</string>
+    <string name="stream_chromecast">Stream on chromecast</string>
+    <string name="choose_option">Choose an option</string>
 
 </resources>

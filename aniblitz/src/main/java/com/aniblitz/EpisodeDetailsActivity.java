@@ -1,5 +1,6 @@
 package com.aniblitz;
 
+import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.MediaInfo;
@@ -27,7 +28,6 @@ import android.widget.Toast;
 
 public class EpisodeDetailsActivity extends ActionBarActivity {
 
-	private int animeId;
 	private Resources r;
 	private SharedPreferences prefs;
 	private Episode episode;
@@ -35,6 +35,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
     private String type;
 	private ProviderListFragment providerListFragment;
     private MiniController mMini;
+    private Anime anime;
     private VideoCastConsumerImpl mCastConsumer;
     private MenuItem mediaRouteMenuItem;
 
@@ -44,11 +45,11 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_episode_details);
 		r = getResources();
-		animeId = getIntent().getIntExtra("AnimeId", 0);
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		Bundle bundle = getIntent().getExtras();
+        anime = (Anime) bundle.getParcelable("Anime");
         episode = (Episode)bundle.getParcelable("Episode");
         type = bundle.getString("Type");
 		
@@ -75,7 +76,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
         if(providerListFragment == null) {
 
             FragmentTransaction ft = fm.beginTransaction();
-            providerListFragment = ProviderListFragment.newInstance(-1, episode.getMirrors(), type);
+            providerListFragment = ProviderListFragment.newInstance(-1, episode.getMirrors(), type, anime);
             ft.add(R.id.layEpisodeDetails, providerListFragment, "providerFragment");
             ft.commit();
         }

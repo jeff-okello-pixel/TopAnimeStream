@@ -50,6 +50,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     private ArrayList<Mirror> mirrors;
     private TextView txtNoProvider;
     private String type; //subbed dubbed
+    private Anime anime;
     private ArrayList<Mirror> filteredMirrors;
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,14 +59,16 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         animeSourceId = getArguments().getInt("animeSourceId");
         type = getArguments().getString("type");
         mirrors = getArguments().getParcelableArrayList("mirrors");
+        anime = getArguments().getParcelable("anime");
 	}
-    public static ProviderListFragment newInstance(int animeSourceId, ArrayList<Mirror> mirrors, String type) {
+    public static ProviderListFragment newInstance(int animeSourceId, ArrayList<Mirror> mirrors, String type, Anime anime) {
         ProviderListFragment frag = new ProviderListFragment();
 
         Bundle args = new Bundle();
         args.putInt("animeSourceId", animeSourceId);
         args.putString("type", type);
         args.putParcelableArrayList("mirrors", mirrors);
+        args.putParcelable("anime", anime);
         frag.setArguments(args);
 
         return frag;
@@ -98,6 +101,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             mirrors = savedInstanceState.getParcelableArrayList("mirrors");
             filteredMirrors = mirrors;
             animeSourceId = savedInstanceState.getInt("animeSourceId");
+            anime = savedInstanceState.getParcelable("anime");
             if(filteredMirrors != null)
                 listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
             else
@@ -153,6 +157,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         else
             outState.putParcelableArrayList("mirrors", null);
 
+        outState.putParcelable("anime", anime);
         outState.putInt("animeSourceId", animeSourceId);
 
         super.onSaveInstanceState(outState);
@@ -160,7 +165,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		(new Utils.GetMp4(filteredMirrors.get(position), getActivity())).execute();
+		(new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime)).execute();
 	}
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {

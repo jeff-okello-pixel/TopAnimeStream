@@ -160,12 +160,12 @@ public class EpisodesContainerFragment extends Fragment{
                                     if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
                                     {
                                         if(subbedProviderFragment == null)
-                                            subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), new ArrayList<Mirror>(), "Subbed");
+                                            subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), new ArrayList<Mirror>(), "Subbed", anime);
                                         return subbedProviderFragment;
                                     }
                                 }
                                 if(subbedProviderFragment == null)
-                                    subbedProviderFragment = ProviderListFragment.newInstance(-1, new ArrayList<Mirror>(), "Subbed");
+                                    subbedProviderFragment = ProviderListFragment.newInstance(-1, new ArrayList<Mirror>(), "Subbed", anime);
                                 return subbedProviderFragment;
 
                             }
@@ -183,12 +183,12 @@ public class EpisodesContainerFragment extends Fragment{
                                     if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
                                     {
                                         if(dubbedProviderFragment == null)
-                                            dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), new ArrayList<Mirror>(), "Dubbed");
+                                            dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), new ArrayList<Mirror>(), "Dubbed", anime);
                                         return dubbedProviderFragment;
                                     }
                                 }
                                 if(dubbedProviderFragment == null)
-                                    dubbedProviderFragment = ProviderListFragment.newInstance(-1, new ArrayList<Mirror>(), "Dubbed");
+                                    dubbedProviderFragment = ProviderListFragment.newInstance(-1, new ArrayList<Mirror>(), "Dubbed", anime);
                                 return dubbedProviderFragment;
                             }
 	

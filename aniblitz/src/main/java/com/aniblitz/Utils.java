@@ -40,7 +40,9 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
+import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -83,7 +85,7 @@ public class Utils {
 
 	public static boolean isNumeric(String s) {  
 	    return s.matches("[-+]?\\d*\\.?\\d+");  
-	}  
+	}
 
 	   public static String unGunzip(String str) {
 		   String s1 = null;
@@ -122,10 +124,13 @@ public class Utils {
 			private Dialog busyDialog;
 			private Activity act;
 			private Resources r;
-			public GetMp4(Mirror mirror, Activity act)
+            private Anime anime;
+            private AlertDialog alertPlay;
+			public GetMp4(Mirror mirror, Activity act, Anime anime)
 			{
 				this.mirror = mirror;
 				this.act = act;
+                this.anime = anime;
 				r = act.getResources();
 			}
 			
@@ -185,7 +190,7 @@ public class Utils {
 			}     
 			    
 		    @Override
-		    protected void onPostExecute(String result)
+		    protected void onPostExecute(final String result)
 		    {
                 Utils.dismissBusyDialog(busyDialog);
 		    	if(result == null)
@@ -197,15 +202,45 @@ public class Utils {
 
 		    		return;
 		    	}
-                loadRemoteMedia(act,0,true,buildMediaInfo("test title", "test subtitle", "test studio", Uri.parse(result).toString(),"asdf", "sadf"));
-/*
-		    	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
-		    	intent.setDataAndType(Uri.parse(result), "video/*");
-		    	act.startActivity(Intent.createChooser(intent, "Complete action using"));*/
+
+                final CharSequence[] items = {act.getString(R.string.play_phone), act.getString(R.string.stream_chromecast), act.getString(R.string.cancel)};
+                final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
+                alertBuilder.setTitle(act.getString(R.string.choose_option));
+                alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if(items[item].equals(act.getString(R.string.play_phone)))
+                        {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
+                            intent.setDataAndType(Uri.parse(result), "video/*");
+                            act.startActivity(Intent.createChooser(intent, "Complete action using"));
+                        }
+                        else if(items[item].equals(act.getString(R.string.stream_chromecast)))
+                        {
+                            String episodeNumber = "unknown";
+                            for(Episode episode:anime.getEpisodes())
+                            {
+                                if(episode.getEpisodeId() == mirror.getEpisodeId())
+                                {
+                                    episodeNumber = episode.getEpisodeNumber();
+                                    break;
+                                }
+                            }
+                            MediaInfo info = buildMediaInfo(anime.getName(), act.getString(R.string.episode) + episodeNumber, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
+                            loadRemoteMedia(act, 0, true, info);
+                        }
+                        else
+                        {
+                            alertPlay.dismiss();
+                        }
+                    }
+                });
+                alertPlay = alertBuilder.create();
+                alertPlay.show();
+
 		    }
 
 		}
-    private static MediaInfo buildMediaInfo(String title,
+    public static MediaInfo buildMediaInfo(String title,
                                             String subTitle, String studio, String url, String imgUrl, String bigImageUrl) {
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
 
@@ -224,24 +259,6 @@ public class Utils {
     private static void loadRemoteMedia(Context context, int position, boolean autoPlay, MediaInfo mediaInfo) {
         App.mCastMgr.startCastControllerActivity(context, mediaInfo, position, autoPlay);
     }
-		public static void ShowProviders(final AnimeSource animeSource, final Activity act, AlertDialog alertProviders)
-		{
-			final ArrayList<String> providers = new ArrayList<String>();
-			for(Mirror mirror:animeSource.getMirrors())
-			{
-				providers.add(mirror.getProvider().getName());
-			}
-			final CharSequence[] items = providers.toArray(new CharSequence[providers.size()]);
-		 	final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
-		 	alertBuilder.setTitle("Choose a provider " + (animeSource.isSubbed() ? "(Subbed)" : "(Dubbed)"));
-		 	alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-		 	    public void onClick(DialogInterface dialog, int item) {
-		 	    	(new Utils.GetMp4(animeSource.getMirrors().get(item), act)).execute();
-		 	    }
-		 	});
-		 	alertProviders = alertBuilder.create();
-		 	alertProviders.show();
-		}
 		
 		
 	 private static boolean downloadFile(String url, File outputFile) {

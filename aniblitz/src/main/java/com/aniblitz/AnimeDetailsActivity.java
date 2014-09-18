@@ -143,6 +143,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 			Intent intent = new Intent(this, EpisodeDetailsActivity.class);
             intent.putExtra("Episode", episode);
             intent.putExtra("Type", type);
+            intent.putExtra("Anime", anime);
 			startActivity(intent);
 	}
 
