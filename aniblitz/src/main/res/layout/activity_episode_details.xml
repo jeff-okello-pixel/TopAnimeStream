@@ -15,5 +15,12 @@
 
 </FrameLayout>
 
+    <com.google.sample.castcompanionlibrary.widgets.MiniController
+        android:id="@+id/miniController"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
+    </com.google.sample.castcompanionlibrary.widgets.MiniController>
+
 </LinearLayout>
 

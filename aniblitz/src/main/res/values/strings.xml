@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Aniblitz</string>
+    <string name="app_id">EBDDFB4F</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Aniblitz</string>
     <string name="anime_service_path">http://lanbox.ca/AnimeServices/AnimeDataService.svc/</string>

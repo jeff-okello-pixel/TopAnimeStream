@@ -42,6 +42,9 @@ import org.jsoup.nodes.Document;
 
 import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Mirror;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.common.images.WebImage;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -194,14 +197,33 @@ public class Utils {
 
 		    		return;
 		    	}
-
-
+                loadRemoteMedia(act,0,true,buildMediaInfo("test title", "test subtitle", "test studio", Uri.parse(result).toString(),"asdf", "sadf"));
+/*
 		    	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
 		    	intent.setDataAndType(Uri.parse(result), "video/*");
-		    	act.startActivity(Intent.createChooser(intent, "Complete action using"));
+		    	act.startActivity(Intent.createChooser(intent, "Complete action using"));*/
 		    }
 
 		}
+    private static MediaInfo buildMediaInfo(String title,
+                                            String subTitle, String studio, String url, String imgUrl, String bigImageUrl) {
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subTitle);
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
+        movieMetadata.putString(MediaMetadata.KEY_STUDIO, studio);
+        movieMetadata.addImage(new WebImage(Uri.parse(imgUrl)));
+        movieMetadata.addImage(new WebImage(Uri.parse(bigImageUrl)));
+
+        return new MediaInfo.Builder(url)
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setContentType("video/mp4")
+                .setMetadata(movieMetadata)
+                .build();
+    }
+    private static void loadRemoteMedia(Context context, int position, boolean autoPlay, MediaInfo mediaInfo) {
+        App.mCastMgr.startCastControllerActivity(context, mediaInfo, position, autoPlay);
+    }
 		public static void ShowProviders(final AnimeSource animeSource, final Activity act, AlertDialog alertProviders)
 		{
 			final ArrayList<String> providers = new ArrayList<String>();

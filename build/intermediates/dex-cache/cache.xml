@@ -2,17 +2,11 @@
 <pre-dex-items>
 
     <item
-        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-d3d7cc70696a1083e33aedea0ec180c026cb127e.jar"
-        jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.2.08\classes.jar"
+        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-21467184d81a3792a73345dd012879b17a3fd6fc.jar"
+        jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\CastCompanionLibrary-android-master\unspecified\release\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="1ed7a7a05185651f9af41ad93711cb96b66f331c"/>
-    <item
-        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-79e42da7c2657068d681cf877be8b4cc06e3cb7a.jar"
-        jar="C:\Program Files (x86)\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+        sha1="e26f6d6fd0ad283de1887474dc89c583c267ec49"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-e659caeb695cd38e214f46e48d18aaa0d6db595a.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\appcompat-v7\20.0.0\classes.jar"
@@ -20,11 +14,23 @@
         revision="20.0.0"
         sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef"/>
     <item
+        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-5e3858607b6227538f79d127648ef349597f6526.jar"
+        jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.89\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
+    <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-d511cbdbb7ae862e86d9bd1f5d8052a6de4db317.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-79e42da7c2657068d681cf877be8b4cc06e3cb7a.jar"
+        jar="C:\Program Files (x86)\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-a62101e6962bdb7bdd64d4e285c99377fe75096d.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\imageloaderlibrary\unspecified\classes.jar"

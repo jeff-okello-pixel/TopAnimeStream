@@ -124,12 +124,14 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                     if(!String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(language))
                         continue;
 
-                    if(type.equals("Subbed"))
+                    if(type.equals("Subbed")) {
                         if (mirror.getAnimeSource().isSubbed())
                             filteredMirrors.add(mirror);
-                    else
+                    }
+                    else {
                         if (!mirror.getAnimeSource().isSubbed())
                             filteredMirrors.add(mirror);
+                    }
                 }
                 listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
             }

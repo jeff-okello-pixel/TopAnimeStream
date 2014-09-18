@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CastCompanionLibrary-android-master/CastCompanionLibrary-android-master.iml" filepath="$PROJECT_DIR$/CastCompanionLibrary-android-master/CastCompanionLibrary-android-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/aniblitz.iml" filepath="$PROJECT_DIR$/aniblitz.iml" />
       <module fileurl="file://$PROJECT_DIR$/aniblitz/aniblitz-aniblitz.iml" filepath="$PROJECT_DIR$/aniblitz/aniblitz-aniblitz.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageloaderlibrary/imageloaderlibrary.iml" filepath="$PROJECT_DIR$/imageloaderlibrary/imageloaderlibrary.iml" />

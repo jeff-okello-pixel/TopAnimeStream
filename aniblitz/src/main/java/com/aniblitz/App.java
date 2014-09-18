@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import com.aniblitz.NetworkChangeReceiver.NetworkEvent;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -23,9 +24,10 @@ public class App extends Application implements NetworkEvent {
 	public static Locale locale;
 	public static ImageLoader imageLoader;
 	private static Connection connection;
-	public static boolean isPro = false;
+	public static boolean isPro = true;
     public static boolean languageChanged = false;
 	private static Context context;
+    public static VideoCastManager mCastMgr = null;
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
         GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
@@ -88,6 +90,20 @@ public class App extends Application implements NetworkEvent {
             configMirror.locale = locale;
             getBaseContext().getResources().updateConfiguration(configMirror, getBaseContext().getResources().getDisplayMetrics());
         }
+    }
+    public static VideoCastManager getCastManager(Context context) {
+        if (null == mCastMgr) {
+            mCastMgr = VideoCastManager.initialize(context, context.getString(R.string.app_id),
+                    null, null);
+            mCastMgr.enableFeatures(
+                    VideoCastManager.FEATURE_NOTIFICATION |
+                            VideoCastManager.FEATURE_LOCKSCREEN |
+                            VideoCastManager.FEATURE_DEBUGGING);
+
+        }
+        mCastMgr.setContext(context);
+        mCastMgr.setStopOnDisconnect(true);
+        return mCastMgr;
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig)
