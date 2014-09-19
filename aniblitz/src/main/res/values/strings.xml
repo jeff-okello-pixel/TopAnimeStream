@@ -82,5 +82,6 @@
     <string name="play_phone">Play on phone</string>
     <string name="stream_chromecast">Stream on chromecast</string>
     <string name="choose_option">Choose an option</string>
+    <string name="parenthese_default">(default)</string>
 
 </resources>

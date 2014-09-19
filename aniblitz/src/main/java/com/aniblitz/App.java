@@ -28,6 +28,7 @@ public class App extends Application implements NetworkEvent {
     public static boolean languageChanged = false;
 	private static Context context;
     public static VideoCastManager mCastMgr = null;
+    public static String phoneLanguage;
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
         GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
@@ -50,6 +51,13 @@ public class App extends Application implements NetworkEvent {
     @Override
     public void onCreate() {
         super.onCreate();
+        phoneLanguage = Locale.getDefault().getLanguage();
+        if(phoneLanguage.equals(Locale.FRENCH))
+            phoneLanguage = "2";
+        else if(phoneLanguage.equals("es"))
+            phoneLanguage = "4";
+        else
+            phoneLanguage = "1"; //default is english
         context = this;
         NetworkChangeReceiver.SetEvent(this);
         networkConnection = NetworkUtil.getConnectivityStatus(this);

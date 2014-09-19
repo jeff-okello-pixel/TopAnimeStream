@@ -135,9 +135,17 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         editor.clear();
         editor.commit();*/
 		String languageId = prefs.getString("prefLanguage", "0");
+
 		if(languageId.equals("0"))
 		{
-			final CharSequence[] items = { getString(R.string.language_english), getString(R.string.language_french), getString(R.string.language_spanish) };
+            CharSequence[] items = null;
+            if(App.phoneLanguage.equals("1"))
+                items = new CharSequence[]{ getString(R.string.language_english) + " " + getString(R.string.parenthese_default), getString(R.string.language_french), getString(R.string.language_spanish) };
+            else if(App.phoneLanguage.equals("2"))
+                items = new CharSequence[]{ getString(R.string.language_english), getString(R.string.language_french) + " " + getString(R.string.parenthese_default), getString(R.string.language_spanish) };
+            else if(App.phoneLanguage.equals("4"))
+                items = new CharSequence[]{ getString(R.string.language_english), getString(R.string.language_french), getString(R.string.language_spanish) + " " + getString(R.string.parenthese_default) };
+
 	     	final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
 	     	alertBuilder.setTitle(r.getString(R.string.title_alert_languages));
 	     	alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
@@ -169,6 +177,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	            public boolean onKey(DialogInterface arg0, int keyCode,
 	                    KeyEvent event) {
 	                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        Editor editor = prefs.edit();
+                        editor.putString("prefLanguage", App.phoneLanguage);
+                        editor.commit();
 	                    alertLanguages.dismiss();
                         SetViewPager();
 	                }
