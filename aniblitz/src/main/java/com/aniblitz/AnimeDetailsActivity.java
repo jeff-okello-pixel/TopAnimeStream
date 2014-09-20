@@ -141,9 +141,13 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	@Override
 	public void onEpisodeSelected(Episode episode, String type) {
 			Intent intent = new Intent(this, EpisodeDetailsActivity.class);
+
             intent.putExtra("Episode", episode);
             intent.putExtra("Type", type);
-            intent.putExtra("Anime", anime);
+            //bug when episode + anime in the same bundle... still don't know why
+            Bundle hackBundle = new Bundle();
+            hackBundle.putParcelable("Anime", anime);
+            intent.putExtra("hackBundle", hackBundle);
 			startActivity(intent);
 	}
 

@@ -49,8 +49,9 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		Bundle bundle = getIntent().getExtras();
-        anime = (Anime) bundle.getParcelable("Anime");
-        episode = (Episode)bundle.getParcelable("Episode");
+        episode = bundle.getParcelable("Episode");
+        Bundle hackBundle = bundle.getBundle("hackBundle");
+        anime = hackBundle.getParcelable("Anime");
         type = bundle.getString("Type");
 		
 		if(episode == null)
@@ -76,7 +77,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
         if(providerListFragment == null) {
 
             FragmentTransaction ft = fm.beginTransaction();
-            providerListFragment = ProviderListFragment.newInstance(-1, episode.getMirrors(), type, anime);
+            providerListFragment = ProviderListFragment.newInstance(-1, episode, type, anime);
             ft.add(R.id.layEpisodeDetails, providerListFragment, "providerFragment");
             ft.commit();
         }

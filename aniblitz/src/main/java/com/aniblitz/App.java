@@ -52,7 +52,7 @@ public class App extends Application implements NetworkEvent {
     public void onCreate() {
         super.onCreate();
         phoneLanguage = Locale.getDefault().getLanguage();
-        if(phoneLanguage.equals(Locale.FRENCH))
+        if(phoneLanguage.equals(Locale.FRENCH.getLanguage()))
             phoneLanguage = "2";
         else if(phoneLanguage.equals("es"))
             phoneLanguage = "4";

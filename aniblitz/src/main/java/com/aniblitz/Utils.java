@@ -126,11 +126,13 @@ public class Utils {
 			private Resources r;
             private Anime anime;
             private AlertDialog alertPlay;
-			public GetMp4(Mirror mirror, Activity act, Anime anime)
+            private Episode episode;
+			public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode)
 			{
 				this.mirror = mirror;
 				this.act = act;
                 this.anime = anime;
+                this.episode = episode;
 				r = act.getResources();
 			}
 			
@@ -216,16 +218,21 @@ public class Utils {
                         }
                         else if(items[item].equals(act.getString(R.string.stream_chromecast)))
                         {
-                            String episodeNumber = "unknown";
-                            for(Episode episode:anime.getEpisodes())
+                            String subtitle = "";
+                            if(episode != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName().equals(""))
                             {
-                                if(episode.getEpisodeId() == mirror.getEpisodeId())
-                                {
-                                    episodeNumber = episode.getEpisodeNumber();
-                                    break;
-                                }
+                                subtitle = episode.getEpisodeInformations().getEpisodeName();
                             }
-                            MediaInfo info = buildMediaInfo(anime.getName(), act.getString(R.string.episode) + episodeNumber, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
+                            else if(episode != null)
+                            {
+                                subtitle = act.getString(R.string.episode) + episode.getEpisodeNumber();
+                            }
+                            else
+                            {
+                                subtitle = act.getString(R.string.tab_movie);
+                            }
+
+                            MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
                             loadRemoteMedia(act, 0, true, info);
                         }
                         else

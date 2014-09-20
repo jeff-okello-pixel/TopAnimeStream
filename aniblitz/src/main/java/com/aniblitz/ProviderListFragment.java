@@ -39,6 +39,7 @@ import com.aniblitz.adapters.ProviderListAdapter;
 import com.aniblitz.interfaces.MovieLoadedEvent;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
+import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 public class ProviderListFragment extends Fragment implements OnItemClickListener {
 
@@ -47,6 +48,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     private ListView listView;
     private int animeSourceId;
     private SharedPreferences prefs;
+    private Episode episode;
     private ArrayList<Mirror> mirrors;
     private TextView txtNoProvider;
     private String type; //subbed dubbed
@@ -58,16 +60,18 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 		app = (App)getActivity().getApplication();
         animeSourceId = getArguments().getInt("animeSourceId");
         type = getArguments().getString("type");
-        mirrors = getArguments().getParcelableArrayList("mirrors");
+        episode = getArguments().getParcelable("episode");
+        if(episode != null)
+          mirrors = episode.getMirrors();
         anime = getArguments().getParcelable("anime");
 	}
-    public static ProviderListFragment newInstance(int animeSourceId, ArrayList<Mirror> mirrors, String type, Anime anime) {
+    public static ProviderListFragment newInstance(int animeSourceId, Episode episode, String type, Anime anime) {
         ProviderListFragment frag = new ProviderListFragment();
 
         Bundle args = new Bundle();
         args.putInt("animeSourceId", animeSourceId);
         args.putString("type", type);
-        args.putParcelableArrayList("mirrors", mirrors);
+        args.putParcelable("episode", episode);
         args.putParcelable("anime", anime);
         frag.setArguments(args);
 
@@ -99,6 +103,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 		if(savedInstanceState != null)
         {
             mirrors = savedInstanceState.getParcelableArrayList("mirrors");
+            episode = savedInstanceState.getParcelable("episode");
             filteredMirrors = mirrors;
             animeSourceId = savedInstanceState.getInt("animeSourceId");
             anime = savedInstanceState.getParcelable("anime");
@@ -118,7 +123,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                 listView.setVisibility(View.VISIBLE);
                 AsyncTaskTools.execute(new LoadProvidersTask());
             }
-            else if(!mirrors.isEmpty())//is not a movie
+            else if(mirrors != null && !mirrors.isEmpty())//is not a movie
             {
                 txtNoProvider.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
@@ -158,6 +163,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             outState.putParcelableArrayList("mirrors", null);
 
         outState.putParcelable("anime", anime);
+        outState.putParcelable("episode", episode);
         outState.putInt("animeSourceId", animeSourceId);
 
         super.onSaveInstanceState(outState);
@@ -165,7 +171,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		(new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime)).execute();
+		(new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime, episode)).execute();
 	}
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {
@@ -211,6 +217,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             }
             else
             {
+                filteredMirrors = mirrors;
                 listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
             }
 

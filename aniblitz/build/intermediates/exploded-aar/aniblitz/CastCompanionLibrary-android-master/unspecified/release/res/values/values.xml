@@ -16,21 +16,21 @@
     </string-array>
     <string-array name="prefs_caption_color_values">
         <item>#FFFFFF</item>
-        <!-- white -->
+ <!-- white -->
         <item>#000000</item>
-        <!-- black -->
+ <!-- black -->
         <item>#FF0000</item>
-        <!-- red -->
+ <!-- red -->
         <item>#FFFF00</item>
-        <!-- yellow -->
+ <!-- yellow -->
         <item>#00FF00</item>
-        <!-- green -->
+ <!-- green -->
         <item>#00FFFF</item>
-        <!-- cyan -->
+ <!-- cyan -->
         <item>#0000FF</item>
-        <!-- blue -->
+ <!-- blue -->
         <item>#FF00FF</item>
-        <!-- magenta -->
+ <!-- magenta -->
     </string-array>
     <string-array name="prefs_caption_edge_type_names">
         <item>None</item>

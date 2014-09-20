@@ -6,7 +6,7 @@
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\CastCompanionLibrary-android-master\unspecified\release\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="e26f6d6fd0ad283de1887474dc89c583c267ec49"/>
+        sha1="148f1b189155f4964b15799dd001f28271e787d6"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-e659caeb695cd38e214f46e48d18aaa0d6db595a.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\appcompat-v7\20.0.0\classes.jar"
@@ -36,13 +36,13 @@
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\imageloaderlibrary\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="a7ca2094f285851e837e5759ee5ab12c64be92de"/>
+        sha1="9322fec56c6b0ab9c947eeb9894e124aa24886f4"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-839700b1466038119621ba4f6dce90400e23b20b.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\initActivity\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="bce19244cdb7b48d3fbdd0d668815e395b67f05c"/>
+        sha1="8b50aacb47a3e89c8d7aaf118c1b20a866e18827"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-21720ec9ecea767e6cab364ff6b7350d0bb8f235.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\20.0.0\libs\internal_impl-20.0.0.jar"
@@ -60,18 +60,18 @@
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\aniblitz\librarytabstrip\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="b943647ad9ac8b8b2aaf522c57a2469d2b4f25a6"/>
-    <item
-        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-4386c0a942bd2ff5d2ec529b3b364a4ca3ead520.jar"
-        jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+        sha1="89321c2b55794b6594c9eb69a397d6edbfb8dbfe"/>
     <item
         dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-c27538744de706f9dcf65dccc236254b670975c6.jar"
         jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\20.0.0\classes.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="35a88c9d605c36273dfb1d472f9b68bbd08acf7b"/>
+    <item
+        dex="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\pre-dexed\debug\classes-4386c0a942bd2ff5d2ec529b3b364a4ca3ead520.jar"
+        jar="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\aniblitz\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
 
 </pre-dex-items>
