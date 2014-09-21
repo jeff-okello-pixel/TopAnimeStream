@@ -211,17 +211,19 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         @Override
         protected void onPostExecute(String result)
         {
-            if(result == null)
-            {
-                Toast.makeText(getActivity(), getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                filteredMirrors = mirrors;
-                listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
-            }
+            try {
+                if (result == null) {
+                    Toast.makeText(getActivity(), getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+                } else {
+                    filteredMirrors = mirrors;
+                    listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+                }
 
-            Utils.dismissBusyDialog(busyDialog);
+                Utils.dismissBusyDialog(busyDialog);
+            }catch(Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
+            }
 
 
         }

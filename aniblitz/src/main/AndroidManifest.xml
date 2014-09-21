@@ -22,7 +22,14 @@
         <provider
             android:name="com.aniblitz.SuggestionProvider"
             android:authorities="com.aniblitz.SuggestionProvider" />
-
+        <receiver
+            android:name="com.aniblitz.NetworkChangeReceiver"
+            android:label="NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name="com.aniblitz.MainActivity"
             android:configChanges="locale|layoutDirection" >

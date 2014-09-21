@@ -244,7 +244,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 isLoading = false;
                 progressBarLoadMore.setVisibility(View.GONE);
             }
-            catch(Exception e)
+            catch(Exception e)//catch all exception... handle orientation change
             {
                 e.printStackTrace();
             }

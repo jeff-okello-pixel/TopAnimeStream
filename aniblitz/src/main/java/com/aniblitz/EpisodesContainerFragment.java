@@ -258,40 +258,37 @@ public class EpisodesContainerFragment extends Fragment{
         @Override
         protected void onPostExecute(String result)
         {
-            if(result == null)
-            {
-                Toast.makeText(getActivity(), r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                if(episodes != null && episodes.size() > 0)
-                {
+            try {
+                if (result == null) {
+                    Toast.makeText(getActivity(), r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
+                } else {
+                    if (episodes != null && episodes.size() > 0) {
 
-                    for(Episode episode:episodes)
-                    {
-                        for(Mirror mirror : episode.getMirrors())
-                        {
-                            if(!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                            {
-                                dubbedEpisodes.add(episode);
-                                break;
+                        for (Episode episode : episodes) {
+                            for (Mirror mirror : episode.getMirrors()) {
+                                if (!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                                    dubbedEpisodes.add(episode);
+                                    break;
+                                } else if (mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                                    subbedEpisodes.add(episode);
+                                    break;
+                                }
                             }
-                            else if(mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                            {
-                                subbedEpisodes.add(episode);
-                                break;
-                            }
+
                         }
+                        subbedEpisodeFragment.setEpisodes(subbedEpisodes);
+                        dubbedEpisodeFragment.setEpisodes(dubbedEpisodes);
+
 
                     }
-                    subbedEpisodeFragment.setEpisodes(subbedEpisodes);
-                    dubbedEpisodeFragment.setEpisodes(dubbedEpisodes);
-
-
                 }
+                Utils.dismissBusyDialog(busyDialog);
+            }catch(Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
             }
 
-            Utils.dismissBusyDialog(busyDialog);
+
         }
 
     }
