@@ -59,6 +59,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -118,6 +119,15 @@ public class Utils {
 		    }
 		    return s1;
        }
+        public static boolean isProInstalled(Context context) {
+            PackageManager manager = context.getPackageManager();
+            if (manager.checkSignatures(context.getPackageName(), "com.aniblitz.key")
+                    == PackageManager.SIGNATURE_MATCH) {
+                //Pro key installed, and signatures match
+                return true;
+            }
+            return false;
+        }
 	   public static class GetMp4 extends AsyncTask<Void, Void, String> {
 			
 			Mirror mirror;

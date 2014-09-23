@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aniblitz.models.Anime;
 
 
 public class AnimeDetailsFragment extends Fragment {
     private ImageView imgBackdrop;
+    private TextView txtTitle;
     public AnimeDetailsFragment() {
         // Required empty public constructor
     }
@@ -30,6 +32,7 @@ public class AnimeDetailsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_anime_details, container, false);
         imgBackdrop = (ImageView) view.findViewById(R.id.imgBackdrop);
+        txtTitle = (TextView) view.findViewById(R.id.txtTitle);
         return view;
     }
 
@@ -39,6 +42,8 @@ public class AnimeDetailsFragment extends Fragment {
             App.imageLoader.displayImage(anime.getBackdropPath("500"), imgBackdrop);
         else
             imgBackdrop.setVisibility(View.GONE);
+
+        txtTitle.setText(anime.getName());
     }
 
 

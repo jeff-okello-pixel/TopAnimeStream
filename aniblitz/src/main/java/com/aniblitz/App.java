@@ -24,7 +24,7 @@ public class App extends Application implements NetworkEvent {
 	public static Locale locale;
 	public static ImageLoader imageLoader;
 	private static Connection connection;
-	public static boolean isPro = true;
+	public static boolean isPro = false;
     public static boolean languageChanged = false;
 	private static Context context;
     public static VideoCastManager mCastMgr = null;

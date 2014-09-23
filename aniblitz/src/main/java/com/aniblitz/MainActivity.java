@@ -75,6 +75,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+        if(Utils.isProInstalled(this))
+        {
+            SQLiteHelper sqlLite = new SQLiteHelper(this);
+            if(!sqlLite.isPro())
+                sqlLite.setPro(true);
+            else
+                App.isPro = true;
+        }
 		r = getResources();
 		animes = new ArrayList<Anime>();
 		mItems = new ArrayList<String>();

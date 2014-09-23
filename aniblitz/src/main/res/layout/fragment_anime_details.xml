@@ -3,11 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.aniblitz.AnimeDetailsFragment">
-
-    <ImageView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_height="180dp"
-        android:id="@+id/imgBackdrop"/>
+        android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_height="180dp"
+                android:id="@+id/imgBackdrop"/>
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:background="#80000000"
+                android:padding="5dp"
+                android:text="TextView"
+                android:textColor="#f5f5f5" />
+        </RelativeLayout>
+
 
 </LinearLayout>

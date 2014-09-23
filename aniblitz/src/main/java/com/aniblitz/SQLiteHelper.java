@@ -19,7 +19,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_FAVORITES = "favorites";
     private static final String TABLE_WATCHED = "watched";
- 
+    private static final String TABLE_VERSIONS = "versions";
+    //Columns for versions
+    private static final String KEY_ISPRO = "isPro";
+
     //Columns for favorites
     private static final String KEY_ANIMEID = "animeId";
     private static final String KEY_NAME = "name";
@@ -36,6 +39,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     
     private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_RATING, KEY_BACKDROP, KEY_LANGUAGEID};
     private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_BACKDROP, KEY_LANGUAGEID};
+    private static final String[] VERSIONS_COLUMNS = {KEY_ISPRO};
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION); 
     }
@@ -63,6 +67,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 KEY_BACKDROP + " TEXT, " +
         		KEY_LANGUAGEID + " TEXT)";
         db.execSQL(CREATE_WATCHED_TABLE);
+
+        String CREATE_VERSIONS_TABLE = "CREATE TABLE " + TABLE_VERSIONS + " ( " +
+                KEY_ISPRO + " TEXT)";
+        db.execSQL(CREATE_VERSIONS_TABLE);
     }
  
     @Override
@@ -71,7 +79,46 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WATCHED);
         this.onCreate(db);
     }
-    
+    public void setPro(boolean pro)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ISPRO, String.valueOf(pro));
+        db.insert(TABLE_VERSIONS,
+                null, //nullColumnHack
+                values);
+
+        db.close();
+
+        App.isPro = pro;
+    }
+    public boolean isPro()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor =
+                db.query(TABLE_VERSIONS,
+                        VERSIONS_COLUMNS,
+                        KEY_ISPRO + " = ?", //selections
+                        new String[] { String.valueOf(true)}, //selections args
+                        null, //group by
+                        null, //having
+                        null, //order by
+                        null);//limit
+
+        if (cursor != null)
+        {
+            if(cursor.getCount() > 0)
+            {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+
+        return false;
+    }
     public void addFavorite(int animeId, String name, String poster, String genres, String description, String rating, String backdrop, int languageId){
         SQLiteDatabase db = this.getWritableDatabase();
  
@@ -238,7 +285,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         
         return animes;
     }
-    
+
     public boolean isWatched(int episodeId, String languageId)
     {
         SQLiteDatabase db = this.getReadableDatabase();
