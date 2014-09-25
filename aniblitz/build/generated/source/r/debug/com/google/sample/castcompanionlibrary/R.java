@@ -460,7 +460,7 @@ public final class R {
 		public static final int audio_empty_message = 0x7f0a0078;
 		public static final int background_image = 0x7f0a005e;
 		public static final int beginning = 0x7f0a000a;
-		public static final int bigContainer = 0x7f0a0088;
+		public static final int bigContainer = 0x7f0a0089;
 		public static final int book_now = 0x7f0a0022;
 		public static final int buyButton = 0x7f0a001c;
 		public static final int buy_now = 0x7f0a0021;
@@ -499,12 +499,12 @@ public final class R {
 		public static final int liveText = 0x7f0a0061;
 		public static final int loadingView = 0x7f0a006e;
 		public static final int match_parent = 0x7f0a001e;
-		public static final int media_route_control_frame = 0x7f0a008c;
-		public static final int media_route_disconnect_button = 0x7f0a008d;
-		public static final int media_route_list = 0x7f0a0089;
-		public static final int media_route_menu_item = 0x7f0a009b;
-		public static final int media_route_volume_layout = 0x7f0a008a;
-		public static final int media_route_volume_slider = 0x7f0a008b;
+		public static final int media_route_control_frame = 0x7f0a008d;
+		public static final int media_route_disconnect_button = 0x7f0a008e;
+		public static final int media_route_list = 0x7f0a008a;
+		public static final int media_route_menu_item = 0x7f0a009c;
+		public static final int media_route_volume_layout = 0x7f0a008b;
+		public static final int media_route_volume_slider = 0x7f0a008c;
 		public static final int middle = 0x7f0a000b;
 		public static final int monochrome = 0x7f0a0025;
 		public static final int never = 0x7f0a0010;
@@ -544,7 +544,7 @@ public final class R {
 		public static final int tabMode = 0x7f0a0002;
 		public static final int tabhost = 0x7f0a0074;
 		public static final int terrain = 0x7f0a000e;
-		public static final int text = 0x7f0a0099;
+		public static final int text = 0x7f0a009a;
 		public static final int textContainer = 0x7f0a006f;
 		public static final int textView1 = 0x7f0a0066;
 		public static final int textView2 = 0x7f0a0067;
