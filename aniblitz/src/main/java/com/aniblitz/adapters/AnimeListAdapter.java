@@ -85,23 +85,7 @@ public class AnimeListAdapter extends BaseAdapter{
         if(holder.txtGenres.getText().equals(""))
             holder.txtGenres.setVisibility(View.GONE);
 		holder.imgPoster.setImageResource(android.R.color.transparent);
-
-        String language = prefs.getString("prefLanguage", "1");
-        for(AnimeInformation animeInfo : anime.getAnimeInformations())
-        {
-            if(String.valueOf(animeInfo.getLanguageId()).equals(language))
-            {
-                if(animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
-                    holder.txtDescription.setText(animeInfo.getOverview().trim());
-                else if(animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
-                    holder.txtDescription.setText(animeInfo.getDescription().trim());
-                else
-                    holder.txtDescription.setVisibility(View.GONE);
-
-                break;
-
-            }
-        }
+        holder.txtDescription.setText(anime.getDescription(context));
 		App.imageLoader.displayImage(anime.getPosterPath("185"), holder.imgPoster);
 
 		return vi;

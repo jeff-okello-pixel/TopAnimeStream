@@ -25,6 +25,7 @@ public class App extends Application implements NetworkEvent {
 	public static ImageLoader imageLoader;
 	private static Connection connection;
 	public static boolean isPro = false;
+    public static boolean isGooglePlayVersion = true;
     public static boolean languageChanged = false;
 	private static Context context;
     public static VideoCastManager mCastMgr = null;

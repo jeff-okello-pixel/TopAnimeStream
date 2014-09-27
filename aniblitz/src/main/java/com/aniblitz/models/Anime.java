@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.view.View;
 
 public class Anime implements Parcelable  {
 	private int AnimeId;
@@ -251,8 +252,22 @@ public class Anime implements Parcelable  {
 	public void setAnimeId(int animeId) {
 		AnimeId = animeId;
 	}
-	public String getDescription() {
-		return Description;
+	public String getDescription(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String language = prefs.getString("prefLanguage", "1");
+        for(AnimeInformation animeInfo : this.getAnimeInformations())
+        {
+            if(String.valueOf(animeInfo.getLanguageId()).equals(language))
+            {
+                if(animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
+                    return animeInfo.getOverview().trim();
+                else if(animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
+                    return animeInfo.getDescription().trim();
+                else
+                    return "";
+            }
+        }
+		return "";
 	}
 	public void setDescription(String description) {
 		Description = description;

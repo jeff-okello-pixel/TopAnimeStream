@@ -3,9 +3,12 @@ package com.aniblitz;
 import java.util.Locale;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -14,12 +17,13 @@ import android.text.Html;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener
 {
 	private App app;
 	private boolean mStopOnExit;
-	
+    private AlertDialog dialog;
     protected void onCreate(final Bundle savedInstanceState)
     {
     	setTheme(R.style.Theme_Blue);
@@ -32,6 +36,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 		  
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
         ListView lv = (ListView) findViewById(android.R.id.list);
         if(lv != null)
         {
@@ -65,10 +70,43 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals("prefLanguage")) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Settings.this);
+        if(key.equals("prefLanguage") && !App.isGooglePlayVersion) {
             app.setLocale();
             App.languageChanged = true;
             Utils.restartActivity(this);
+        }
+        else if(key.equals("prefLanguage") && App.isGooglePlayVersion && !prefs.getString("prefLanguage", "0").equals("4"))
+        {
+
+            prefs.edit().putString("prefLanguage", "4").commit();
+            AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+
+            builder.setTitle("Not available");
+            builder.setMessage("You can't change the language of the animes in this version. Please download the full version on www.aniblitz.com to get access to all languages (English, Français, Español)");
+            builder.setPositiveButton("Go to aniblitz.com", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(getString(R.string.anibliz_website)));
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialog.cancel();
+                }
+            });
+            try {
+                dialog = builder.show();
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+
+
+
         }
 		SetSummary();
     }
@@ -89,7 +127,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 
-		return false;
+        return false;
 	}
 
 }

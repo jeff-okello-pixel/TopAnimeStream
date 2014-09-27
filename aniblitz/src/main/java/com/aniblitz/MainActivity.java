@@ -144,7 +144,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         editor.commit();*/
 		String languageId = prefs.getString("prefLanguage", "0");
 
-		if(languageId.equals("0"))
+		if(languageId.equals("0") && !App.isGooglePlayVersion)
 		{
             CharSequence[] items = null;
             if(App.phoneLanguage.equals("1"))
@@ -196,6 +196,13 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	        });
 	     	alertLanguages.show();
 		}
+        else if(App.isGooglePlayVersion)
+        {
+            Editor editor = prefs.edit();
+            editor.putString("prefLanguage", "4");
+            editor.commit();
+            SetViewPager();
+        }
         else
         {
             SetViewPager();
