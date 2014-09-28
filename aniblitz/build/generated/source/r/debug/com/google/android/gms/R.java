@@ -95,12 +95,12 @@ public final class R {
 		public static final int common_signin_btn_text_normal_light = 0x7f020083;
 		public static final int common_signin_btn_text_pressed_dark = 0x7f020084;
 		public static final int common_signin_btn_text_pressed_light = 0x7f020085;
-		public static final int ic_plusone_medium_off_client = 0x7f0200b3;
-		public static final int ic_plusone_small_off_client = 0x7f0200b4;
-		public static final int ic_plusone_standard_off_client = 0x7f0200b5;
-		public static final int ic_plusone_tall_off_client = 0x7f0200b6;
-		public static final int powered_by_google_dark = 0x7f0200d8;
-		public static final int powered_by_google_light = 0x7f0200d9;
+		public static final int ic_plusone_medium_off_client = 0x7f0200b5;
+		public static final int ic_plusone_small_off_client = 0x7f0200b6;
+		public static final int ic_plusone_standard_off_client = 0x7f0200b7;
+		public static final int ic_plusone_tall_off_client = 0x7f0200b8;
+		public static final int powered_by_google_dark = 0x7f0200da;
+		public static final int powered_by_google_light = 0x7f0200db;
 	}
 	public static final class id {
 		public static final int book_now = 0x7f0a0022;
@@ -128,39 +128,39 @@ public final class R {
 		public static final int google_play_services_version = 0x7f0c0001;
 	}
 	public static final class string {
-		public static final int common_google_play_services_enable_button = 0x7f0d002f;
-		public static final int common_google_play_services_enable_text = 0x7f0d0030;
-		public static final int common_google_play_services_enable_title = 0x7f0d0031;
-		public static final int common_google_play_services_error_notification_requested_by_msg = 0x7f0d0032;
-		public static final int common_google_play_services_install_button = 0x7f0d0033;
-		public static final int common_google_play_services_install_text_phone = 0x7f0d0034;
-		public static final int common_google_play_services_install_text_tablet = 0x7f0d0035;
-		public static final int common_google_play_services_install_title = 0x7f0d0036;
-		public static final int common_google_play_services_invalid_account_text = 0x7f0d0037;
-		public static final int common_google_play_services_invalid_account_title = 0x7f0d0038;
-		public static final int common_google_play_services_needs_enabling_title = 0x7f0d0039;
-		public static final int common_google_play_services_network_error_text = 0x7f0d003a;
-		public static final int common_google_play_services_network_error_title = 0x7f0d003b;
-		public static final int common_google_play_services_notification_needs_installation_title = 0x7f0d003c;
-		public static final int common_google_play_services_notification_needs_update_title = 0x7f0d003d;
-		public static final int common_google_play_services_notification_ticker = 0x7f0d003e;
-		public static final int common_google_play_services_unknown_issue = 0x7f0d003f;
-		public static final int common_google_play_services_unsupported_date_text = 0x7f0d0040;
-		public static final int common_google_play_services_unsupported_text = 0x7f0d0041;
-		public static final int common_google_play_services_unsupported_title = 0x7f0d0042;
-		public static final int common_google_play_services_update_button = 0x7f0d0043;
-		public static final int common_google_play_services_update_text = 0x7f0d0044;
-		public static final int common_google_play_services_update_title = 0x7f0d0045;
-		public static final int common_signin_button_text = 0x7f0d0046;
-		public static final int common_signin_button_text_long = 0x7f0d0047;
-		public static final int wallet_buy_button_place_holder = 0x7f0d00b8;
+		public static final int common_google_play_services_enable_button = 0x7f0d0030;
+		public static final int common_google_play_services_enable_text = 0x7f0d0031;
+		public static final int common_google_play_services_enable_title = 0x7f0d0032;
+		public static final int common_google_play_services_error_notification_requested_by_msg = 0x7f0d0033;
+		public static final int common_google_play_services_install_button = 0x7f0d0034;
+		public static final int common_google_play_services_install_text_phone = 0x7f0d0035;
+		public static final int common_google_play_services_install_text_tablet = 0x7f0d0036;
+		public static final int common_google_play_services_install_title = 0x7f0d0037;
+		public static final int common_google_play_services_invalid_account_text = 0x7f0d0038;
+		public static final int common_google_play_services_invalid_account_title = 0x7f0d0039;
+		public static final int common_google_play_services_needs_enabling_title = 0x7f0d003a;
+		public static final int common_google_play_services_network_error_text = 0x7f0d003b;
+		public static final int common_google_play_services_network_error_title = 0x7f0d003c;
+		public static final int common_google_play_services_notification_needs_installation_title = 0x7f0d003d;
+		public static final int common_google_play_services_notification_needs_update_title = 0x7f0d003e;
+		public static final int common_google_play_services_notification_ticker = 0x7f0d003f;
+		public static final int common_google_play_services_unknown_issue = 0x7f0d0040;
+		public static final int common_google_play_services_unsupported_date_text = 0x7f0d0041;
+		public static final int common_google_play_services_unsupported_text = 0x7f0d0042;
+		public static final int common_google_play_services_unsupported_title = 0x7f0d0043;
+		public static final int common_google_play_services_update_button = 0x7f0d0044;
+		public static final int common_google_play_services_update_text = 0x7f0d0045;
+		public static final int common_google_play_services_update_title = 0x7f0d0046;
+		public static final int common_signin_button_text = 0x7f0d0047;
+		public static final int common_signin_button_text_long = 0x7f0d0048;
+		public static final int wallet_buy_button_place_holder = 0x7f0d00b9;
 	}
 	public static final class style {
-		public static final int Theme_IAPTheme = 0x7f0e004c;
-		public static final int WalletFragmentDefaultButtonTextAppearance = 0x7f0e004f;
-		public static final int WalletFragmentDefaultDetailsHeaderTextAppearance = 0x7f0e0050;
-		public static final int WalletFragmentDefaultDetailsTextAppearance = 0x7f0e0051;
-		public static final int WalletFragmentDefaultStyle = 0x7f0e0052;
+		public static final int Theme_IAPTheme = 0x7f0e004d;
+		public static final int WalletFragmentDefaultButtonTextAppearance = 0x7f0e0050;
+		public static final int WalletFragmentDefaultDetailsHeaderTextAppearance = 0x7f0e0051;
+		public static final int WalletFragmentDefaultDetailsTextAppearance = 0x7f0e0052;
+		public static final int WalletFragmentDefaultStyle = 0x7f0e0053;
 	}
 	public static final class styleable {
 		public static final int[] AdsAttrs = { 0x7f01005d, 0x7f01005e, 0x7f01005f };

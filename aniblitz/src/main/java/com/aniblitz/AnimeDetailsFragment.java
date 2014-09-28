@@ -2,12 +2,16 @@ package com.aniblitz;
 
 
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aniblitz.models.Anime;
@@ -17,6 +21,8 @@ public class AnimeDetailsFragment extends Fragment {
     private ImageView imgBackdrop;
     private TextView txtTitle;
     private TextView txtDescription;
+    private TextView txtGenres;
+    private RatingBar rtbRating;
     public AnimeDetailsFragment() {
         // Required empty public constructor
     }
@@ -35,6 +41,8 @@ public class AnimeDetailsFragment extends Fragment {
         imgBackdrop = (ImageView) view.findViewById(R.id.imgBackdrop);
         txtTitle = (TextView) view.findViewById(R.id.txtTitle);
         txtDescription = (TextView) view.findViewById(R.id.txtDescription);
+        txtGenres = (TextView) view.findViewById(R.id.txtGenres);
+        rtbRating = (RatingBar) view.findViewById(R.id.rtbRating);
         return view;
     }
 
@@ -47,6 +55,10 @@ public class AnimeDetailsFragment extends Fragment {
 
         txtTitle.setText(anime.getName());
         txtDescription.setText(anime.getDescription(getActivity()));
+        txtGenres.setText(anime.getGenresFormatted());
+        if(anime.getRating() != null)
+            rtbRating.setRating((float)Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
+
     }
 
 
