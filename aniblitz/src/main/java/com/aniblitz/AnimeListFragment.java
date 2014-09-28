@@ -181,7 +181,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTable("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby(isDesc ? "OriginalName%20desc" : "OriginalName").skip(currentSkip).top(currentLimit);
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations").orderby(isDesc ? "OriginalName%20desc" : "OriginalName").skip(currentSkip).top(currentLimit);
                 String filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
                 if(fragmentName.equals(getString(R.string.tab_cartoon)))
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
@@ -211,7 +211,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 JSONObject animeJson;
                 try {
                     animeJson = animeArray.getJSONObject(i);
-                    newAnimes.add(new Anime(animeJson));
+                    newAnimes.add(new Anime(animeJson, getActivity()));
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

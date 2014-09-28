@@ -243,7 +243,7 @@ public class EpisodesContainerFragment extends Fragment{
                 JSONObject episodeJson;
                 try {
                     episodeJson = episodesArray.getJSONObject(i);
-                    Episode episode = new Episode(episodeJson);
+                    Episode episode = new Episode(episodeJson, getActivity());
 
                     episodes.add(episode);
                 } catch (Exception e) {

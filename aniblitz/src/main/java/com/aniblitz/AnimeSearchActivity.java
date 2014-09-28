@@ -165,11 +165,11 @@ private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
 		{
 
 		}
-		private final String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/FastSearch?query='" + query + "'&$format=json&$filter=AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
-		
-		@Override
+
+		private String URL;
 	    protected void onPreExecute()
 	    {
+            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("FastSearch").formatJson().addParameter("query", "%27" + query + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
 			busyDialog = Utils.showBusyDialog("Searching...", AnimeSearchActivity.this);
 			animes = new ArrayList<Anime>();
 			mItems = new ArrayList<String>();
@@ -192,7 +192,7 @@ private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
 	    		JSONObject animeJson;
 				try {
 					animeJson = animeArray.getJSONObject(i);
-		    		animes.add(new Anime(animeJson));
+		    		animes.add(new Anime(animeJson, AnimeSearchActivity.this));
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

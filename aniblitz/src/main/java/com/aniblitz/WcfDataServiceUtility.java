@@ -20,12 +20,12 @@ public class WcfDataServiceUtility {
         queries = new ArrayList<String>();
     }
 
-    public WcfDataServiceUtility getTable(String tableName)  {
+    public WcfDataServiceUtility getEntity(String tableName)  {
         dataServiceUrl = this.dataServiceUrl + tableName;
         return this;
     }
 
-    public WcfDataServiceUtility getTableSpecificRow(String tableName, int id, boolean isLong)  {
+    public WcfDataServiceUtility getEntitySpecificRow(String tableName, int id, boolean isLong)  {
         dataServiceUrl = this.dataServiceUrl + tableName + "(" + id + (isLong ? "L" : "") + ")";
         return this;
     }
@@ -47,6 +47,12 @@ public class WcfDataServiceUtility {
 
     public WcfDataServiceUtility filter(String filter){
         queries.add("$filter=" + filter);
+        return this;
+    }
+
+    public WcfDataServiceUtility addParameter(String name, String value)
+    {
+        queries.add(name + "=" + value);
         return this;
     }
 

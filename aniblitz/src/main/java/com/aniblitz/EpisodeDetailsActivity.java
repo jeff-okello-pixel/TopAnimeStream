@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class EpisodeDetailsActivity extends ActionBarActivity {
@@ -38,6 +39,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
     private Anime anime;
     private VideoCastConsumerImpl mCastConsumer;
     private MenuItem mediaRouteMenuItem;
+    private TextView txtEpisodeName;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +62,14 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 			finish();
 		}
         imgScreenshot = (ImageView)findViewById(R.id.imgScreenshot);
+        txtEpisodeName = (TextView)findViewById(R.id.txtEpisodeName);
         String episodeName;
-        if(episode.getEpisodeName() != null && !episode.getEpisodeName().equals(""))
-            episodeName = episode.getEpisodeName();
+        if(episode.getEpisodeInformations() != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName() .equals(""))
+            episodeName = episode.getEpisodeInformations().getEpisodeName() ;
         else
             episodeName = getString(R.string.episode) + episode.getEpisodeNumber();
-
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + episodeName + "</font>"));
+        txtEpisodeName.setText(episodeName);
+        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episode) + episode.getEpisodeNumber() + "</font>"));
         if(episode.getScreenshot() != null && !episode.getScreenshot().equals(""))
             App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(),imgScreenshot);
         else

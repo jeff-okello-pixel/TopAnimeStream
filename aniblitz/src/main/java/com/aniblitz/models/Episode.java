@@ -6,8 +6,11 @@ import java.util.Arrays;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 
 import com.aniblitz.App;
 
@@ -39,7 +42,7 @@ public class Episode implements Parcelable {
     	AiredDate = in.readString();
     	Screenshot = in.readString();
     }
-	public Episode(JSONObject jsonEpisode)
+	public Episode(JSONObject jsonEpisode, Context context)
 	{
 		JSONArray episodeInfoArray = new JSONArray();
 		JSONArray episodeMirrors = new JSONArray();
@@ -62,7 +65,16 @@ public class Episode implements Parcelable {
 			episodeInfoArray = !jsonEpisode.isNull("EpisodeInformations") ? jsonEpisode.getJSONArray("EpisodeInformations") : null;
 			if(episodeInfoArray != null)
 			{
-				this.EpisodeInformations = new EpisodeInformations(episodeInfoArray.getJSONObject(0));
+                for(int i = 0; i < episodeInfoArray.length(); i++)
+                {
+                    EpisodeInformations episodeInformations = new EpisodeInformations(episodeInfoArray.getJSONObject(i));
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    if(String.valueOf(episodeInformations.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+                    {
+                        this.EpisodeInformations = episodeInformations;
+                        break;
+                    }
+                }
 			}
 
 			

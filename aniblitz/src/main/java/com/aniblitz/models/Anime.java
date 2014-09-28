@@ -99,7 +99,7 @@ public class Anime implements Parcelable  {
     	SourceUrl = in.readString();
     	
     }
-	public Anime(JSONObject animeJson)
+	public Anime(JSONObject animeJson, Context context)
 	{
 		try
 		{
@@ -145,7 +145,7 @@ public class Anime implements Parcelable  {
 				JSONArray jsonEpisodes = animeJson.getJSONArray("Episodes");
 				for(int i = 0; i < jsonEpisodes.length(); i++)
 				{
-					episodes.add(new Episode(jsonEpisodes.getJSONObject(i)));
+					episodes.add(new Episode(jsonEpisodes.getJSONObject(i), context));
 				}
 			}
             if(!animeJson.isNull("AnimeSources"))

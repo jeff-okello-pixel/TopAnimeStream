@@ -182,7 +182,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         protected void onPreExecute()
         {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
-            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getTableSpecificRow("AnimeSources", animeSourceId,false).formatJson().expand("Mirrors/Provider").build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntitySpecificRow("AnimeSources", animeSourceId,false).formatJson().expand("Mirrors/Provider").build();
         };
         @Override
         protected String doInBackground(Void... params)
