@@ -19,10 +19,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_FAVORITES = "favorites";
     private static final String TABLE_WATCHED = "watched";
-    private static final String TABLE_VERSIONS = "versions";
-    //Columns for versions
+    private static final String TABLE_FLAGS = "flags";
+    //Columns for flags
     private static final String KEY_ISPRO = "isPro";
-
+    private static final String KEY_ISFIRSTTIME = "isFirstTime";
     //Columns for favorites
     private static final String KEY_ANIMEID = "animeId";
     private static final String KEY_NAME = "name";
@@ -39,7 +39,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     
     private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_RATING, KEY_BACKDROP, KEY_LANGUAGEID};
     private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_BACKDROP, KEY_LANGUAGEID};
-    private static final String[] VERSIONS_COLUMNS = {KEY_ISPRO};
+    private static final String[] FLAGS_COLUMNS = {KEY_ISPRO, KEY_ISFIRSTTIME};
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION); 
     }
@@ -68,9 +68,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		KEY_LANGUAGEID + " TEXT)";
         db.execSQL(CREATE_WATCHED_TABLE);
 
-        String CREATE_VERSIONS_TABLE = "CREATE TABLE " + TABLE_VERSIONS + " ( " +
-                KEY_ISPRO + " TEXT)";
-        db.execSQL(CREATE_VERSIONS_TABLE);
+        String CREATE_FLAGS_TABLE = "CREATE TABLE " + TABLE_FLAGS + " ( " +
+                KEY_ISPRO + " TEXT, " +
+                KEY_ISFIRSTTIME + " TEXT)";
+        db.execSQL(CREATE_FLAGS_TABLE);
     }
  
     @Override
@@ -85,7 +86,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ISPRO, String.valueOf(pro));
-        db.insert(TABLE_VERSIONS,
+        db.insert(TABLE_FLAGS,
                 null, //nullColumnHack
                 values);
 
@@ -98,8 +99,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor =
-                db.query(TABLE_VERSIONS,
-                        VERSIONS_COLUMNS,
+                db.query(TABLE_FLAGS,
+                        FLAGS_COLUMNS,
                         KEY_ISPRO + " = ?", //selections
                         new String[] { String.valueOf(true)}, //selections args
                         null, //group by
