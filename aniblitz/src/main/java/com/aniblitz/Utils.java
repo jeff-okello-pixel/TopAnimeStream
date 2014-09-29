@@ -14,10 +14,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -166,7 +168,7 @@ public class Utils {
 					}
 					else
 					{
-						doc = Jsoup.connect(mirror.getSource()).userAgent("Chrome").get();
+						doc = Jsoup.connect(URLDecoder.decode(mirror.getSource(), "UTF-8")).userAgent("Chrome").get();
 					}
 					
 					byte[] data = doc.html().getBytes("UTF-8");
@@ -208,7 +210,11 @@ public class Utils {
 		    	if(result == null)
 		    	{
                     Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(mirror.getSource()));
+                    try {
+                        i.setData(Uri.parse(URLDecoder.decode(mirror.getSource(), "UTF-8")));
+                    } catch (UnsupportedEncodingException e) {
+                        return;
+                    }
                     act.startActivity(i);
 		    		//Toast.makeText(act, r.getString(R.string.error_loading_video) , Toast.LENGTH_LONG).show();
 
