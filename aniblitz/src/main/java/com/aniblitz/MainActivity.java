@@ -210,6 +210,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
+        startActivity(new Intent(MainActivity.this,LoginActivity.class));
 	}
 
     private void SetViewPager()

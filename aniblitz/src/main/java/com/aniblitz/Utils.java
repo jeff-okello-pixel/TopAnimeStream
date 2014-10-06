@@ -20,6 +20,7 @@ import java.net.NetworkInterface;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -89,7 +90,7 @@ public class Utils {
 	public static boolean isNumeric(String s) {  
 	    return s.matches("[-+]?\\d*\\.?\\d+");  
 	}
-
+    public static String ignitionKey = null;
 	   public static String unGunzip(String str) {
 		   String s1 = null;
 
@@ -121,6 +122,50 @@ public class Utils {
 		    }
 		    return s1;
        }
+    public static void createLoginDialog(final Activity act)
+    {
+        Utils.lockScreen(act);
+        final Dialog loginDialog = new Dialog(act);
+        loginDialog.setOnDismissListener(new OnDismissListener() {
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Utils.unlockScreen(act);
+            }
+        });
+        loginDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        loginDialog.setContentView(R.layout.login_dialog);
+        loginDialog.setTitle(act.getResources().getString(R.string.login));
+
+        Button btnLogin = (Button) loginDialog.findViewById(R.id.btnLogin);
+        Button btnRegister = (Button) loginDialog.findViewById(R.id.btnRegister);
+        final EditText username = (EditText)loginDialog.findViewById(R.id.txtUsername);
+        final EditText password = (EditText)loginDialog.findViewById(R.id.txtPassword);
+        final TextView lblError = (TextView)loginDialog.findViewById(R.id.lblError);
+        // if button is clicked, close the custom dialog
+        btnLogin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!username.getText().toString().equals("") && !password.getText().toString().equals(""))
+                {
+                    lblError.setVisibility(View.GONE);
+
+                }
+                else
+                {
+                    lblError.setVisibility(View.VISIBLE);
+                    lblError.setText(act.getString(R.string.invalid_username_password));
+                }
+            }
+        });
+        btnRegister.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        loginDialog.show();
+    }
         public static boolean isProInstalled(Context context) {
             PackageManager manager = context.getPackageManager();
             if (manager.checkSignatures(context.getPackageName(), "com.aniblitz.key")
@@ -139,12 +184,14 @@ public class Utils {
             private Anime anime;
             private AlertDialog alertPlay;
             private Episode episode;
-			public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode)
+            private String quality;
+			public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String quality)
 			{
 				this.mirror = mirror;
 				this.act = act;
                 this.anime = anime;
                 this.episode = episode;
+                this.quality = quality;
 				r = act.getResources();
 			}
 			
@@ -160,12 +207,19 @@ public class Utils {
 		    {   
 		    	Document doc;
 				try {
-					if(mirror.getProvider().getName().toLowerCase().equals("animeultima"))
+                    String providerName = mirror.getProvider().getName().toLowerCase();
+					if(providerName.equals("animeultima"))
 					{
 						doc = Jsoup.connect(mirror.getSource()).userAgent("Chrome").ignoreContentType(true).get();
 						String dailyMotionUrl = doc.baseUri().replace("swf/", "");
 						doc = Jsoup.connect(dailyMotionUrl).userAgent("Chrome").get();
 					}
+                    else if(providerName.equals("ignition s") || providerName.equals("ignition hd"))
+                    {
+                        if(ignitionKey != null)
+                            return ignitionKey;
+                        doc = Jsoup.connect(URLDecoder.decode("http://jkanime.net/naruto/1/", "UTF-8")).userAgent("Chrome").get();
+                    }
 					else
 					{
 						doc = Jsoup.connect(URLDecoder.decode(mirror.getSource(), "UTF-8")).userAgent("Chrome").get();
@@ -174,7 +228,7 @@ public class Utils {
 					byte[] data = doc.html().getBytes("UTF-8");
 					String base64 = Base64.encodeToString(data, Base64.DEFAULT);
 					
-			    	String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/GetMp4Url?provider='" + this.mirror.getProvider().getName() + "'&$format=json";
+			    	String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/GetMp4Url?provider='" + URLEncoder.encode(mirror.getProvider().getName()) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
 			    	HttpClient httpClient = new DefaultHttpClient();
 					HttpPost request = new HttpPost(URL);
 					/*
@@ -228,8 +282,20 @@ public class Utils {
                     public void onClick(DialogInterface dialog, int item) {
                         if(items[item].equals(act.getString(R.string.play_phone)))
                         {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
-                            intent.setDataAndType(Uri.parse(result), "video/*");
+                            Intent intent = null;
+                            String providerName = mirror.getProvider().getName().toLowerCase();
+                            if(providerName.equals("ignition s") || providerName.equals("ignition hd"))
+                            {
+                                String textToReplace = mirror.getSource().substring(mirror.getSource().indexOf("/1/") + 3);
+                                ignitionKey = result;
+                                String url = mirror.getSource().replace(textToReplace,result);
+                                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                intent.setDataAndType(Uri.parse(url), "video/*");
+                            }
+                            else {
+                                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
+                                intent.setDataAndType(Uri.parse(result), "video/*");
+                            }
                             act.startActivity(Intent.createChooser(intent, "Complete action using"));
                         }
                         else if(items[item].equals(act.getString(R.string.stream_chromecast)))

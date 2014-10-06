@@ -2,6 +2,7 @@ package com.aniblitz;
 
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
+import com.aniblitz.models.EpisodeInformations;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -40,6 +41,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
     private VideoCastConsumerImpl mCastConsumer;
     private MenuItem mediaRouteMenuItem;
     private TextView txtEpisodeName;
+    private TextView txtDescription;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +65,26 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 		}
         imgScreenshot = (ImageView)findViewById(R.id.imgScreenshot);
         txtEpisodeName = (TextView)findViewById(R.id.txtEpisodeName);
-        String episodeName;
-        if(episode.getEpisodeInformations() != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName() .equals(""))
-            episodeName = episode.getEpisodeInformations().getEpisodeName() ;
-        else
-            episodeName = getString(R.string.episode) + episode.getEpisodeNumber();
+        txtDescription = (TextView)findViewById(R.id.txtDescription);
+        String episodeName = "";
+        EpisodeInformations episodeInfo = episode.getEpisodeInformations();
+        if(episodeInfo != null) {
+            if (episodeInfo.getEpisodeName() != null && !episodeInfo.getEpisodeName().equals("")) {
+                episodeName = episodeInfo.getEpisodeName();
+            }
+            else{
+                episodeName = getString(R.string.episode) + episode.getEpisodeNumber();
+            }
+
+            if(episodeInfo.getSummary() != null && !episodeInfo.getSummary().equals(""))
+            {
+                txtDescription.setText(episodeInfo.getSummary());
+            }
+            else if(episodeInfo.getDescription() != null && !episodeInfo.getDescription().equals(""))
+            {
+                txtDescription.setText(episodeInfo.getDescription());
+            }
+        }
         txtEpisodeName.setText(episodeName);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episode) + episode.getEpisodeNumber() + "</font>"));
         if(episode.getScreenshot() != null && !episode.getScreenshot().equals(""))

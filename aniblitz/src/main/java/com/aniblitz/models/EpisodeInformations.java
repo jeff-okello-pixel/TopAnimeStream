@@ -14,7 +14,7 @@ public class EpisodeInformations implements Parcelable {
 	private int LanguageId;
 	private String EpisodeName;
 	private String Description;
-	
+	private String Summary;
 	public EpisodeInformations() {
 		super();
 	}
@@ -23,14 +23,16 @@ public class EpisodeInformations implements Parcelable {
     	LanguageId = in.readInt();
     	EpisodeName = in.readString();
     	Description = in.readString();
+        Summary = in.readString();
     }
 	public EpisodeInformations(int episodeId, int languageId,
-			String episodeName, String description) {
+			String episodeName, String description, String summary) {
 		super();
 		EpisodeId = episodeId;
 		LanguageId = languageId;
 		EpisodeName = episodeName;
 		Description = description;
+        Summary = summary;
 	}
 	public EpisodeInformations(JSONObject episodeInformationsJson) {
 		try {
@@ -38,7 +40,8 @@ public class EpisodeInformations implements Parcelable {
 			this.setLanguageId(!episodeInformationsJson.isNull("LanguageId") ? episodeInformationsJson.getInt("LanguageId") : 0);
 			this.setEpisodeName(!episodeInformationsJson.isNull("EpisodeName") ? episodeInformationsJson.getString("EpisodeName") : null);
 			this.setDescription(!episodeInformationsJson.isNull("Description") ? episodeInformationsJson.getString("Description") : null);
-		} catch (JSONException e) {
+		    this.setSummary(!episodeInformationsJson.isNull("Summary") ? episodeInformationsJson.getString("Summary") : null);
+        } catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
@@ -66,6 +69,14 @@ public class EpisodeInformations implements Parcelable {
 	public void setDescription(String description) {
 		Description = description;
 	}
+    public String getSummary()
+    {
+        return this.Summary;
+    }
+    public void setSummary(String summary)
+    {
+        this.Summary = summary;
+    }
 	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub
@@ -77,6 +88,7 @@ public class EpisodeInformations implements Parcelable {
         dest.writeInt(LanguageId);
         dest.writeString(EpisodeName);
         dest.writeString(Description);
+        dest.writeString(Summary);
 		
 	}
     public static final Parcelable.Creator<EpisodeInformations> CREATOR = new Parcelable.Creator<EpisodeInformations>()

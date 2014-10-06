@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="#245169"
+    tools:context="com.aniblitz.LoginActivity">
+    <LinearLayout
+        android:id="@+id/layContent"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/txtUsername"
+            style="@style/SignInEditText"
+            android:layout_marginBottom="20dp"
+            android:maxLength="30"
+            android:hint="@string/username"
+            android:singleLine="true"
+            android:lines="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+        <EditText
+            android:id="@+id/txtPassword"
+            style="@style/SignInEditText"
+            android:inputType ="textPassword"
+            android:layout_marginBottom="20dp"
+            android:maxLength="30"
+            android:hint="@string/password"
+            android:singleLine="true"
+            android:lines="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/button_blue"
+                android:textColor="#ffffff"
+                android:id="@+id/btnLogin"
+                android:text="@string/login" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:background="@drawable/button_green"
+                android:id="@+id/btnRegister"
+                android:text="@string/register"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblError"
+            android:visibility="gone"
+            android:textColor="#ff0000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</RelativeLayout>

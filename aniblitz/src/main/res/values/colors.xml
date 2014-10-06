@@ -10,9 +10,11 @@
         <color name="translucent_black">#44000000</color>
   		<color name="translucent">#00000000</color>
   		<color name="blueDrawer">#D9245169</color>
-  		
+        <color name="table_text">#484848</color>
+        <color name="edit_text_background_start">#EFF6FF</color>
+        <color name="edit_text_background_end">#FBFDFF</color>
   		<drawable name="black">#000000</drawable>
   		<drawable name="red">#e14d4d</drawable>
   		<drawable name="nocolor">#00000000</drawable>
-  		
+        <color name="table_text_light">#A6A6A6</color>
 </resources>

@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     private String type; //subbed dubbed
     private Anime anime;
     private ArrayList<Mirror> filteredMirrors;
+    private Dialog qualityDialog;
     @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -170,8 +172,25 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     }
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		(new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime, episode)).execute();
+	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+        String providerName = filteredMirrors.get(position).getProvider().getName();
+        if(providerName.equals("vk") || providerName.equals("vk_gk"))
+        {
+            final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+
+            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
+            alertBuilder.setTitle(getString(R.string.choose_quality));
+            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    (new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime, episode, items[item].toString())).execute();
+                }
+            });
+
+            qualityDialog = alertBuilder.create();
+            qualityDialog.show();
+        }
+        else
+		    (new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime, episode, null)).execute();
 	}
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {

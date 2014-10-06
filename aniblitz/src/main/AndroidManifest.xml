@@ -3,35 +3,39 @@
     package="com.aniblitz"
     android:versionCode="1"
     android:versionName="1.0" >
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="14" />
 
     <application
-        android:name="com.aniblitz.App"
+        android:name=".App"
         android:allowBackup="true"
-        android:largeHeap="true"
         android:icon="@drawable/ic_launcher"
         android:label="Aniblitz"
+        android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <provider
-            android:name="com.aniblitz.SuggestionProvider"
+            android:name=".SuggestionProvider"
             android:authorities="com.aniblitz.SuggestionProvider" />
+
         <receiver
-            android:name="com.aniblitz.NetworkChangeReceiver"
+            android:name=".NetworkChangeReceiver"
             android:label="NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
         <activity
-            android:name="com.aniblitz.MainActivity"
+            android:name=".MainActivity"
             android:configChanges="locale|layoutDirection" >
             <meta-data
                 android:name="android.app.default_searchable"
@@ -44,12 +48,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.aniblitz.Settings"
+            android:name=".Settings"
             android:configChanges="locale|layoutDirection"
             android:label="Settings" >
         </activity>
         <activity
-            android:name="com.aniblitz.FavoriteActivity"
+            android:name=".FavoriteActivity"
             android:configChanges="locale|layoutDirection"
             android:label="Favorites" >
         </activity>
@@ -59,18 +63,19 @@
             android:label="Providers" >
         </activity>
         <activity
-            android:name="com.aniblitz.HistoryActivity"
+            android:name=".HistoryActivity"
             android:configChanges="locale|layoutDirection"
             android:label="History" >
         </activity>
         <activity
-            android:name="com.aniblitz.AnimeSearchActivity"
+            android:name=".AnimeSearchActivity"
             android:configChanges="locale|layoutDirection"
             android:label="@string/title_activity_anime_search"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value="com.aniblitz.AnimeSearchActivity" />
@@ -80,7 +85,7 @@
         </activity>
         <activity
             android:name=".AnimeDetailsActivity"
-            android:configChanges="locale|layoutDirection">
+            android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
             android:name="com.google.sample.castcompanionlibrary.cast.player.VideoCastControllerActivity"
@@ -95,7 +100,15 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login" >
+        </activity>
     </application>
 
 </manifest>

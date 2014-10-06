@@ -84,5 +84,16 @@
     <string name="stream_chromecast">Stream on chromecast</string>
     <string name="choose_option">Choose an option</string>
     <string name="parenthese_default">(default)</string>
+    <string name="choose_quality">Choose your quality</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="invalid_username_password">Invalid username or password</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="error_username_empty">Username is empty</string>
+    <string name="error_password_empty">Password is empty</string>
+    <string name="error_login">Error, cannot log in</string>
+    <string name="logging">Logging in...</string>
 
 </resources>
