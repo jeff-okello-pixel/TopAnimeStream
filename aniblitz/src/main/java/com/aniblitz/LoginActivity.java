@@ -2,13 +2,16 @@ package com.aniblitz;
 
 import android.app.Dialog;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -38,8 +41,12 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         txtUserName = (EditText) findViewById(R.id.txtUsername);
@@ -47,7 +54,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         layContent = (LinearLayout) findViewById(R.id.layContent);
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
-
     }
 
 
@@ -99,6 +105,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String URL;
         private String method = "Login";
+        private String token;
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.logging), LoginActivity.this);
@@ -124,7 +131,8 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
                 result = (SoapPrimitive)envelope.getResponse();
-                return result.toString();
+                token = result.toString();
+                return null;
             }
             catch (Exception e)
             {
@@ -135,16 +143,15 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
                 e.printStackTrace();
             }
-            return null;
+            return "An error has occured, cannot login";
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String error) {
             try {
-                if (result == null) {
-                    Toast.makeText(LoginActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG).show();
-                } else {
-
+                if(error != null)
+                {
+                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
                 }
                 Utils.dismissBusyDialog(busyDialog);
             } catch (Exception e)//catch all exception, handle orientation change

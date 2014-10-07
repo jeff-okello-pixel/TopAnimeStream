@@ -30,13 +30,13 @@ public final class R {
 		public static final int background_tab_pressed_red = 0x7f090009;
 	}
 	public static final class drawable {
-		public static final int background_tab = 0x7f02005f;
-		public static final int background_tab_black = 0x7f020060;
-		public static final int background_tab_blue = 0x7f020061;
-		public static final int background_tab_darkblue = 0x7f020062;
-		public static final int background_tab_green = 0x7f020063;
-		public static final int background_tab_orange = 0x7f020064;
-		public static final int background_tab_red = 0x7f020065;
+		public static final int background_tab = 0x7f020060;
+		public static final int background_tab_black = 0x7f020061;
+		public static final int background_tab_blue = 0x7f020062;
+		public static final int background_tab_darkblue = 0x7f020063;
+		public static final int background_tab_green = 0x7f020064;
+		public static final int background_tab_orange = 0x7f020065;
+		public static final int background_tab_red = 0x7f020066;
 	}
 	public static final class styleable {
 		public static final int[] PagerSlidingTabStrip = { 0x7f010076, 0x7f010077, 0x7f010078, 0x7f010079, 0x7f01007a, 0x7f01007b, 0x7f01007c, 0x7f01007d, 0x7f01007e, 0x7f01007f, 0x7f010080 };
