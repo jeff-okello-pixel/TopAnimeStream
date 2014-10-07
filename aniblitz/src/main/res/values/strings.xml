@@ -95,5 +95,6 @@
     <string name="error_password_empty">Password is empty</string>
     <string name="error_login">Error, cannot log in</string>
     <string name="logging">Logging in...</string>
+    <string name="error_internet_connection">No internet connection</string>
 
 </resources>

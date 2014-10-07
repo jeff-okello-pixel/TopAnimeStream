@@ -1,7 +1,9 @@
 package com.aniblitz;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -116,7 +118,10 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
         @Override
         protected String doInBackground(Void... params) {
-
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("username", userName);
@@ -143,21 +148,24 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
                 e.printStackTrace();
             }
-            return "An error has occured, cannot login";
+            return getString(R.string.error_login);
         }
 
         @Override
         protected void onPostExecute(String error) {
-            try {
                 if(error != null)
                 {
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
                 }
+                else
+                {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                    prefs.edit().putString("AccessToken", token).commit();
+                    App.accessToken = token;
+                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_LONG).show();
+                }
                 Utils.dismissBusyDialog(busyDialog);
-            } catch (Exception e)//catch all exception, handle orientation change
-            {
-                e.printStackTrace();
-            }
+
 
 
         }

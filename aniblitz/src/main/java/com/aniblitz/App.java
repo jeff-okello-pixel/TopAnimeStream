@@ -27,6 +27,7 @@ public class App extends Application implements NetworkEvent {
 	public static boolean isPro = false;
     public static boolean isGooglePlayVersion = false;
     public static boolean languageChanged = false;
+    public static String accessToken;
 	private static Context context;
     public static VideoCastManager mCastMgr = null;
     public static String phoneLanguage;
@@ -75,7 +76,10 @@ public class App extends Application implements NetworkEvent {
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(imgConfig);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        App.accessToken = prefs.getString("AccessToken","");
         setLocale();
+
 
     }
     public void setLocale()
