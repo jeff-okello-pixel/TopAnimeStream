@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -41,6 +42,13 @@ import android.widget.Toast;
 import com.aniblitz.adapters.MenuArrayAdapter;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection {
 
@@ -194,7 +202,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	                return true;
 	            }
 	        });
-	     	alertLanguages.show();
+            try {
+                //leaked error
+                alertLanguages.show();
+            }catch(Exception e){}
 		}
         else if(App.isGooglePlayVersion)
         {
@@ -210,7 +221,16 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
-        startActivity(new Intent(MainActivity.this,LoginActivity.class));
+        if(App.accessToken != null && !App.accessToken.equals("") && !App.isGooglePlayVersion)
+        {
+            AsyncTaskTools.execute(new ValidTokenTask());
+        }
+        else if(!App.isGooglePlayVersion)
+        {
+            startActivity(new Intent(MainActivity.this,LoginActivity.class));
+            finish();
+        }
+
 	}
 
     private void SetViewPager()
@@ -500,5 +520,72 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             Utils.restartActivity(this);
         }
 
+    }
+
+    private class ValidTokenTask extends AsyncTask<Void, Void, String> {
+
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String URL;
+        private String method = "IsValidToken";
+        private boolean isValidToken = false;
+        @Override
+        protected void onPreExecute() {
+            busyDialog = Utils.showBusyDialog(getString(R.string.logging), MainActivity.this);
+            URL = "http://lanbox.ca/AnimeServices/AnimeService.svc";
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("token", App.accessToken);
+
+
+            envelope .dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try
+            {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive)envelope.getResponse();
+                isValidToken = Boolean.valueOf(result.toString());
+                return null;
+            }
+            catch (Exception e)
+            {
+                if(e instanceof SoapFault)
+                {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+            return getString(R.string.error_login);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            Utils.dismissBusyDialog(busyDialog);
+            if(error != null)
+            {
+                Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
+            }
+            else
+            {
+                if(!isValidToken)
+                {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }
+        }
     }
 }

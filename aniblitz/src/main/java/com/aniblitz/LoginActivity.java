@@ -1,6 +1,7 @@
 package com.aniblitz;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -40,12 +41,14 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private EditText txtPassword;
     private LinearLayout layContent;
     private Dialog busyDialog;
-
+    private Boolean shouldCloseOnly;//Used to start the mainactivity or not
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Intent intent = getIntent();
+        shouldCloseOnly = intent.getBooleanExtra("ShouldCloseOnly", false);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
@@ -153,21 +156,23 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(String error) {
-                if(error != null)
+            Utils.dismissBusyDialog(busyDialog);
+            if(error != null)
+            {
+                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                prefs.edit().putString("AccessToken", token).commit();
+                App.accessToken = token;
+                Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_LONG).show();
+                if(!shouldCloseOnly)
                 {
-                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
                 }
-                else
-                {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                    prefs.edit().putString("AccessToken", token).commit();
-                    App.accessToken = token;
-                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_LONG).show();
-                }
-                Utils.dismissBusyDialog(busyDialog);
-
-
-
+                finish();
+            }
         }
     }
 }
