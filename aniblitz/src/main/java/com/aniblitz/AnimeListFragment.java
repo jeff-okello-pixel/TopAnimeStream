@@ -19,6 +19,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -28,7 +29,7 @@ import com.aniblitz.models.Mirror;
 public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
 	public int currentSkip = 0;
-	public int currentLimit = 20;
+	public int currentLimit = 40;
 	public boolean isLoading = false;
 	public boolean loadmore = false;
 	public boolean hasResults = false;
@@ -45,7 +46,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private SharedPreferences prefs;
     private AnimeTask task;
     private AnimeListAdapter adapter;
-
+    private TextView txtNoAnime;
     public AnimeListFragment()
 	{
 
@@ -86,7 +87,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Anime anime = animes.get(position);
+
+		Anime anime = (Anime)gridView.getAdapter().getItem(position);
 		animeId = anime.getAnimeId();
 
         Intent intent = new Intent(this.getActivity(),AnimeDetailsActivity.class);
@@ -105,7 +107,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     public void refresh()
     {
         currentSkip = 0;
-        adapter.clear();
+        if(adapter != null)
+            adapter.clear();
         loadmore = false;
         isDesc = ((MainActivity)getActivity()).isDesc;
         AsyncTaskTools.execute(new AnimeTask());
@@ -124,7 +127,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             isDesc = getArguments().getBoolean("isDesc");*/
         animes = new ArrayList<Anime>();
         fragmentName = getArguments().getString("fragmentName");
-
+        txtNoAnime = (TextView) rootView.findViewById(R.id.txtNoAnime);
         progressBarLoadMore = (ProgressBar)rootView.findViewById(R.id.progressBarLoadMore);
         gridView = (GridView)rootView.findViewById(R.id.gridView);
         gridView.setFastScrollEnabled(true);
@@ -230,19 +233,31 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     Toast.makeText(getActivity(), r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
                 } else {
                     if (loadmore) {
+
                         for (Anime anime : newAnimes) {
                             adapter.add(anime);
                         }
                         adapter.update();
                     } else {
-                        adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), animes);
-                        gridView.setAdapter(adapter);
-                    }
+                        adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), newAnimes);
+                    gridView.setAdapter(adapter);
+                }
 
 
                 }
                 isLoading = false;
                 progressBarLoadMore.setVisibility(View.GONE);
+
+                if(gridView.getAdapter().getCount() == 0)
+                {
+                    txtNoAnime.setVisibility(View.VISIBLE);
+                    gridView.setVisibility(View.GONE);
+                }
+                else
+                {
+                    txtNoAnime.setVisibility(View.GONE);
+                    gridView.setVisibility(View.VISIBLE);
+                }
             }
             catch(Exception e)//catch all exception... handle orientation change
             {

@@ -13,26 +13,26 @@ public final class R {
 		public static final int transparent = 0x7f09002d;
 	}
 	public static final class drawable {
-		public static final int ic_launcher = 0x7f0200b4;
-		public static final int mediacontroller_button = 0x7f0200c8;
-		public static final int mediacontroller_pause = 0x7f0200c9;
-		public static final int mediacontroller_play = 0x7f0200ca;
-		public static final int scrubber_control_disabled_holo = 0x7f0200e9;
-		public static final int scrubber_control_focused_holo = 0x7f0200ea;
-		public static final int scrubber_control_normal_holo = 0x7f0200eb;
-		public static final int scrubber_control_pressed_holo = 0x7f0200ec;
-		public static final int scrubber_control_selector_holo = 0x7f0200ed;
-		public static final int scrubber_primary_holo = 0x7f0200ee;
-		public static final int scrubber_progress_horizontal_holo_dark = 0x7f0200ef;
-		public static final int scrubber_secondary_holo = 0x7f0200f0;
-		public static final int scrubber_track_holo_dark = 0x7f0200f1;
+		public static final int ic_launcher = 0x7f0200b5;
+		public static final int mediacontroller_button = 0x7f0200c9;
+		public static final int mediacontroller_pause = 0x7f0200ca;
+		public static final int mediacontroller_play = 0x7f0200cb;
+		public static final int scrubber_control_disabled_holo = 0x7f0200ea;
+		public static final int scrubber_control_focused_holo = 0x7f0200eb;
+		public static final int scrubber_control_normal_holo = 0x7f0200ec;
+		public static final int scrubber_control_pressed_holo = 0x7f0200ed;
+		public static final int scrubber_control_selector_holo = 0x7f0200ee;
+		public static final int scrubber_primary_holo = 0x7f0200ef;
+		public static final int scrubber_progress_horizontal_holo_dark = 0x7f0200f0;
+		public static final int scrubber_secondary_holo = 0x7f0200f1;
+		public static final int scrubber_track_holo_dark = 0x7f0200f2;
 	}
 	public static final class id {
-		public static final int mediacontroller_file_name = 0x7f0a0092;
-		public static final int mediacontroller_play_pause = 0x7f0a008e;
-		public static final int mediacontroller_seekbar = 0x7f0a0091;
-		public static final int mediacontroller_time_current = 0x7f0a008f;
-		public static final int mediacontroller_time_total = 0x7f0a0090;
+		public static final int mediacontroller_file_name = 0x7f0a0094;
+		public static final int mediacontroller_play_pause = 0x7f0a0090;
+		public static final int mediacontroller_seekbar = 0x7f0a0093;
+		public static final int mediacontroller_time_current = 0x7f0a0091;
+		public static final int mediacontroller_time_total = 0x7f0a0092;
 	}
 	public static final class layout {
 		public static final int mediacontroller = 0x7f03002d;
@@ -45,15 +45,15 @@ public final class R {
 		public static final int VideoView_error_text_invalid_progressive_playback = 0x7f0d0001;
 		public static final int VideoView_error_text_unknown = 0x7f0d0002;
 		public static final int VideoView_error_title = 0x7f0d0003;
-		public static final int mediacontroller_play_pause = 0x7f0d007e;
-		public static final int permission_group_tools_description = 0x7f0d0094;
-		public static final int permission_group_tools_label = 0x7f0d0095;
-		public static final int permission_receive_messages_description = 0x7f0d0096;
-		public static final int permission_receive_messages_label = 0x7f0d0097;
-		public static final int permission_write_providers_description = 0x7f0d0098;
-		public static final int permission_write_providers_label = 0x7f0d0099;
-		public static final int vitamio_init_decoders = 0x7f0d00c4;
-		public static final int vitamio_library_app_name = 0x7f0d00c5;
+		public static final int mediacontroller_play_pause = 0x7f0d0082;
+		public static final int permission_group_tools_description = 0x7f0d009b;
+		public static final int permission_group_tools_label = 0x7f0d009c;
+		public static final int permission_receive_messages_description = 0x7f0d009d;
+		public static final int permission_receive_messages_label = 0x7f0d009e;
+		public static final int permission_write_providers_description = 0x7f0d009f;
+		public static final int permission_write_providers_label = 0x7f0d00a0;
+		public static final int vitamio_init_decoders = 0x7f0d00ce;
+		public static final int vitamio_library_app_name = 0x7f0d00cf;
 	}
 	public static final class style {
 		public static final int MediaController_SeekBar = 0x7f0e000a;

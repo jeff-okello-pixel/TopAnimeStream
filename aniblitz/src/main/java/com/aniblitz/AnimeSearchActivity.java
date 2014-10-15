@@ -1,5 +1,7 @@
 package com.aniblitz;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -76,7 +78,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.search, menu);
 		menuItem=menu.findItem(R.id.search_widget);
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 	    final SearchView searchView = (SearchView)MenuItemCompat.getActionView(menu.findItem(R.id.search_widget));
@@ -169,8 +171,12 @@ private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
 		private String URL;
 	    protected void onPreExecute()
 	    {
-            URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("FastSearch").formatJson().addParameter("query", "%27" + query + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
-			busyDialog = Utils.showBusyDialog("Searching...", AnimeSearchActivity.this);
+            try {
+                URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            busyDialog = Utils.showBusyDialog("Searching...", AnimeSearchActivity.this);
 			animes = new ArrayList<Anime>();
 			mItems = new ArrayList<String>();
 			listView.setAdapter(null);

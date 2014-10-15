@@ -90,7 +90,7 @@ public class VideoViewSubtitle extends Activity {
 
 
 		Bundle bundle = getIntent().getExtras();
-		path = bundle.getString("videoPath");
+		path = bundle.getString("VideoPath");
 		if(path == null)
 		{
 			Toast.makeText(this, "Could not find the video to play", Toast.LENGTH_LONG).show();

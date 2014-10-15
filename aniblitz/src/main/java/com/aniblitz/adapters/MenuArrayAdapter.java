@@ -52,6 +52,10 @@ public class MenuArrayAdapter extends ArrayAdapter<String> {
 		{
 			textViewIcon = re.getDrawable(R.drawable.ic_tools);
 		}
+        else if(values[position].equals(re.getString(R.string.menu_logout)))
+        {
+            textViewIcon = re.getDrawable(R.drawable.ic_action_logout);
+        }
 		textView.setCompoundDrawablesWithIntrinsicBounds(textViewIcon, null, null, null);
 		
 		convertView.setPadding(20, 20, 20, 20);

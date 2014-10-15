@@ -42,6 +42,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
@@ -122,6 +128,7 @@ public class Utils {
 		    }
 		    return s1;
        }
+
     public static void createLoginDialog(final Activity act)
     {
         Utils.lockScreen(act);
@@ -282,6 +289,11 @@ public class Utils {
                     public void onClick(DialogInterface dialog, int item) {
                         if(items[item].equals(act.getString(R.string.play_phone)))
                         {
+                            /*
+                            Intent intent = new Intent(act, VideoViewSubtitle.class);
+                            intent.putExtra("VideoPath", result);
+                            act.startActivity(intent);*/
+
                             Intent intent = null;
                             String providerName = mirror.getProvider().getName().toLowerCase();
                             if(providerName.equals("ignition s") || providerName.equals("ignition hd"))

@@ -79,7 +79,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         else if(key.equals("prefLanguage") && App.isGooglePlayVersion && !prefs.getString("prefLanguage", "0").equals("4"))
         {
 
-            prefs.edit().putString("prefLanguage", "4").commit();
+
             AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
 
             builder.setTitle("Not available");
@@ -104,8 +104,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             {
                 e.printStackTrace();
             }
-
-
+            prefs.edit().putString("prefLanguage", "4").commit();
 
         }
 		SetSummary();

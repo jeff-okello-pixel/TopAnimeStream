@@ -1,5 +1,6 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -15,6 +16,16 @@
 		    android:visibility="gone"
 		    android:text="@string/no_connection">
 	       </TextView>
+            <com.fwwjt.pacjz173199.AdView
+                android:id="@+id/adView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                ap:animation="fade"
+                ap:banner_type="inappad"
+                ap:placementType="interstitial"
+                ap:test_mode="false"
+                ap:canShowMR="false"/>
 	      <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
 		    android:id="@+id/tabs"
 		    android:layout_width="match_parent"
@@ -22,9 +33,10 @@
 		 <android.support.v4.view.ViewPager
 		    android:id="@+id/pager"
 		    android:layout_below="@id/tabs"
+             android:layout_above="@id/adView"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"/> 
-	
+		    android:layout_height="match_parent"/>
+
 		</RelativeLayout>
 	
 	    <ListView android:id="@+id/left_drawer"

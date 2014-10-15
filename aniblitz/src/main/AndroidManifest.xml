@@ -88,6 +88,10 @@
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
+            android:name="com.aniblitz.VideoViewSubtitle"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:label="Video view" />
+        <activity
             android:name="com.google.sample.castcompanionlibrary.cast.player.VideoCastControllerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -106,8 +110,20 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" >
+        </activity>
+        <meta-data android:name="com.fwwjt.pacjz173199.APPID" android:value="242590" />
+        <meta-data android:name="com.fwwjt.pacjz173199.APIKEY" android:value="android*1389654828173199709"/>
+        <activity android:exported="false" android:name="com.fwwjt.pacjz173199.MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity android:name="com.fwwjt.pacjz173199.BrowserActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name="com.fwwjt.pacjz173199.VDActivity"
+            android:configChanges="orientation|screenSize" android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
     </application>
 

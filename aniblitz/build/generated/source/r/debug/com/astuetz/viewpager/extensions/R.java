@@ -8,17 +8,17 @@ package com.astuetz.viewpager.extensions;
 
 public final class R {
 	public static final class attr {
-		public static final int dividerColor = 0x7f010078;
-		public static final int dividerPaddingTab = 0x7f01007b;
-		public static final int indicatorColor = 0x7f010076;
-		public static final int indicatorHeight = 0x7f010079;
-		public static final int scrollOffset = 0x7f01007d;
-		public static final int shouldExpand = 0x7f01007f;
-		public static final int tabBackground = 0x7f01007e;
-		public static final int tabPaddingLeftRight = 0x7f01007c;
-		public static final int textAllCapsTab = 0x7f010080;
-		public static final int underlineColor = 0x7f010077;
-		public static final int underlineHeight = 0x7f01007a;
+		public static final int dividerColor = 0x7f01007d;
+		public static final int dividerPaddingTab = 0x7f010080;
+		public static final int indicatorColor = 0x7f01007b;
+		public static final int indicatorHeight = 0x7f01007e;
+		public static final int scrollOffset = 0x7f010082;
+		public static final int shouldExpand = 0x7f010084;
+		public static final int tabBackground = 0x7f010083;
+		public static final int tabPaddingLeftRight = 0x7f010081;
+		public static final int textAllCapsTab = 0x7f010085;
+		public static final int underlineColor = 0x7f01007c;
+		public static final int underlineHeight = 0x7f01007f;
 	}
 	public static final class color {
 		public static final int background_tab_pressed = 0x7f090003;
@@ -39,7 +39,7 @@ public final class R {
 		public static final int background_tab_red = 0x7f020066;
 	}
 	public static final class styleable {
-		public static final int[] PagerSlidingTabStrip = { 0x7f010076, 0x7f010077, 0x7f010078, 0x7f010079, 0x7f01007a, 0x7f01007b, 0x7f01007c, 0x7f01007d, 0x7f01007e, 0x7f01007f, 0x7f010080 };
+		public static final int[] PagerSlidingTabStrip = { 0x7f01007b, 0x7f01007c, 0x7f01007d, 0x7f01007e, 0x7f01007f, 0x7f010080, 0x7f010081, 0x7f010082, 0x7f010083, 0x7f010084, 0x7f010085 };
 		public static final int PagerSlidingTabStrip_dividerColor = 2;
 		public static final int PagerSlidingTabStrip_dividerPaddingTab = 5;
 		public static final int PagerSlidingTabStrip_indicatorColor = 0;
