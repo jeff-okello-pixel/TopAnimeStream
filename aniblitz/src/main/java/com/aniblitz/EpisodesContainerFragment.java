@@ -150,7 +150,7 @@ public class EpisodesContainerFragment extends Fragment{
                         case 0:
                             if(!anime.isMovie()) {
                                 if(subbedEpisodeFragment == null)
-                                    subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null));
+                                    subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
                                 return subbedEpisodeFragment;
                             }
                             else
@@ -173,7 +173,7 @@ public class EpisodesContainerFragment extends Fragment{
                         case 1:
                             if(!anime.isMovie()) {
                                 if(dubbedEpisodeFragment == null)
-                                    dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null));
+                                    dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null),anime.getGenresFormatted(),String.valueOf(anime.getRating()));
                                 return dubbedEpisodeFragment;
                             }
                             else

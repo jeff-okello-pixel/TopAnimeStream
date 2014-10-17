@@ -68,7 +68,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
 
-        Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/playtime.ttf");
+        Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
         txtTitle.setTypeface(typeFace);
     }
 
@@ -156,6 +156,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("username", userName);
             request.addProperty("password", password);
+            request.addProperty("application", "Android");
 
 
             envelope .dotNet = true;

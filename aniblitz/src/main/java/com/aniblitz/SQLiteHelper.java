@@ -14,7 +14,7 @@ import com.aniblitz.models.Episode;
 import com.aniblitz.models.Genre;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "AnimeDB";
 
     private static final String TABLE_FAVORITES = "favorites";
@@ -80,6 +80,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WATCHED);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FLAGS);
         this.onCreate(db);
     }
     public void setPro(boolean pro)

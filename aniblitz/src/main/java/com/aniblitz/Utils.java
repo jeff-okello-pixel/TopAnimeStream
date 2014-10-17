@@ -580,7 +580,8 @@ public class Utils {
     	    try {
     	        URL url = new URL(urlString);
     	        URLConnection conn = url.openConnection();
-    	        //conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                if(App.accessToken != null && !App.accessToken.equals(""))
+    	            conn.setRequestProperty("Authentication", App.accessToken);
     	        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
     	        StringBuffer buffer = new StringBuffer();
     	        int read;

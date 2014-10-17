@@ -41,9 +41,11 @@ public class EpisodeListAdapter extends BaseAdapter{
 	private String animeDescription;
 	private String animePoster;
     private String animeBackdrop;
+    private String animeGenres;
+    private String animeRating;
 	App app;
 	
-	public EpisodeListAdapter(Context context, ArrayList<Episode> values, String animeName, String animeDescription, String animePoster, String animeBackdrop) {
+	public EpisodeListAdapter(Context context, ArrayList<Episode> values, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
 		this.context = context;
 		this.values = values;
 		this.re = this.context.getResources();
@@ -55,6 +57,8 @@ public class EpisodeListAdapter extends BaseAdapter{
 		this.animeDescription = animeDescription;
 		this.animePoster = animePoster;
         this.animeBackdrop = animeBackdrop;
+        this.animeGenres = animeGenres;
+        this.animeRating = animeRating;
 	}
 	public void update()
 	{
@@ -132,7 +136,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 				}
 				else
 				{
-					sqlite.addWatched(episode.getAnimeId(), animeName, animePoster, animeDescription, episode.getEpisodeId(), episode.getEpisodeNumber(), animeBackdrop, Integer.valueOf(prefs.getString("prefLanguage", "1")));
+					sqlite.addWatched(episode.getAnimeId(), animeName, animePoster, animeDescription, episode.getEpisodeId(), episode.getEpisodeNumber(), animeBackdrop, animeGenres, animeRating, Integer.valueOf(prefs.getString("prefLanguage", "1")));
 					v.setBackgroundColor(Color.parseColor("#D9245169"));
 					imgView.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
 				}

@@ -71,11 +71,13 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 	private String animePoster;
 	private String animeDescription;
     private String animeBackdrop;
+    private String animeGenres;
+    private String animeRating;
 	public EpisodeListFragment()
 	{
 
 	}
-	public static EpisodeListFragment newInstance(String fragmentName, int animeId, String animeName, String animeDescription, String animePoster, String animeBackdrop) {
+	public static EpisodeListFragment newInstance(String fragmentName, int animeId, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
 		EpisodeListFragment ttFrag = new EpisodeListFragment();
 	    Bundle args = new Bundle();
 	    args.putString("fragmentName", fragmentName);
@@ -84,6 +86,8 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         args.putString("animeDescription", animeDescription);
         args.putString("animePoster", animePoster);
         args.putString("animeBackdrop", animeBackdrop);
+        args.putString("animeGenres", animeGenres);
+        args.putString("animeRating", animeRating);
 	    ttFrag.setArguments(args);
 	    return ttFrag;
 	}
@@ -132,6 +136,8 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         animeName = bundle.getString("animeName");
         animePoster = bundle.getString("animePoster");
         animeBackdrop = bundle.getString("animeBackdrop");
+        animeGenres = bundle.getString("animeGenres");
+        animeRating = bundle.getString("animeRating");
 
         txtNoEpisode = (TextView)rootView.findViewById(R.id.txtNoEpisode);
 		listView = (ListView)rootView.findViewById(R.id.listView);
@@ -146,7 +152,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 			  this.animePoster = savedInstanceState.getString("animePoster");
               this.animeBackdrop = savedInstanceState.getString("animeBackdrop");
               if(episodes != null && episodes.size() > 0)
-			    listView.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop));
+			    listView.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating));
               else
               {
                   listView.setVisibility(View.GONE);
@@ -180,7 +186,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             txtNoEpisode.setVisibility(View.GONE);
         }
 
-        listView.setAdapter(new EpisodeListAdapter(getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop));
+        listView.setAdapter(new EpisodeListAdapter(getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating));
     }
 
 

@@ -45,15 +45,15 @@ public final class R {
 		public static final int VideoView_error_text_invalid_progressive_playback = 0x7f0d0001;
 		public static final int VideoView_error_text_unknown = 0x7f0d0002;
 		public static final int VideoView_error_title = 0x7f0d0003;
-		public static final int mediacontroller_play_pause = 0x7f0d0082;
-		public static final int permission_group_tools_description = 0x7f0d009b;
-		public static final int permission_group_tools_label = 0x7f0d009c;
-		public static final int permission_receive_messages_description = 0x7f0d009d;
-		public static final int permission_receive_messages_label = 0x7f0d009e;
-		public static final int permission_write_providers_description = 0x7f0d009f;
-		public static final int permission_write_providers_label = 0x7f0d00a0;
-		public static final int vitamio_init_decoders = 0x7f0d00ce;
-		public static final int vitamio_library_app_name = 0x7f0d00cf;
+		public static final int mediacontroller_play_pause = 0x7f0d0084;
+		public static final int permission_group_tools_description = 0x7f0d009e;
+		public static final int permission_group_tools_label = 0x7f0d009f;
+		public static final int permission_receive_messages_description = 0x7f0d00a0;
+		public static final int permission_receive_messages_label = 0x7f0d00a1;
+		public static final int permission_write_providers_description = 0x7f0d00a2;
+		public static final int permission_write_providers_label = 0x7f0d00a3;
+		public static final int vitamio_init_decoders = 0x7f0d00d1;
+		public static final int vitamio_library_app_name = 0x7f0d00d2;
 	}
 	public static final class style {
 		public static final int MediaController_SeekBar = 0x7f0e000a;
