@@ -14,7 +14,7 @@ import com.aniblitz.models.Episode;
 import com.aniblitz.models.Genre;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "AnimeDB";
 
     private static final String TABLE_FAVORITES = "favorites";
@@ -38,7 +38,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_LANGUAGEID = "languageId";
     
     private static final String[] FAVORITES_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_GENRES, KEY_RATING, KEY_BACKDROP, KEY_LANGUAGEID};
-    private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_BACKDROP, KEY_LANGUAGEID};
+    private static final String[] WATCHED_COLUMNS = {KEY_ANIMEID, KEY_NAME, KEY_POSTER, KEY_DESCRIPTION, KEY_EPISODEID, KEY_EPISODENUMBER, KEY_BACKDROP, KEY_GENRES, KEY_RATING, KEY_LANGUAGEID};
     private static final String[] FLAGS_COLUMNS = {KEY_ISPRO, KEY_ISFIRSTTIME};
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION); 
@@ -65,6 +65,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		KEY_EPISODEID + " TEXT, " +
         		KEY_EPISODENUMBER + " TEXT, " +
                 KEY_BACKDROP + " TEXT, " +
+                KEY_GENRES + " TEXT, " +
+                KEY_RATING + " TEXT, " +
         		KEY_LANGUAGEID + " TEXT)";
         db.execSQL(CREATE_WATCHED_TABLE);
 
@@ -220,7 +222,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return false;
     }
     
-    public void addWatched(int animeId, String name, String poster, String description, int episodeId, String episodeNumber, String backdrop, int languageId){
+    public void addWatched(int animeId, String name, String poster, String description, int episodeId, String episodeNumber, String backdrop, String genres, String rating, int languageId){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_ANIMEID, String.valueOf(animeId));
@@ -231,6 +233,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_EPISODENUMBER, episodeNumber);
         values.put(KEY_EPISODENUMBER, episodeNumber);
         values.put(KEY_BACKDROP, backdrop);
+        values.put(KEY_GENRES, genres);
+        values.put(KEY_RATING, rating);
         values.put(KEY_LANGUAGEID, String.valueOf(languageId));
         db.insert(TABLE_WATCHED,
                 null, //nullColumnHack
@@ -270,7 +274,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		anime.setAnimeId(Integer.valueOf(cursor.getString(0)));
         		anime.setName(cursor.getString(1));
         		anime.setPosterPath(cursor.getString(2));
-        		anime.setDescription(cursor.getString(3));
+                ArrayList<AnimeInformation> animeInfos = new ArrayList<AnimeInformation>();
+                animeInfos.add(new AnimeInformation(Integer.valueOf(languageId), cursor.getString(3)));
+                anime.setAnimeInformations(animeInfos);
         		Episode episode = new Episode();
         		episode.setEpisodeId(Integer.valueOf(cursor.getString(4)));
         		episode.setEpisodeNumber(cursor.getString(5));
@@ -278,6 +284,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		episodes.add(episode);
         		anime.setEpisodes(episodes);
                 anime.setBackdropPath(cursor.getString(6));
+                ArrayList<Genre> genres = new ArrayList<Genre>();
+                String[] genreArray = cursor.getString(7).split(", ");
+                for(String genreStr:genreArray)
+                {
+                    Genre genre = new Genre();
+                    genre.setName(genreStr);
+                    genres.add(genre);
+                }
+                anime.setGenres(genres);
+                anime.setRating(Double.valueOf(cursor.getString(8)));
         		animes.add(anime);
         		cursor.moveToNext();
         	}
