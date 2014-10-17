@@ -82,9 +82,9 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 
             AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
 
-            builder.setTitle("Not available");
-            builder.setMessage("You can't change the language of the animes in this version. Please download the full version on www.aniblitz.com to get access to all languages (English, Français, Español)");
-            builder.setPositiveButton("Go to aniblitz.com", new DialogInterface.OnClickListener() {
+            builder.setTitle(getString(R.string.not_available));
+            builder.setMessage(getString(R.string.download_full_version));
+            builder.setPositiveButton(getString(R.string.goto_aniblitz), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);

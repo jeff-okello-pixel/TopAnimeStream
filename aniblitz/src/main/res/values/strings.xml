@@ -114,5 +114,8 @@
     <string name="remind_me_later">Remind me later</string>
     <string name="no_thanks">No, thanks</string>
     <string name="no_anime">No anime in this tab</string>
+    <string name="not_available">Not available</string>
+    <string name="download_full_version">You can\'t change the language of the animes in this version. Please download the full version on www.aniblitz.com to get access to all languages (English, Français, Español)</string>
+    <string name="goto_aniblitz">Go to aniblitz.com</string>
 
 </resources>
