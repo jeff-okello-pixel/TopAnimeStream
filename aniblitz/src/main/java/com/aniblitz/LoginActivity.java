@@ -3,6 +3,7 @@ package com.aniblitz;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aniblitz.models.Episode;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
     private Button btnLogin;
     private Button btnRegister;
+    private TextView txtTitle;
     private EditText txtUserName;
     private EditText txtPassword;
     private LinearLayout layContent;
@@ -60,9 +63,13 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         btnRegister = (Button) findViewById(R.id.btnRegister);
         txtUserName = (EditText) findViewById(R.id.txtUsername);
         txtPassword = (EditText) findViewById(R.id.txtPassword);
+        txtTitle = (TextView) findViewById(R.id.txtTitle);
         layContent = (LinearLayout) findViewById(R.id.layContent);
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
+
+        Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/playtime.ttf");
+        txtTitle.setTypeface(typeFace);
     }
 
 
