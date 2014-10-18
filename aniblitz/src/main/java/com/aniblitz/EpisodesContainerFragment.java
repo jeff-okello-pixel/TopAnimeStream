@@ -51,6 +51,8 @@ public class EpisodesContainerFragment extends Fragment{
 	private Resources r;
     private Anime anime;
     private ArrayList<Episode> episodes;
+    private boolean subbed;
+    private boolean dubbed;
 	App app;
 	public Dialog busyDialog;
 	private SharedPreferences prefs;
@@ -97,42 +99,25 @@ public class EpisodesContainerFragment extends Fragment{
             rootView.setLayoutParams(params);
         }
         r = getResources();
-		tabTitles = new String[] {r.getString(R.string.tab_subbed), r.getString(R.string.tab_dubbed)};
-		viewPager = (ViewPager)rootView.findViewById(R.id.pager);
-		mAdapter = new PagerAdapter(getChildFragmentManager());
-		viewPager.setAdapter(mAdapter);
-		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
-		tabs.setViewPager(viewPager);
-		tabs.setDividerColor(r.getColor(R.color.blueTab));
-		tabs.setUnderlineColor(r.getColor(R.color.blueTab));
-		//tabs.setTextColor(Color.parseColor("#55a73d"));
-		tabs.setIndicatorColor(r.getColor(R.color.blueTab));
-		tabs.setTabBackground("background_tab_darkblue");
-		tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			 
-		    @Override
-		    public void onPageSelected(int position) {
-
-		    }
-		 
-		    @Override
-		    public void onPageScrolled(int arg0, float arg1, int arg2) {
-		    }
-		 
-		    @Override
-		    public void onPageScrollStateChanged(int arg0) {
-		    }
-		});
+        viewPager = (ViewPager)rootView.findViewById(R.id.pager);
+        tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
 
         if(!anime.isMovie() && savedInstanceState == null)
             AsyncTaskTools.execute(new EpisodesTask());
+
+        if(savedInstanceState != null)
+        {
+            subbed = savedInstanceState.getBoolean("subbed");
+            dubbed = savedInstanceState.getBoolean("dubbed");
+            createViewPager();
+        }
         return rootView;
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("subbed", subbed);
+        outState.putBoolean("dubbed", dubbed);
         super.onSaveInstanceState(outState);
-
 
     }
 
@@ -140,57 +125,25 @@ public class EpisodesContainerFragment extends Fragment{
 		    public PagerAdapter(FragmentManager fm) {
 		        super(fm);
 		    }
-	
+
 		    @Override
 		    public Fragment getItem(int index) {
-                    String language = prefs.getString("prefLanguage", "1");
+
                     switch(index)
                     {
                         //Subbed
                         case 0:
-                            if(!anime.isMovie()) {
-                                if(subbedEpisodeFragment == null)
-                                    subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
-                                return subbedEpisodeFragment;
+                            if(subbedEpisodes != null && subbedEpisodes.size() > 0)
+                            {
+                                return getSubbedPagerFragment();
                             }
                             else
                             {
-                                for(AnimeSource animeSource: anime.getAnimeSources())
-                                {
-                                    if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
-                                    {
-                                        if(subbedProviderFragment == null)
-                                            subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Subbed", anime);
-                                        return subbedProviderFragment;
-                                    }
-                                }
-                                if(subbedProviderFragment == null)
-                                    subbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Subbed", anime);
-                                return subbedProviderFragment;
-
+                                return getDubbedPagerFragment();
                             }
                         //Dubbed
                         case 1:
-                            if(!anime.isMovie()) {
-                                if(dubbedEpisodeFragment == null)
-                                    dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null),anime.getGenresFormatted(),String.valueOf(anime.getRating()));
-                                return dubbedEpisodeFragment;
-                            }
-                            else
-                            {
-                                for(AnimeSource animeSource: anime.getAnimeSources())
-                                {
-                                    if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
-                                    {
-                                        if(dubbedProviderFragment == null)
-                                            dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Dubbed", anime);
-                                        return dubbedProviderFragment;
-                                    }
-                                }
-                                if(dubbedProviderFragment == null)
-                                    dubbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Dubbed", anime);
-                                return dubbedProviderFragment;
-                            }
+                            return getDubbedPagerFragment();
 	
 		    	}
 		    	return null;
@@ -209,7 +162,55 @@ public class EpisodesContainerFragment extends Fragment{
     public interface ProviderFragmentCoordinator {
         void onEpisodeSelected(Episode episode, String type);
     }
+    private Fragment getSubbedPagerFragment()
+    {
+        String language = prefs.getString("prefLanguage", "1");
+        if(!anime.isMovie()) {
+            if(subbedEpisodeFragment == null)
+                subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
+            return subbedEpisodeFragment;
+        }
+        else
+        {
+            for(AnimeSource animeSource: anime.getAnimeSources())
+            {
+                if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
+                {
+                    if(subbedProviderFragment == null)
+                        subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Subbed", anime);
+                    return subbedProviderFragment;
+                }
+            }
+            if(subbedProviderFragment == null)
+                subbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Subbed", anime);
+            return subbedProviderFragment;
 
+        }
+    }
+    private Fragment getDubbedPagerFragment()
+    {
+        String language = prefs.getString("prefLanguage", "1");
+        if(!anime.isMovie()) {
+            if(dubbedEpisodeFragment == null)
+                dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null),anime.getGenresFormatted(),String.valueOf(anime.getRating()));
+            return dubbedEpisodeFragment;
+        }
+        else
+        {
+            for(AnimeSource animeSource: anime.getAnimeSources())
+            {
+                if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
+                {
+                    if(dubbedProviderFragment == null)
+                        dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Dubbed", anime);
+                    return dubbedProviderFragment;
+                }
+            }
+            if(dubbedProviderFragment == null)
+                dubbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Dubbed", anime);
+            return dubbedProviderFragment;
+        }
+    }
     private class EpisodesTask extends AsyncTask<Void, Void, String> {
 
         public EpisodesTask()
@@ -277,20 +278,61 @@ public class EpisodesContainerFragment extends Fragment{
                             }
 
                         }
+                    }
+                    subbed = subbedEpisodes.size() > 0;
+                    dubbed = dubbedEpisodes.size() > 0;
+                    createViewPager();
+
+                    if(subbedEpisodeFragment != null)
                         subbedEpisodeFragment.setEpisodes(subbedEpisodes);
+                    if(dubbedEpisodeFragment != null)
                         dubbedEpisodeFragment.setEpisodes(dubbedEpisodes);
 
-
-                    }
                 }
-                Utils.dismissBusyDialog(busyDialog);
             }catch(Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
             }
-
+            Utils.dismissBusyDialog(busyDialog);
 
         }
 
+    }
+    private void createViewPager()
+    {
+        tabTitles = new String[] {r.getString(R.string.tab_subbed), r.getString(R.string.tab_dubbed)};
+        if(!dubbed)
+        {
+            tabTitles = new String[]{getString(R.string.tab_subbed)};
+        }
+        else if(!subbed)
+        {
+            tabTitles = new String[]{getString(R.string.tab_dubbed)};
+        }
+
+        mAdapter = new PagerAdapter(getChildFragmentManager());
+        viewPager.setAdapter(mAdapter);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        tabs.setViewPager(viewPager);
+        tabs.setDividerColor(r.getColor(R.color.blueTab));
+        tabs.setUnderlineColor(r.getColor(R.color.blueTab));
+        //tabs.setTextColor(Color.parseColor("#55a73d"));
+        tabs.setIndicatorColor(r.getColor(R.color.blueTab));
+        tabs.setTabBackground("background_tab_darkblue");
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
     }
 }
