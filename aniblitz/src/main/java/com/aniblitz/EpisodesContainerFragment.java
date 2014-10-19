@@ -51,8 +51,8 @@ public class EpisodesContainerFragment extends Fragment{
 	private Resources r;
     private Anime anime;
     private ArrayList<Episode> episodes;
-    private boolean subbed;
-    private boolean dubbed;
+    private boolean subbed = false;
+    private boolean dubbed = false;
 	App app;
 	public Dialog busyDialog;
 	private SharedPreferences prefs;
@@ -111,6 +111,22 @@ public class EpisodesContainerFragment extends Fragment{
             dubbed = savedInstanceState.getBoolean("dubbed");
             createViewPager();
         }
+        else if(anime.isMovie())
+        {
+            String language = prefs.getString("prefLanguage", "1");
+            for(AnimeSource animeSource: anime.getAnimeSources())
+            {
+                if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
+                {
+                    subbed = true;
+                }
+                else if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
+                {
+                    dubbed = true;
+                }
+            }
+            createViewPager();
+        }
         return rootView;
     }
     @Override
@@ -133,7 +149,7 @@ public class EpisodesContainerFragment extends Fragment{
                     {
                         //Subbed
                         case 0:
-                            if(subbedEpisodes != null && subbedEpisodes.size() > 0)
+                            if(subbed)
                             {
                                 return getSubbedPagerFragment();
                             }
