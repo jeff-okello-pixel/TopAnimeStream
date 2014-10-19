@@ -234,7 +234,7 @@ public class EpisodesContainerFragment extends Fragment{
 
         }
 
-        private final String URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").formatJson().build();
+        private final String URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations,vks").formatJson().build();
 
         @Override
         protected void onPreExecute()
