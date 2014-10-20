@@ -52,6 +52,14 @@ public class Vk implements Parcelable {
         AddedDate = addedDate;
     }
 
+    public AnimeSource getAnimeSource() {
+        return AnimeSource;
+    }
+
+    public void setAnimeSource(AnimeSource animeSource) {
+        AnimeSource = animeSource;
+    }
+
     public int getVkId() {
         return VkId;
     }

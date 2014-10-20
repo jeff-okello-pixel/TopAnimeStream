@@ -12,8 +12,11 @@ import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
+import com.aniblitz.models.Vk;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -44,8 +47,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	private SharedPreferences prefs;
 	private SQLiteHelper db;
     private EpisodesContainerFragment episodeContainerFragment;
+    private MovieVkFragment movieVkFragment;
+    private AlertDialog qualityDialog;
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
@@ -76,12 +81,26 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
 
         FragmentManager fm = getSupportFragmentManager();
-        episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
-        if(episodeContainerFragment == null) {
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
-            ft.commit();
+        if(!App.isVkOnly || !anime.isMovie())
+        {
+            episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
+            if(episodeContainerFragment == null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+                ft.commit();
+            }
         }
+        else
+        {
+            movieVkFragment = (MovieVkFragment)fm.findFragmentByTag("movieVkFragment");
+            if(movieVkFragment == null)
+            {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(layAnimeDetails.getId(), MovieVkFragment.newInstance(anime), "movieVkFragment");
+                ft.commit();
+            }
+        }
+
         AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment)fm.findFragmentById(R.id.animeDetailsFragment);
         if(animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
@@ -139,16 +158,42 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 
 	@Override
-	public void onEpisodeSelected(Episode episode, String type) {
-			Intent intent = new Intent(this, EpisodeDetailsActivity.class);
-
+	public void onEpisodeSelected(final Episode episode, String type) {
+        if(!App.isVkOnly) {
+            Intent intent = new Intent(this, EpisodeDetailsActivity.class);
             intent.putExtra("Episode", episode);
             intent.putExtra("Type", type);
             //bug when episode + anime in the same bundle... still don't know why
             Bundle hackBundle = new Bundle();
             hackBundle.putParcelable("Anime", anime);
             intent.putExtra("hackBundle", hackBundle);
-			startActivity(intent);
+            startActivity(intent);
+        }
+        else //we play the video, since we only have vks provider with only 1 link.
+        {
+            boolean isSubbed = type.equals("Subbed") ? true : false;
+            String language = prefs.getString("prefLanguage", "1");
+            for(final Vk vk: episode.getVks())
+            {
+                if(vk.getAnimeSource().isSubbed() == isSubbed && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(language))
+                {
+                    final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+
+                    final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+                    alertBuilder.setTitle(getString(R.string.choose_quality));
+                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
+                            Mirror mirror = new Mirror(vk);
+                            (new Utils.GetMp4(mirror, AnimeDetailsActivity.this, anime, episode, items[item].toString())).execute();
+                        }
+                    });
+
+                    qualityDialog = alertBuilder.create();
+                    qualityDialog.show();
+                }
+                break;
+            }
+        }
 	}
 
 

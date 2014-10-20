@@ -21,18 +21,26 @@ public class Episode implements Parcelable {
 	private String EpisodeName;
 	private String AiredDate;
 	private ArrayList<Mirror> Mirrors;
+    private ArrayList<Vk> Vks;
 	private EpisodeInformations EpisodeInformations;
 	private String Screenshot;
 	public Episode() {
 		super();
 	}
     public Episode(Parcel in) {
-		Parcelable[] parcelableArray = in.readParcelableArray(Mirror.class.getClassLoader());
-		Mirror[] resultArray = null;
-		if (parcelableArray != null)
+        Parcelable[] parcelableVkArray = in.readParcelableArray(Vk.class.getClassLoader());
+        Vk[] resultVkArray = null;
+        if (parcelableVkArray != null)
+        {
+            resultVkArray = Arrays.copyOf(parcelableVkArray, parcelableVkArray.length, Vk[].class);
+            Vks = new ArrayList<Vk>(Arrays.asList(resultVkArray));
+        }
+		Parcelable[] parcelableMirrorArray = in.readParcelableArray(Mirror.class.getClassLoader());
+		Mirror[] resultMirrorArray = null;
+		if (parcelableMirrorArray != null)
 		{
-			resultArray = Arrays.copyOf(parcelableArray, parcelableArray.length, Mirror[].class);
-			Mirrors = new ArrayList<Mirror>(Arrays.asList(resultArray));
+            resultMirrorArray = Arrays.copyOf(parcelableMirrorArray, parcelableMirrorArray.length, Mirror[].class);
+			Mirrors = new ArrayList<Mirror>(Arrays.asList(resultMirrorArray));
 		}
 		EpisodeInformations = (EpisodeInformations) in.readParcelable(EpisodeInformations.class.getClassLoader());
     	AnimeId = in.readInt();
@@ -46,6 +54,7 @@ public class Episode implements Parcelable {
 	{
 		JSONArray episodeInfoArray = new JSONArray();
 		JSONArray episodeMirrors = new JSONArray();
+        JSONArray vkArray = new JSONArray();
 		try
 		{
 			this.setEpisodeNumber(!jsonEpisode.isNull("EpisodeNumber") ? jsonEpisode.getString("EpisodeNumber") : "0");
@@ -54,6 +63,7 @@ public class Episode implements Parcelable {
 			this.setAiredDate(!jsonEpisode.isNull("AiredDate") ? jsonEpisode.getString("AiredDate") : null);
 			this.setScreenshot(!jsonEpisode.isNull("Screenshot") ? jsonEpisode.getString("Screenshot") : null);
 			episodeMirrors = !jsonEpisode.isNull("Mirrors") ? jsonEpisode.getJSONArray("Mirrors") : null;
+            vkArray = !jsonEpisode.isNull("vks") ? jsonEpisode.getJSONArray("vks") : null;
 			this.Mirrors = new ArrayList<Mirror>();
 			if(episodeMirrors != null)
 			{
@@ -62,6 +72,14 @@ public class Episode implements Parcelable {
 					this.Mirrors.add(new Mirror(episodeMirrors.getJSONObject(i)));
 				}
 			}
+            this.Vks = new ArrayList<Vk>();
+            if(vkArray != null)
+            {
+                for(int i =0; i<vkArray.length(); i++)
+                {
+                    this.Vks.add(new Vk(vkArray.getJSONObject(i)));
+                }
+            }
 			episodeInfoArray = !jsonEpisode.isNull("EpisodeInformations") ? jsonEpisode.getJSONArray("EpisodeInformations") : null;
 			if(episodeInfoArray != null)
 			{
@@ -103,7 +121,16 @@ public class Episode implements Parcelable {
 	public void setEpisodeInformations(EpisodeInformations episodeInformations) {
 		EpisodeInformations = episodeInformations;
 	}
-	public ArrayList<Mirror> getMirrors() {
+
+    public ArrayList<Vk> getVks() {
+        return Vks;
+    }
+
+    public void setVks(ArrayList<Vk> vks) {
+        Vks = vks;
+    }
+
+    public ArrayList<Mirror> getMirrors() {
 		return Mirrors;
 	}
 	public void setMirrors(ArrayList<Mirror> mirrors) {
@@ -141,15 +168,18 @@ public class Episode implements Parcelable {
 	}
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+        if(Vks == null)
+            Vks = new ArrayList<Vk>();
 		if(Mirrors == null)
 			Mirrors = new ArrayList<Mirror>();
-        Parcelable[] parcelableArray = new Parcelable[Mirrors.size()];
-        dest.writeParcelableArray(Mirrors.toArray(parcelableArray),flags);
+        Parcelable[] parcelableVkArray = new Parcelable[Vks.size()];
+        dest.writeParcelableArray(Vks.toArray(parcelableVkArray),flags);
+        Parcelable[] parcelableMirrorArray = new Parcelable[Mirrors.size()];
+        dest.writeParcelableArray(Mirrors.toArray(parcelableMirrorArray),flags);
         dest.writeParcelable(EpisodeInformations, flags);
         dest.writeInt(AnimeId);
         dest.writeInt(EpisodeId);

@@ -96,6 +96,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         bundle.putParcelable("Anime", anime);
         intent.putExtras(bundle);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.exit, R.anim.enter);
 		
 	}
     @Override

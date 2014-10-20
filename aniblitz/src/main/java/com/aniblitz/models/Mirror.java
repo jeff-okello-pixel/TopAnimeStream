@@ -26,6 +26,15 @@ public class Mirror implements Parcelable {
 		AddedDate = addedDate;
 		this.source = source;
 	}
+    public Mirror(Vk vk)
+    {
+        this.EpisodeId = vk.getEpisodeId();
+        this.AnimeSourceId = vk.getAnimeSourceId();
+        this.AddedDate = vk.getAddedDate();
+        this.source = vk.getSource();
+        this.AnimeSource = vk.getAnimeSource();
+        this.provider = new Provider(70, "vk");
+    }
 	public Mirror(JSONObject jsonMirror)
 	{
 		try

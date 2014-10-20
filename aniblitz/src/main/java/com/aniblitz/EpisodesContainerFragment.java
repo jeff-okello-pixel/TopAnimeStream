@@ -27,6 +27,7 @@ import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Provider;
+import com.aniblitz.models.Vk;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
 import org.json.JSONArray;
@@ -234,12 +235,15 @@ public class EpisodesContainerFragment extends Fragment{
 
         }
 
-        private final String URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations,vks").formatJson().build();
-
+        private String URL;
         @Override
         protected void onPreExecute()
         {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
+            if(!App.isVkOnly)
+                URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").formatJson().build();
+            else
+                URL = new WcfDataServiceUtility("http://lanbox.ca/AnimeServices/AnimeDataService.svc/").getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20vks/any(vk:vk/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("EpisodeInformations,vks/AnimeSource").formatJson().build();
             episodes = new ArrayList<Episode>();
             subbedEpisodes = new ArrayList<Episode>();
             dubbedEpisodes = new ArrayList<Episode>();
@@ -283,13 +287,27 @@ public class EpisodesContainerFragment extends Fragment{
                     if (episodes != null && episodes.size() > 0) {
 
                         for (Episode episode : episodes) {
-                            for (Mirror mirror : episode.getMirrors()) {
-                                if (!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                                    dubbedEpisodes.add(episode);
-                                    break;
-                                } else if (mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                                    subbedEpisodes.add(episode);
-                                    break;
+                            if(!App.isVkOnly) {
+                                for (Mirror mirror : episode.getMirrors()) {
+                                    if (!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                                        dubbedEpisodes.add(episode);
+                                        break;
+                                    } else if (mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                                        subbedEpisodes.add(episode);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (Vk vk : episode.getVks()) {
+                                    if (!vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                                        dubbedEpisodes.add(episode);
+                                        break;
+                                    } else if (vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                                        subbedEpisodes.add(episode);
+                                        break;
+                                    }
                                 }
                             }
 
