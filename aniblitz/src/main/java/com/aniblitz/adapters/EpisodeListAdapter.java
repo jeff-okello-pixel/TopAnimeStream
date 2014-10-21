@@ -7,6 +7,7 @@ import com.aniblitz.R;
 import com.aniblitz.SQLiteHelper;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
+import com.aniblitz.models.EpisodeInformations;
 
 import android.app.Activity;
 import android.content.Context;
@@ -85,7 +86,16 @@ public class EpisodeListAdapter extends BaseAdapter{
             holder = (ViewHolder) vi.getTag();
         }
 		holder.imgWatched.setOnClickListener(new imageViewClickListener(position,holder.imgWatched));
-		holder.txtEpisodeNumber.setText(re.getString(R.string.episode) + episode.getEpisodeNumber());
+        String episodeName = re.getString(R.string.episode) + episode.getEpisodeNumber();
+        EpisodeInformations episodeInfo = episode.getEpisodeInformations();
+        if(episodeInfo != null)
+        {
+            if(episodeInfo.getEpisodeName() != null && !episodeInfo.getEpisodeName().equals(""))
+            {
+                episodeName = episodeInfo.getEpisodeName();
+            }
+        }
+        holder.txtEpisodeNumber.setText(episodeName);
 		if(sqlite.isWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1")))
 		{
 			holder.imgWatched.setBackgroundColor(Color.parseColor("#D9245169"));
