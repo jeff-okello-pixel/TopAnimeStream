@@ -107,6 +107,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 
 	}
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("anime", anime);
@@ -134,6 +142,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 			break;
 			case android.R.id.home:
 				finish();
+                AnimationManager.ActivityFinish(this);
 			break;
 			case R.id.action_favorite:
 				if(db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
@@ -190,8 +199,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
                     qualityDialog = alertBuilder.create();
                     qualityDialog.show();
+                    break;
                 }
-                break;
+
             }
         }
 	}

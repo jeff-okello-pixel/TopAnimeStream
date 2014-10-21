@@ -96,9 +96,10 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         bundle.putParcelable("Anime", anime);
         intent.putExtras(bundle);
         startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.exit, R.anim.enter);
+        AnimationManager.ActivityStart(getActivity());
 		
 	}
+
     @Override
     public void onSaveInstanceState (Bundle outState) {
         outState.putBoolean("isDesc", isDesc);

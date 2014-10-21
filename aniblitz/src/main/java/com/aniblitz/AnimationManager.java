@@ -1,5 +1,6 @@
 package com.aniblitz;
 
+import android.app.Activity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,5 +21,13 @@ public class AnimationManager {
     {
         if(ft != null)
             ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+    }
+    public static void ActivityFinish(Activity act)
+    {
+        act.overridePendingTransition(R.anim.pop_enter,R.anim.pop_exit);
+    }
+    public static void ActivityStart(Activity act)
+    {
+        act.overridePendingTransition(R.anim.enter,R.anim.exit);
     }
 }
