@@ -10,6 +10,7 @@ import com.aniblitz.interfaces.EpisodesLoadedEvent;
 import com.aniblitz.interfaces.MovieLoadedEvent;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
+import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Vk;
@@ -80,23 +81,30 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         }
 
+
+        String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
+        if(anime.isMovie()) {
+            for (AnimeSource animeSource : anime.getAnimeSources()) {
+                if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.getVks().size() > 0) {
+                    movieVkFragment = (MovieVkFragment)fm.findFragmentByTag("movieVkFragment");
+                    if(movieVkFragment == null)
+                    {
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.add(layAnimeDetails.getId(), MovieVkFragment.newInstance(anime), "movieVkFragment");
+                        ft.commit();
+                    }
+                    break;
+                }
+            }
+        }
+
         if(!App.isVkOnly || !anime.isMovie())
         {
             episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
             if(episodeContainerFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
-                ft.commit();
-            }
-        }
-        else
-        {
-            movieVkFragment = (MovieVkFragment)fm.findFragmentByTag("movieVkFragment");
-            if(movieVkFragment == null)
-            {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.add(layAnimeDetails.getId(), MovieVkFragment.newInstance(anime), "movieVkFragment");
                 ft.commit();
             }
         }
@@ -168,17 +176,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 	@Override
 	public void onEpisodeSelected(final Episode episode, String type) {
-        if(!App.isVkOnly) {
-            Intent intent = new Intent(this, EpisodeDetailsActivity.class);
-            intent.putExtra("Episode", episode);
-            intent.putExtra("Type", type);
-            //bug when episode + anime in the same bundle... still don't know why
-            Bundle hackBundle = new Bundle();
-            hackBundle.putParcelable("Anime", anime);
-            intent.putExtra("hackBundle", hackBundle);
-            startActivity(intent);
-        }
-        else //we play the video, since we only have vks provider with only 1 link.
+        if(episode.getVks().size() > 0)
         {
             boolean isSubbed = type.equals("Subbed") ? true : false;
             String language = prefs.getString("prefLanguage", "1");
@@ -203,6 +201,17 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 }
 
             }
+        }
+        else if(!App.isVkOnly)
+        {
+            Intent intent = new Intent(this, EpisodeDetailsActivity.class);
+            intent.putExtra("Episode", episode);
+            intent.putExtra("Type", type);
+            //bug when episode + anime in the same bundle... still don't know why
+            Bundle hackBundle = new Bundle();
+            hackBundle.putParcelable("Anime", anime);
+            intent.putExtra("hackBundle", hackBundle);
+            startActivity(intent);
         }
 	}
 
