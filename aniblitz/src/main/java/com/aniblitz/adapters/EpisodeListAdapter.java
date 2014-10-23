@@ -80,22 +80,32 @@ public class EpisodeListAdapter extends BaseAdapter{
 			vi = inflater.inflate(R.layout.row_episode, null);
 			holder = new ViewHolder();
 			holder.txtEpisodeNumber = (TextView) vi.findViewById(R.id.txtEpisodeNumber);
+            holder.txtEpisodeName = (TextView) vi.findViewById(R.id.txtEpisodeName);
 			holder.imgWatched = (ImageView) vi.findViewById(R.id.imgWatched);
 			vi.setTag(holder);
 		}else {
             holder = (ViewHolder) vi.getTag();
         }
 		holder.imgWatched.setOnClickListener(new imageViewClickListener(position,holder.imgWatched));
-        String episodeName = re.getString(R.string.episode) + episode.getEpisodeNumber();
+        holder.txtEpisodeNumber.setText(re.getString(R.string.episode) + " " + episode.getEpisodeNumber());
         EpisodeInformations episodeInfo = episode.getEpisodeInformations();
         if(episodeInfo != null)
         {
             if(episodeInfo.getEpisodeName() != null && !episodeInfo.getEpisodeName().equals(""))
             {
-                episodeName = episodeInfo.getEpisodeName();
+                holder.txtEpisodeName.setVisibility(View.VISIBLE);
+                holder.txtEpisodeName.setText(episodeInfo.getEpisodeName());
+            }
+            else
+            {
+                holder.txtEpisodeName.setVisibility(View.GONE);
             }
         }
-        holder.txtEpisodeNumber.setText(episodeName);
+        else
+        {
+            holder.txtEpisodeName.setVisibility(View.GONE);
+        }
+
 		if(sqlite.isWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1")))
 		{
 			holder.imgWatched.setBackgroundColor(Color.parseColor("#D9245169"));
@@ -111,6 +121,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 	}
 	  static class ViewHolder {
 	        TextView txtEpisodeNumber;
+            TextView txtEpisodeName;
 	        ImageView imgWatched;
 	    }
 	@Override

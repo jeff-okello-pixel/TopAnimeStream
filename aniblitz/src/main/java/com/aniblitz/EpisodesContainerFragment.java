@@ -253,6 +253,10 @@ public class EpisodesContainerFragment extends Fragment{
         {
 
             JSONObject json = Utils.GetJson(URL);
+            if(json == null)
+            {
+                return null;
+            }
             JSONArray episodesArray = new JSONArray();
 
             try {

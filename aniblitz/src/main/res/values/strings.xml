@@ -27,7 +27,7 @@
     <string name="remove_favorite">Remove from favorites</string>
     <string name="back_again">Press back again to exit</string>
     <string name="cancel">Cancel</string>
-    <string name="episode">Episode: </string>
+    <string name="episode">Episode</string>
     <!-- Titles -->
     <string name="title_alert_languages">Choose your preferred language</string>
     <string name="title_favorites">Favorites</string>
