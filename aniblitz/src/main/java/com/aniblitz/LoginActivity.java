@@ -70,6 +70,8 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
         txtTitle.setTypeface(typeFace);
+
+        txtUserName.setText(prefs.getString("Username",""));
     }
 
 
@@ -193,6 +195,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                 prefs.edit().putString("AccessToken", token).commit();
+                prefs.edit().putString("Username", userName).commit();
                 App.accessToken = token;
                 Toast.makeText(LoginActivity.this, getString(R.string.login_successful), Toast.LENGTH_LONG).show();
                 if(!shouldCloseOnly)
