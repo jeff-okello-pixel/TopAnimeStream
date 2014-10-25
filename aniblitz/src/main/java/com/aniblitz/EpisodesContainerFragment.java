@@ -339,10 +339,8 @@ public class EpisodesContainerFragment extends Fragment{
         for (Vk vk : episode.getVks()) {
             if (!vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
                 dubbedEpisodes.add(episode);
-                break;
             } else if (vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
                 subbedEpisodes.add(episode);
-                break;
             }
         }
     }
