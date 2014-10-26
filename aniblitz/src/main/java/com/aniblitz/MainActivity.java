@@ -45,6 +45,10 @@ import com.aniblitz.adapters.MenuArrayAdapter;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.fwwjt.pacjz173199.AdView;
+import com.google.android.gms.cast.ApplicationMetadata;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
+import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
@@ -81,7 +85,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	private SharedPreferences prefs;
     private App app;
 	private AlertDialog alertLanguages;
-	@Override
+    private MiniController mMini;
+    private VideoCastConsumerImpl mCastConsumer;
+    private MenuItem mediaRouteMenuItem;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
@@ -246,6 +254,55 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             AdView adView = (AdView)findViewById(R.id.adView);
             ((ViewGroup)adView.getParent()).removeView(adView);
 
+       
+
+        
+            VideoCastManager.checkGooglePlaySevices(this);
+
+            App.getCastManager(this);
+
+            // -- Adding MiniController
+            mMini = (MiniController) findViewById(R.id.miniController);
+            App.mCastMgr.addMiniController(mMini);
+
+            mCastConsumer = new VideoCastConsumerImpl() {
+                @Override
+                public void onApplicationConnected(ApplicationMetadata appMetadata,
+                                                   String sessionId, boolean wasLaunched) {
+
+                }
+
+                @Override
+                public void onApplicationDisconnected(int errorCode) {
+
+                }
+
+                @Override
+                public void onDisconnected() {
+
+                }
+
+                @Override
+                public void onRemoteMediaPlayerMetadataUpdated() {
+
+                }
+
+                @Override
+                public void onFailed(int resourceId, int statusCode) {
+
+                }
+
+                @Override
+                public void onConnectionSuspended(int cause) {
+
+                }
+
+                @Override
+                public void onConnectivityRecovered() {
+
+                }
+            };
+            App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
 	}
 
@@ -368,6 +425,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+        if(App.isPro)
+        {
+            mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
+        }
 		menuItem=menu.findItem(R.id.search_widget);
 		menuItem=menu.findItem(R.id.search_widget);
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -595,15 +656,34 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             }
         }
     }
-
+    @Override
+    protected void onPause()
+    {
+        if(App.isPro)
+        {
+            App.mCastMgr.decrementUiCounter();
+            App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
+        }
+        super.onPause();
+    }
     @Override
     protected void onResume() {
+        if(App.isPro)
+        {
+            App.getCastManager(this);
+            if (null != App.mCastMgr) {
+                App.mCastMgr.addVideoCastConsumer(mCastConsumer);
+                App.mCastMgr.incrementUiCounter();
+            }
+        }
         super.onResume();
         if(App.languageChanged)
         {
             App.languageChanged = false;
             Utils.restartActivity(this);
         }
+
+
 
     }
 

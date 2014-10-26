@@ -2,18 +2,16 @@ package com.aniblitz;
 
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.aniblitz.interfaces.EpisodesLoadedEvent;
-import com.aniblitz.interfaces.MovieLoadedEvent;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Vk;
+import com.google.android.gms.cast.ApplicationMetadata;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
+import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
 
 import android.app.AlertDialog;
@@ -27,7 +25,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,6 +47,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private EpisodesContainerFragment episodeContainerFragment;
     private MovieVkFragment movieVkFragment;
     private AlertDialog qualityDialog;
+    private VideoCastConsumerImpl mCastConsumer;
+    private MenuItem mediaRouteMenuItem;
+    private MiniController mMini;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +97,64 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     break;
                 }
             }
+
+            if(App.isPro) {
+                VideoCastManager.checkGooglePlaySevices(this);
+
+                App.getCastManager(this);
+
+                // -- Adding MiniController
+                mMini = (MiniController) findViewById(R.id.miniController);
+                App.mCastMgr.addMiniController(mMini);
+
+                mCastConsumer = new VideoCastConsumerImpl() {
+                    @Override
+                    public void onApplicationConnected(ApplicationMetadata appMetadata,
+                                                       String sessionId, boolean wasLaunched) {
+
+                    }
+
+                    @Override
+                    public void onApplicationDisconnected(int errorCode) {
+
+                    }
+
+                    @Override
+                    public void onDisconnected() {
+
+                    }
+
+                    @Override
+                    public void onRemoteMediaPlayerMetadataUpdated() {
+
+                    }
+
+                    @Override
+                    public void onFailed(int resourceId, int statusCode) {
+
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+
+                    }
+
+                    @Override
+                    public void onConnectivityRecovered() {
+
+                    }
+                };
+                App.mCastMgr.reconnectSessionIfPossible(this, false);
+            }
         }
 
         if(!App.isVkOnly || !anime.isMovie())
         {
             episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
-            if(episodeContainerFragment == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
-                ft.commit();
+                if(episodeContainerFragment == null) {
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+                    ft.commit();
             }
         }
 
@@ -122,7 +171,28 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         finish();
         AnimationManager.ActivityFinish(this);
     }
+    @Override
+    protected void onResume() {
+        if(App.isPro)
+        {
+            App.getCastManager(this);
+            if (null != App.mCastMgr) {
+                App.mCastMgr.addVideoCastConsumer(mCastConsumer);
+                App.mCastMgr.incrementUiCounter();
+            }
+        }
+        super.onResume();
+    }
 
+    @Override
+    protected void onPause() {
+        if(App.isPro)
+        {
+            App.mCastMgr.decrementUiCounter();
+            App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
+        }
+        super.onPause();
+    }
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("anime", anime);
@@ -132,6 +202,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.episodes, menu);
+        if(App.isPro)
+        {
+            mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
+        }
 		menuFavorite = menu.findItem(R.id.action_favorite);
 		
 		if(db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))

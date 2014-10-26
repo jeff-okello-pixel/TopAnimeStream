@@ -16,7 +16,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.NetworkInterface;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -56,6 +58,9 @@ import com.aniblitz.models.Mirror;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
+import com.google.sample.castcompanionlibrary.cast.BaseCastManager;
+import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -97,6 +102,8 @@ public class Utils {
 	    return s.matches("[-+]?\\d*\\.?\\d+");  
 	}
     public static String ignitionKey = null;
+    public static Dialog chromecastDialog;
+    public static int getJsonCount = 0;
 	   public static String unGunzip(String str) {
 		   String s1 = null;
 
@@ -358,7 +365,32 @@ public class Utils {
                 .build();
     }
     private static void loadRemoteMedia(Context context, int position, boolean autoPlay, MediaInfo mediaInfo) {
-        App.mCastMgr.startCastControllerActivity(context, mediaInfo, position, autoPlay);
+        if(App.mCastMgr != null) {
+            try {
+                App.mCastMgr.checkConnectivity();
+                App.mCastMgr.startCastControllerActivity(context, mediaInfo, position, autoPlay);
+                return;
+            } catch (TransientNetworkDisconnectionException e) {
+                e.printStackTrace();
+            } catch (NoConnectionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.title_connect_chromecast))
+                .setMessage(context.getString(R.string.message_connect_chromecast))
+                .setCancelable(false)
+                .setIcon(R.drawable.mr_ic_media_route_off_holo_light)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        chromecastDialog.dismiss();
+                    }
+                });
+        chromecastDialog = builder.create();
+        chromecastDialog.show();
+
+
     }
 		
 		
@@ -574,12 +606,12 @@ public class Utils {
 		return String.valueOf(c.get(Calendar.YEAR)) + "/" + month + "/" + day;
     }
 
-    public static JSONObject GetJson(String urlString)
-    {
+    public static JSONObject GetJson(String urlString){
     	 BufferedReader reader = null;
     	    try {
     	        URL url = new URL(urlString);
     	        URLConnection conn = url.openConnection();
+                conn.setConnectTimeout(6000);
                 if(App.accessToken != null && !App.accessToken.equals(""))
     	            conn.setRequestProperty("Authentication", App.accessToken);
     	        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -591,14 +623,35 @@ public class Utils {
     	        	
     	       // String json = unGunzip(buffer.toString());
     	        String json = buffer.toString();
+                getJsonCount = 0;
     	        if(json == null)
     	        	return null;
 				return new JSONObject(json);
-    	    } 
-		    catch(Exception e)
-		    {
-		    	String hello = e.getMessage();
-		    }finally {
+    	    }
+            catch (SocketTimeoutException e) {
+                e.printStackTrace();
+                //lets try again
+                if(getJsonCount < 1)
+                {
+                    getJsonCount++;
+                    Utils.GetJson(urlString);
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch(JSONException e)
+            {
+                e.printStackTrace();
+                return null;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
     	        if (reader != null)
 					try {
 						reader.close();

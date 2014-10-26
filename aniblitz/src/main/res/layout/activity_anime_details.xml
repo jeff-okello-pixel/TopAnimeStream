@@ -10,5 +10,10 @@
         android:id="@+id/animeDetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
+    <com.google.sample.castcompanionlibrary.widgets.MiniController
+        android:id="@+id/miniController"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" >
+    </com.google.sample.castcompanionlibrary.widgets.MiniController>
 </LinearLayout>

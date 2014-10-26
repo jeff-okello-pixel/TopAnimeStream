@@ -150,25 +150,6 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
 	}
-    private static MediaInfo buildMediaInfo(String title,
-                                            String subTitle, String studio, String url, String imgUrl, String bigImageUrl) {
-        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-
-        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subTitle);
-        movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
-        movieMetadata.putString(MediaMetadata.KEY_STUDIO, studio);
-        movieMetadata.addImage(new WebImage(Uri.parse(imgUrl)));
-        movieMetadata.addImage(new WebImage(Uri.parse(bigImageUrl)));
-
-        return new MediaInfo.Builder(url)
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setContentType("video/mp4")
-                .setMetadata(movieMetadata)
-                .build();
-    }
-    private void loadRemoteMedia(int position, boolean autoPlay, MediaInfo mediaInfo) {
-        App.mCastMgr.startCastControllerActivity(this, mediaInfo, position, autoPlay);
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.cast, menu);
@@ -177,8 +158,9 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
         return true;
-    }  @Override
-       protected void onResume() {
+    }
+    @Override
+    protected void onResume() {
         if(App.isPro)
         {
             App.getCastManager(this);

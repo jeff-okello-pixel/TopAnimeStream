@@ -208,6 +208,10 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         {
 
             JSONObject json = Utils.GetJson(URL);
+            if(json == null)
+            {
+                return null;
+            }
             JSONArray mirrorArray = new JSONArray();
             try {
                 mirrors = new ArrayList<Mirror>();
