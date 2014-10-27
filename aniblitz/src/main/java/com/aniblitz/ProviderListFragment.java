@@ -123,7 +123,33 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             {
                 txtNoProvider.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
-                AsyncTaskTools.execute(new LoadProvidersTask());
+                for(AnimeSource animeSource: anime.getAnimeSources())
+                {
+                    //we already know that this animesource correspond to the subbed/dubbed and language that we want (checked in EpisodesContainerFragment)
+                    if(animeSource.getAnimeSourceId() == animeSourceId)
+                    {
+                        if(animeSource.getVks().size() > 0)
+                        {
+                            //We have a vk source (yay!), we know it is the best provider so we only show the option to play the video
+                            Mirror mirror = new Mirror(animeSource.getVks().get(0));
+                            //Since we want to play the video, let's change the provider name to Play so the user doesn't see VK
+                            mirror.getProvider().setName(getString(R.string.play));
+
+                            mirrors.add(mirror);
+                            filteredMirrors = mirrors;
+                            listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+                        }
+                        else
+                        {
+                            //We do not have anything in vk so we let the user choose the provider he wants
+                            AsyncTaskTools.execute(new LoadProvidersTask());
+                        }
+                    }
+                }
+
+
+
+
             }
             else if(mirrors != null && !mirrors.isEmpty())//is not a movie
             {
@@ -163,7 +189,6 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             outState.putParcelableArrayList("mirrors", filteredMirrors);
         else
             outState.putParcelableArrayList("mirrors", null);
-
         outState.putParcelable("anime", anime);
         outState.putParcelable("episode", episode);
         outState.putInt("animeSourceId", animeSourceId);
@@ -174,7 +199,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         String providerName = filteredMirrors.get(position).getProvider().getName();
-        if(providerName.equals("vk") || providerName.equals("vk_gk"))
+        if(providerName.equals("vk") || providerName.equals("vk_gk") || providerName.equals(getString(R.string.play)))
         {
             final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
 

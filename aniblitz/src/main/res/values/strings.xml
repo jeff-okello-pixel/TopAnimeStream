@@ -119,5 +119,6 @@
     <string name="goto_aniblitz">Go to aniblitz.com</string>
     <string name="title_connect_chromecast">Connect to a chromecast device</string>
     <string name="message_connect_chromecast">You have to connect to a chromecast device prior to cast the video</string>
+    <string name="play">Play</string>
 
 </resources>

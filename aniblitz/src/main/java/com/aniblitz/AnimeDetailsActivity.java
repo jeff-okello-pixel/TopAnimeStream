@@ -80,83 +80,65 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             anime = savedInstanceState.getParcelable("anime");
 
         }
+        if(App.isPro) {
+            VideoCastManager.checkGooglePlaySevices(this);
 
+            App.getCastManager(this);
+
+            // -- Adding MiniController
+            mMini = (MiniController) findViewById(R.id.miniController);
+            App.mCastMgr.addMiniController(mMini);
+
+            mCastConsumer = new VideoCastConsumerImpl() {
+                @Override
+                public void onApplicationConnected(ApplicationMetadata appMetadata,
+                                                   String sessionId, boolean wasLaunched) {
+
+                }
+
+                @Override
+                public void onApplicationDisconnected(int errorCode) {
+
+                }
+
+                @Override
+                public void onDisconnected() {
+
+                }
+
+                @Override
+                public void onRemoteMediaPlayerMetadataUpdated() {
+
+                }
+
+                @Override
+                public void onFailed(int resourceId, int statusCode) {
+
+                }
+
+                @Override
+                public void onConnectionSuspended(int cause) {
+
+                }
+
+                @Override
+                public void onConnectivityRecovered() {
+
+                }
+            };
+            App.mCastMgr.reconnectSessionIfPossible(this, false);
+        }
 
         String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
-        if(anime.isMovie()) {
-            for (AnimeSource animeSource : anime.getAnimeSources()) {
-                if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.getVks().size() > 0) {
-                    movieVkFragment = (MovieVkFragment)fm.findFragmentByTag("movieVkFragment");
-                    if(movieVkFragment == null)
-                    {
-                        FragmentTransaction ft = fm.beginTransaction();
-                        ft.add(layAnimeDetails.getId(), MovieVkFragment.newInstance(anime), "movieVkFragment");
-                        ft.commit();
-                    }
-                    break;
-                }
-            }
 
-            if(App.isPro) {
-                VideoCastManager.checkGooglePlaySevices(this);
-
-                App.getCastManager(this);
-
-                // -- Adding MiniController
-                mMini = (MiniController) findViewById(R.id.miniController);
-                App.mCastMgr.addMiniController(mMini);
-
-                mCastConsumer = new VideoCastConsumerImpl() {
-                    @Override
-                    public void onApplicationConnected(ApplicationMetadata appMetadata,
-                                                       String sessionId, boolean wasLaunched) {
-
-                    }
-
-                    @Override
-                    public void onApplicationDisconnected(int errorCode) {
-
-                    }
-
-                    @Override
-                    public void onDisconnected() {
-
-                    }
-
-                    @Override
-                    public void onRemoteMediaPlayerMetadataUpdated() {
-
-                    }
-
-                    @Override
-                    public void onFailed(int resourceId, int statusCode) {
-
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-
-                    }
-
-                    @Override
-                    public void onConnectivityRecovered() {
-
-                    }
-                };
-                App.mCastMgr.reconnectSessionIfPossible(this, false);
-            }
+        episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
+            if(episodeContainerFragment == null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+                ft.commit();
         }
 
-        if(!App.isVkOnly || !anime.isMovie())
-        {
-            episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
-                if(episodeContainerFragment == null) {
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
-                    ft.commit();
-            }
-        }
 
         AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment)fm.findFragmentById(R.id.animeDetailsFragment);
         if(animeDetailsFragment != null)
