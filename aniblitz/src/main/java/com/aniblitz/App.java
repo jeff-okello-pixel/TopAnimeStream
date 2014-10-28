@@ -26,7 +26,7 @@ public class App extends Application implements NetworkEvent {
 	private static Connection connection;
 	public static boolean isPro = true;
     public static boolean isGooglePlayVersion = false;
-    public static boolean isVkOnly = false;
+    public static boolean isVkOnly = true;
     public static boolean languageChanged = false;
     public static String accessToken;
 	private static Context context;

@@ -16,21 +16,21 @@
     </string-array>
     <string-array name="prefs_caption_color_values">
         <item>#FFFFFF</item>
- <!-- white -->
+        <!-- white -->
         <item>#000000</item>
- <!-- black -->
+        <!-- black -->
         <item>#FF0000</item>
- <!-- red -->
+        <!-- red -->
         <item>#FFFF00</item>
- <!-- yellow -->
+        <!-- yellow -->
         <item>#00FF00</item>
- <!-- green -->
+        <!-- green -->
         <item>#00FFFF</item>
- <!-- cyan -->
+        <!-- cyan -->
         <item>#0000FF</item>
- <!-- blue -->
+        <!-- blue -->
         <item>#FF00FF</item>
- <!-- magenta -->
+        <!-- magenta -->
     </string-array>
     <string-array name="prefs_caption_edge_type_names">
         <item>None</item>
@@ -91,6 +91,7 @@
 
     <color name="black">#000000</color>
     <color name="black_opaque">#AA000000</color>
+    <color name="blueTab">#245169</color>
     <color name="casting_media_control_bg">#2c393d</color>
     <color name="dark_grey">#2d3134</color>
     <color name="mr_custom_line_1">#FFFFFF</color>

@@ -241,8 +241,12 @@ public class Utils {
 					
 					byte[] data = doc.html().getBytes("UTF-8");
 					String base64 = Base64.encodeToString(data, Base64.DEFAULT);
-					
-			    	String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/GetMp4Url?provider='" + URLEncoder.encode(mirror.getProvider().getName()) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
+
+                    if(providerName.equals(r.getString(R.string.play).toLowerCase()))
+                    {
+                        providerName = "vk";
+                    }
+			    	String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
 			    	HttpClient httpClient = new DefaultHttpClient();
 					HttpPost request = new HttpPost(URL);
 					/*

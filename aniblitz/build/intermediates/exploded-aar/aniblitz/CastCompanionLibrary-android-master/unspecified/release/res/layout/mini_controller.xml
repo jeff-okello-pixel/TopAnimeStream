@@ -4,9 +4,16 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:paddingTop="0dp" >
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/blueTab"></View>
 
     <ImageView
         android:id="@+id/iconView"
+        android:layout_below="@id/separator"
         android:layout_width="@dimen/mini_controller_icon_width"
         android:layout_height="@dimen/mini_controller_icon_height"
         android:layout_alignParentLeft="true"

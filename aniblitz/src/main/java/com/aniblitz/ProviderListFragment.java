@@ -134,7 +134,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                             Mirror mirror = new Mirror(animeSource.getVks().get(0));
                             //Since we want to play the video, let's change the provider name to Play so the user doesn't see VK
                             mirror.getProvider().setName(getString(R.string.play));
-
+                            mirrors = new ArrayList<Mirror>();
                             mirrors.add(mirror);
                             filteredMirrors = mirrors;
                             listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
