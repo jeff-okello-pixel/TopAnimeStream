@@ -103,6 +103,7 @@ public class Utils {
 	}
     public static String ignitionKey = null;
     public static Dialog chromecastDialog;
+    public static Dialog qualityDialog;
     public static int getJsonCount = 0;
 	   public static String unGunzip(String str) {
 		   String s1 = null;
@@ -189,7 +190,107 @@ public class Utils {
             }
             return false;
         }
-	   public static class GetMp4 extends AsyncTask<Void, Void, String> {
+    public static void getMp4(Mirror mirror, Activity act, Anime anime, Episode episode)
+    {
+        AsyncTaskTools.execute(new Utils.GetWebPageTask(mirror, act, anime, episode));
+    }
+    public static class GetWebPageTask extends AsyncTask<Void, Void, String> {
+        Mirror mirror;
+        private Dialog busyDialog;
+        private Activity act;
+        private Resources r;
+        private Anime anime;
+        private AlertDialog alertPlay;
+        private Episode episode;
+        private String providerName;
+        private Document doc;
+        public GetWebPageTask(Mirror mirror, Activity act, Anime anime, Episode episode)
+        {
+            this.mirror = mirror;
+            this.act = act;
+            this.anime = anime;
+            this.episode = episode;
+        }
+        @Override
+        protected void onPreExecute() {
+            busyDialog = Utils.showBusyDialog(r.getString(R.string.loading_video), act);
+
+        }
+
+        ;
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            try {
+                providerName = mirror.getProvider().getName().toLowerCase();
+                if (providerName.equals("animeultima")) {
+                    doc = Jsoup.connect(mirror.getSource()).userAgent("Chrome").ignoreContentType(true).get();
+                    String dailyMotionUrl = doc.baseUri().replace("swf/", "");
+                    doc = Jsoup.connect(dailyMotionUrl).userAgent("Chrome").get();
+                } else if (providerName.equals("ignition s") || providerName.equals("ignition hd")) {
+                    if (ignitionKey != null)
+                        return ignitionKey;
+                    doc = Jsoup.connect(URLDecoder.decode("http://jkanime.net/naruto/1/", "UTF-8")).userAgent("Chrome").get();
+                } else {
+                    doc = Jsoup.connect(URLDecoder.decode(mirror.getSource(), "UTF-8")).userAgent("Chrome").get();
+                }
+                if (providerName.equals(r.getString(R.string.play).toLowerCase())) {
+                    providerName = "vk";
+                }
+                String content = doc.html();
+
+                //TODO check quality
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+
+            return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (result == null) {
+                    Toast.makeText(act, act.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    if(providerName.equals("vk") || providerName.equals("vk_gk"))
+                    {
+                        final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+                        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
+                        alertBuilder.setTitle(act.getString(R.string.choose_quality));
+                        alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, items[item].toString(), doc));
+                            }
+                        });
+
+                        qualityDialog = alertBuilder.create();
+                        qualityDialog.show();
+                    }
+                    else
+                    {
+                        AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, null, doc));
+                    }
+                }
+
+
+            } catch (Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
+                Toast.makeText(act, act.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+            }
+            Utils.dismissBusyDialog(busyDialog);
+
+        }
+
+    }
+
+    public static class GetMp4 extends AsyncTask<Void, Void, String> {
 			
 			Mirror mirror;
 			private Dialog busyDialog;
@@ -198,14 +299,18 @@ public class Utils {
             private Anime anime;
             private AlertDialog alertPlay;
             private Episode episode;
+            private String providerName;
             private String quality;
-			public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String quality)
+            private Document doc;
+			public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String providerName, String quality, Document doc)
 			{
 				this.mirror = mirror;
 				this.act = act;
                 this.anime = anime;
                 this.episode = episode;
+                this.providerName = providerName;
                 this.quality = quality;
+                this.doc = doc;
 				r = act.getResources();
 			}
 			
@@ -218,63 +323,42 @@ public class Utils {
 		    };      
 		    @Override
 		    protected String doInBackground(Void... params)
-		    {   
-		    	Document doc;
-				try {
-                    String providerName = mirror.getProvider().getName().toLowerCase();
-					if(providerName.equals("animeultima"))
-					{
-						doc = Jsoup.connect(mirror.getSource()).userAgent("Chrome").ignoreContentType(true).get();
-						String dailyMotionUrl = doc.baseUri().replace("swf/", "");
-						doc = Jsoup.connect(dailyMotionUrl).userAgent("Chrome").get();
-					}
-                    else if(providerName.equals("ignition s") || providerName.equals("ignition hd"))
-                    {
-                        if(ignitionKey != null)
-                            return ignitionKey;
-                        doc = Jsoup.connect(URLDecoder.decode("http://jkanime.net/naruto/1/", "UTF-8")).userAgent("Chrome").get();
-                    }
-					else
-					{
-						doc = Jsoup.connect(URLDecoder.decode(mirror.getSource(), "UTF-8")).userAgent("Chrome").get();
-					}
-					
-					byte[] data = doc.html().getBytes("UTF-8");
-					String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+		    {
 
-                    if(providerName.equals(r.getString(R.string.play).toLowerCase()))
-                    {
-                        providerName = "vk";
-                    }
-			    	String URL = act.getString(R.string.anime_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
-			    	HttpClient httpClient = new DefaultHttpClient();
-					HttpPost request = new HttpPost(URL);
+                try {
+                    byte[] data = doc.html().getBytes("UTF-8");
+                    String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+
+
+                    String URL = act.getString(R.string.anime_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpPost request = new HttpPost(URL);
 					/*
 					List<NameValuePair> listParam = new ArrayList<NameValuePair>();
 					listParam.add(new BasicNameValuePair("html", base64));
 		            UrlEncodedFormEntity ent = new UrlEncodedFormEntity(listParam);*/
-					request.setEntity(new StringEntity(base64));
-					HttpResponse response = httpClient.execute(request);
-					HttpEntity entity = response.getEntity();
-					InputStream instream = entity.getContent();
-					try {
-						JSONObject jsonObj = new JSONObject(Utils.convertStreamToString(instream));
-						return jsonObj.getString("value");
-					} catch (JSONException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					return null;
-				} catch (IOException e) {
-					return null;
-				}
+                    request.setEntity(new StringEntity(base64));
+                    HttpResponse response = httpClient.execute(request);
+                    HttpEntity entity = response.getEntity();
+                    InputStream instream = entity.getContent();
+                    try {
+                        JSONObject jsonObj = new JSONObject(Utils.convertStreamToString(instream));
+                        return jsonObj.getString("value");
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                        return null;
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                        return null;
+                    }
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                    return null;
+                }
 
 			}     
-			    
+
 		    @Override
 		    protected void onPostExecute(final String result)
 		    {

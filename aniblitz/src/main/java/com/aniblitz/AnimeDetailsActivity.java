@@ -240,19 +240,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             {
                 if(vk.getAnimeSource().isSubbed() == isSubbed && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(language))
                 {
-                    final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+                    Mirror mirror = new Mirror(vk);
+                    Utils.getMp4(mirror, AnimeDetailsActivity.this, anime, episode);
 
-                    final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-                    alertBuilder.setTitle(getString(R.string.choose_quality));
-                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int item) {
-                            Mirror mirror = new Mirror(vk);
-                            (new Utils.GetMp4(mirror, AnimeDetailsActivity.this, anime, episode, items[item].toString())).execute();
-                        }
-                    });
-
-                    qualityDialog = alertBuilder.create();
-                    qualityDialog.show();
                     break;
                 }
 

@@ -100,7 +100,7 @@ public class MovieVkFragment extends Fragment implements View.OnClickListener {
             public void onClick(DialogInterface dialog, int item) {
                 Vk vk = isSubbed ? subbedAnimeSource.getVks().get(0) : dubbedAnimeSource.getVks().get(0);
                 Mirror mirror = new Mirror(vk);
-                (new Utils.GetMp4(mirror, getActivity(), anime, null, items[item].toString())).execute();
+                Utils.getMp4(mirror, getActivity(), anime, null);
             }
         });
 

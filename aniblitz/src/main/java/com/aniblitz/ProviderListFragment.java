@@ -198,24 +198,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-        String providerName = filteredMirrors.get(position).getProvider().getName();
-        if(providerName.equals("vk") || providerName.equals("vk_gk") || providerName.equals(getString(R.string.play)))
-        {
-            final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
-
-            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
-            alertBuilder.setTitle(getString(R.string.choose_quality));
-            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    (new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime, episode, items[item].toString())).execute();
-                }
-            });
-
-            qualityDialog = alertBuilder.create();
-            qualityDialog.show();
-        }
-        else
-		    (new Utils.GetMp4(filteredMirrors.get(position), getActivity(), anime, episode, null)).execute();
+        Utils.getMp4(filteredMirrors.get(position), getActivity(), anime, episode);
 	}
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {
