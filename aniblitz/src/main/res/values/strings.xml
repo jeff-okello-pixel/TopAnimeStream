@@ -5,9 +5,9 @@
     <string name="app_id">EBDDFB4F</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Aniblitz</string>
-    <string name="anibliz_website">http://198.48.206.42:8000</string>
-    <string name="anime_service_path">http://lanbox.ca/AnimeServices/AnimeDataService.svc/</string>
-    <string name="image_host_path">http://lanbox.ca/ImageHost/</string>
+    <string name="anibliz_website">https://www.aniblitz.com</string>
+    <string name="anime_service_path">https://www.aniblitz.com/AnimeServices/AnimeDataService.svc/</string>
+    <string name="image_host_path">https://www.aniblitz.com/ImageHost/</string>
     <!-- Menu actions -->
     <string name="action_favorite">Add to favorite</string>
     <string name="action_settings">Settings</string>

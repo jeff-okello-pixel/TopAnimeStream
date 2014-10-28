@@ -4,7 +4,7 @@
     <string name="app_name">Aniblitz</string>
     <string name="search_hint">Rechercher</string>
     <string name="app_label">Aniblitz</string>
-    <string name="image_host_path">http://lanbox.ca/ImageHost/</string>
+    <string name="image_host_path">https://www.aniblitz.com/ImageHost/</string>
     <!-- Menu actions -->
     <string name="action_favorite">Ajouter au favories</string>
     <string name="action_settings">Configuration</string>

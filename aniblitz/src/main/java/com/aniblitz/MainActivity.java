@@ -600,7 +600,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.logging_out), MainActivity.this);
-            URL = "http://lanbox.ca/AnimeServices/AnimeService.svc";
+            URL = getString(R.string.anime_service_path);
         }
 
         ;
@@ -697,7 +697,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.logging), MainActivity.this);
-            URL = "http://lanbox.ca/AnimeServices/AnimeService.svc";
+            URL = getString(R.string.anime_service_path);
         }
 
         @Override

@@ -246,7 +246,7 @@ public class Utils {
                     {
                         providerName = "vk";
                     }
-			    	String URL = "http://lanbox.ca/AnimeServices/AnimeDataService.svc/GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
+			    	String URL = act.getString(R.string.anime_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
 			    	HttpClient httpClient = new DefaultHttpClient();
 					HttpPost request = new HttpPost(URL);
 					/*

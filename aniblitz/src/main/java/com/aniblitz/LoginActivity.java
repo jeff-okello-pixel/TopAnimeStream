@@ -143,7 +143,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.logging), LoginActivity.this);
-            URL = "http://lanbox.ca/AnimeServices/AnimeService.svc";
+            URL = getString(R.string.anime_service_path);
         }
 
         ;
