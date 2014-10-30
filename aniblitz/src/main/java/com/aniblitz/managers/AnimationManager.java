@@ -1,10 +1,12 @@
-package com.aniblitz;
+package com.aniblitz.managers;
 
 import android.app.Activity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+
+import com.aniblitz.R;
 
 public class AnimationManager {
 

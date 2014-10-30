@@ -2,9 +2,9 @@ package com.aniblitz;
 
 import java.util.ArrayList;
 
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
-import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Vk;
@@ -15,7 +15,6 @@ import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;

@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.aniblitz.adapters.AnimeListAdapter;
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Mirror;
 public class AnimeListFragment extends Fragment implements OnItemClickListener {

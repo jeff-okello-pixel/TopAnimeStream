@@ -1,8 +1,11 @@
-package com.aniblitz;
+package com.aniblitz.managers;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
+
+import com.aniblitz.App;
+import com.aniblitz.AsyncTaskTools;
+import com.aniblitz.managers.DialogManager;
 
 public class VersionManager {
     //Executed everytime the app is opened

@@ -1,4 +1,4 @@
-package com.aniblitz;
+package com.aniblitz.managers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.TextView;
+
+import com.aniblitz.R;
+
 /**
  * Created by marcandre.therrien on 2014-10-30.
  */
@@ -39,7 +42,20 @@ public class DialogManager {
         public void onGenericDialogSecondButton();
 
     }
-
+    public static void ShowChromecastConnectionErrorDialog(Context context)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.title_connect_chromecast))
+                .setMessage(context.getString(R.string.message_connect_chromecast))
+                .setCancelable(false)
+                .setIcon(R.drawable.mr_ic_media_route_off_holo_light)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+    }
     public static void ShowNetworkErrorDialog(final Context context){
         if(!(context instanceof NetworkErrorDialogEvent))
             throw new ClassCastException("Activity must implement NetworkDialogEvent.");
