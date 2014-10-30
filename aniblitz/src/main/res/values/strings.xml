@@ -120,5 +120,10 @@
     <string name="title_connect_chromecast">Connect to a chromecast device</string>
     <string name="message_connect_chromecast">You have to connect to a chromecast device prior to cast the video</string>
     <string name="play">Play</string>
+    <string name="try_again">Try again</string>
+    <string name="network_settings">Network settings</string>
+    <string name="update_now">Update now</string>
+    <string name="new_version_available">A new version of Aniblitz is available. Update to get all the new features and fixes!</string>
+    <string name="title_update">Update</string>
 
 </resources>

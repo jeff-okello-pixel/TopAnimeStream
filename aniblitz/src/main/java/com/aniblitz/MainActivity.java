@@ -57,7 +57,7 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection {
+public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection{
 
 	private DrawerLayout mDrawerLayout;
 	private boolean firstTime;
@@ -123,7 +123,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		}
         else
         {
-            AppRater.app_launched(this);
+            if(App.isGooglePlayVersion)
+                AppRater.app_launched(this);
         }
 		
 		ActionBar actionBar = getSupportActionBar();
@@ -342,6 +343,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             tabs.setVisibility(View.GONE);
         }
     }
+
 
     public class PagerAdapter extends FragmentStatePagerAdapter {
 	    public PagerAdapter(FragmentManager fm) {
