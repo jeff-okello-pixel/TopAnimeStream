@@ -164,8 +164,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 result = (SoapPrimitive)envelope.getResponse();
                 token = result.toString();
                 return null;
-            }
-            catch (Exception e)
+            }            catch (Exception e)
             {
                 if(e instanceof SoapFault)
                 {

@@ -3,6 +3,7 @@ package com.aniblitz;
 import java.util.ArrayList;
 
 import com.aniblitz.managers.AnimationManager;
+import com.aniblitz.managers.Mp4Manager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.Episode;
@@ -240,7 +241,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 if(vk.getAnimeSource().isSubbed() == isSubbed && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(language))
                 {
                     Mirror mirror = new Mirror(vk);
-                    Utils.getMp4(mirror, AnimeDetailsActivity.this, anime, episode);
+                    Mp4Manager.getMp4(mirror, AnimeDetailsActivity.this, anime, episode);
 
                     break;
                 }

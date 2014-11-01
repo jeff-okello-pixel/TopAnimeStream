@@ -38,6 +38,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.adapters.ProviderListAdapter;
 import com.aniblitz.interfaces.MovieLoadedEvent;
+import com.aniblitz.managers.Mp4Manager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
@@ -198,7 +199,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-        Utils.getMp4(filteredMirrors.get(position), getActivity(), anime, episode);
+        Mp4Manager.getMp4(filteredMirrors.get(position), getActivity(), anime, episode);
 	}
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {

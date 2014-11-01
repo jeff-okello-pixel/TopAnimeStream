@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.aniblitz.managers.Mp4Manager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Mirror;
@@ -100,7 +101,7 @@ public class MovieVkFragment extends Fragment implements View.OnClickListener {
             public void onClick(DialogInterface dialog, int item) {
                 Vk vk = isSubbed ? subbedAnimeSource.getVks().get(0) : dubbedAnimeSource.getVks().get(0);
                 Mirror mirror = new Mirror(vk);
-                Utils.getMp4(mirror, getActivity(), anime, null);
+                Mp4Manager.getMp4(mirror, getActivity(), anime, null);
             }
         });
 
