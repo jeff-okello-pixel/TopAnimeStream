@@ -56,7 +56,6 @@ public class Mp4Manager {
         Mirror mirror;
         private Dialog busyDialog;
         private Activity act;
-        private Resources r;
         private Anime anime;
         private AlertDialog alertPlay;
         private Episode episode;
@@ -71,7 +70,7 @@ public class Mp4Manager {
         }
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(r.getString(R.string.loading_video), act);
+            busyDialog = DialogManager.showBusyDialog(act.getString(R.string.loading_video), act);
 
         }
 
@@ -92,7 +91,7 @@ public class Mp4Manager {
                 } else {
                     doc = Jsoup.connect(URLDecoder.decode(mirror.getSource(), "UTF-8")).userAgent("Chrome").get();
                 }
-                if (providerName.equals(r.getString(R.string.play).toLowerCase())) {
+                if (providerName.equals(act.getString(R.string.play).toLowerCase())) {
                     providerName = "vk";
                 }
                 String content = doc.html();
@@ -187,7 +186,7 @@ public class Mp4Manager {
                 String base64 = Base64.encodeToString(data, Base64.DEFAULT);
 
 
-                String URL = act.getString(R.string.anime_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
+                String URL = act.getString(R.string.anime_data_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost request = new HttpPost(URL);
 					/*

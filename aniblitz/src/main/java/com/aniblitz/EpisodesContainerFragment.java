@@ -241,9 +241,9 @@ public class EpisodesContainerFragment extends Fragment{
         {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
             if(!App.isVkOnly)
-                URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations,vks/AnimeSource").formatJson().build();
+                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations,vks/AnimeSource").formatJson().build();
             else
-                URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20vks/any(vk:vk/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("EpisodeInformations,vks/AnimeSource").formatJson().build();
+                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20vks/any(vk:vk/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("EpisodeInformations,vks/AnimeSource").formatJson().build();
             episodes = new ArrayList<Episode>();
             subbedEpisodes = new ArrayList<Episode>();
             dubbedEpisodes = new ArrayList<Episode>();

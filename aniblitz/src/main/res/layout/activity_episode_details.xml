@@ -1,9 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
     <RelativeLayout
+        android:id="@+id/layAnimeDetails"
         android:layout_width="match_parent"
         android:layout_height="180dp">
             <ImageView
@@ -45,21 +46,37 @@
                 </LinearLayout>
             </ScrollView>
 
-        </RelativeLayout>
-
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/layBottom"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.sample.castcompanionlibrary.widgets.MiniController
+            android:id="@+id/miniController"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+        <com.fwwjt.pacjz173199.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ap:animation="fade"
+            ap:banner_type="inappad"
+            ap:placementType="interstitial"
+            ap:test_mode="false"
+            ap:canShowMR="false"/>
+    </LinearLayout>
     <FrameLayout
+        android:layout_below="@id/layAnimeDetails"
+        android:layout_above="@id/layBottom"
         android:layout_width="match_parent"
         android:id="@+id/layEpisodeDetails"
         android:layout_height="wrap_content">
 
-</FrameLayout>
+    </FrameLayout>
 
-    <com.google.sample.castcompanionlibrary.widgets.MiniController
-        android:id="@+id/miniController"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" >
-    </com.google.sample.castcompanionlibrary.widgets.MiniController>
 
-</LinearLayout>
+</RelativeLayout>
 

@@ -187,7 +187,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             {
                 progressBarLoadMore.setVisibility(View.VISIBLE);
                 isLoading = true;
-                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations").orderby(isDesc ? "OriginalName%20desc" : "OriginalName").skip(currentSkip).top(currentLimit);
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations").orderby(isDesc ? "OriginalName%20desc" : "OriginalName").skip(currentSkip).top(currentLimit);
                 String filter;
                 if(!App.isVkOnly) {
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";

@@ -51,6 +51,8 @@ public class VersionManager {
                 }
                 else
                 {
+                    String versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+                    int versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
                     //TODO check if current version < server version then show dialog
                     DialogManager.ShowUpdateDialog(context);
                 }

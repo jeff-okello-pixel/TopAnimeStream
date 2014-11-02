@@ -9,6 +9,7 @@ import com.aniblitz.models.AnimeInformation;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Vk;
+import com.fwwjt.pacjz173199.AdView;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
@@ -28,6 +29,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -49,6 +51,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private AlertDialog qualityDialog;
     private VideoCastConsumerImpl mCastConsumer;
     private MenuItem mediaRouteMenuItem;
+    private LinearLayout layEpisodes;
     private MiniController mMini;
 
     @Override
@@ -57,6 +60,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_anime_details);
         layAnimeDetails = (LinearLayout) findViewById(R.id.layAnimeDetails);
+        layEpisodes = (LinearLayout) findViewById(R.id.layEpisodes);
 		r = getResources();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		db = new SQLiteHelper(this);
@@ -81,6 +85,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         }
         if(App.isPro) {
+
+            AdView adView = (AdView)findViewById(R.id.adView);
+            ((ViewGroup)adView.getParent()).removeView(adView);
             VideoCastManager.checkGooglePlaySevices(this);
 
             App.getCastManager(this);
@@ -135,7 +142,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
             if(episodeContainerFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(layAnimeDetails.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+                ft.add(layEpisodes.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
                 ft.commit();
         }
 

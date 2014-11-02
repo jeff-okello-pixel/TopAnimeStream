@@ -172,7 +172,7 @@ private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
 	    protected void onPreExecute()
 	    {
             try {
-                URL = new WcfDataServiceUtility(getString(R.string.anime_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
+                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

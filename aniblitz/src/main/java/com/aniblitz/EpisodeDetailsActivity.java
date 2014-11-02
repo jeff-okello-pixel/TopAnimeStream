@@ -3,6 +3,7 @@ package com.aniblitz;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.EpisodeInformations;
+import com.fwwjt.pacjz173199.AdView;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -23,6 +24,7 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -102,6 +104,8 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             ft.commit();
         }
         if(App.isPro) {
+            AdView adView = (AdView)findViewById(R.id.adView);
+            ((ViewGroup)adView.getParent()).removeView(adView);
             VideoCastManager.checkGooglePlaySevices(this);
 
             App.getCastManager(this);
