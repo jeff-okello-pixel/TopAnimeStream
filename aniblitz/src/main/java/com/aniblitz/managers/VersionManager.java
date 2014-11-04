@@ -5,7 +5,14 @@ import android.os.AsyncTask;
 
 import com.aniblitz.App;
 import com.aniblitz.AsyncTaskTools;
+import com.aniblitz.R;
+import com.aniblitz.Utils;
 import com.aniblitz.managers.DialogManager;
+import com.aniblitz.models.*;
+
+import org.json.JSONObject;
+
+import io.vov.vitamio.utils.Log;
 
 public class VersionManager {
     //Executed everytime the app is opened
@@ -16,7 +23,7 @@ public class VersionManager {
 
     public static class CheckUpdateTask extends AsyncTask<Void, Void, String> {
         private Context context;
-
+        com.aniblitz.models.Package pkg;
         public CheckUpdateTask(Context context)
         {
             this.context = context;
@@ -33,7 +40,8 @@ public class VersionManager {
         protected String doInBackground(Void... params) {
             if(App.IsNetworkConnected())
             {
-               //TODO get json
+                JSONObject jsonPackage = Utils.GetJson(context.getString(R.string.aniblitz_website) + "/apps/android/package.json");
+                pkg = new com.aniblitz.models.Package(jsonPackage);
             }
             else
             {
@@ -51,10 +59,11 @@ public class VersionManager {
                 }
                 else
                 {
-                    String versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
                     int versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-                    //TODO check if current version < server version then show dialog
-                    DialogManager.ShowUpdateDialog(context);
+                    if(pkg.getVersion() > versionCode)
+                    {
+                        DialogManager.ShowUpdateDialog(context, pkg);
+                    }
                 }
 
             } catch (Exception e)//catch all exception, handle orientation change

@@ -42,6 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.aniblitz.adapters.MenuArrayAdapter;
+import com.aniblitz.managers.VersionManager;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.fwwjt.pacjz173199.AdView;
@@ -125,8 +126,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         {
             if(App.isGooglePlayVersion)
                 AppRater.app_launched(this);
+
+
         }
-		
+        VersionManager.checkUpdate(this);
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.app_name) + "</font>"));
 		listView = (ListView)findViewById(R.id.left_drawer);

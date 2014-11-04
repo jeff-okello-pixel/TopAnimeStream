@@ -88,7 +88,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(getString(R.string.anibliz_website)));
+                    intent.setData(Uri.parse(getString(R.string.aniblitz_website)));
                     startActivity(intent);
                 }
             });

@@ -2,12 +2,17 @@ package com.aniblitz.managers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.widget.TextView;
 
 import com.aniblitz.R;
+import com.aniblitz.models.*;
 
 /**
  * Created by marcandre.therrien on 2014-10-30.
@@ -90,18 +95,30 @@ public class DialogManager {
         builder.show();
 
     }
-    public static void ShowUpdateDialog(final Context context){
-        if(!(context instanceof NetworkErrorDialogEvent))
-            throw new ClassCastException("Activity must implement GenericTwoButtonDialogEvent.");
+    public static void ShowUpdateDialog(final Context context, final com.aniblitz.models.Package pkg){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.title_update);
+        builder.setTitle(context.getString(R.string.title_update) + " " + context.getString(R.string.app_name) + " " + String.valueOf(pkg.getVersion()));
         //builder.setIcon(R.drawable.icon);
-        builder.setMessage(R.string.new_version_available);
-        builder.setPositiveButton(R.string.update_now,
+        //TODO show the changes
+        builder.setMessage(context.getString(R.string.new_version_available));
+        builder.setPositiveButton(context.getString(R.string.update_now),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //TODO download .apk
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(pkg.getApkUrl()));
+                        request.setDescription(context.getString(R.string.new_version_downloading));
+                        request.setTitle(context.getString(R.string.title_aniblitz_update));
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                            request.allowScanningByMediaScanner();
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        }
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, context.getString(R.string.app_name) + "-" + String.valueOf(pkg.getVersion()) + ".apk");
+
+
+                        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                        manager.enqueue(request);
+                        dialog.dismiss();
 
                     }
                 });

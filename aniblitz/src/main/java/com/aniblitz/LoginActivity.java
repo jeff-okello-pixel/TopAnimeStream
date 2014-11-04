@@ -102,7 +102,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 AsyncTaskTools.execute(new LoginTask(txtUserName.getText().toString(), txtPassword.getText().toString()));
                 break;
             case R.id.btnRegister:
-                String url = getString(R.string.anibliz_website);
+                String url = getString(R.string.aniblitz_website);
                 String lang = prefs.getString("prefLanguage", "");
                 if(lang.equals("1"))
                     lang = "en";
