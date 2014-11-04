@@ -1,6 +1,5 @@
 package com.aniblitz;
 
-import com.aniblitz.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

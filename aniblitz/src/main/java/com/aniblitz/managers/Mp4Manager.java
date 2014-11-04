@@ -16,6 +16,7 @@ import com.aniblitz.App;
 import com.aniblitz.AsyncTaskTools;
 import com.aniblitz.R;
 import com.aniblitz.Utils;
+import com.aniblitz.VideoActivity;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
@@ -240,12 +241,17 @@ public class Mp4Manager {
                 public void onClick(DialogInterface dialog, int item) {
                     if(items[item].equals(act.getString(R.string.play_phone)))
                     {
+
                             /*
                             Intent intent = new Intent(act, VideoViewSubtitle.class);
                             intent.putExtra("VideoPath", result);
                             act.startActivity(intent);*/
 
                         Intent intent = null;
+                        intent = new Intent(act, VideoActivity.class);
+                        intent.putExtra("Mp4Url", result);
+                        act.startActivity(intent);
+                        /*
                         String providerName = mirror.getProvider().getName().toLowerCase();
                         if(providerName.equals("ignition s") || providerName.equals("ignition hd"))
                         {
@@ -259,7 +265,7 @@ public class Mp4Manager {
                             intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
                             intent.setDataAndType(Uri.parse(result), "video/*");
                         }
-                        act.startActivity(Intent.createChooser(intent, "Complete action using"));
+                        act.startActivity(Intent.createChooser(intent, "Complete action using"));*/
                     }
                     else if(items[item].equals(act.getString(R.string.stream_chromecast)))
                     {
