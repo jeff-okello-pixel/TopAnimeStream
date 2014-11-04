@@ -233,7 +233,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     animeJson = animeArray.getJSONObject(i);
                     newAnimes.add(new Anime(animeJson, getActivity()));
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 

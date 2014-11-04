@@ -96,43 +96,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             mMini = (MiniController) findViewById(R.id.miniController);
             App.mCastMgr.addMiniController(mMini);
 
-            mCastConsumer = new VideoCastConsumerImpl() {
-                @Override
-                public void onApplicationConnected(ApplicationMetadata appMetadata,
-                                                   String sessionId, boolean wasLaunched) {
-
-                }
-
-                @Override
-                public void onApplicationDisconnected(int errorCode) {
-
-                }
-
-                @Override
-                public void onDisconnected() {
-
-                }
-
-                @Override
-                public void onRemoteMediaPlayerMetadataUpdated() {
-
-                }
-
-                @Override
-                public void onFailed(int resourceId, int statusCode) {
-
-                }
-
-                @Override
-                public void onConnectionSuspended(int cause) {
-
-                }
-
-                @Override
-                public void onConnectivityRecovered() {
-
-                }
-            };
+            mCastConsumer = new VideoCastConsumerImpl();
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
 
@@ -239,6 +203,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 	@Override
 	public void onEpisodeSelected(final Episode episode, String type) {
+        /*
         if(episode.getVks().size() > 0)
         {
             boolean isSubbed = type.equals("Subbed") ? true : false;
@@ -256,7 +221,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             }
         }
         else if(!App.isVkOnly)
-        {
+        {*/
             Intent intent = new Intent(this, EpisodeDetailsActivity.class);
             intent.putExtra("Episode", episode);
             intent.putExtra("Type", type);
@@ -265,7 +230,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             hackBundle.putParcelable("Anime", anime);
             intent.putExtra("hackBundle", hackBundle);
             startActivity(intent);
-        }
+        //}
 	}
 
 

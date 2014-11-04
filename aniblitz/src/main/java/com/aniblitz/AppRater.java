@@ -30,13 +30,6 @@ public class AppRater {
         long launch_count = prefs.getLong("launch_count", 0) + 1;
         editor.putLong("launch_count", launch_count);
 
-        // Get date of first launch
-        Long date_firstLaunch = prefs.getLong("date_firstlaunch", 0);
-        if (date_firstLaunch == 0) {
-            date_firstLaunch = System.currentTimeMillis();
-            editor.putLong("date_firstlaunch", date_firstLaunch);
-        }
-
         // Wait at least n days before opening
         if (launch_count >= LAUNCHES_UNTIL_PROMPT) {
             showRateDialog(mContext, editor);

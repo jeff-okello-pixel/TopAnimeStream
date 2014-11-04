@@ -129,6 +129,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                     //we already know that this animesource correspond to the subbed/dubbed and language that we want (checked in EpisodesContainerFragment)
                     if(animeSource.getAnimeSourceId() == animeSourceId)
                     {
+                        /*
                         if(animeSource.getVks().size() > 0)
                         {
                             //We have a vk source (yay!), we know it is the best provider so we only show the option to play the video
@@ -141,10 +142,10 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                             listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
                         }
                         else
-                        {
+                        {*/
                             //We do not have anything in vk so we let the user choose the provider he wants
                             AsyncTaskTools.execute(new LoadProvidersTask());
-                        }
+                        //}
                     }
                 }
 

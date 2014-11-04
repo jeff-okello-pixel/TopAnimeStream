@@ -110,13 +110,11 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 
 		@Override
 		public boolean onSuggestionSelect(int position) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		public boolean onSuggestionClick(int position) {
-			// TODO Auto-generated method stub
 			MenuItemCompat.collapseActionView(menuItem);
 			searchView.setQuery("", false);
 			return false;
@@ -161,73 +159,72 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 		(new SearchAnimeTask()).execute();
 		
 	 }
-private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
-		
-		public SearchAnimeTask()
-		{
+    private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
 
-		}
+            public SearchAnimeTask()
+            {
 
-		private String URL;
-	    protected void onPreExecute()
-	    {
-            try {
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
             }
-            busyDialog = Utils.showBusyDialog("Searching...", AnimeSearchActivity.this);
-			animes = new ArrayList<Anime>();
-			mItems = new ArrayList<String>();
-			listView.setAdapter(null);
-	    };      
-	    @Override
-	    protected String doInBackground(Void... params)
-	    {   
-	    	
-	    	JSONObject json = Utils.GetJson(URL);
-	    	JSONArray animeArray = new JSONArray();
-	    	
-	    	try {
-	    		animeArray = json.getJSONArray("value");
-			} catch (Exception e) {
-				return null;
-			}
-	    	for(int i = 0;i<animeArray.length();i++)
-	    	{
-	    		JSONObject animeJson;
-				try {
-					animeJson = animeArray.getJSONObject(i);
-		    		animes.add(new Anime(animeJson, AnimeSearchActivity.this));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 
-	    	}
-		    return "Success";
-		}     
-		    
-	    @Override
-	    protected void onPostExecute(String result)
-	    {
-	    	if(result == null)
-	    	{
-	    		Toast.makeText(AnimeSearchActivity.this, r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
-	    		finish();
-	    		return;
-	    	}
-	    	if(animes.size() > 0)
-	    	{
-	    		txtNoResult.setVisibility(View.GONE);
-		    	listView.setAdapter(new AnimeListAdapter(AnimeSearchActivity.this,animes));
-	    	}
-	    	else
-	    	{
-	    		txtNoResult.setVisibility(View.VISIBLE);
-	    	}
-	    	Utils.dismissBusyDialog(busyDialog);
-	    }
-	
-	}
+            private String URL;
+            protected void onPreExecute()
+            {
+                try {
+                    URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                busyDialog = Utils.showBusyDialog("Searching...", AnimeSearchActivity.this);
+                animes = new ArrayList<Anime>();
+                mItems = new ArrayList<String>();
+                listView.setAdapter(null);
+            };
+            @Override
+            protected String doInBackground(Void... params)
+            {
+
+                JSONObject json = Utils.GetJson(URL);
+                JSONArray animeArray = new JSONArray();
+
+                try {
+                    animeArray = json.getJSONArray("value");
+                } catch (Exception e) {
+                    return null;
+                }
+                for(int i = 0;i<animeArray.length();i++)
+                {
+                    JSONObject animeJson;
+                    try {
+                        animeJson = animeArray.getJSONObject(i);
+                        animes.add(new Anime(animeJson, AnimeSearchActivity.this));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                return "Success";
+            }
+
+            @Override
+            protected void onPostExecute(String result)
+            {
+                if(result == null)
+                {
+                    Toast.makeText(AnimeSearchActivity.this, r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                }
+                if(animes.size() > 0)
+                {
+                    txtNoResult.setVisibility(View.GONE);
+                    listView.setAdapter(new AnimeListAdapter(AnimeSearchActivity.this,animes));
+                }
+                else
+                {
+                    txtNoResult.setVisibility(View.VISIBLE);
+                }
+                Utils.dismissBusyDialog(busyDialog);
+            }
+
+    }
 }

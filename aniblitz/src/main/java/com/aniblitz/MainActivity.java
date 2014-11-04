@@ -269,43 +269,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             mMini = (MiniController) findViewById(R.id.miniController);
             App.mCastMgr.addMiniController(mMini);
 
-            mCastConsumer = new VideoCastConsumerImpl() {
-                @Override
-                public void onApplicationConnected(ApplicationMetadata appMetadata,
-                                                   String sessionId, boolean wasLaunched) {
-
-                }
-
-                @Override
-                public void onApplicationDisconnected(int errorCode) {
-
-                }
-
-                @Override
-                public void onDisconnected() {
-
-                }
-
-                @Override
-                public void onRemoteMediaPlayerMetadataUpdated() {
-
-                }
-
-                @Override
-                public void onFailed(int resourceId, int statusCode) {
-
-                }
-
-                @Override
-                public void onConnectionSuspended(int cause) {
-
-                }
-
-                @Override
-                public void onConnectivityRecovered() {
-
-                }
-            };
+            mCastConsumer = new VideoCastConsumerImpl();
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
 	}

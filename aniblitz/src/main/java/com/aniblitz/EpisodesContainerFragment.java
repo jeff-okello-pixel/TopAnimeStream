@@ -304,9 +304,10 @@ public class EpisodesContainerFragment extends Fragment{
                                         break;
                                     }
                                 }
+                                /*
                                 //let's see if we have some source in vk
                                 if(!episodeAdded)
-                                    getVkEpisode(episode);
+                                    getVkEpisode(episode);*/
                             }
                             else
                             {

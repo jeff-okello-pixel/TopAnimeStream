@@ -79,7 +79,6 @@
         <item>Share</item>
         <item>Settings</item>
     </string-array>
-
     <string-array name="menu_drawer_full">
         <item>Favorites</item>
         <item>History</item>
@@ -128,5 +127,8 @@
     <string name="title_update">Update</string>
     <string name="new_version_downloading">A New version of aniblitz is downloading...</string>
     <string name="title_aniblitz_update">Aniblitz update</string>
+    <string name="title_activity_video">VideoActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
