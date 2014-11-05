@@ -42,6 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.aniblitz.adapters.MenuArrayAdapter;
+import com.aniblitz.managers.DialogManager;
 import com.aniblitz.managers.VersionManager;
 import com.aniblitz.models.Anime;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
@@ -128,12 +129,16 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             if(App.isGooglePlayVersion)
             {
                 AppRater.app_launched(this);
+                if(prefs.getBoolean("ShowWelcomeDialog", true))
+                {
+                    DialogManager.ShowWelcomeDialog(this);
+                }
             }
             else
             {
                 if(prefs.getBoolean("ShowUpdate", true))
                 {
-                    VersionManager.checkUpdate(this);
+                    VersionManager.checkUpdate(this, false);
                 }
             }
 

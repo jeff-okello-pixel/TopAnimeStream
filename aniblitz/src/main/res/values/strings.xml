@@ -131,5 +131,12 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="changes">Changes</string>
+    <string name="title_auto_check_updates">Auto check for updates</string>
+    <string name="check_update_everytime_app_launched">Check for updates everything the app is launched</string>
+    <string name="title_language">Language</string>
+    <string name="checking_for_updates">Checking for updates...</string>
+    <string name="welcome_aniblitz">Welcome to Aniblitz!</string>
+    <string name="welcome_dialog_message">The google play version of Aniblitz is only available in Spanish, but what if you don\'t like watching animes in Spanish? Well, Aniblitz has a full version with which you can watch your animes in French, English and Spanish! Interrested?</string>
+    <string name="get_full_version">Get full version!</string>
 
 </resources>

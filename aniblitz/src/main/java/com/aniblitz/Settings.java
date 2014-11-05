@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.aniblitz.managers.VersionManager;
+
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener
 {
 	private App app;
@@ -47,6 +49,15 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         	}
         }
         SetSummary();
+
+        Preference prefManuallyCheckUpdates = (Preference)findPreference("prefManuallyCheckUpdates");
+        prefManuallyCheckUpdates.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference pref) {
+                VersionManager.checkUpdate(Settings.this, true);
+                return true;
+            }
+        });
     }
     
 	@Override

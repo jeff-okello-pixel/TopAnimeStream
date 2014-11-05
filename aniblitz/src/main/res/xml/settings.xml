@@ -10,7 +10,20 @@
             android:entries="@array/languages"
             android:summary="English"
             android:entryValues="@array/languagesValues"
-            android:title="Language" />
+            android:title="@string/title_language" />
+
+        <CheckBoxPreference
+            android:title="@string/title_auto_check_updates"
+            android:defaultValue="true"
+            android:summary="@string/check_update_everytime_app_launched"
+            android:disableDependentsState="true"
+            android:key="prefAutoCheckUpdates" />
+
+        <Preference
+            android:title="Check for updates"
+            android:summary="Manually check for updates"
+            android:key="prefManuallyCheckUpdates"
+            android:dependency="prefAutoCheckUpdates"/>
     </PreferenceCategory>
 
  

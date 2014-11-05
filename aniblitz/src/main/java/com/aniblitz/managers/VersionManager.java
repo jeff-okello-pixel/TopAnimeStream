@@ -1,5 +1,7 @@
 package com.aniblitz.managers;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -15,23 +17,29 @@ import org.json.JSONObject;
 import io.vov.vitamio.utils.Log;
 
 public class VersionManager {
+    private static Dialog busyDialog;
     //Executed everytime the app is opened
-    public static void checkUpdate(Context context)
+    public static void checkUpdate(Context context, boolean showBusyDialog)
     {
-        AsyncTaskTools.execute(new CheckUpdateTask(context));
+        AsyncTaskTools.execute(new CheckUpdateTask(context, showBusyDialog));
     }
 
     public static class CheckUpdateTask extends AsyncTask<Void, Void, String> {
         private Context context;
+        private boolean showBusyDialog;
         com.aniblitz.models.Package pkg;
-        public CheckUpdateTask(Context context)
+        public CheckUpdateTask(Context context, boolean showBusyDialog)
         {
             this.context = context;
+            this.showBusyDialog = showBusyDialog;
         }
 
         @Override
         protected void onPreExecute() {
-
+            if(showBusyDialog)
+            {
+                busyDialog = DialogManager.showBusyDialog(context.getString(R.string.checking_for_updates), context);
+            }
 
         }
 
@@ -69,6 +77,10 @@ public class VersionManager {
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
+            }
+            if(showBusyDialog)
+            {
+                DialogManager.dismissBusyDialog(busyDialog);
             }
 
 
