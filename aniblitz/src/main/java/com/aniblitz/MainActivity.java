@@ -95,6 +95,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if(Utils.isProInstalled(this))
         {
             SQLiteHelper sqlLite = new SQLiteHelper(this);
@@ -125,11 +126,20 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         else
         {
             if(App.isGooglePlayVersion)
+            {
                 AppRater.app_launched(this);
+            }
+            else
+            {
+                if(prefs.getBoolean("ShowUpdate", true))
+                {
+                    VersionManager.checkUpdate(this);
+                }
+            }
 
 
         }
-        VersionManager.checkUpdate(this);
+
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.app_name) + "</font>"));
 		listView = (ListView)findViewById(R.id.left_drawer);
@@ -167,7 +177,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         	actionBar.setHomeButtonEnabled(false);
         }
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         /*
         Editor editor = prefs.edit();
         editor.clear();
