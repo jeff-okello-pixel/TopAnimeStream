@@ -6,9 +6,11 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.widget.TextView;
 
 import com.aniblitz.R;
@@ -97,11 +99,11 @@ public class DialogManager {
     }
     public static void ShowUpdateDialog(final Context context, final com.aniblitz.models.Package pkg){
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.title_update) + " " + context.getString(R.string.app_name) + " " + String.valueOf(pkg.getVersion()));
         //builder.setIcon(R.drawable.icon);
-        //TODO show the changes
-        builder.setMessage(context.getString(R.string.new_version_available));
+        builder.setMessage(context.getString(R.string.new_version_available) + "\n\n" + context.getString(R.string.changes) + "\n" + pkg.getChanges());
         builder.setPositiveButton(context.getString(R.string.update_now),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -119,7 +121,15 @@ public class DialogManager {
                         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                         manager.enqueue(request);
                         dialog.dismiss();
+                        prefs.edit().putBoolean("ShowUpdate", false);
 
+                    }
+                }
+        );
+        builder.setNeutralButton(context.getString(R.string.remind_me_later),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        prefs.edit().putBoolean("ShowUpdate", true);
                     }
                 });
 
@@ -127,6 +137,7 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
+                        prefs.edit().putBoolean("ShowUpdate", false).commit();
                     }
                 });
         builder.show();

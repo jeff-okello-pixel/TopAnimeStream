@@ -130,5 +130,6 @@
     <string name="title_activity_video">VideoActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="changes">Changes</string>
 
 </resources>
