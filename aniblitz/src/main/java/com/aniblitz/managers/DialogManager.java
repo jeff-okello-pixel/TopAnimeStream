@@ -61,7 +61,7 @@ public class DialogManager {
                         dialog.dismiss();
                     }
                 });
-        builder.show();
+        ShowDialog(builder);
     }
     public static void ShowNetworkErrorDialog(final Context context){
         if(!(context instanceof NetworkErrorDialogEvent))
@@ -94,9 +94,20 @@ public class DialogManager {
                     }
                 });
 
-        builder.show();
+        ShowDialog(builder);
 
     }
+    private static void ShowDialog(AlertDialog.Builder builder)
+    {
+        try
+        {
+            builder.show();
+        }catch(Exception e)//leaked error
+        {
+            e.printStackTrace();
+        }
+    }
+
     public static void ShowUpdateDialog(final Context context, final com.aniblitz.models.Package pkg){
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -140,7 +151,8 @@ public class DialogManager {
                         prefs.edit().putBoolean("ShowUpdate", false).commit();
                     }
                 });
-        builder.show();
+
+        ShowDialog(builder);
 
     }
     /*not really usable since you can't have 2 of them in the same activity...*/
@@ -166,9 +178,37 @@ public class DialogManager {
                         ((GenericTwoButtonDialogEvent)context).onGenericDialogSecondButton();
                     }
                 });
-        builder.show();
+
+        ShowDialog(builder);
 
     }
+    public static void ShowWelcomeDialog(final Context context){
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.welcome_aniblitz));
+        //builder.setIcon(R.drawable.icon);
+        builder.setMessage(context.getString(R.string.welcome_dialog_message));
+        builder.setPositiveButton(context.getString(R.string.get_full_version),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //TODO go to download/register/promo page
+
+                        prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
+                    }
+                });
+
+        builder.setNegativeButton(context.getString(R.string.no_thanks),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
+                    }
+                });
+
+        ShowDialog(builder);
+
+    }
+
 
     public static void ShowGenericErrorDialog(final Context context, String errorMessage){
         if(!(context instanceof GenericDialogEvent))
@@ -185,8 +225,8 @@ public class DialogManager {
                         ((GenericDialogEvent)context).onGenericDialogOk();
                     }
                 });
-        builder.show();
 
+        ShowDialog(builder);
     }
 
     public static void ShowGenericTryAgainErrorDialog(final Context context, String errorMessage){
@@ -212,17 +252,18 @@ public class DialogManager {
                     }
                 });
 
-        builder.show();
+        ShowDialog(builder);
 
 
     }
 
-    public static Dialog showBusyDialog(String message, Activity act) {
-        Dialog busyDialog = new Dialog(act, R.style.lightbox_dialog);
+    public static Dialog showBusyDialog(String message, Context context) {
+        Dialog busyDialog = new Dialog(context, R.style.lightbox_dialog);
         busyDialog.setContentView(R.layout.lightbox_dialog);
         ((TextView)busyDialog.findViewById(R.id.dialogText)).setText(message);
-
-        busyDialog.show();
+        try{
+            busyDialog.show();
+        }catch(Exception e){}//leaked error
         return busyDialog;
     }
 
