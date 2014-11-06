@@ -2,13 +2,13 @@
 <resources>
 
     <string name="app_name">Aniblitz</string>
-    <string name="search_hint">Rechercher</string>
+    <string name="search_hint">Buscar</string>
     <string name="app_label">Aniblitz</string>
     <!-- Menu actions -->
-    <string name="action_favorite">Ajouter aux favoris</string>
-    <string name="action_settings">Configuration</string>
-    <string name="action_buypro">Acheter Aniblitz pro</string>
-    <string name="action_rate">Donner votre avis</string>
+    <string name="action_favorite">Agregar a favoritos</string>
+    <string name="action_settings">Configuración</string>
+    <string name="action_buypro">Compra la versión pro</string>
+    <string name="action_rate">Escribe una opinión</string>
     <string name="action_share">Partager</string>
     <string name="action_show_as_list">Afficher en tant que liste</string>
     <string name="action_show_as_grid">Afficher en tant que grille</string>

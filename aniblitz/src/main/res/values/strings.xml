@@ -89,8 +89,8 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_provider">No provider in this tab</string>
-    <string name="play_phone">Play on phone</string>
-    <string name="stream_chromecast">Stream on chromecast</string>
+    <string name="play_phone">Play on device</string>
+    <string name="stream_chromecast">Stream on Chromecast</string>
     <string name="choose_option">Choose an option</string>
     <string name="parenthese_default">(default)</string>
     <string name="choose_quality">Choose your quality</string>
@@ -128,16 +128,14 @@
     <string name="new_version_downloading">A New version of aniblitz is downloading...</string>
     <string name="title_aniblitz_update">Aniblitz update</string>
     <string name="title_activity_video">VideoActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="changes">Changes</string>
     <string name="title_auto_check_updates">Auto check for updates</string>
-    <string name="check_update_everytime_app_launched">Check for updates everything the app is launched</string>
+    <string name="check_update_everytime_app_launched">Check for updates everytime the app is launched</string>
     <string name="title_language">Language</string>
     <string name="checking_for_updates">Checking for updates...</string>
     <string name="welcome_aniblitz">Welcome to Aniblitz!</string>
     <string name="welcome_dialog_message">The google play version of Aniblitz is only available in Spanish, but what if you don\'t like watching animes in Spanish? Well, Aniblitz has a full version with which you can watch your animes in French, English and Spanish! Interrested?</string>
-    <string name="get_full_version">Get full version!</string>
+    <string name="get_full_version">Get the full version!</string>
     <string name="title_activity_web">WebActivity</string>
 
 </resources>
