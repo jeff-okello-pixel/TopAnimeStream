@@ -126,6 +126,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		}
         else
         {
+
             if(App.isGooglePlayVersion)
             {
                 AppRater.app_launched(this);
@@ -136,13 +137,20 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             }
             else
             {
-                if(prefs.getBoolean("ShowUpdate", true))
+                if(App.accessToken != null && !App.accessToken.equals("") && !App.isGooglePlayVersion)
                 {
-                    VersionManager.checkUpdate(this, false);
+                    AsyncTaskTools.execute(new ValidTokenTask());
+                    if(prefs.getBoolean("ShowUpdate", true))
+                    {
+                        VersionManager.checkUpdate(this, false);
+                    }
+                }
+                else
+                {
+                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    finish();
                 }
             }
-
-
         }
 
 		ActionBar actionBar = getSupportActionBar();
@@ -257,15 +265,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
-        if(App.accessToken != null && !App.accessToken.equals("") && !App.isGooglePlayVersion)
-        {
-            AsyncTaskTools.execute(new ValidTokenTask());
-        }
-        else if(!App.isGooglePlayVersion)
-        {
-            startActivity(new Intent(MainActivity.this,LoginActivity.class));
-            finish();
-        }
 
 
         if(App.isPro)
