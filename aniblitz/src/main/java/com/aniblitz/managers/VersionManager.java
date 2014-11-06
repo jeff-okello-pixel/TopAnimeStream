@@ -14,7 +14,6 @@ import com.aniblitz.models.*;
 
 import org.json.JSONObject;
 
-import io.vov.vitamio.utils.Log;
 
 public class VersionManager {
     private static Dialog busyDialog;

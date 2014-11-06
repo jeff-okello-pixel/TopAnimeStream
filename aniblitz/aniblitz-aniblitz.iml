@@ -88,7 +88,6 @@
     <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="ksoap2" level="project" />
-    <orderEntry type="module" module-name="initActivity" exported="" />
     <orderEntry type="module" module-name="CastCompanionLibrary-android-master" exported="" />
     <orderEntry type="module" module-name="librarytabstrip" exported="" />
     <orderEntry type="module" module-name="imageloaderlibrary" exported="" />

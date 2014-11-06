@@ -21,7 +21,6 @@ android {
 dependencies {
     compile project(':librarytabstrip')
     compile project(':imageloaderlibrary')
-    compile project(':initActivity')
     compile project(':CastCompanionLibrary-android-master')
     compile files('libs/jsoup-1.7.3.jar')
     compile files('libs/ksoap2.jar')

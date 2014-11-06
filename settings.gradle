@@ -1,4 +1,4 @@
-include ':initActivity', ':CastCompanionLibrary-android-master'
+include ':CastCompanionLibrary-android-master'
 include ':imageloaderlibrary'
 include ':librarytabstrip'
 include ':aniblitz'

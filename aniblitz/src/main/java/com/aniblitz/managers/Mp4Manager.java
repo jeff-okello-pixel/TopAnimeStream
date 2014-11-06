@@ -222,6 +222,7 @@ public class Mp4Manager {
             Utils.dismissBusyDialog(busyDialog);
             if(result == null)
             {
+
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 try {
                     i.setData(Uri.parse(URLDecoder.decode(mirror.getSource(), "UTF-8")));

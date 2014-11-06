@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.aniblitz.R;
@@ -28,14 +29,12 @@ public class VideoActivity extends Activity {
         Intent intent = getIntent();
         mp4Url = intent.getStringExtra("Mp4Url");
         videoView = (VideoView) findViewById(R.id.videoView);
-        this.getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         Uri mp4Uri = Uri.parse(mp4Url);
         videoView.setVideoURI(mp4Uri);
+        MediaController mediaController = new MediaController(this);
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
         videoView.start();
 
     }
