@@ -20,8 +20,8 @@
             android:key="prefAutoCheckUpdates" />
 
         <Preference
-            android:title="Check for updates"
-            android:summary="Manually check for updates"
+            android:title="@string/title_check_updates"
+            android:summary="@string/manually_check_updates"
             android:key="prefManuallyCheckUpdates"
             android:dependency="prefAutoCheckUpdates"/>
     </PreferenceCategory>

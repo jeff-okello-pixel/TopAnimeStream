@@ -174,7 +174,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                busyDialog = Utils.showBusyDialog("Searching...", AnimeSearchActivity.this);
+                busyDialog = Utils.showBusyDialog(getString(R.string.loading_search), AnimeSearchActivity.this);
                 animes = new ArrayList<Anime>();
                 mItems = new ArrayList<String>();
                 listView.setAdapter(null);

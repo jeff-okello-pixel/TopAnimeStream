@@ -137,5 +137,8 @@
     <string name="welcome_dialog_message">The google play version of Aniblitz is only available in Spanish, but what if you don\'t like watching animes in Spanish? Well, Aniblitz has a full version with which you can watch your animes in French, English and Spanish! Interrested?</string>
     <string name="get_full_version">Get the full version!</string>
     <string name="title_activity_web">WebActivity</string>
+    <string name="title_check_updates">Check for updates</string>
+    <string name="manually_check_updates">Manually check for updates</string>
+    <string name="loading_search">Searching...</string>
 
 </resources>

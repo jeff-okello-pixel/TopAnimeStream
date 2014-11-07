@@ -96,7 +96,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="error_username_empty">Nom d\'utilisateur est vide</string>
     <string name="error_password_empty">Mot de passe est vide</string>
-    <string name="error_login">Une erreur est survenue lors de l'authentification</string>
+    <string name="error_login">Une erreur est survenue lors de l\'authentification</string>
     <string name="logging">Connexion en cours...</string>
     <string name="error_internet_connection">Pas de connexion Internet</string>
     <string name="logging_out">Déconnexion...</string>
@@ -105,9 +105,9 @@
     <string name="enjoy_using">"Si vous aimez utiliser "</string>
     <string name="take_a_moment_to_rate">, s\'il vous plaît prendre un moment pour évaluer l\'application. Merci pour votre soutien!</string>
     <string name="rate_aniblitz">Donnez votre avis</string>
-    <string name="remind_me_later">Rappelez-moi plus tard</string>
+    <string name="remind_me_later">Plus tard</string>
     <string name="no_thanks">Non merci</string>
-    <string name="no_anime">Aucun anime dans cet ongelt</string>
+    <string name="no_anime">Aucun anime dans cet onglet</string>
     <string name="not_available">Pas disponible</string>
     <string name="download_full_version">Vous ne pouvez pas changer la langue dans cette version. Télécharger la version complète au www.aniblitz.com pour avoir accès à toutes les langues (Anglais, Français, Espagnol)</string>
     <string name="goto_aniblitz">Allez au aniblitz.com</string>
@@ -116,11 +116,11 @@
     <string name="play">Jouer</string>
     <string name="try_again">Essayer à nouveau</string>
     <string name="network_settings">Paramètres réseau</string>
-    <string name="update_now">Mettre à jour maintenant</string>
+    <string name="update_now">Mettre à jour</string>
     <string name="new_version_available">Une nouvelle version de Aniblitz est disponible. Télécharger la nouvelle version pour accéder aux nouvelles fonctionnalités et corrections de bogues!</string>
     <string name="title_update">Mise à jour</string>
     <string name="new_version_downloading">Téléchargement d\'une nouvelle version de Aniblitz...</string>
-    <string name="title_aniblitz_update">Mise à jour d'Aniblitz</string>
+    <string name="title_aniblitz_update">Mise à jour d\'Aniblitz</string>
     <string name="title_activity_video">VideoActivity</string>
     <string name="changes">Changements</string>
     <string name="title_auto_check_updates">Vérification automatique des mises à jour</string>
@@ -128,8 +128,11 @@
     <string name="title_language">Langage</string>
     <string name="checking_for_updates">Vérification des mises à jour...</string>
     <string name="welcome_aniblitz">Bienvenue sur Aniblitz!</string>
-    <string name="welcome_dialog_message">La version d'Aniblitz sur le Google Play est seulement disponible en Espagnol, mais qu\'arrive-t-il si vous n'aimez pas regarder les animes en Espagnol? Eh bien, Aniblitz offre une version complète qui vous permet de regarder les animes en Français, Anglais et Espagnol! Intéressé?</string>
+    <string name="welcome_dialog_message">La version d\'Aniblitz sur le Google Play est seulement disponible en Espagnol, mais qu\'arrive-t-il si vous n\'aimez pas regarder les animes en Espagnol? Eh bien, Aniblitz offre une version complète qui vous permet de regarder les animes en Français, Anglais et Espagnol! Intéressé?</string>
     <string name="get_full_version">Obtenir la version complète!</string>
     <string name="title_activity_web">WebActivity</string>
+    <string name="title_check_updates">Vérifiez les mises à jour</string>
+    <string name="manually_check_updates">Vérification manuelle des mises à jour</string>
+    <string name="loading_search">Recherche...</string>
 
 </resources>

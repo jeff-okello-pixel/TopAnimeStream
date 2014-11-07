@@ -122,16 +122,17 @@ public class Mp4Manager {
                         alertBuilder.setTitle(act.getString(R.string.choose_quality));
                         alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int item) {
-                                AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, items[item].toString(), doc));
+                                AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, items[item].toString(), doc, null));
                             }
                         });
 
                         qualityDialog = alertBuilder.create();
                         qualityDialog.show();
+                        DialogManager.dismissBusyDialog(busyDialog);
                     }
                     else
                     {
-                        AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, null, doc));
+                        AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, null, doc, busyDialog));
                     }
                 }
 
@@ -140,8 +141,9 @@ public class Mp4Manager {
             {
                 e.printStackTrace();
                 Toast.makeText(act, act.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+                DialogManager.dismissBusyDialog(busyDialog);
             }
-            DialogManager.dismissBusyDialog(busyDialog);
+
 
         }
 
@@ -159,7 +161,7 @@ public class Mp4Manager {
         private String providerName;
         private String quality;
         private Document doc;
-        public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String providerName, String quality, Document doc)
+        public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String providerName, String quality, Document doc, Dialog busyDialog)
         {
             this.mirror = mirror;
             this.act = act;
@@ -168,6 +170,7 @@ public class Mp4Manager {
             this.providerName = providerName;
             this.quality = quality;
             this.doc = doc;
+            this.busyDialog = busyDialog;
             r = act.getResources();
         }
 
@@ -175,8 +178,10 @@ public class Mp4Manager {
         @Override
         protected void onPreExecute()
         {
-            busyDialog = DialogManager.showBusyDialog(r.getString(R.string.loading_video), act);
-
+            if(busyDialog == null)
+            {
+                busyDialog = Utils.showBusyDialog(act.getString(R.string.loading_video), act);
+            }
         };
         @Override
         protected String doInBackground(Void... params)
