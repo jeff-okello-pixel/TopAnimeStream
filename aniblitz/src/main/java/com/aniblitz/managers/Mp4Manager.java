@@ -275,22 +275,23 @@ public class Mp4Manager {
                     }
                     else if(items[item].equals(act.getString(R.string.stream_chromecast)))
                     {
-                        String subtitle = "";
-                        if(episode != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName().equals(""))
-                        {
-                            subtitle = episode.getEpisodeInformations().getEpisodeName();
-                        }
-                        else if(episode != null)
-                        {
-                            subtitle = act.getString(R.string.episode) + episode.getEpisodeNumber();
+                        if(App.isPro) {
+                            String subtitle = "";
+                            if (episode != null && episode.getEpisodeInformations() != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName().equals("")) {
+                                subtitle = episode.getEpisodeInformations().getEpisodeName();
+                            } else if (episode != null) {
+                                subtitle = act.getString(R.string.episode) + episode.getEpisodeNumber();
+                            } else {
+                                subtitle = act.getString(R.string.tab_movie);
+                            }
+
+                            MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
+                            loadRemoteMedia(act, 0, true, info);
                         }
                         else
                         {
-                            subtitle = act.getString(R.string.tab_movie);
+                            DialogManager.ShowChromecastNotProErrorDialog(act);
                         }
-
-                        MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
-                        loadRemoteMedia(act, 0, true, info);
                     }
                     else
                     {

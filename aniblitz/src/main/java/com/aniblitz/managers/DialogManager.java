@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.widget.TextView;
 
+import com.aniblitz.App;
 import com.aniblitz.R;
 import com.aniblitz.models.*;
 
@@ -178,6 +179,97 @@ public class DialogManager {
                         ((GenericTwoButtonDialogEvent)context).onGenericDialogSecondButton();
                     }
                 });
+
+        ShowDialog(builder);
+
+    }
+    public static void ShowChromecastNotProErrorDialog(final Context context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.pro_version_needed));
+        //builder.setIcon(R.drawable.icon);
+        builder.setMessage(context.getString(R.string.need_pro_chromecast));
+        builder.setPositiveButton(context.getString(R.string.action_buypro),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.aniblitz.pro")));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.aniblitz.pro")));
+                        }
+                    }
+                });
+        builder.setNegativeButton(context.getString(R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        ShowDialog(builder);
+    }
+    public static void ShowUpgradedToProDialog(final Context context){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.title_aniblitz_upgraded));
+        //builder.setIcon(R.drawable.icon);
+        builder.setMessage(context.getString(R.string.aniblitz_upgraded_message));
+        builder.setPositiveButton(context.getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        ShowDialog(builder);
+
+    }
+    public static void ShowBuyProDialog(final Context context){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Buy Aniblitz pro");
+        //builder.setIcon(R.drawable.icon);
+        if(App.isGooglePlayVersion && !App.isPro)
+        {
+            builder.setMessage("Aniblitz has 2 pro versions available. The first one (downloadable on Google Play) is in Spanish only with no ads and Chromecast support. The other one let you watch animes in English, French and Spanish and also have no ads and Chromecast support. Which one do you prefer?");
+            builder.setPositiveButton("All languages",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //TODO redirect to promo/buy app
+                        }
+                    });
+            builder.setNeutralButton("Spanish only",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            try {
+                                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.aniblitz.pro")));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.aniblitz.pro")));
+                            }
+                        }
+                    });
+            builder.setNegativeButton(context.getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+        }
+        else
+        {
+            builder.setMessage("Bored of animes in Spanish only? Buy the full version of Aniblitz to get access to animes in English, French and Spanish!");
+            builder.setPositiveButton(context.getString(R.string.buy_full_version),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //TODO redirect to promo/buy app
+                        }
+                    });
+            builder.setNegativeButton(context.getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+        }
 
         ShowDialog(builder);
 

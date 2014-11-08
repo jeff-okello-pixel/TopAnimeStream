@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -90,6 +91,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private MiniController mMini;
     private VideoCastConsumerImpl mCastConsumer;
     private MenuItem mediaRouteMenuItem;
+    private MenuItem menuBuyPro;
+    private MenuArrayAdapter menuAdapter;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +103,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         if(Utils.isProInstalled(this))
         {
             SQLiteHelper sqlLite = new SQLiteHelper(this);
-            if(!sqlLite.isPro())
+            if(!sqlLite.isPro()) {
                 sqlLite.setPro(true);
+                DialogManager.ShowUpgradedToProDialog(this);
+            }
             else
                 App.isPro = true;
+
+
         }
 		r = getResources();
 		animes = new ArrayList<Anime>();
@@ -132,7 +139,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 AppRater.app_launched(this);
                 if(prefs.getBoolean("ShowWelcomeDialog", true))
                 {
-                    DialogManager.ShowWelcomeDialog(this);
+                    if(!App.isPro) {
+                        DialogManager.ShowWelcomeDialog(this);
+                    }
                 }
             }
             else
@@ -161,10 +170,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         listView.setScrollingCacheEnabled(false);
         listView.setScrollContainer(false);
         listView.setSmoothScrollbarEnabled(true);
+
         if(App.isGooglePlayVersion)
-            listView.setAdapter(new MenuArrayAdapter(this, r.getStringArray(R.array.menu_drawer_google_play)));
+            menuAdapter = new MenuArrayAdapter(this, r.getStringArray(R.array.menu_drawer_google_play));
         else
-            listView.setAdapter(new MenuArrayAdapter(this, r.getStringArray(R.array.menu_drawer_full)));
+            menuAdapter = new MenuArrayAdapter(this, r.getStringArray(R.array.menu_drawer_full));
+
+        listView.setAdapter(menuAdapter);
+
 		mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 		
 		if(mDrawerLayout != null)
@@ -462,6 +475,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
+        menuBuyPro = menu.findItem(R.id.action_buypro);
+        if(App.isPro)
+            menuBuyPro.setVisible(false);
+
         menuSortAz = menu.findItem(R.id.action_sortaz);
         menuSortZa = menu.findItem(R.id.action_sortza);
 
@@ -495,6 +512,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                     refreshFragment(movieFragment, isDesc);
                     refreshFragment(cartoonFragment, isDesc);
                  break;
+                case R.id.action_buypro:
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.aniblitz.pro")));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.aniblitz.pro")));
+                    }
+
+                break;
                 case R.id.action_sortza:
                     menuSortAz.setVisible(true);
                     menuSortZa.setVisible(false);
@@ -538,37 +563,45 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 	{
-			switch(position)
-			{
-				case 0:
-					startActivity(new Intent(MainActivity.this,FavoriteActivity.class));
-					break;
-				case 1:
-					startActivity(new Intent(MainActivity.this,HistoryActivity.class));
-					break;
-				case 2:
-			    	Intent sendIntent = new Intent();
-			    	sendIntent.setAction(Intent.ACTION_SEND);
-			    	if(App.isPro)
-			    	{
-				    	sendIntent.putExtra(Intent.EXTRA_TEXT,
-					    	    "https://play.google.com/store/apps/details?id=com.aniblitz.pro");
-			    	}
-			    	else
-			    	{
-			    	sendIntent.putExtra(Intent.EXTRA_TEXT,
-			    	    "https://play.google.com/store/apps/details?id=com.aniblitz");
-			    	}
-			    	sendIntent.setType("text/plain");
-			    	startActivity(sendIntent);
-					break;
-				case 3:
-					startActivity(new Intent(MainActivity.this,Settings.class));
-					break;
-                case 4:
-                    AsyncTaskTools.execute(new LogoutTask());
-                    break;
-			}
+        String menuItem = menuAdapter.getItem(position);
+        if(menuItem.equals(getString(R.string.menu_favorites)))
+        {
+            startActivity(new Intent(MainActivity.this,FavoriteActivity.class));
+        }
+        else if(menuItem.equals(getString(R.string.menu_history)))
+        {
+            startActivity(new Intent(MainActivity.this,HistoryActivity.class));
+        }
+        else if(menuItem.equals(getString(R.string.menu_share)))
+        {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            if(App.isPro)
+            {
+                sendIntent.putExtra(Intent.EXTRA_TEXT,
+                        "https://play.google.com/store/apps/details?id=com.aniblitz.pro");
+            }
+            else
+            {
+                sendIntent.putExtra(Intent.EXTRA_TEXT,
+                        "https://play.google.com/store/apps/details?id=com.aniblitz");
+            }
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        }
+        else if(menuItem.equals(getString(R.string.menu_settings)))
+        {
+            startActivity(new Intent(MainActivity.this,Settings.class));
+        }
+        else if(menuItem.equals(getString(R.string.menu_logout)))
+        {
+            AsyncTaskTools.execute(new LogoutTask());
+        }
+        else if(menuItem.equals(getString(R.string.menu_pro)))
+        {
+            DialogManager.ShowBuyProDialog(this);
+        }
+
 
 	}
 

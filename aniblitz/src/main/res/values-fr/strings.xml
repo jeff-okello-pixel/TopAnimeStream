@@ -134,5 +134,9 @@
     <string name="title_check_updates">Vérifiez les mises à jour</string>
     <string name="manually_check_updates">Vérification manuelle des mises à jour</string>
     <string name="loading_search">Recherche...</string>
+    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">You have now  Aniblitz Pro. Enjoy watching anime in English, French and Spanish. The app is now ad-free* and you have now access to Google Chromecast.
+*Some providers may show ads in the video.</string>
+    <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
+    <string name="pro_version_needed">Pro version needed</string>
 
 </resources>

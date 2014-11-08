@@ -182,7 +182,7 @@ public class Utils {
     }
         public static boolean isProInstalled(Context context) {
             PackageManager manager = context.getPackageManager();
-            if (manager.checkSignatures(context.getPackageName(), "urc.aniblitzprounlocker")
+            if (manager.checkSignatures(context.getPackageName(), "com.aniblitz.pro")
                     == PackageManager.SIGNATURE_MATCH) {
                 //Pro key installed, and signatures match
                 return true;

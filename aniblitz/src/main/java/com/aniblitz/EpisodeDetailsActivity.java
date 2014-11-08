@@ -75,7 +75,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
                 episodeName = episodeInfo.getEpisodeName();
             }
             else{
-                episodeName = getString(R.string.episode) + episode.getEpisodeNumber();
+                episodeName = getString(R.string.episode) + " " + episode.getEpisodeNumber();
             }
 
             if(episodeInfo.getSummary() != null && !episodeInfo.getSummary().equals(""))
@@ -88,7 +88,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             }
         }
         txtEpisodeName.setText(episodeName);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episode) + episode.getEpisodeNumber() + "</font>"));
+        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episode) + " " + episode.getEpisodeNumber() + "</font>"));
         if(episode.getScreenshot() != null && !episode.getScreenshot().equals(""))
             App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(),imgScreenshot);
         else

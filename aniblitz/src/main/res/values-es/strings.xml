@@ -60,6 +60,7 @@
     <string name="menu_share">Partager</string>
     <string name="menu_settings">Configuration</string>
     <string name="menu_logout">Déconnexion</string>
+    <string name="menu_pro">Upgrade to pro</string>
     <string name="language_english">English</string>
     <string name="language_french">Français</string>
     <string name="language_spanish">Español</string>
@@ -73,6 +74,7 @@
         <item>Historique</item>
         <item>Partager</item>
         <item>Configuration</item>
+        <item>Upgrade to pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
         <item>Favoris</item>
@@ -105,7 +107,7 @@
     <string name="enjoy_using">"Si vous aimez utiliser "</string>
     <string name="take_a_moment_to_rate">, s\'il vous plaît prendre un moment pour évaluer l\'application. Merci pour votre soutien!</string>
     <string name="rate_aniblitz">Donnez votre avis</string>
-    <string name="remind_me_later">Rappelez-moi plus tard</string>
+    <string name="remind_me_later">Plus tard</string>
     <string name="no_thanks">Non merci</string>
     <string name="no_anime">Aucun anime dans cet onglet</string>
     <string name="not_available">Pas disponible</string>
@@ -116,7 +118,7 @@
     <string name="play">Jouer</string>
     <string name="try_again">Essayer à nouveau</string>
     <string name="network_settings">Paramètres réseau</string>
-    <string name="update_now">Mettre à jour maintenant</string>
+    <string name="update_now">Mettre à jour</string>
     <string name="new_version_available">Une nouvelle version de Aniblitz est disponible. Télécharger la nouvelle version pour accéder aux nouvelles fonctionnalités et corrections de bogues!</string>
     <string name="title_update">Mise à jour</string>
     <string name="new_version_downloading">Téléchargement d\'une nouvelle version de Aniblitz...</string>
@@ -134,4 +136,8 @@
     <string name="title_check_updates">Vérifiez les mises à jour</string>
     <string name="manually_check_updates">Vérification manuelle des mises à jour</string>
     <string name="loading_search">Recherche...</string>
+    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">You have now  Aniblitz Pro. Enjoy watching anime in English, French and Spanish. The app is now ad-free* and you have now access to Google Chromecast.
+*Some providers may show ads in the video.</string>
+    <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
+    <string name="pro_version_needed">Pro version needed</string>
 </resources>

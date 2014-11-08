@@ -64,6 +64,7 @@
     <string name="menu_history">History</string>
     <string name="menu_share">Share</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_pro">Upgrade to pro</string>
     <string name="menu_logout">Logout</string>
     <string name="language_english">English</string>
     <string name="language_french">Français</string>
@@ -78,6 +79,7 @@
         <item>History</item>
         <item>Share</item>
         <item>Settings</item>
+        <item>Upgrade to pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
         <item>Favorites</item>
@@ -140,5 +142,10 @@
     <string name="title_check_updates">Check for updates</string>
     <string name="manually_check_updates">Manually check for updates</string>
     <string name="loading_search">Searching...</string>
+    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">You have now  Aniblitz Pro. Enjoy watching anime in English, French and Spanish. The app is now ad-free* and you have now access to Google Chromecast.
+*Some providers may show ads in the video.</string>
+    <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
+    <string name="pro_version_needed">Pro version needed</string>
+    <string name="buy_full_version">Buy full version</string>
 
 </resources>
