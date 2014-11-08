@@ -22,12 +22,18 @@ import android.widget.Toast;
 
 import com.aniblitz.managers.AnimationManager;
 
+import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.kxml2.kdom.Element;
+import org.kxml2.kdom.Node;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
@@ -149,6 +155,11 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             }
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+            envelope.headerOut = new Element[1];
+            Element lang = new Element().createElement("", "Lang");
+            lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
+            envelope.headerOut[0] = lang;
             request.addProperty("username", userName);
             request.addProperty("password", password);
             request.addProperty("application", "Android");
@@ -156,15 +167,19 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
             envelope .dotNet = true;
             envelope.setOutputSoapObject(request);
+
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            //androidHttpTransport.debug = true;
             SoapPrimitive result = null;
             try
             {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                //String requestDump = androidHttpTransport.requestDump.toString();
                 result = (SoapPrimitive)envelope.getResponse();
                 token = result.toString();
                 return null;
-            }            catch (Exception e)
+            }
+            catch (Exception e)
             {
                 if(e instanceof SoapFault)
                 {

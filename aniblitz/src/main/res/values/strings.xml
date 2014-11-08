@@ -6,7 +6,7 @@
     <string name="search_hint">Search</string>
     <string name="app_label">Aniblitz</string>
     <string name="aniblitz_website">http://aniblitz.com</string>
-    <string name="anime_service_path">http://aniblitz.com/AnimeServices/AnimeService.svc/</string>
+    <string name="anime_service_path">http://lanbox.ca/AnimeServices/AnimeService.svc/</string>
     <string name="anime_data_service_path">http://aniblitz.com/AnimeServices/AnimeDataService.svc/</string>
     <string name="image_host_path">http://aniblitz.com/ImageHost/</string>
     <!-- Menu actions -->
