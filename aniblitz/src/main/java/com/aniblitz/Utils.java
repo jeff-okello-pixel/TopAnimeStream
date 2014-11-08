@@ -78,6 +78,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Base64;
@@ -500,10 +501,19 @@ public class Utils {
     	return String.format(new String(new char[terms.toArray().length]).replace("\0", "%s" + " ").replaceFirst("(.*)" + " " + "$","$1"), terms.toArray()).replace("+", "+" + key + ":");
     }
     public static void restartActivity(Activity act) {
-        Intent intent = act.getIntent();
-        act.finish();
-        act.startActivity(intent);
-        act.overridePendingTransition(0, 0);
+        if (Build.VERSION.SDK_INT >= 11) {
+            act.overridePendingTransition(0, 0);
+            act.recreate();
+            act.overridePendingTransition(0, 0);
+        } else {
+            Intent intent = act.getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            act.finish();
+            act.overridePendingTransition(0, 0);
+
+            act.startActivity(intent);
+            act.overridePendingTransition(0, 0);
+        }
     }
 
 	public static Dialog showBusyDialog(String message, Activity act) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.aniblitz.adapters.HistoryListAdapter;
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.models.Anime;
 
 import android.app.AlertDialog;
@@ -50,6 +51,7 @@ public class HistoryActivity extends ActionBarActivity implements OnItemClickLis
 			 switch (item.getItemId()) {
 			    case android.R.id.home:
 			    	finish();
+                    AnimationManager.ActivityFinish(this);
 			    	break;
 			 }
 	    return true;
@@ -86,5 +88,12 @@ public class HistoryActivity extends ActionBarActivity implements OnItemClickLis
 			else
 				txtNoWatch.setVisibility(View.VISIBLE);
 		}
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
+    }
 
 }

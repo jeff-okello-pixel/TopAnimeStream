@@ -118,12 +118,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 	}
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        AnimationManager.ActivityFinish(this);
-    }
+
     @Override
     protected void onResume() {
         if(App.isPro)
@@ -145,7 +140,16 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
         }
         super.onPause();
+
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("anime", anime);
@@ -176,7 +180,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 			case R.id.action_settings:
 			break;
 			case android.R.id.home:
-				finish();
+                finish();
                 AnimationManager.ActivityFinish(this);
 			break;
 			case R.id.action_favorite:
@@ -230,6 +234,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             hackBundle.putParcelable("Anime", anime);
             intent.putExtra("hackBundle", hackBundle);
             startActivity(intent);
+            AnimationManager.ActivityStart(this);
         //}
 	}
 

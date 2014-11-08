@@ -1,6 +1,7 @@
 package com.aniblitz;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -43,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.aniblitz.adapters.MenuArrayAdapter;
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.managers.DialogManager;
 import com.aniblitz.managers.VersionManager;
 import com.aniblitz.models.Anime;
@@ -59,6 +61,8 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.kxml2.kdom.Element;
+import org.kxml2.kdom.Node;
 
 public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection{
 
@@ -435,6 +439,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    	textView.setTextColor(Color.WHITE);
 	    	textView.setHintTextColor(Color.WHITE);
 	    }
+
 	    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 	    
 	    searchView.setOnQueryTextListener(new OnQueryTextListener(){
@@ -449,6 +454,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
 				MenuItemCompat.collapseActionView(menuItem);
 				searchView.setQuery("", false);
+                AnimationManager.ActivityStart(MainActivity.this);
 				return false;
 			}
 			 
@@ -567,10 +573,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         if(menuItem.equals(getString(R.string.menu_favorites)))
         {
             startActivity(new Intent(MainActivity.this,FavoriteActivity.class));
+            AnimationManager.ActivityStart(this);
         }
         else if(menuItem.equals(getString(R.string.menu_history)))
         {
             startActivity(new Intent(MainActivity.this,HistoryActivity.class));
+            AnimationManager.ActivityStart(this);
         }
         else if(menuItem.equals(getString(R.string.menu_share)))
         {
@@ -592,6 +600,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         else if(menuItem.equals(getString(R.string.menu_settings)))
         {
             startActivity(new Intent(MainActivity.this,Settings.class));
+            AnimationManager.ActivityStart(this);
         }
         else if(menuItem.equals(getString(R.string.menu_logout)))
         {
@@ -631,7 +640,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("token", App.accessToken);
 
-
+            envelope.headerOut = new Element[1];
+            Element lang = new Element().createElement("", "Lang");
+            lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
+            envelope.headerOut[0] = lang;
             envelope .dotNet = true;
             envelope.setOutputSoapObject(request);
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
@@ -726,7 +738,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("token", App.accessToken);
 
-
+            envelope.headerOut = new Element[1];
+            Element lang = new Element().createElement("", "Lang");
+            lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
+            envelope.headerOut[0] = lang;
             envelope .dotNet = true;
             envelope.setOutputSoapObject(request);
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);

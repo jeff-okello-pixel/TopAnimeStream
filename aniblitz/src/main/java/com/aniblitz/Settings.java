@@ -12,13 +12,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.managers.VersionManager;
 
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener
@@ -38,7 +41,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 		  
         //getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-
         ListView lv = (ListView) findViewById(android.R.id.list);
         if(lv != null)
         {
@@ -49,7 +51,8 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         	}
         }
         SetSummary();
-
+        PreferenceCategory miscCategory = (PreferenceCategory) findPreference("prefCategoryMisc");
+        Preference prefAutoCheckUpdates = (Preference)findPreference("prefAutoCheckUpdates");
         Preference prefManuallyCheckUpdates = (Preference)findPreference("prefManuallyCheckUpdates");
         prefManuallyCheckUpdates.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -58,6 +61,12 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 return true;
             }
         });
+
+        if(App.isGooglePlayVersion)
+        {
+            miscCategory.removePreference(prefManuallyCheckUpdates);
+            miscCategory.removePreference(prefAutoCheckUpdates);
+        }
     }
     
 	@Override
@@ -113,6 +122,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
                 dialog = builder.show();
             }catch(Exception e)
             {
+                Toast.makeText(Settings.this,getString(R.string.download_full_version), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
             prefs.edit().putString("prefLanguage", "4").commit();
@@ -139,5 +149,12 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
 
         return false;
 	}
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        AnimationManager.ActivityFinish(this);
+    }
 
 }

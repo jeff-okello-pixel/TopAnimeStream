@@ -2,6 +2,7 @@ package com.aniblitz;
 
 import java.util.ArrayList;
 import com.aniblitz.adapters.AnimeListAdapter;
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.models.Anime;
 
 import android.app.AlertDialog;
@@ -52,6 +53,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
 			 switch (item.getItemId()) {
 			    case android.R.id.home:
 			    	finish();
+                    AnimationManager.ActivityFinish(this);
 			    	break;
 			 }
 	    return true;
@@ -87,32 +89,38 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
 			else
 				txtNoFavorite.setVisibility(View.VISIBLE);
 		}
-		@Override
-		public boolean onItemLongClick(AdapterView<?> parent, View view,
-				final int position, long id) {
-			final CharSequence[] items = {r.getString(R.string.remove_favorite),r.getString(R.string.cancel)};
-		 	final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-		 	alertBuilder.setTitle(r.getString(R.string.title_favorites));
-		 	alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-		 	    public void onClick(DialogInterface dialog, int item) {
-		 	    	if(item == 0)
-		 	    	{
-		 	    		SQLiteHelper sqlLite = new SQLiteHelper(FavoriteActivity.this);
-		 	    		sqlLite.removeFavorite(animes.get(position).getAnimeId());
-		 	    		populateList();
-		 	    		Toast.makeText(FavoriteActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
-		 	    	}
-		 	    	else
-		 	    	{
-		 	    		alertProviders.dismiss();
-		 	    	}
-		 	    		
-		 	    		
-		 	    }
-		 	});
-		 	alertProviders = alertBuilder.create();
-		 	alertProviders.show();
-			return true;
-		}
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view,
+                final int position, long id) {
+            final CharSequence[] items = {r.getString(R.string.remove_favorite),r.getString(R.string.cancel)};
+            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            alertBuilder.setTitle(r.getString(R.string.title_favorites));
+            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    if(item == 0)
+                    {
+                        SQLiteHelper sqlLite = new SQLiteHelper(FavoriteActivity.this);
+                        sqlLite.removeFavorite(animes.get(position).getAnimeId());
+                        populateList();
+                        Toast.makeText(FavoriteActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        alertProviders.dismiss();
+                    }
+
+
+                }
+            });
+            alertProviders = alertBuilder.create();
+            alertProviders.show();
+            return true;
+        }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
+    }
 
 }

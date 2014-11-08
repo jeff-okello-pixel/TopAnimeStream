@@ -3,6 +3,8 @@ package com.aniblitz.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 public class Package {
     private String name;
     private int version;
@@ -20,7 +22,20 @@ public class Package {
             this.setDescription(!jsonPackage.isNull("description") ? jsonPackage.getString("description") : null);
             this.setManifestUrl(!jsonPackage.isNull("manifestUrl") ? jsonPackage.getString("manifestUrl") : null);
             this.setApkUrl(!jsonPackage.isNull("apkUrl") ? jsonPackage.getString("apkUrl") : null);
-            this.setChanges(!jsonPackage.isNull("changes") ? jsonPackage.getString("changes") : null);
+            JSONObject jsonChanges = !jsonPackage.isNull("changes") ? jsonPackage.getJSONObject("changes") : null;
+            if(jsonChanges != null)
+            {
+                String language = Locale.getDefault().getLanguage();
+                String changes = !jsonChanges.isNull(language) ? jsonChanges.getString(language) : null;
+                if(changes != null)
+                {
+                    this.changes = changes;
+                }
+                else
+                {
+                    this.changes = jsonChanges.getString("en");
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

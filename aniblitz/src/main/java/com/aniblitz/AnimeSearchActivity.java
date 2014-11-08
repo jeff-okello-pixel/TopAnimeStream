@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.aniblitz.adapters.AnimeListAdapter;
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
 
@@ -131,6 +132,8 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 		{
 			case android.R.id.home:
 				finish();
+                AnimationManager.ActivityFinish(this);
+                break;
 			case R.id.action_settings:
 				break;
 		}
@@ -159,6 +162,12 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 		(new SearchAnimeTask()).execute();
 		
 	 }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
+    }
     private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
 
             public SearchAnimeTask()

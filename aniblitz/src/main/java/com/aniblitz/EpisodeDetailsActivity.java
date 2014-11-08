@@ -1,5 +1,6 @@
 package com.aniblitz;
 
+import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.EpisodeInformations;
@@ -148,18 +149,25 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
         }
         super.onPause();
+
     }
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId())
 		{
 			case android.R.id.home:
-				finish();
+                finish();
+                AnimationManager.ActivityFinish(this);
 			break;
 		}
 
 		return true;
 	}
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
+    }
 }

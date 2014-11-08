@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
  
-    <PreferenceCategory android:title="Misc">   
+    <PreferenceCategory android:title="Misc" android:key="prefCategoryMisc">
         <ListPreference
             android:key="prefLanguage"
             android:defaultValue="1"

@@ -14,6 +14,7 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -145,7 +146,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             URL = getString(R.string.anime_service_path);
         }
 
-        ;
 
         @Override
         protected String doInBackground(Void... params) {
@@ -208,9 +208,16 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 if(!shouldCloseOnly)
                 {
                     startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                    AnimationManager.ActivityStart(LoginActivity.this);
                 }
                 finish();
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        AnimationManager.ActivityFinish(this);
     }
 }
