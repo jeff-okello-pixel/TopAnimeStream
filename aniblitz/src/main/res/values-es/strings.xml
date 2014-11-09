@@ -9,108 +9,107 @@
     <string name="action_settings">Configuración</string>
     <string name="action_buypro">Compra la versión pro</string>
     <string name="action_rate">Escribe una opinión</string>
-    <string name="action_share">Partager</string>
-    <string name="action_show_as_list">Afficher en tant que liste</string>
-    <string name="action_show_as_grid">Afficher en tant que grille</string>
-    <string name="title_search_widget">Rechercher</string>
-    <string name="no_connection">Pas de connexion</string>
-    <string name="no_result">Aucun résultat trouvé</string>
-    <string name="no_episodes">Aucun épisode dans cet onglet</string>
+    <string name="action_share">Compartir</string>
+    <string name="action_show_as_list">Mostrar como lista</string>
+    <string name="action_show_as_grid">Mostrar como rejilla</string>
+    <string name="title_search_widget">Buscar</string>
+    <string name="no_connection">No hay conexión</string>
+    <string name="no_result">No hay resultados</string>
+    <string name="no_episodes">Sin episodio en esta ficha</string>
     <string name="title_activity_anime_search">AnimeSearchActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="no_favorite">Vous n\'avez pas de favori</string>
-    <string name="empty_history">Votre historique est vide</string>
-    <string name="remove_favorite">Supprimer des favoris</string>
-    <string name="back_again">Appuyer sur retour un fois de plus pour quitter</string>
-    <string name="cancel">Annuler</string>
-    <string name="episode">Épisode</string>
+    <string name="no_favorite">Ningún favorito encontrado</string>
+    <string name="empty_history">No se encontraron elementos vistos</string>
+    <string name="remove_favorite">Eliminar de los favoritos</string>
+    <string name="back_again">Presione de nuevo para salir</string>
+    <string name="cancel">Cancelar</string>
+    <string name="episode">Episodio</string>
     <!-- Titles -->
-    <string name="title_alert_languages">Choisissez votre langage préféré</string>
-    <string name="title_favorites">Favoris</string>
-    <string name="title_history">Historique</string>
-    <string name="title_providers">Fournisseurs</string>
+    <string name="title_alert_languages">Elija su idioma preferido</string>
+    <string name="title_favorites">Favoritos</string>
+    <string name="title_history">Vistos</string>
+    <string name="title_providers">Proveedores</string>
 
     <!-- Loadings -->
-    <string name="loading_anime_list">Chargement de la liste d\'animes...</string>
-    <string name="loading_episode_list">Chargement des épisodes...</string>
-    <string name="loading_video">Chargement du vidéo...</string>
+    <string name="loading_anime_list">Cargando la lista de anime...</string>
+    <string name="loading_episode_list">Cargando episodios...</string>
+    <string name="loading_video">Cargando el vídeo...</string>
     <!-- Tabs -->
-    <string name="tab_all">Tous</string>
-    <string name="tab_serie">Séries</string>
-    <string name="tab_movie">Films</string>
-    <string name="tab_cartoon">Dessins animés</string>
-    <string name="tab_dubbed">Doublé</string>
-    <string name="tab_subbed">Sous-titré</string>
+    <string name="tab_all">Todo</string>
+    <string name="tab_serie">Series</string>
+    <string name="tab_movie">Películas</string>
+    <string name="tab_cartoon">Dibujos animados</string>
+    <string name="tab_dubbed">Doblada</string>
+    <string name="tab_subbed">Subtitulado</string>
 
     <!-- Information toasts -->
-    <string name="toast_add_favorite">Ajouté aux favoris</string>
-    <string name="toast_remove_favorite">Supprimé des favoris</string>
+    <string name="toast_add_favorite">Agrego a favoritos</string>
+    <string name="toast_remove_favorite">Eliminado de favoritos</string>
 
     <!-- Error messages -->
-    <string name="error_loading_animes">Une erreur est survenue pendant le chargement des animes</string>
-    <string name="error_loading_video">Une erreur est survenue pendant le chargement du vidéo</string>
-    <string name="error_loading_sources">Une erreur est survenue pendant le chargement des sources</string>
-    <string name="error_loading_episodes">Une erreur est survenue pendant le chargement des épisodes</string>
-    <string name="error_loading_mirrors">Une erreur est survenue pendant le chargement des liens miroirs</string>
-    <string name="error_loading_providers">Une erreur est survenue pendant le chargement des fournisseurs</string>
+    <string name="error_loading_animes">Se ha producido un error al cargar los animes</string>
+    <string name="error_loading_video">Se ha producido un error al cargar el video</string>
+    <string name="error_loading_sources">Se ha producido un error al cargar las fuentes</string>
+    <string name="error_loading_episodes">Se ha producido un error al cargar los episodios</string>
+    <string name="error_loading_mirrors">Se ha producido un error al cargar los enlaces espejo</string>
+    <string name="error_loading_providers">Se ha producido un error al cargar los proveedores</string>
 
     <!-- Menu drawer -->
-    <string name="menu_favorites">Favoris</string>
-    <string name="menu_history">Historique</string>
-    <string name="menu_share">Partager</string>
-    <string name="menu_settings">Configuration</string>
-    <string name="menu_logout">Déconnexion</string>
-    <string name="menu_pro">Upgrade to pro</string>
+    <string name="menu_favorites">Favoritos</string>
+    <string name="menu_history">Vistos</string>
+    <string name="menu_share">Compartir</string>
+    <string name="menu_settings">Configuración</string>
+    <string name="menu_logout">Salir</string>
+    <string name="menu_pro">Actualiza a pro</string>
     <string name="language_english">English</string>
     <string name="language_french">Français</string>
     <string name="language_spanish">Español</string>
-    <string name="episodes_of">Épisodes de</string>
-    <string name="error_loading_episode_details">Une erreur est survenue pendant le chargement des détails de l\'épisode</string>
-    <string name="loading_anime_details">Chargement des détails de l\'anime</string>
-    <string name="error_loading_anime_details">Une erreur est survenue pendant le chargement des détails de l\'anime</string>
+    <string name="episodes_of">Los episodios de</string>
+    <string name="error_loading_episode_details">Se ha producido un error al cargar los detalles del episodio</string>
+    <string name="loading_anime_details">Cargando los detalles del anime</string>
+    <string name="error_loading_anime_details">Se ha producido un error al cargar los detalles de el anime</string>
 
     <string-array name="menu_drawer_google_play">
-        <item>Favoris</item>
-        <item>Historique</item>
-        <item>Partager</item>
-        <item>Configuration</item>
-        <item>Upgrade to pro</item>
+        <item>Favoritos</item>
+        <item>Vistos</item>
+        <item>Compartir</item>
+        <item>Configuración</item>
+        <item>Actualiza a pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
-        <item>Favoris</item>
-        <item>Historique</item>
-        <item>Partager</item>
-        <item>Configuration</item>
-        <item>Déconnexion</item>
+        <item>Favoritos</item>
+        <item>Vistos</item>
+        <item>Compartir</item>
+        <item>Configuración</item>
+        <item>Salir</item>
     </string-array>
 
-    <string name="no_provider">Aucun fournisseur dans cet onglet</string>
-    <string name="play_phone">Jouer sur l\'appareil</string>
-    <string name="stream_chromecast">Jouer sur Chromecast</string>
-    <string name="choose_option">Choisissez une option</string>
-    <string name="parenthese_default">(défaut)</string>
-    <string name="choose_quality">choisissez une qualité</string>
-    <string name="username">Nom d\'utilisateur</string>
-    <string name="password">Mot de passe</string>
-    <string name="login">Se connecter</string>
-    <string name="register">Inscription</string>
-    <string name="invalid_username_password">Nom d\'utilisateur ou mot de passe invalide</string>
+    <string name="no_provider">No hay proveedores en esta ficha</string>
+    <string name="play_phone">Reproducir en el dispositivo</string>
+    <string name="stream_chromecast">Reproducir en el Chromecast</string>
+    <string name="choose_option">Seleccione una opción</string>
+    <string name="parenthese_default">(defecto)</string>
+    <string name="choose_quality">Elija una calidad</string>
+    <string name="username">Nombre de usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="register">Registro</string>
+    <string name="invalid_username_password">Nombre de usuario o contraseña no válidos</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="error_username_empty">Nom d\'utilisateur est vide</string>
-    <string name="error_password_empty">Mot de passe est vide</string>
-    <string name="error_login">Une erreur est survenue lors de l\'authentification</string>
-    <string name="logging">Connexion en cours...</string>
-    <string name="error_internet_connection">Pas de connexion Internet</string>
-    <string name="logging_out">Déconnexion...</string>
-    <string name="error_logout">Une erreur est survenue lors de la déconnexion</string>
-    <string name="login_successful">Connexion réussie</string>
-    <string name="enjoy_using">"Si vous aimez utiliser "</string>
-    <string name="take_a_moment_to_rate">, s\'il vous plaît prendre un moment pour évaluer l\'application. Merci pour votre soutien!</string>
-    <string name="rate_aniblitz">Donnez votre avis</string>
-    <string name="remind_me_later">Plus tard</string>
-    <string name="no_thanks">Non merci</string>
-    <string name="no_anime">Aucun anime dans cet onglet</string>
-    <string name="not_available">Pas disponible</string>
+    <string name="error_username_empty">Nombre de usuario está vacío</string>
+    <string name="error_password_empty">Contraseña está vacío</string>
+    <string name="error_login">Se produjo un error durante la autenticación</string>
+    <string name="logging">Conexión...</string>
+    <string name="error_internet_connection">No hay conexión a internet</string>
+    <string name="logging_out">Salir...</string>
+    <string name="error_logout">Se produjo un error al desconectar</string>
+    <string name="login_successful">Conexión con éxito</string>
+    <string name="enjoy_using">"Si te gusta usar "</string>
+    <string name="take_a_moment_to_rate">, por favor, tome un momento para evaluar la aplicación. Gracias por su apoyo!</string>
+    <string name="rate_aniblitz">Escribe una opinión</string>
+    <string name="remind_me_later">Más tarde</string>
+    <string name="no_thanks">No gracias</string>
+    <string name="no_anime">No hay anime en esta ficha</string>
+    <string name="not_available">No disponible</string>
     <string name="download_full_version">Vous ne pouvez pas changer la langue dans cette version. Télécharger la version complète au www.aniblitz.com pour avoir accès à toutes les langues (Anglais, Français, Espagnol)</string>
     <string name="goto_aniblitz">Allez au aniblitz.com</string>
     <string name="title_connect_chromecast">Se connecter à un appareil Chromecast</string>
@@ -140,4 +139,5 @@
 *Some providers may show ads in the video.</string>
     <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
     <string name="pro_version_needed">Pro version needed</string>
+    <string name="buy_full_version">Buy full version</string>
 </resources>

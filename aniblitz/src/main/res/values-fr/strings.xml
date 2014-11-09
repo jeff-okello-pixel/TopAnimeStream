@@ -18,16 +18,16 @@
     <string name="no_episodes">Aucun épisode dans cet onglet</string>
     <string name="title_activity_anime_search">AnimeSearchActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="no_favorite">Vous n\'avez pas de favori</string>
-    <string name="empty_history">Votre historique est vide</string>
+    <string name="no_favorite">Vous n\'avez pas de favoris</string>
+    <string name="empty_history">Aucune liste de visionnage trouvée...</string>
     <string name="remove_favorite">Supprimer des favoris</string>
     <string name="back_again">Appuyer sur retour un fois de plus pour quitter</string>
     <string name="cancel">Annuler</string>
     <string name="episode">Épisode</string>
     <!-- Titles -->
-    <string name="title_alert_languages">Choisissez votre langage préféré</string>
+    <string name="title_alert_languages">Choisissez votre langue préférée</string>
     <string name="title_favorites">Favoris</string>
-    <string name="title_history">Historique</string>
+    <string name="title_history">Liste de visionnage</string>
     <string name="title_providers">Fournisseurs</string>
 
     <!-- Loadings -->
@@ -56,7 +56,7 @@
 
     <!-- Menu drawer -->
     <string name="menu_favorites">Favoris</string>
-    <string name="menu_history">Historique</string>
+    <string name="menu_history">Liste de visionnage</string>
     <string name="menu_share">Partager</string>
     <string name="menu_settings">Configuration</string>
     <string name="menu_logout">Déconnexion</string>
@@ -70,13 +70,13 @@
 
     <string-array name="menu_drawer_google_play">
         <item>Favoris</item>
-        <item>Historique</item>
+        <item>Liste de visionnage</item>
         <item>Partager</item>
         <item>Configuration</item>
     </string-array>
     <string-array name="menu_drawer_full">
         <item>Favoris</item>
-        <item>Historique</item>
+        <item>Liste de visionnage</item>
         <item>Partager</item>
         <item>Configuration</item>
         <item>Déconnexion</item>

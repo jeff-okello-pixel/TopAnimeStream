@@ -20,11 +20,11 @@
     <string name="title_search_widget">Search</string>
     <string name="no_connection">No connection</string>
     <string name="no_result">No result found</string>
-    <string name="no_episodes">No episodes in this tab</string>
+    <string name="no_episodes">No episode in this tab</string>
     <string name="title_activity_anime_search">AnimeSearchActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="no_favorite">You don\'t have any favorite</string>
-    <string name="empty_history">Your history is empty</string>
+    <string name="empty_history">No Watchlist found...</string>
     <string name="remove_favorite">Remove from favorites</string>
     <string name="back_again">Press back again to exit</string>
     <string name="cancel">Cancel</string>
@@ -32,7 +32,7 @@
     <!-- Titles -->
     <string name="title_alert_languages">Choose your preferred language</string>
     <string name="title_favorites">Favorites</string>
-    <string name="title_history">History</string>
+    <string name="title_history">Watchlist</string>
     <string name="title_providers">Providers</string>
 
     <!-- Loadings -->
@@ -76,14 +76,14 @@
 
     <string-array name="menu_drawer_google_play">
         <item>Favorites</item>
-        <item>History</item>
+        <item>Watchlist</item>
         <item>Share</item>
         <item>Settings</item>
         <item>Upgrade to pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
         <item>Favorites</item>
-        <item>History</item>
+        <item>Watchlist</item>
         <item>Share</item>
         <item>Settings</item>
         <item>Logout</item>
