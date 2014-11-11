@@ -8,7 +8,7 @@
     <style name="FullScreenVideoTheme" parent="@android:style/Theme.Holo.NoActionBar.Fullscreen">
 
     </style>
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <!-- API 11 theme customizations can go here. -->
     </style>
 

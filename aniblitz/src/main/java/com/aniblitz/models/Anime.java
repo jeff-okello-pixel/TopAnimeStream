@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.aniblitz.App;
 import com.aniblitz.R;
+import com.aniblitz.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -280,12 +281,27 @@ public class Anime implements Parcelable  {
 	}
 	public String getGenresFormatted()
 	{
+        Context context = App.getContext();
+        ArrayList<String> translatedGenres = new ArrayList<String>();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String language = prefs.getString("prefLanguage", "1");
+
+        for(Genre genre:this.genres)
+        {
+            if(!language.equals("1")) {
+                String genreName = genre.getName().toLowerCase().replace(" ", "");
+                translatedGenres.add(Utils.getStringResourceByName(genreName));
+            }
+            else
+                translatedGenres.add(genre.getName());
+        }
+
 		String genresFormatted = "";
 		if(this.genres != null)
 		{
-			for(Genre genre:this.genres)
+			for(String genre: translatedGenres)
 			{
-				genresFormatted += genre.getName() + ", ";
+				genresFormatted += genre + ", ";
 			}
 		}
 		if(!genresFormatted.equals(""))

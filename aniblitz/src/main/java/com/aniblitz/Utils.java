@@ -192,7 +192,20 @@ public class Utils {
         }
 
 
-		
+    public static String getStringResourceByName(String aString) {
+        try {
+            Context context = App.getContext();
+            String packageName = context.getPackageName();
+            int resId = context.getResources().getIdentifier(aString, "string", packageName);
+            return context.getString(resId);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
 		
 	 private static boolean downloadFile(String url, File outputFile) {
 		  //return true if successful, false otherwise
