@@ -269,7 +269,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
             {
                 e.printStackTrace();
             }
-            return getString(R.string.error_login);
+            return getString(R.string.error_loading_favorites);
         }
 
         @Override

@@ -153,6 +153,11 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             {
                 return getString(R.string.error_internet_connection);
             }
+
+            if(!Utils.IsServiceAvailable())
+            {
+                return getString(R.string.service_unavailable);
+            }
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 

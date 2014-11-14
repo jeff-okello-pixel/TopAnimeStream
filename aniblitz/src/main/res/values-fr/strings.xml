@@ -178,4 +178,5 @@
     <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
     <string name="error_adding_anime">An error has occurred while adding the anime</string>
     <string name="adding_to_favorites">Adding to favorites...</string>
+    <string name="service_unavailable">The services of Aniblitz are currently unavailable, we will be back shortly.</string>
 </resources>

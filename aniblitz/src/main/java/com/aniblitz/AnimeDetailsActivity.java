@@ -2,11 +2,13 @@ package com.aniblitz;
 
 import java.util.ArrayList;
 
+import com.aniblitz.adapters.AnimeListAdapter;
 import com.aniblitz.managers.AnimationManager;
 import com.aniblitz.managers.DialogManager;
 import com.aniblitz.managers.Mp4Manager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
+import com.aniblitz.models.AnimeSource;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
 import com.aniblitz.models.Vk;
@@ -31,12 +33,15 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.preference.PreferenceManager;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
@@ -173,11 +178,17 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
 		menuFavorite = menu.findItem(R.id.action_favorite);
-		
-		if(db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
-			menuFavorite.setIcon(R.drawable.ic_favorite);
-		else
-			menuFavorite.setIcon(R.drawable.ic_not_favorite);
+
+        if(App.isGooglePlayVersion) {
+            if (db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
+                menuFavorite.setIcon(R.drawable.ic_favorite);
+            else
+                menuFavorite.setIcon(R.drawable.ic_not_favorite);
+        }
+        else
+        {
+            AsyncTaskTools.execute(new IsFavoriteTask());
+        }
 		
 		return true;
 	}
@@ -349,7 +360,78 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             }
         }
     }
+    private class IsFavoriteTask extends AsyncTask<Void, Void, String> {
+        private String url;
+        private String username;
+        private boolean isFavorite = false;
+        public IsFavoriteTask() {
 
+        }
+
+        @Override
+        protected void onPreExecute() {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
+            username = prefs.getString("Username", null);
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Accounts").formatJson().expand("Favorites/Anime/AnimeSources").filter("Username%20eq%20%27" + username + "%27").select("Favorites").build();
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+
+            try
+            {
+                if(username != null)
+                {
+                    JSONObject json = Utils.GetJson(url);
+                    JSONArray jsonValue = json.getJSONArray("value");
+                    JSONArray jsonFavorites = jsonValue.getJSONObject(0).getJSONArray("Favorites");
+                    for(int i = 0; i < jsonFavorites.length(); i++)
+                    {
+                        Anime animeFavorite = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), AnimeDetailsActivity.this);
+                        for(AnimeSource animeSource : animeFavorite.getAnimeSources())
+                        {
+                            if(String.valueOf(animeSource.getLanguageId()).equals(prefs.getString("prefLanguage", "1")) && animeFavorite.getAnimeId() == anime.getAnimeId())
+                            {
+                                isFavorite = true;
+                            }
+                        }
+
+                    }
+                    return null;
+                }
+                else
+                {
+                    return getString(R.string.error_loading_anime_details);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return getString(R.string.error_loading_anime_details);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            if(error != null)
+            {
+                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
+                menuFavorite.setIcon(R.drawable.ic_not_favorite);
+            }
+            else
+            {
+                if(isFavorite)
+                    menuFavorite.setIcon(R.drawable.ic_favorite);
+                else
+                    menuFavorite.setIcon(R.drawable.ic_not_favorite);
+            }
+        }
+    }
 	@Override
 	public void onEpisodeSelected(final Episode episode, String type) {
         /*

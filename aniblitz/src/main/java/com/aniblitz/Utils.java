@@ -15,9 +15,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -428,6 +430,38 @@ public class Utils {
         lang.addChild(Node.TEXT, App.accessToken);
         envelope.headerOut[0] = lang;
         return envelope;
+    }
+    public static boolean IsServiceAvailable() {
+
+        try {
+            URL animeServiceUrl = new URL(App.getContext().getString(R.string.anime_service_path));
+            HttpURLConnection animeServiceConnection = (HttpURLConnection)animeServiceUrl.openConnection();
+            animeServiceConnection.setRequestMethod("GET");
+            animeServiceConnection.connect();
+            int code = animeServiceConnection.getResponseCode();
+            if(code == 200)
+            {
+                URL animeDataServiceUrl = new URL(App.getContext().getString(R.string.anime_service_path));
+                HttpURLConnection animeDataServiceConnection = (HttpURLConnection)animeDataServiceUrl.openConnection();
+                animeDataServiceConnection.setRequestMethod("GET");
+                animeDataServiceConnection.connect();
+                code = animeDataServiceConnection.getResponseCode();
+                if(code == 200)
+                {
+                    return true;
+                }
+            }
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
     }
     public static JSONObject GetJson(String urlString){
     	 BufferedReader reader = null;
