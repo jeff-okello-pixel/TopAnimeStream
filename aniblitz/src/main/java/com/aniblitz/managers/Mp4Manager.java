@@ -95,9 +95,6 @@ public class Mp4Manager {
                 if (providerName.equals(act.getString(R.string.play).toLowerCase())) {
                     providerName = "vk";
                 }
-                String content = doc.html();
-
-                //TODO check quality
             }
             catch(Exception e)
             {
@@ -115,19 +112,38 @@ public class Mp4Manager {
                 }
                 else
                 {
-                    if(providerName.equals("vk") || providerName.equals("vk_gk"))
+                    if(providerName.equals("vk") || providerName.equals("vk_gk") || providerName.equals("vkontakte"))
                     {
-                        final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
-                        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
-                        alertBuilder.setTitle(act.getString(R.string.choose_quality));
-                        alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int item) {
-                                AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, items[item].toString(), doc, null));
-                            }
-                        });
+                        String content = doc.html();
+                        CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+                        if(content.indexOf("url720") != -1)
+                            items = new CharSequence[]{"720", "480", "360", "240" };
+                        else if(content.indexOf("url480") != -1)
+                            items = new CharSequence[]{"480", "360", "240" };
+                        else if(content.indexOf("url360") != -1)
+                            items = new CharSequence[]{"360", "240" };
+                        else if(content.indexOf("url240") != -1)
+                            items = new CharSequence[]{"240"};
 
-                        qualityDialog = alertBuilder.create();
-                        qualityDialog.show();
+                        if(items.length > 1) {
+                            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
+                            alertBuilder.setTitle(act.getString(R.string.choose_quality));
+                            final CharSequence[] finalItems = items;
+                            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int item) {
+                                    AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, finalItems[item].toString(), doc, null));
+                                }
+                            });
+                            qualityDialog = alertBuilder.create();
+                            qualityDialog.show();
+                        }
+                        else
+                        {
+                            Toast.makeText(act,act.getString(R.string.only_240p_available),Toast.LENGTH_SHORT).show();
+                            AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, "240", doc, null));
+                        }
+
+
                         DialogManager.dismissBusyDialog(busyDialog);
                     }
                     else
