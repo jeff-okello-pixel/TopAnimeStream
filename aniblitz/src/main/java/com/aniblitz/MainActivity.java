@@ -104,6 +104,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        App.accessToken = prefs.getString("AccessToken","");
         if(Utils.isProInstalled(this))
         {
             SQLiteHelper sqlLite = new SQLiteHelper(this);
