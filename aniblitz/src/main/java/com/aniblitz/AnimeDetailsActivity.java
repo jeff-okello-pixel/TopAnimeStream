@@ -3,6 +3,7 @@ package com.aniblitz;
 import java.util.ArrayList;
 
 import com.aniblitz.managers.AnimationManager;
+import com.aniblitz.managers.DialogManager;
 import com.aniblitz.managers.Mp4Manager;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeInformation;
@@ -17,6 +18,7 @@ import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
 
 import android.app.AlertDialog;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -34,6 +36,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.preference.PreferenceManager;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator{
 	private ListView listViewEpisodes;
@@ -186,24 +195,160 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 			case R.id.action_favorite:
 				if(db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
 				{
-					menuFavorite.setIcon(R.drawable.ic_not_favorite);
-					db.removeFavorite(anime.getAnimeId());
-					Toast.makeText(this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+                    if(App.isGooglePlayVersion) {
+                        menuFavorite.setIcon(R.drawable.ic_not_favorite);
+                        db.removeFavorite(anime.getAnimeId());
+                        Toast.makeText(this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
+                    }
 				}
 				else
 				{
-					menuFavorite.setIcon(R.drawable.ic_favorite);
-                    AnimeInformation info = anime.getAnimeInformation(this);
-					db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(),String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), Integer.valueOf(prefs.getString("prefLanguage", "1")));
-					Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
+                    if(App.isGooglePlayVersion) {
+                        menuFavorite.setIcon(R.drawable.ic_favorite);
+                        AnimeInformation info = anime.getAnimeInformation(this);
+                        db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(), String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), Integer.valueOf(prefs.getString("prefLanguage", "1")));
+                        Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
+                    }
 				}
 			break;
 		}
 
 		return true;
 	}
+    private class RemoveFavoriteTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        private int animeId;
+        public RemoveFavoriteTask(int animeId) {
+            this.animeId = animeId;
+        }
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String URL;
+        private String method = "RemoveFromFavorite";
 
+        @Override
+        protected void onPreExecute() {
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_from_favorites), AnimeDetailsActivity.this);
+            URL = getString(R.string.anime_service_path);
+        }
 
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("animeId", animeId);
+            envelope = Utils.addAuthentication(envelope);
+            envelope .dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try
+            {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive)envelope.getResponse();
+                return null;
+            }
+            catch (Exception e)
+            {
+                if(e instanceof SoapFault)
+                {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+            return getString(R.string.error_remove_favorite);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            Utils.dismissBusyDialog(busyDialog);
+            if(error != null)
+            {
+                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                menuFavorite.setIcon(R.drawable.ic_not_favorite);
+                Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private class AddFavoriteTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        private int animeId;
+        public AddFavoriteTask(int animeId) {
+            this.animeId = animeId;
+        }
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String URL;
+        private String method = "AddToFavorite";
+
+        @Override
+        protected void onPreExecute() {
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_to_favorites), AnimeDetailsActivity.this);
+            URL = getString(R.string.anime_service_path);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("animeId", animeId);
+            envelope = Utils.addAuthentication(envelope);
+            envelope .dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try
+            {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive)envelope.getResponse();
+                return null;
+            }
+            catch (Exception e)
+            {
+                if(e instanceof SoapFault)
+                {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+            return getString(R.string.error_remove_favorite);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            Utils.dismissBusyDialog(busyDialog);
+            if(error != null)
+            {
+                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                menuFavorite.setIcon(R.drawable.ic_favorite);
+                Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 	@Override
 	public void onEpisodeSelected(final Episode episode, String type) {

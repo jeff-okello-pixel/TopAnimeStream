@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -50,6 +51,8 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.kxml2.kdom.Element;
+import org.kxml2.kdom.Node;
 
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.AnimeSource;
@@ -418,7 +421,14 @@ public class Utils {
 		 }
 		return String.valueOf(c.get(Calendar.YEAR)) + "/" + month + "/" + day;
     }
-
+    public static SoapSerializationEnvelope addAuthentication(SoapSerializationEnvelope envelope)
+    {
+        envelope.headerOut = new Element[1];
+        Element lang = new Element().createElement("", "Authentication");
+        lang.addChild(Node.TEXT, App.accessToken);
+        envelope.headerOut[0] = lang;
+        return envelope;
+    }
     public static JSONObject GetJson(String urlString){
     	 BufferedReader reader = null;
     	    try {

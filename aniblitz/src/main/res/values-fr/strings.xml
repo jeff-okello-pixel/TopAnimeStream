@@ -138,5 +138,44 @@
 *Some providers may show ads in the video.</string>
     <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
     <string name="pro_version_needed">Pro version needed</string>
-
+    <string name="buy_full_version">Buy full version</string>
+    <string name="action">Action</string>
+    <string name="adventure">Aventure</string>
+    <string name="animation">Animation</string>
+    <string name="children">Enfant</string>
+    <string name="comedy">Comédie</string>
+    <string name="crime">Crime</string>
+    <string name="documentary">Documentaire</string>
+    <string name="drama">Drame</string>
+    <string name="erotica">Érotique</string>
+    <string name="family">Famille</string>
+    <string name="fantasy">Fantaisie</string>
+    <string name="gameshow">Jeux</string>
+    <string name="homeandgarden">Maison et jardins</string>
+    <string name="horror">Horreur</string>
+    <string name="magic">Magie</string>
+    <string name="miniSeries">Mini séries</string>
+    <string name="music">Musique</string>
+    <string name="mystery">Mystère</string>
+    <string name="news">Nouvelles</string>
+    <string name="reality">Réalité</string>
+    <string name="romance">Romantique</string>
+    <string name="sciencefiction">Science-fiction</string>
+    <string name="sliceoflife">Tranche de vie</string>
+    <string name="soap">Roman</string>
+    <string name="specialInterest">Intérêt</string>
+    <string name="psychological">Psychologique</string>
+    <string name="school">École</string>
+    <string name="sports">Sports</string>
+    <string name="suspense">Suspense</string>
+    <string name="supernatural">Surnaturel</string>
+    <string name="talkShow">tv</string>
+    <string name="thriller">Thriller</string>
+    <string name="tournament">Tournoi</string>
+    <string name="western">Western</string>
+    <string name="loading_favorites">Loading favorites...</string>
+    <string name="error_loading_favorites">An error has occured while loading the favorites. Try to login again.</string>
+    <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
+    <string name="error_adding_anime">An error has occurred while adding the anime</string>
+    <string name="adding_to_favorites">Adding to favorites...</string>
 </resources>

@@ -147,5 +147,11 @@
     <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
     <string name="pro_version_needed">Pro version needed</string>
     <string name="buy_full_version">Buy full version</string>
+    <string name="loading_favorites">Loading favorites...</string>
+    <string name="error_loading_favorites">An error has occured while loading the favorites. Try to login again.</string>
+    <string name="deleting_from_favorites">Deleting from favorite...</string>
+    <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
+    <string name="error_adding_anime">An error has occurred while adding the anime</string>
+    <string name="adding_to_favorites">Adding to favorites...</string>
 
 </resources>

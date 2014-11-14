@@ -61,6 +61,11 @@ public class WcfDataServiceUtility {
         return this;
     }
 
+    public WcfDataServiceUtility select(String select){
+        queries.add("$select=" + select);
+        return this;
+    }
+
     public WcfDataServiceUtility skip(int skip){
         queries.add("$skip=" + String.valueOf(skip));
         return this;
