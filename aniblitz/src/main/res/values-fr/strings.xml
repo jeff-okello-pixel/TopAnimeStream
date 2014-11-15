@@ -173,11 +173,17 @@
     <string name="thriller">Thriller</string>
     <string name="tournament">Tournoi</string>
     <string name="western">Western</string>
-    <string name="loading_favorites">Loading favorites...</string>
-    <string name="error_loading_favorites">An error has occured while loading the favorites. Try to login again.</string>
-    <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
-    <string name="error_adding_anime">An error has occurred while adding the anime</string>
-    <string name="adding_to_favorites">Adding to favorites...</string>
-    <string name="service_unavailable">The services of Aniblitz are currently unavailable, we will be back shortly.</string>
-    <string name="only_240p_available">This source has only 240p available.</string>
+    <string name="loading_favorites">Chargement des favoris...</string>
+    <string name="error_loading_favorites">Une erreur est survenue lors du chargement des favoris. Réessayé de vous connecter.</string>
+    <string name="error_remove_favorite">Une erreur est survenue lors de la suppression du favoris</string>
+    <string name="error_adding_anime">Une erreur est survenue lors de l\'ajout de l\'anime aux favoris</string>
+    <string name="adding_to_favorites">Ajout au favoris...</string>
+    <string name="only_240p_available">Cette source est seulement disponible en 240p.</string>
+    <string name="title_buy_aniblitz">Achetez Aniblitz pro</string>
+    <string name="aniblitz_has_2_pro">Aniblitz a 2 version pro disponible. La première (téléchargeable sur Google Play) est en espagnol seulement sans pubs et supporte ChromeCast. La deuxième vous permet de regarder les animes en Français, Anglais et Espagnol, tout en étant sans pubs et supportant chromecast. Laquelle est-ce que vous préférer?</string>
+    <string name="all_languages">Tous les langues</string>
+    <string name="spanish_only">Espagnol seulement</string>
+    <string name="bored_animes_spanish">Ennuyé de regarder des animes en Espagnol? Achetez la version complète pour avoir accès au animes en Français, Anglais et Espagnol!</string>
+    <string name="title_service_unavailable">Service indisponible</string>
+    <string name="service_unavailable">Les services de Aniblitz ne sont pas disponible pour le moment. Nous serons de retour bientôt.</string>
 </resources>

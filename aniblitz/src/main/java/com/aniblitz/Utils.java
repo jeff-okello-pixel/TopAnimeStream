@@ -434,14 +434,14 @@ public class Utils {
     public static boolean IsServiceAvailable() {
 
         try {
-            URL animeServiceUrl = new URL(App.getContext().getString(R.string.anime_service_path));
+            URL animeServiceUrl = new URL(App.getContext().getString(R.string.anime_service_path_no_dash));
             HttpURLConnection animeServiceConnection = (HttpURLConnection)animeServiceUrl.openConnection();
             animeServiceConnection.setRequestMethod("GET");
             animeServiceConnection.connect();
             int code = animeServiceConnection.getResponseCode();
             if(code == 200)
             {
-                URL animeDataServiceUrl = new URL(App.getContext().getString(R.string.anime_service_path));
+                URL animeDataServiceUrl = new URL(App.getContext().getString(R.string.anime_data_service_path_no_dash));
                 HttpURLConnection animeDataServiceConnection = (HttpURLConnection)animeDataServiceUrl.openConnection();
                 animeDataServiceConnection.setRequestMethod("GET");
                 animeDataServiceConnection.connect();

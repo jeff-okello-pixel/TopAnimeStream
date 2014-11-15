@@ -204,25 +204,24 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 AnimationManager.ActivityFinish(this);
 			break;
 			case R.id.action_favorite:
-				if(db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
-				{
-                    if(App.isGooglePlayVersion) {
+               if(App.isGooglePlayVersion)
+               {
+                    if(db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1"))) {
                         menuFavorite.setIcon(R.drawable.ic_not_favorite);
                         db.removeFavorite(anime.getAnimeId());
                         Toast.makeText(this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
-                    }
-                    else
+                    }else
                     {
-                        AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
-                    }
-				}
-				else
-				{
-                    if(App.isGooglePlayVersion) {
                         menuFavorite.setIcon(R.drawable.ic_favorite);
                         AnimeInformation info = anime.getAnimeInformation(this);
                         db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(), String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), Integer.valueOf(prefs.getString("prefLanguage", "1")));
                         Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
+                    }
+                }
+				else
+				{
+                    if(menuFavorite.getIcon().getConstantState().equals(getResources().getDrawable(R.drawable.ic_favorite).getConstantState())) {
+                        AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
                     }
                     else
                     {

@@ -7,6 +7,8 @@
     <string name="app_label">Aniblitz</string>
     <string name="aniblitz_website">http://aniblitz.com</string>
     <string name="anime_service_path">http://aniblitz.com/AnimeServices/AnimeService.svc/</string>
+    <string name="anime_service_path_no_dash">http://aniblitz.com/AnimeServices/AnimeService.svc</string>
+    <string name="anime_data_service_path_no_dash">http://aniblitz.com/AnimeServices/AnimeDataService.svc</string>
     <string name="anime_data_service_path">http://aniblitz.com/AnimeServices/AnimeDataService.svc/</string>
     <string name="image_host_path">http://aniblitz.com/ImageHost/</string>
     <!-- Menu actions -->
@@ -153,7 +155,13 @@
     <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
     <string name="error_adding_anime">An error has occurred while adding the anime</string>
     <string name="adding_to_favorites">Adding to favorites...</string>
-    <string name="service_unavailable">The services of Aniblitz are currently unavailable, we will be back shortly.</string>
     <string name="only_240p_available">This source has only 240p available.</string>
+    <string name="title_buy_aniblitz">Buy Aniblitz pro</string>
+    <string name="aniblitz_has_2_pro">Aniblitz has 2 pro versions available. The first one (downloadable on Google Play) is in Spanish only with no ads and Chromecast support. The other one let you watch animes in English, French and Spanish and also have no ads and Chromecast support. Which one do you prefer?</string>
+    <string name="all_languages">All languages</string>
+    <string name="spanish_only">Spanish only</string>
+    <string name="bored_animes_spanish">Bored of animes in Spanish only? Buy the full version of Aniblitz to get access to animes in English, French and Spanish!</string>
+    <string name="title_service_unavailable">Service unavailable</string>
+    <string name="service_unavailable">The services of Aniblitz are currently unavailable. We will be back shortly.</string>
 
 </resources>

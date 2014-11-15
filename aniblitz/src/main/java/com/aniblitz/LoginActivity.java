@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aniblitz.managers.AnimationManager;
+import com.aniblitz.managers.DialogManager;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -201,7 +202,14 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             Utils.dismissBusyDialog(busyDialog);
             if(error != null)
             {
-                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                if(error.equals(getString(R.string.service_unavailable)))
+                {
+                    DialogManager.ShowNoServiceDialog(LoginActivity.this);
+                }
+                else
+                {
+                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                }
             }
             else
             {

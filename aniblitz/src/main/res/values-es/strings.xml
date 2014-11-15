@@ -175,11 +175,17 @@
     <string name="thriller">Thriller</string>
     <string name="tournament">Torneo</string>
     <string name="western">Western</string>
-    <string name="loading_favorites">Loading favorites...</string>
-    <string name="error_loading_favorites">An error has occured while loading the favorites. Try to login again.</string>
-    <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
-    <string name="error_adding_anime">An error has occurred while adding the anime</string>
-    <string name="adding_to_favorites">Adding to favorites...</string>
-    <string name="service_unavailable">The services of Aniblitz are currently unavailable, we will be back shortly.</string>
-    <string name="only_240p_available">This source has only 240p available.</string>
+    <string name="loading_favorites">Cargando favoritos...</string>
+    <string name="error_loading_favorites">Se ha producido un error durante al cargar de los favoritos. Trate de iniciar sesión de nuevo.</string>
+    <string name="error_remove_favorite">Se ha producido un error durante la supresión de los favoritos</string>
+    <string name="error_adding_anime">Se ha producido un error durante al añadir de el anime</string>
+    <string name="adding_to_favorites">Añadir a favoritos...</string>
+    <string name="only_240p_available">Esta fuente sólo está disponible en 240p.</string>
+    <string name="title_buy_aniblitz">Comprar Aniblitz pro</string>
+    <string name="aniblitz_has_2_pro">Aniblitz tiene 2 pro versión disponible. La primera (descargable en Google Play) es sólo en los bares españoles y sin apoyo Chromecast. El segundo le permite ver el anime en Español, Inglés y Francés, mientras que no hay anuncios y apoyar Chromecast. ¿Cuál te gusta más?</string>
+    <string name="all_languages">Todos los idiomas</string>
+    <string name="spanish_only">Sólo Español</string>
+    <string name="bored_animes_spanish">Aburrido de ver dibujos animados en español? Compra la versión completa obtén acceso a los dibujos animados en Francés, Inglés y Español !</string>
+    <string name="title_service_unavailable">Servicio no disponible</string>
+    <string name="service_unavailable">Aniblitz servicios no están disponibles en este momento. Estaremos de vuelta pronto.</string>
 </resources>

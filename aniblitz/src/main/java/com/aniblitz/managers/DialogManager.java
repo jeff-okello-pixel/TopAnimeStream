@@ -50,6 +50,22 @@ public class DialogManager {
         public void onGenericDialogSecondButton();
 
     }
+    public static void ShowNoServiceDialog(Context context)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.title_service_unavailable));
+        //builder.setIcon(R.drawable.icon);
+        builder.setMessage(context.getString(R.string.service_unavailable));
+        builder.setPositiveButton(context.getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+
+                    }
+                });
+
+        ShowDialog(builder);
+    }
     public static void ShowChromecastConnectionErrorDialog(Context context)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -57,7 +73,7 @@ public class DialogManager {
                 .setMessage(context.getString(R.string.message_connect_chromecast))
                 .setCancelable(false)
                 .setIcon(R.drawable.mr_ic_media_route_off_holo_light)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -226,18 +242,18 @@ public class DialogManager {
     public static void ShowBuyProDialog(final Context context){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Buy Aniblitz pro");
+        builder.setTitle(context.getString(R.string.title_buy_aniblitz));
         //builder.setIcon(R.drawable.icon);
         if(App.isGooglePlayVersion && !App.isPro)
         {
-            builder.setMessage("Aniblitz has 2 pro versions available. The first one (downloadable on Google Play) is in Spanish only with no ads and Chromecast support. The other one let you watch animes in English, French and Spanish and also have no ads and Chromecast support. Which one do you prefer?");
-            builder.setPositiveButton("All languages",
+            builder.setMessage(context.getString(R.string.aniblitz_has_2_pro));
+            builder.setPositiveButton(context.getString(R.string.all_languages),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             //TODO redirect to promo/buy app
                         }
                     });
-            builder.setNeutralButton("Spanish only",
+            builder.setNeutralButton(context.getString(R.string.spanish_only),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             try {
@@ -256,7 +272,7 @@ public class DialogManager {
         }
         else
         {
-            builder.setMessage("Bored of animes in Spanish only? Buy the full version of Aniblitz to get access to animes in English, French and Spanish!");
+            builder.setMessage(context.getString(R.string.bored_animes_spanish));
             builder.setPositiveButton(context.getString(R.string.buy_full_version),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
