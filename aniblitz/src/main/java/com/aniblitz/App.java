@@ -91,12 +91,7 @@ public class App extends Application implements NetworkEvent {
         Configuration configMirror = new Configuration(config);
         String lang = settings.getString("prefLanguage", "");
 
-        if(lang.equals("1"))
-            lang = "en";
-        else if(lang.equals("2"))
-            lang = "fr";
-        else if(lang.equals("4"))
-            lang = "es";
+        lang = Utils.ToLanguageString(lang);
         if (! "".equals(lang) && ! configMirror.locale.getLanguage().equals(lang))
         {
             locale = new Locale(lang);

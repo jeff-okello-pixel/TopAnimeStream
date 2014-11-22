@@ -439,14 +439,14 @@ public class Utils {
             animeServiceConnection.setRequestMethod("GET");
             animeServiceConnection.connect();
             int code = animeServiceConnection.getResponseCode();
-            if(code != 503 && code != 504)
+            if(code != 503 && code != 504 && code != 404)
             {
                 URL animeDataServiceUrl = new URL(App.getContext().getString(R.string.anime_data_service_path_no_dash));
                 HttpURLConnection animeDataServiceConnection = (HttpURLConnection)animeDataServiceUrl.openConnection();
                 animeDataServiceConnection.setRequestMethod("GET");
                 animeDataServiceConnection.connect();
                 code = animeDataServiceConnection.getResponseCode();
-                if(code != 503 && code != 504)
+                if(code != 503 && code != 504 && code != 404)
                 {
                     return true;
                 }
@@ -463,6 +463,31 @@ public class Utils {
         return false;
 
     }
+    public static String ToLanguageId(String language)
+    {
+        language = language.toLowerCase();
+        if(language.equals("en"))
+            return "1";
+        else if(language.equals("fr"))
+            return "2";
+        else if(language.equals("es"))
+            return "4";
+
+
+        return null;
+    }
+    public static String ToLanguageString(String id)
+    {
+        if(id.equals("1"))
+            return "en";
+        else if(id.equals("2"))
+            return "fr";
+        else if(id.equals("4"))
+            return "es";
+
+
+        return null;
+    }
     public static JSONObject GetJson(String urlString){
     	 BufferedReader reader = null;
     	    try {
@@ -471,6 +496,8 @@ public class Utils {
                 conn.setConnectTimeout(6000);
                 if(App.accessToken != null && !App.accessToken.equals(""))
     	            conn.setRequestProperty("Authentication", App.accessToken);
+                else
+                    conn.setRequestProperty("Authentication", App.getContext().getString(R.string.urc));
     	        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
     	        StringBuffer buffer = new StringBuffer();
     	        int read;

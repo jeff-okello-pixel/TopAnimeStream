@@ -90,7 +90,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Settings.this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Settings.this);
         if(key.equals("prefLanguage") && !App.isGooglePlayVersion) {
             app.setLocale();
             App.languageChanged = true;
@@ -107,8 +107,10 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             builder.setPositiveButton(getString(R.string.goto_aniblitz), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    String language = prefs.getString("prefLanguage", "1");
+                    language = Utils.ToLanguageString(language);
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(getString(R.string.aniblitz_website)));
+                    intent.setData(Uri.parse(getString(R.string.aniblitz_website) + "/" + language + "/" + "android/"));
                     startActivity(intent);
                 }
             });

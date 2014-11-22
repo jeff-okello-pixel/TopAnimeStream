@@ -218,6 +218,8 @@ public class Mp4Manager {
                 request.setEntity(new StringEntity(base64));
                 if(App.accessToken != null && !App.accessToken.equals(""))
                     request.setHeader("Authentication", App.accessToken);
+                else
+                    request.setHeader("Authentication", App.getContext().getString(R.string.urc));
                 HttpResponse response = httpClient.execute(request);
                 HttpEntity entity = response.getEntity();
                 InputStream instream = entity.getContent();
