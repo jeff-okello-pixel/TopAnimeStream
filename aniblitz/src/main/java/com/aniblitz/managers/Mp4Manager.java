@@ -216,6 +216,8 @@ public class Mp4Manager {
 					listParam.add(new BasicNameValuePair("html", base64));
 		            UrlEncodedFormEntity ent = new UrlEncodedFormEntity(listParam);*/
                 request.setEntity(new StringEntity(base64));
+                if(App.accessToken != null && !App.accessToken.equals(""))
+                    request.setHeader("Authentication", App.accessToken);
                 HttpResponse response = httpClient.execute(request);
                 HttpEntity entity = response.getEntity();
                 InputStream instream = entity.getContent();

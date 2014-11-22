@@ -439,14 +439,14 @@ public class Utils {
             animeServiceConnection.setRequestMethod("GET");
             animeServiceConnection.connect();
             int code = animeServiceConnection.getResponseCode();
-            if(code == 200)
+            if(code != 503 && code != 504)
             {
                 URL animeDataServiceUrl = new URL(App.getContext().getString(R.string.anime_data_service_path_no_dash));
                 HttpURLConnection animeDataServiceConnection = (HttpURLConnection)animeDataServiceUrl.openConnection();
                 animeDataServiceConnection.setRequestMethod("GET");
                 animeDataServiceConnection.connect();
                 code = animeDataServiceConnection.getResponseCode();
-                if(code == 200)
+                if(code != 503 && code != 504)
                 {
                     return true;
                 }
