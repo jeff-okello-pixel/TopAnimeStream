@@ -258,14 +258,28 @@ public class Anime implements Parcelable  {
         String language = prefs.getString("prefLanguage", "1");
         for(AnimeInformation animeInfo : this.getAnimeInformations())
         {
-            if(String.valueOf(animeInfo.getLanguageId()).equals(language))
+            if(App.isGooglePlayVersion)
             {
-                if(animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
-                    return animeInfo.getOverview().trim();
-                else if(animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
-                    return animeInfo.getDescription().trim();
-                else
-                    return "";
+                if(String.valueOf(animeInfo.getLanguageId()).equals(App.phoneLanguage))
+                {
+                    if(animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
+                        return animeInfo.getOverview().trim();
+                    else if(animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
+                        return animeInfo.getDescription().trim();
+                    else
+                        return "";
+                }
+            }
+            else
+            {
+                if (String.valueOf(animeInfo.getLanguageId()).equals(language)) {
+                    if (animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
+                        return animeInfo.getOverview().trim();
+                    else if (animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
+                        return animeInfo.getDescription().trim();
+                    else
+                        return "";
+                }
             }
         }
 		return "";
@@ -288,9 +302,17 @@ public class Anime implements Parcelable  {
 
         for(Genre genre:this.genres)
         {
-            if(!language.equals("1")) {
-                String genreName = genre.getName().toLowerCase().replace(" ", "");
-                translatedGenres.add(Utils.getStringResourceByName(genreName));
+            if(!language.equals("1"))
+            {
+                if(App.isGooglePlayVersion && App.phoneLanguage.equals("1"))
+                {
+                    translatedGenres.add(genre.getName());
+                }
+                else
+                {
+                    String genreName = genre.getName().toLowerCase().replace(" ", "");
+                    translatedGenres.add(Utils.getStringResourceByName(genreName));
+                }
             }
             else
                 translatedGenres.add(genre.getName());

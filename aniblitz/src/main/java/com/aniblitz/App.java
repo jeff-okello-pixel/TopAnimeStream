@@ -89,9 +89,12 @@ public class App extends Application implements NetworkEvent {
 
         Configuration config = getBaseContext().getResources().getConfiguration();
         Configuration configMirror = new Configuration(config);
-        String lang = settings.getString("prefLanguage", "");
 
+        String lang = settings.getString("prefLanguage", "1");
+        if(!App.isGooglePlayVersion)
         lang = Utils.ToLanguageString(lang);
+        else
+            lang = Utils.ToLanguageString(phoneLanguage);
         if (! "".equals(lang) && ! configMirror.locale.getLanguage().equals(lang))
         {
             locale = new Locale(lang);

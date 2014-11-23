@@ -107,8 +107,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             builder.setPositiveButton(getString(R.string.goto_aniblitz), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    String language = prefs.getString("prefLanguage", "1");
-                    language = Utils.ToLanguageString(language);
+                    String language = Utils.ToLanguageString(App.phoneLanguage);
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse(getString(R.string.aniblitz_website) + "/" + language + "/" + "android/"));
                     startActivity(intent);

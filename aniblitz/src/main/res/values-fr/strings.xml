@@ -59,6 +59,7 @@
     <string name="menu_history">Liste de visionnage</string>
     <string name="menu_share">Partager</string>
     <string name="menu_settings">Configuration</string>
+    <string name="menu_pro">Acheter la version pro</string>
     <string name="menu_logout">Déconnexion</string>
     <string name="language_english">English</string>
     <string name="language_french">Français</string>
@@ -73,6 +74,7 @@
         <item>Liste de visionnage</item>
         <item>Partager</item>
         <item>Configuration</item>
+        <item>Acheter la version pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
         <item>Favoris</item>

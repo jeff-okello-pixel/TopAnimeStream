@@ -87,10 +87,19 @@ public class Episode implements Parcelable {
                 {
                     EpisodeInformations episodeInformations = new EpisodeInformations(episodeInfoArray.getJSONObject(i));
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    if(String.valueOf(episodeInformations.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+                    if(App.isGooglePlayVersion)
                     {
-                        this.EpisodeInformations = episodeInformations;
-                        break;
+                        if (String.valueOf(episodeInformations.getLanguageId()).equals(App.phoneLanguage)) {
+                            this.EpisodeInformations = episodeInformations;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (String.valueOf(episodeInformations.getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                            this.EpisodeInformations = episodeInformations;
+                            break;
+                        }
                     }
                 }
 			}

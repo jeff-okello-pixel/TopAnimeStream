@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.aniblitz.App;
 import com.aniblitz.R;
+import com.aniblitz.Utils;
 import com.aniblitz.models.*;
 
 /**
@@ -250,7 +251,13 @@ public class DialogManager {
             builder.setPositiveButton(context.getString(R.string.all_languages),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            //TODO redirect to promo/buy app
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            String language = Utils.ToLanguageString(App.phoneLanguage);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse(context.getString(R.string.aniblitz_website) + "/" + language + "/" + "android/"));
+                            context.startActivity(intent);
+                            prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
+
                         }
                     });
             builder.setNeutralButton(context.getString(R.string.spanish_only),
@@ -276,7 +283,12 @@ public class DialogManager {
             builder.setPositiveButton(context.getString(R.string.buy_full_version),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            //TODO redirect to promo/buy app
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            String language = Utils.ToLanguageString(App.phoneLanguage);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse(context.getString(R.string.aniblitz_website) + "/" + language + "/" + "android/"));
+                            context.startActivity(intent);
+                            prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
                         }
                     });
             builder.setNegativeButton(context.getString(R.string.cancel),
@@ -299,8 +311,11 @@ public class DialogManager {
         builder.setPositiveButton(context.getString(R.string.get_full_version),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //TODO go to download/register/promo page
-
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                        String language = Utils.ToLanguageString(App.phoneLanguage);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(context.getString(R.string.aniblitz_website) + "/" + language + "/" + "android/"));
+                        context.startActivity(intent);
                         prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
                     }
                 });
