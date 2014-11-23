@@ -17,7 +17,6 @@
     <string name="no_result">Aucun résultat trouvé</string>
     <string name="no_episodes">Aucun épisode dans cet onglet</string>
     <string name="title_activity_anime_search">AnimeSearchActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="no_favorite">Vous n\'avez pas de favoris</string>
     <string name="empty_history">Aucune liste de visionnage trouvée...</string>
     <string name="remove_favorite">Supprimer des favoris</string>
@@ -136,8 +135,8 @@
     <string name="title_check_updates">Vérifiez les mises à jour</string>
     <string name="manually_check_updates">Vérification manuelle des mises à jour</string>
     <string name="loading_search">Recherche...</string>
-    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">You have now  Aniblitz Pro. Enjoy watching anime in English, French and Spanish. The app is now ad-free* and you have now access to Google Chromecast.
-*Some providers may show ads in the video.</string>
+    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">Vous avez maintenant Aniblitz pro. L\'application est désormais sans annonce* et vous avez accès à Google Chromecast.
+*Certains fournisseurs peuvent afficher des annonces dans les vidéos.</string>
     <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
     <string name="pro_version_needed">Pro version needed</string>
     <string name="buy_full_version">Buy full version</string>
@@ -178,6 +177,7 @@
     <string name="loading_favorites">Chargement des favoris...</string>
     <string name="error_loading_favorites">Une erreur est survenue lors du chargement des favoris. Réessayé de vous connecter.</string>
     <string name="error_remove_favorite">Une erreur est survenue lors de la suppression du favoris</string>
+    <string name="deleting_from_favorites">Suppression du favoris...</string>
     <string name="error_adding_anime">Une erreur est survenue lors de l\'ajout de l\'anime aux favoris</string>
     <string name="adding_to_favorites">Ajout au favoris...</string>
     <string name="only_240p_available">Cette source est seulement disponible en 240p.</string>

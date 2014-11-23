@@ -136,7 +136,7 @@
     <string name="manually_check_updates">Comprobación manual de actualizaciones</string>
     <string name="loading_search">Buscar...</string>
     <string name="title_aniblitz_upgraded">Aniblitz actualizado a pro</string>
-    <string name="aniblitz_upgraded_message">Usted ahora tiene su versión pro. Disfruta de ver anime en Inglés, Francés y Español. La aplicación no tiene anuncios* y usted tiene acceso a Chromecast
+    <string name="aniblitz_upgraded_message">Usted ahora tiene su versión pro. La aplicación no tiene anuncios* y usted tiene acceso a Chromecast
 \n*Algunos proveedores pueden mostrar anuncios en el vídeo.</string>
     <string name="need_pro_chromecast">Usted necesita la versión Pro de Aniblitz para reproducir el vídeo en un dispositivo Chromecast.</string>
     <string name="pro_version_needed">Pro versión necesaria</string>
@@ -178,6 +178,7 @@
     <string name="loading_favorites">Cargando favoritos...</string>
     <string name="error_loading_favorites">Se ha producido un error durante al cargar de los favoritos. Trate de iniciar sesión de nuevo.</string>
     <string name="error_remove_favorite">Se ha producido un error durante la supresión de los favoritos</string>
+    <string name="deleting_from_favorites">Eliminación de favoritos...</string>
     <string name="error_adding_anime">Se ha producido un error durante al añadir de el anime</string>
     <string name="adding_to_favorites">Añadir a favoritos...</string>
     <string name="only_240p_available">Esta fuente sólo está disponible en 240p.</string>

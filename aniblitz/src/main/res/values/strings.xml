@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Aniblitz</string>
-    <string name="app_id">EBDDFB4F</string>
-    <string name="urc">Jgd7fFD63Ss</string>
+    <string name="app_id" tools:ignore="MissingTranslation">EBDDFB4F</string>
+    <string name="urc" tools:ignore="MissingTranslation">Jgd7fFD63Ss</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Aniblitz</string>
-    <string name="aniblitz_website">http://aniblitz.com</string>
-    <string name="anime_service_path">http://aniblitz.com/AnimeServices/AnimeService.svc/</string>
-    <string name="anime_service_path_no_dash">http://aniblitz.com/AnimeServices/AnimeService.svc</string>
-    <string name="anime_data_service_path_no_dash">http://aniblitz.com/AnimeServices/AnimeDataService.svc</string>
-    <string name="anime_data_service_path">http://aniblitz.com/AnimeServices/AnimeDataService.svc/</string>
-    <string name="image_host_path">http://aniblitz.com/ImageHost/</string>
+    <string name="aniblitz_website" tools:ignore="MissingTranslation">http://aniblitz.com</string>
+    <string name="anime_service_path" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeService.svc/</string>
+    <string name="anime_service_path_no_dash" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeService.svc</string>
+    <string name="anime_data_service_path_no_dash" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeDataService.svc</string>
+    <string name="anime_data_service_path" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeDataService.svc/</string>
+    <string name="image_host_path" tools:ignore="MissingTranslation">http://aniblitz.com/ImageHost/</string>
     <!-- Menu actions -->
     <string name="action_favorite">Add to favorite</string>
     <string name="action_settings">Settings</string>
@@ -25,7 +26,6 @@
     <string name="no_result">No result found</string>
     <string name="no_episodes">No episode in this tab</string>
     <string name="title_activity_anime_search">AnimeSearchActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="no_favorite">You don\'t have any favorite</string>
     <string name="empty_history">No Watchlist found...</string>
     <string name="remove_favorite">Remove from favorites</string>
@@ -92,7 +92,6 @@
         <item>Logout</item>
     </string-array>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_provider">No provider in this tab</string>
     <string name="play_phone">Play on device</string>
     <string name="stream_chromecast">Stream on Chromecast</string>
@@ -145,7 +144,7 @@
     <string name="title_check_updates">Check for updates</string>
     <string name="manually_check_updates">Manually check for updates</string>
     <string name="loading_search">Searching...</string>
-    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">You have now  Aniblitz Pro. Enjoy watching anime in English, French and Spanish. The app is now ad-free* and you have now access to Google Chromecast.
+    <string name="title_aniblitz_upgraded">Aniblitz upgraded to pro</string><string name="aniblitz_upgraded_message">You have now  Aniblitz Pro. The app is now ad-free* and you have now access to Google Chromecast.
 *Some providers may show ads in the video.</string>
     <string name="need_pro_chromecast">You need the pro version of Aniblitz to play the video on a Chromecast device.</string>
     <string name="pro_version_needed">Pro version needed</string>
@@ -164,5 +163,38 @@
     <string name="bored_animes_spanish">Bored of animes in Spanish only? Buy the full version of Aniblitz to get access to animes in English, French and Spanish!</string>
     <string name="title_service_unavailable">Service unavailable</string>
     <string name="service_unavailable">The services of Aniblitz are currently unavailable. We will be back shortly.</string>
-
+    <string name="action">Action</string>
+    <string name="adventure">Adventure</string>
+    <string name="animation">Animation</string>
+    <string name="children">Children</string>
+    <string name="comedy">Comedy</string>
+    <string name="crime">Crime</string>
+    <string name="documentary">Documentary</string>
+    <string name="drama">Drama</string>
+    <string name="erotica">Erotica</string>
+    <string name="family">Family</string>
+    <string name="fantasy">Fantasy</string>
+    <string name="gameshow">Game show</string>
+    <string name="homeandgarden">Home and garden</string>
+    <string name="horror">Horror</string>
+    <string name="magic">Magic</string>
+    <string name="miniSeries">Mini series</string>
+    <string name="music">Music</string>
+    <string name="mystery">Mystery</string>
+    <string name="news">News</string>
+    <string name="reality">Reality</string>
+    <string name="romance">Romance</string>
+    <string name="sciencefiction">Science fiction</string>
+    <string name="sliceoflife">Slice of Life</string>
+    <string name="soap">Soap</string>
+    <string name="specialInterest">Special interest</string>
+    <string name="psychological">Psychological</string>
+    <string name="school">School</string>
+    <string name="sports">Sports</string>
+    <string name="suspense">Suspense</string>
+    <string name="supernatural">Supernatural</string>
+    <string name="talkShow">Talk show</string>
+    <string name="thriller">Thriller</string>
+    <string name="tournament">Tournament</string>
+    <string name="western">Western</string>
 </resources>

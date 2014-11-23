@@ -24,8 +24,8 @@ public class App extends Application implements NetworkEvent {
 	public static Locale locale;
 	public static ImageLoader imageLoader;
 	private static Connection connection;
-	public static boolean isPro = true;
-    public static boolean isGooglePlayVersion = false;
+	public static boolean isPro = false;
+    public static boolean isGooglePlayVersion = true;
     public static boolean isVkOnly = false;
     public static boolean languageChanged = false;
     public static String accessToken;
