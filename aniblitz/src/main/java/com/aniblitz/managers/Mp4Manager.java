@@ -208,12 +208,14 @@ public class Mp4Manager {
             {
                 busyDialog = Utils.showBusyDialog(act.getString(R.string.loading_video), act);
             }
-            Prm prm = new Prm(act, null, false);
+            if(!App.isPro) {
+                Prm prm = new Prm(act, null, false);
 
-            try {
-                prm.runAppWall();
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    prm.runAppWall();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         @Override
