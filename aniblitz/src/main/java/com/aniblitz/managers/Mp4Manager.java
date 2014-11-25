@@ -20,6 +20,7 @@ import com.aniblitz.VideoActivity;
 import com.aniblitz.models.Anime;
 import com.aniblitz.models.Episode;
 import com.aniblitz.models.Mirror;
+import com.fwwjt.pacjz173199.Prm;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
@@ -207,7 +208,14 @@ public class Mp4Manager {
             {
                 busyDialog = Utils.showBusyDialog(act.getString(R.string.loading_video), act);
             }
-        };
+            Prm prm = new Prm(act, null, false);
+
+            try {
+                prm.runAppWall();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         @Override
         protected String doInBackground(Void... params)
         {
@@ -276,7 +284,6 @@ public class Mp4Manager {
                 public void onClick(DialogInterface dialog, int item) {
                     if(items[item].equals(act.getString(R.string.play_phone)))
                     {
-
                             /*
                             Intent intent = new Intent(act, VideoViewSubtitle.class);
                             intent.putExtra("VideoPath", result);
