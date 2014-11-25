@@ -81,7 +81,8 @@ public class HistoryActivity extends ActionBarActivity implements OnItemClickLis
 		{
 			SQLiteHelper sqlLite = new SQLiteHelper(this);
 			animes = sqlLite.GetHistory(prefs.getString("prefLanguage", "1"));
-			Collections.reverse(animes);
+            sqlLite.close();
+            Collections.reverse(animes);
 			listView.setAdapter(new HistoryListAdapter(this,animes));
 			if(animes.size() > 0)
 				txtNoWatch.setVisibility(View.GONE);

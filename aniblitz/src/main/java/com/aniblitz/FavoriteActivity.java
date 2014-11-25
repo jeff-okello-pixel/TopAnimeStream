@@ -98,6 +98,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
             if(App.isGooglePlayVersion) {
                 SQLiteHelper sqlLite = new SQLiteHelper(this);
                 animes = sqlLite.getFavorites(prefs.getString("prefLanguage", "1"));
+                sqlLite.close();
                 listView.setAdapter(new AnimeListAdapter(this, animes));
                 if (animes.size() > 0)
                     txtNoFavorite.setVisibility(View.GONE);

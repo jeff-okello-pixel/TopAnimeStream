@@ -170,7 +170,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         
         super.onSaveInstanceState(outState);
     }
-	@Override
+
+    @Override
+    protected void onDestroy() {
+        db.close();
+        super.onDestroy();
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.episodes, menu);
         if(App.isPro)

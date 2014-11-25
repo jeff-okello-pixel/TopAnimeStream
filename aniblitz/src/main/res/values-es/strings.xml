@@ -189,4 +189,6 @@
     <string name="bored_animes_spanish">Aburrido de ver dibujos animados en español? Compra la versión completa obtén acceso a los dibujos animados en Francés, Inglés y Español !</string>
     <string name="title_service_unavailable">Servicio no disponible</string>
     <string name="service_unavailable">Aniblitz servicios no están disponibles en este momento. Estaremos de vuelta pronto.</string>
+    <string name="report_sent">Un informe ha sido enviada a nosotros, vamos a solucionarlo lo antes posible.</string>
+    <string name="recommended">(recomendado)</string>
 </resources>

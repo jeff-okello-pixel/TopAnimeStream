@@ -115,7 +115,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             else
                 App.isPro = true;
 
-
+            sqlLite.close();
         }
 		r = getResources();
 		animes = new ArrayList<Anime>();

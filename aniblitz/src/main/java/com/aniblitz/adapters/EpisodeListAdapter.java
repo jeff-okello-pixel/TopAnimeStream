@@ -34,7 +34,6 @@ public class EpisodeListAdapter extends BaseAdapter{
 	private Resources re;
 	private Activity act;
 	private ViewHolder holder;
-	private SQLiteHelper sqlite;
 	private SharedPreferences prefs;
 	private TextView txtEpisodeNumber;
 	private ImageView imgWatched;
@@ -51,7 +50,6 @@ public class EpisodeListAdapter extends BaseAdapter{
 		this.values = values;
 		this.re = this.context.getResources();
 		this.act = (Activity)context;
-		sqlite = new SQLiteHelper(act);
 		prefs = PreferenceManager.getDefaultSharedPreferences(act);
 		app = ((App)context.getApplicationContext());
 		this.animeName = animeName;
@@ -105,7 +103,7 @@ public class EpisodeListAdapter extends BaseAdapter{
         {
             holder.txtEpisodeName.setVisibility(View.GONE);
         }
-
+        SQLiteHelper sqlite = new SQLiteHelper(act);
 		if(sqlite.isWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1")))
 		{
 			holder.imgWatched.setBackgroundColor(Color.parseColor("#D9245169"));
@@ -116,6 +114,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 			holder.imgWatched.setBackgroundColor(Color.parseColor("#00000000"));
 			holder.imgWatched.setImageDrawable(re.getDrawable(R.drawable.ic_not_watched));
 		}
+        sqlite.close();
 		
 		return vi;
 	}
@@ -149,6 +148,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 
 		    public void onClick(View v) {
 		    	Episode episode = values.get(position);
+                SQLiteHelper sqlite = new SQLiteHelper(act);
 		    	if(sqlite.isWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1")))
 				{
 		    		sqlite.removeWatched(episode.getEpisodeId(),prefs.getString("prefLanguage", "1"));
@@ -161,6 +161,7 @@ public class EpisodeListAdapter extends BaseAdapter{
 					v.setBackgroundColor(Color.parseColor("#D9245169"));
 					imgView.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
 				}
+                sqlite.close();
 		     }
 	  }
 

@@ -43,9 +43,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION); 
     }
- 
+    private SQLiteDatabase db;
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String CREATE_FAVORITES_TABLE = "CREATE TABLE " + TABLE_FAVORITES + " ( " +
         		KEY_ANIMEID + " TEXT, " +
         		KEY_NAME + " TEXT, "+
@@ -74,8 +75,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 KEY_ISPRO + " TEXT, " +
                 KEY_ISFIRSTTIME + " TEXT)";
         db.execSQL(CREATE_FLAGS_TABLE);
+
+        this.db = db;
+
     }
- 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
@@ -93,7 +97,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 null, //nullColumnHack
                 values);
 
-        db.close();
 
         App.isPro = pro;
     }
@@ -125,7 +128,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
     public void addFavorite(int animeId, String name, String poster, String genres, String description, String rating, String backdrop, int languageId){
         SQLiteDatabase db = this.getWritableDatabase();
- 
+
         ContentValues values = new ContentValues();
         values.put(KEY_ANIMEID, String.valueOf(animeId));
         values.put(KEY_NAME, name);
@@ -139,14 +142,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 null, //nullColumnHack
                 values);
         
-        db.close();
+
     }
     
     public void removeFavorite(int animeId)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_FAVORITES, KEY_ANIMEID + " = ?",  new String[] { String.valueOf(animeId) });
-        db.close();
+
     }
     
     public ArrayList<Anime> getFavorites(String languageId)
@@ -219,7 +222,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         	}
         	cursor.close();
         }
-        
+
         return false;
     }
     
@@ -241,16 +244,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 null, //nullColumnHack
                 values);
         
-        db.close();
+
     }
     
     public void removeWatched(int episodeId, String languageId)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_WATCHED, KEY_EPISODEID + " = ? AND " + KEY_LANGUAGEID + " = ?",  new String[] { String.valueOf(episodeId), languageId });
-        db.close();
+
     }
-    
+
     public ArrayList<Anime> GetHistory(String languageId)
     {
     	ArrayList<Anime> animes = new ArrayList<Anime>();
@@ -300,7 +303,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         	}
         	cursor.close();
         }
-        
+
         return animes;
     }
 
@@ -327,7 +330,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         	}
         	cursor.close();
         }
-        
+
         return false;
     }
 }

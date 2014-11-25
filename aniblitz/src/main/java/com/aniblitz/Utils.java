@@ -544,6 +544,67 @@ public class Utils {
     	    }
     	return null;
     }
+    public static class ReportMirror extends AsyncTask<Void, Void, String> {
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String URL;
+        private String method = "ReportMirror";
+        private int mirrorId;
+        private Context context;
+        public ReportMirror(int mirrorId, Context context) {
+            this.mirrorId = mirrorId;
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            URL = App.getContext().getString(R.string.anime_service_path);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return App.getContext().getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("mirrorId", mirrorId);
+            envelope = Utils.addAuthentication(envelope);
+            envelope .dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try
+            {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive)envelope.getResponse();
+                return null;
+            }
+            catch (Exception e)
+            {
+                if(e instanceof SoapFault)
+                {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+            return "error";
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            if(error != null)
+            {
+                //dont show any error because it is a behind the scene report
+            }
+            else
+            {
+                Toast.makeText(context,context.getString(R.string.report_sent),Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     public static String getStringFromFile (String filePath) throws Exception {
         File fl = new File(filePath);
         FileInputStream fin = new FileInputStream(fl);

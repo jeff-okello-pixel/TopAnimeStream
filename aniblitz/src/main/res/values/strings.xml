@@ -197,4 +197,6 @@
     <string name="thriller">Thriller</string>
     <string name="tournament">Tournament</string>
     <string name="western">Western</string>
+    <string name="report_sent">A mirror broken report has been sent to us, we will fix it as soon as possible.</string>
+    <string name="recommended">(recommended)</string>
 </resources>

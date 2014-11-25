@@ -188,4 +188,6 @@
     <string name="bored_animes_spanish">Ennuyé de regarder des animes en Espagnol? Achetez la version complète pour avoir accès au animes en Français, Anglais et Espagnol!</string>
     <string name="title_service_unavailable">Service indisponible</string>
     <string name="service_unavailable">Les services de Aniblitz ne sont pas disponible pour le moment. Nous serons de retour bientôt.</string>
+    <string name="report_sent">Un rapport de lien mort nous a été envoyé, nous allons régler le vidéo dès que possible.</string>
+    <string name="recommended">(recommandé)</string>
 </resources>

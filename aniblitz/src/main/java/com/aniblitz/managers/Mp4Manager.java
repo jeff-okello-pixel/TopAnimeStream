@@ -36,6 +36,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -108,7 +114,8 @@ public class Mp4Manager {
         protected void onPostExecute(String result) {
             try {
                 if (result == null) {
-                    Toast.makeText(act, act.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+                    Toast.makeText(act, act.getString(R.string.error_loading_video), Toast.LENGTH_LONG).show();
+                    AsyncTaskTools.execute(new Utils.ReportMirror(mirror.getMirrorId(), act));
                 }
                 else
                 {
@@ -156,14 +163,16 @@ public class Mp4Manager {
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
-                Toast.makeText(act, act.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+                Toast.makeText(act, act.getString(R.string.error_loading_video), Toast.LENGTH_LONG).show();
                 DialogManager.dismissBusyDialog(busyDialog);
+                AsyncTaskTools.execute(new Utils.ReportMirror(mirror.getMirrorId(), act));
             }
 
 
         }
 
     }
+
 
     public static class GetMp4 extends AsyncTask<Void, Void, String> {
 
@@ -256,7 +265,7 @@ public class Mp4Manager {
                 }
                 act.startActivity(i);
                 //Toast.makeText(act, r.getString(R.string.error_loading_video) , Toast.LENGTH_LONG).show();
-
+                AsyncTaskTools.execute(new Utils.ReportMirror(mirror.getMirrorId(), act));
                 return;
             }
 
@@ -276,6 +285,7 @@ public class Mp4Manager {
                         Intent intent = null;
                         intent = new Intent(act, VideoActivity.class);
                         intent.putExtra("Mp4Url", result);
+                        intent.putExtra("MirrorId", mirror.getMirrorId());
                         act.startActivity(intent);
                         /*
                         String providerName = mirror.getProvider().getName().toLowerCase();

@@ -1,6 +1,7 @@
 package com.aniblitz.adapters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.aniblitz.App;
 import com.aniblitz.R;
@@ -61,7 +62,14 @@ public class ProviderListAdapter extends BaseAdapter  {
 		}else {
             holder = (ViewHolder) vi.getTag();
         }
-		holder.txtProviderName.setText(mirror.getProvider().getName());
+        String[] recommendProvider = new String[] {"vk","uploadcrazy","videocrazy", "yourupload"};
+        if(Arrays.asList(recommendProvider).contains(mirror.getProvider().getName()))
+        {
+            holder.txtProviderName.setText(mirror.getProvider().getName() + " " + context.getString(R.string.recommended));
+        }
+        else {
+            holder.txtProviderName.setText(mirror.getProvider().getName());
+        }
 		//holder.imgBroken.setOnClickListener(new imageViewClickListener(position,holder.imgBroken));
 
 		return vi;
