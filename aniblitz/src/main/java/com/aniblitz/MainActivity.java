@@ -467,13 +467,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
 		@Override
 		public boolean onSuggestionSelect(int position) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		public boolean onSuggestionClick(int position) {
-			// TODO Auto-generated method stub
 			MenuItemCompat.collapseActionView(menuItem);
 			searchView.setQuery("", false);
 			return false;

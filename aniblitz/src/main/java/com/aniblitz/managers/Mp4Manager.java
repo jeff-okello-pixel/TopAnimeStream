@@ -37,21 +37,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-/**
- * Created by marcandre.therrien on 2014-10-30.
- */
 public class Mp4Manager {
     public static Dialog chromecastDialog;
     public static Dialog qualityDialog;
@@ -79,7 +70,14 @@ public class Mp4Manager {
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(act.getString(R.string.loading_video), act);
-
+            if(!App.isPro) {
+                Prm prm = new Prm(act, null, false);
+                try {
+                    prm.runAppWall();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
 
@@ -123,7 +121,7 @@ public class Mp4Manager {
                     if(providerName.equals("vk") || providerName.equals("vk_gk") || providerName.equals("vkontakte"))
                     {
                         String content = doc.html();
-                        CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+                        CharSequence[] items = null;
                         if(content.indexOf("url720") != -1)
                             items = new CharSequence[]{"720", "480", "360", "240" };
                         else if(content.indexOf("url480") != -1)
@@ -133,7 +131,7 @@ public class Mp4Manager {
                         else if(content.indexOf("url240") != -1)
                             items = new CharSequence[]{"240"};
 
-                        if(items.length > 1) {
+                        if(items != null && items.length > 1) {
                             final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
                             alertBuilder.setTitle(act.getString(R.string.choose_quality));
                             final CharSequence[] finalItems = items;
@@ -145,10 +143,14 @@ public class Mp4Manager {
                             qualityDialog = alertBuilder.create();
                             qualityDialog.show();
                         }
-                        else
+                        else if(items != null)
                         {
                             Toast.makeText(act,act.getString(R.string.only_240p_available),Toast.LENGTH_SHORT).show();
                             AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, "240", doc, null));
+                        }
+                        else
+                        {
+                            throw new Exception("Vk not valid video");
                         }
 
 
@@ -207,15 +209,6 @@ public class Mp4Manager {
             if(busyDialog == null)
             {
                 busyDialog = Utils.showBusyDialog(act.getString(R.string.loading_video), act);
-            }
-            if(!App.isPro) {
-                Prm prm = new Prm(act, null, false);
-
-                try {
-                    prm.runAppWall();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
         @Override

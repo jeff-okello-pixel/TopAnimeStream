@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -62,14 +63,13 @@ public class ProviderListAdapter extends BaseAdapter  {
 		}else {
             holder = (ViewHolder) vi.getTag();
         }
-        String[] recommendProvider = new String[] {"vk","uploadcrazy","videocrazy", "yourupload"};
-        if(Arrays.asList(recommendProvider).contains(mirror.getProvider().getName()))
-        {
+        String[] recommendProvider = new String[] {"vk","uploadcrazy","videocrazy", "yourupload", "vidcrazy"};
+        if(Arrays.asList(recommendProvider).contains(mirror.getProvider().getName()) && mirror.isVisible())
             holder.txtProviderName.setText(mirror.getProvider().getName() + " " + context.getString(R.string.recommended));
-        }
-        else {
+        else if(!mirror.isVisible())
+            holder.txtProviderName.setText(mirror.getProvider().getName() + " " + Html.fromHtml("<font color=#E50000>" + context.getString(R.string.bad) + "</font>"));
+        else
             holder.txtProviderName.setText(mirror.getProvider().getName());
-        }
 		//holder.imgBroken.setOnClickListener(new imageViewClickListener(position,holder.imgBroken));
 
 		return vi;

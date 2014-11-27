@@ -200,4 +200,5 @@
     <string name="report_sent">A mirror broken report has been sent to us, we will fix it as soon as possible.</string>
     <string name="recommended">(recommended)</string>
     <string name="video_spanish_only">Video is in spanish only, get full version for all languages</string>
+    <string name="bad">(Bad)</string>
 </resources>

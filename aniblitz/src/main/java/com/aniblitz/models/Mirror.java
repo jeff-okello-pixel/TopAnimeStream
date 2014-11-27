@@ -12,20 +12,27 @@ public class Mirror implements Parcelable {
 	private int PartNumber;
 	private String AddedDate;
 	private String source;
+    private int ReportCount;
+    private boolean IsVisible;
 	private AnimeSource AnimeSource;
 	private Provider provider;
 	public Mirror() {
 		super();
 	}
-	public Mirror(int mirrorId, int episodeId, int animeSourceId,
-			String addedDate, String source) {
-		super();
-		MirrorId = mirrorId;
-		EpisodeId = episodeId;
-		AnimeSourceId = animeSourceId;
-		AddedDate = addedDate;
-		this.source = source;
-	}
+
+    public Mirror(int mirrorId, int episodeId, int animeSourceId, int partNumber, String addedDate, String source, int reportCount, boolean isVisible, com.aniblitz.models.AnimeSource animeSource, Provider provider) {
+        MirrorId = mirrorId;
+        EpisodeId = episodeId;
+        AnimeSourceId = animeSourceId;
+        PartNumber = partNumber;
+        AddedDate = addedDate;
+        this.source = source;
+        ReportCount = reportCount;
+        IsVisible = isVisible;
+        AnimeSource = animeSource;
+        this.provider = provider;
+    }
+
     public Mirror(Vk vk)
     {
         this.EpisodeId = vk.getEpisodeId();
@@ -48,6 +55,8 @@ public class Mirror implements Parcelable {
 			this.AnimeSourceId = !jsonMirror.isNull("AnimeSourceId") ? jsonMirror.getInt("AnimeSourceId") : 0;
 			this.AddedDate = !jsonMirror.isNull("AddedDate") ? jsonMirror.getString("AddedDate") : null;
 			this.source = !jsonMirror.isNull("Source") ? jsonMirror.getString("Source") : null;
+            this.ReportCount = !jsonMirror.isNull("ReportCount") ? jsonMirror.getInt("ReportCount") : null;
+            this.IsVisible = !jsonMirror.isNull("IsVisible") ? jsonMirror.getBoolean("IsVisible") : null;
 		}catch(Exception e)
 		{
 			
@@ -62,8 +71,27 @@ public class Mirror implements Parcelable {
     	PartNumber = in.readInt();
     	AddedDate = in.readString();
     	source = in.readString();
+        ReportCount = in.readInt();
+        IsVisible = in.readByte() != 0;
     }
-	public Provider getProvider() {
+
+    public int getReportCount() {
+        return ReportCount;
+    }
+
+    public void setReportCount(int reportCount) {
+        ReportCount = reportCount;
+    }
+
+    public boolean isVisible() {
+        return IsVisible;
+    }
+
+    public void setVisible(boolean isVisible) {
+        IsVisible = isVisible;
+    }
+
+    public Provider getProvider() {
 		return provider;
 	}
 	public void setProvider(Provider provider) {
@@ -107,7 +135,6 @@ public class Mirror implements Parcelable {
 	}
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
     public void writeToParcel(Parcel dest, int flags) {
@@ -119,8 +146,8 @@ public class Mirror implements Parcelable {
         dest.writeInt(PartNumber);
         dest.writeString(AddedDate);
         dest.writeString(source);
-        
-
+        dest.writeInt(ReportCount);
+        dest.writeByte((byte) (IsVisible ? 1 : 0));
     }
     
     public static final Parcelable.Creator<Mirror> CREATOR = new Parcelable.Creator<Mirror>()
