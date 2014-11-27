@@ -84,6 +84,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 		Bundle bundle = getIntent().getExtras();
 		anime = bundle.getParcelable("Anime");
 		ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episodes_of) + " " + anime.getName() + "</font>"));
 
@@ -222,7 +223,12 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     {
                         menuFavorite.setIcon(R.drawable.ic_favorite);
                         AnimeInformation info = anime.getAnimeInformation(this);
-                        db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription(), String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), 4);
+                        String description = "";
+                        if(info != null)
+                        {
+                            description = info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription();
+                        }
+                        db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), description, String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), 4);
                         Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
                     }
                 }

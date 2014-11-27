@@ -190,8 +190,15 @@ public class Anime implements Parcelable  {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         for(AnimeInformation info:this.animeInformations)
         {
-            if(String.valueOf(info.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                return info;
+            if(App.isGooglePlayVersion)
+            {
+                if (String.valueOf(info.getLanguageId()).equals(App.phoneLanguage))
+                    return info;
+            }
+            else {
+                if (String.valueOf(info.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
+                    return info;
+            }
         }
 
         return null;

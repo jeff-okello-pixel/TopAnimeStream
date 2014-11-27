@@ -24,8 +24,8 @@ public class App extends Application implements NetworkEvent {
 	public static Locale locale;
 	public static ImageLoader imageLoader;
 	private static Connection connection;
-	public static boolean isPro = false;
-    public static boolean isGooglePlayVersion = true;
+	public static boolean isPro = true;
+    public static boolean isGooglePlayVersion = false;
     public static boolean isVkOnly = false;
     public static boolean languageChanged = false;
     public static String accessToken;
@@ -91,10 +91,20 @@ public class App extends Application implements NetworkEvent {
         Configuration configMirror = new Configuration(config);
 
         String lang = settings.getString("prefLanguage", "1");
-        if(!App.isGooglePlayVersion)
-        lang = Utils.ToLanguageString(lang);
-        else
+        boolean shouldSetLanguage = settings.getBoolean("shouldSetLanguage", true);
+        if(!App.isGooglePlayVersion && shouldSetLanguage) {
+            settings.edit().remove("prefLanguage").apply();
             lang = Utils.ToLanguageString(phoneLanguage);
+            settings.edit().putBoolean("shouldSetLanguage", false).apply();
+        }
+        else if(!App.isGooglePlayVersion)
+            lang = Utils.ToLanguageString(lang);
+        else
+        {
+            //lang = Utils.ToLanguageString(phoneLanguage);
+            phoneLanguage = "4";
+            lang = "es";
+        }
         if (! "".equals(lang) && ! configMirror.locale.getLanguage().equals(lang))
         {
             locale = new Locale(lang);

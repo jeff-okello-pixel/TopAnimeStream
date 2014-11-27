@@ -40,6 +40,7 @@ public class HistoryActivity extends ActionBarActivity implements OnItemClickLis
 		  prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		  txtNoWatch = (TextView)findViewById(R.id.txtNoWatch);
 		  ActionBar actionBar = getSupportActionBar();
+          actionBar.setDisplayShowHomeEnabled(false);
 		  actionBar.setDisplayHomeAsUpEnabled(true);
 		  actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.title_history) + "</font>"));
 		  listView = (ListView)findViewById(R.id.listView);

@@ -53,6 +53,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_episode_details);
 		r = getResources();
 		ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		Bundle bundle = getIntent().getExtras();

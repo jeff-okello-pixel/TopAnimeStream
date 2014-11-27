@@ -62,6 +62,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		r = getResources();
 		actionBar = getSupportActionBar();
+        actionBar.setIcon(android.R.color.transparent);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		txtNoResult = (TextView)findViewById(R.id.txtNoResult);
 		animes = new ArrayList<Anime>();

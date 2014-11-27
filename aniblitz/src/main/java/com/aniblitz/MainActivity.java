@@ -168,6 +168,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         }
 
 		ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(android.R.color.transparent);
 		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.app_name) + "</font>"));
 		listView = (ListView)findViewById(R.id.left_drawer);
         listView.setOnItemClickListener(this);
@@ -260,6 +261,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                         editor.commit();
 	                    alertLanguages.dismiss();
                         SetViewPager();
+                        app.setLocale();
+                        Utils.restartActivity(MainActivity.this);
 	                }
 	                return true;
 	            }
@@ -318,6 +321,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         //tabs.setTextColor(Color.parseColor("#55a73d"));
         tabs.setIndicatorColor(r.getColor(R.color.blueTab));
         tabs.setTabBackground("background_tab_darkblue");
+
     }
 
     @Override
@@ -440,7 +444,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    	textView.setTextColor(Color.WHITE);
 	    	textView.setHintTextColor(Color.WHITE);
 	    }
-
 	    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 	    
 	    searchView.setOnQueryTextListener(new OnQueryTextListener(){

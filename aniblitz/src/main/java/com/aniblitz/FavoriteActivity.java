@@ -56,6 +56,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
 		  txtNoFavorite = (TextView)findViewById(R.id.txtNoFavorite);
 		  ActionBar actionBar = getSupportActionBar();
 		  actionBar.setDisplayHomeAsUpEnabled(true);
+          actionBar.setDisplayShowHomeEnabled(false);
 		  actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.title_favorites) + "</font>"));
 		  listView = (ListView)findViewById(R.id.listView);
 		  listView.setOnItemClickListener(this);

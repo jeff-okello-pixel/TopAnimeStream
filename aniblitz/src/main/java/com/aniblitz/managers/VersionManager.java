@@ -47,8 +47,16 @@ public class VersionManager {
         protected String doInBackground(Void... params) {
             if(App.IsNetworkConnected())
             {
-                JSONObject jsonPackage = Utils.GetJson(context.getString(R.string.aniblitz_website) + "/apps/android/package.json");
-                pkg = new com.aniblitz.models.Package(jsonPackage);
+                try
+                {
+                    JSONObject jsonPackage = Utils.GetJson(context.getString(R.string.aniblitz_website) + "/apps/android/package.json");
+                    pkg = new com.aniblitz.models.Package(jsonPackage);
+                }
+                catch(Exception e)
+                {
+                    return null;
+                }
+
             }
             else
             {

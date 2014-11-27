@@ -264,9 +264,11 @@ public class Mp4Manager {
         protected void onPostExecute(final String result)
         {
             Utils.dismissBusyDialog(busyDialog);
+            if(App.isGooglePlayVersion) {
+                Toast.makeText(act, act.getString(R.string.video_spanish_only), Toast.LENGTH_LONG).show();
+            }
             if(result == null)
             {
-
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 try {
                     i.setData(Uri.parse(URLDecoder.decode(mirror.getSource(), "UTF-8")));

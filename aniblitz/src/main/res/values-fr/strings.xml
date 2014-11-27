@@ -190,4 +190,5 @@
     <string name="service_unavailable">Les services de Aniblitz ne sont pas disponible pour le moment. Nous serons de retour bientôt.</string>
     <string name="report_sent">Un rapport de lien mort nous a été envoyé, nous allons régler le vidéo dès que possible.</string>
     <string name="recommended">(recommandé)</string>
+    <string name="video_spanish_only">La vidéo est en Espagnol seulement, acheter la version complète pour la regarder en d\'autres langages.</string>
 </resources>

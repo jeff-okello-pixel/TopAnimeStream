@@ -209,7 +209,7 @@ public class Utils {
             e.printStackTrace();
         }
 
-        return "";
+        return aString;
     }
 		
 	 private static boolean downloadFile(String url, File outputFile) {

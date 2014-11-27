@@ -177,7 +177,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         		anime.setName(cursor.getString(1));
         		anime.setPosterPath(cursor.getString(2));
                 ArrayList<AnimeInformation> animeInfos = new ArrayList<AnimeInformation>();
-                animeInfos.add(new AnimeInformation(Integer.valueOf(languageId), cursor.getString(3)));
+                if(App.isGooglePlayVersion)
+                {
+                    animeInfos.add(new AnimeInformation(Integer.valueOf(App.phoneLanguage), cursor.getString(3)));
+                }
+                else {
+                    animeInfos.add(new AnimeInformation(Integer.valueOf(languageId), cursor.getString(3)));
+                }
                 anime.setAnimeInformations(animeInfos);
         		ArrayList<Genre> genres = new ArrayList<Genre>();
         		String[] genreArray = cursor.getString(4).split(", ");
