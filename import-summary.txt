@@ -16,7 +16,7 @@ The following files were *not* copied into the new Gradle project; you
 should evaluate whether these are still needed in your project and if
 so manually move them:
 
-From Aniblitz:
+From Topanimestream:
 * .gitignore
 * .gitignore.gitignore
 * ic_launcher-web.png
@@ -103,13 +103,13 @@ In librarytabstrip:
 * assets\ => librarytabstrip\src\main\assets\
 * res\ => librarytabstrip\src\main\res\
 * src\ => librarytabstrip\src\main\java\
-In Aniblitz:
-* AndroidManifest.xml => aniblitz\src\main\AndroidManifest.xml
-* assets\ => aniblitz\src\main\assets\
-* libs\jsoup-1.7.3.jar => aniblitz\libs\jsoup-1.7.3.jar
-* lint.xml => aniblitz\lint.xml
-* res\ => aniblitz\src\main\res\
-* src\ => aniblitz\src\main\java\
+In Topanimestream:
+* AndroidManifest.xml => topanimestream\src\main\AndroidManifest.xml
+* assets\ => topanimestream\src\main\assets\
+* libs\jsoup-1.7.3.jar => topanimestream\libs\jsoup-1.7.3.jar
+* lint.xml => topanimestream\lint.xml
+* res\ => topanimestream\src\main\res\
+* src\ => topanimestream\src\main\java\
 
 Missing Google Repository:
 --------------------------

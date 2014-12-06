@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/aniblitz/lightbox/src/main/res/values/colors.xml -->
+    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/topanimestream/lightbox/src/main/res/values/colors.xml -->
     <eat-comment />
 
     <color name="translucent">#00000000</color>
     <color name="translucent_black">#44000000</color>
-    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/aniblitz/lightbox/src/main/res/values/strings.xml -->
+    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/topanimestream/lightbox/src/main/res/values/strings.xml -->
     <eat-comment />
 
     <string name="app_name">LightBox</string>
     <string name="hello">Hello World, MainActivity!</string>
-    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/aniblitz/lightbox/src/main/res/values/styles.xml -->
+    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/topanimestream/lightbox/src/main/res/values/styles.xml -->
     <eat-comment />
 
     <style name="dialog_animation">

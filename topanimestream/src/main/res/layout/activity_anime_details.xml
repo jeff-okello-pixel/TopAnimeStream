@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/layAnimeDetails">
+    <fragment
+        class="com.topanimestream.AnimeDetailsFragment"
+        android:id="@+id/animeDetailsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/layBottom"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.google.sample.castcompanionlibrary.widgets.MiniController
+                    android:id="@+id/miniController"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+                <com.fwwjt.pacjz173199.AdView
+                    android:id="@+id/adView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    ap:animation="fade"
+                    ap:banner_type="inappad"
+                    ap:placementType="interstitial"
+                    ap:test_mode="false"
+                    ap:canShowMR="false"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layEpisodes"
+                android:layout_above="@id/layBottom"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+</LinearLayout>

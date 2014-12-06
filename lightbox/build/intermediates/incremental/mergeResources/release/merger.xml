@@ -2,39 +2,39 @@
 <merger version="2" >
 
     <dataSet config="main" >
-        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res" >
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res" >
             <file
                 name="ic_launcher"
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-hdpi\ic_launcher.png"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\drawable-hdpi\ic_launcher.png"
                 qualifiers="hdpi-v4"
                 type="drawable" />
             <file
                 name="ic_launcher"
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-ldpi\ic_launcher.png"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\drawable-ldpi\ic_launcher.png"
                 qualifiers="ldpi-v4"
                 type="drawable" />
             <file
                 name="ic_launcher"
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-mdpi\ic_launcher.png"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\drawable-mdpi\ic_launcher.png"
                 qualifiers="mdpi-v4"
                 type="drawable" />
             <file
                 name="ic_launcher"
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\drawable-xhdpi\ic_launcher.png"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\drawable-xhdpi\ic_launcher.png"
                 qualifiers="xhdpi-v4"
                 type="drawable" />
             <file
                 name="lightbox_dialog"
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\layout\lightbox_dialog.xml"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\layout\lightbox_dialog.xml"
                 qualifiers=""
                 type="layout" />
             <file
                 name="main"
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\layout\main.xml"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\layout\main.xml"
                 qualifiers=""
                 type="layout" />
             <file
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\values\colors.xml"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\values\colors.xml"
                 qualifiers="" >
                 <color name="translucent" >#00000000
                 </color>
@@ -42,7 +42,7 @@
                 </color>
             </file>
             <file
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\values\strings.xml"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\values\strings.xml"
                 qualifiers="" >
                 <string name="app_name" >LightBox
                 </string>
@@ -50,7 +50,7 @@
                 </string>
             </file>
             <file
-                path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\res\values\styles.xml"
+                path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\res\values\styles.xml"
                 qualifiers="" >
 
                 <style
@@ -74,11 +74,11 @@
                 </style>
             </file>
         </source>
-        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\build\generated\res\rs\release" />
-        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\build\generated\res\generated\release" />
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\build\generated\res\rs\release" />
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\build\generated\res\generated\release" />
     </dataSet>
     <dataSet config="release" >
-        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\release\res" />
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\release\res" />
     </dataSet>
 
 </merger>

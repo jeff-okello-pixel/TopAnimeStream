@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="ksoap2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/aniblitz/libs/ksoap2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/topanimestream/libs/ksoap2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

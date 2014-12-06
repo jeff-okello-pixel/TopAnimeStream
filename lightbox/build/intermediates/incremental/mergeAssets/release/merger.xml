@@ -2,10 +2,10 @@
 <merger version="2" >
 
     <dataSet config="main" >
-        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\main\assets" />
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\main\assets" />
     </dataSet>
     <dataSet config="release" >
-        <source path="C:\Users\Marc-André\AndroidStudioProjects\aniblitz\lightbox\src\release\assets" />
+        <source path="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\lightbox\src\release\assets" />
     </dataSet>
 
 </merger>
