@@ -4,16 +4,16 @@
 
     <string name="app_name">Topanimestream</string>
     <string name="app_name_login">TopAnimeStream</string>
-    <string name="app_id" tools:ignore="MissingTranslation">EBDDFB4F</string>
+    <string name="app_id" tools:ignore="MissingTranslation">43F674AF</string>w
     <string name="urc" tools:ignore="MissingTranslation">Jgd7fFD63Ss</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Topanimestream</string>
-    <string name="topanimestream_website" tools:ignore="MissingTranslation">http://aniblitz.com</string>
-    <string name="anime_service_path" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeService.svc/</string>
-    <string name="anime_service_path_no_dash" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeService.svc</string>
-    <string name="anime_data_service_path_no_dash" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeDataService.svc</string>
-    <string name="anime_data_service_path" tools:ignore="MissingTranslation">http://aniblitz.com/AnimeServices/AnimeDataService.svc/</string>
-    <string name="image_host_path" tools:ignore="MissingTranslation">http://aniblitz.com/ImageHost/</string>
+    <string name="topanimestream_website" tools:ignore="MissingTranslation">http://www.topanimestream.com/</string>
+    <string name="anime_service_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeService.svc/</string>
+    <string name="anime_service_path_no_dash" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeService.svc</string>
+    <string name="anime_data_service_path_no_dash" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeDataService.svc</string>
+    <string name="anime_data_service_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeDataService.svc/</string>
+    <string name="image_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/ImageHost/</string>
     <!-- Menu actions -->
     <string name="action_favorite">Add to favorite</string>
     <string name="action_settings">Settings</string>
@@ -203,4 +203,5 @@
     <string name="video_spanish_only">Video is in spanish only, get full version for all languages</string>
     <string name="bad">(Bad)</string>
     <string name="have_been_logged_out">You have been logged out, please re-enter your username and password</string>
+    <string name="latest_version_installed">You have the latest version</string>
 </resources>

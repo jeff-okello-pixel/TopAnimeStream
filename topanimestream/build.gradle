@@ -5,7 +5,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.topanimestream"
+        applicationId "urf.animestream"
         minSdkVersion 10
         targetSdkVersion 14
     }

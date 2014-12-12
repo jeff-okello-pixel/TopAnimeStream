@@ -194,4 +194,5 @@
     <string name="video_spanish_only">La vidéo est en Espagnol seulement, acheter la version complète pour la regarder en d\'autres langages.</string>
     <string name="bad">(Mauvais)</string>
     <string name="have_been_logged_out">Vous avez été déconnecté, réentrez votre nom d\'utilisateur et votre mot de passe</string>
+    <string name="latest_version_installed">Vous avez la version la plus récente</string>
 </resources>

@@ -137,9 +137,9 @@
     <string name="manually_check_updates">Comprobación manual de actualizaciones</string>
     <string name="loading_search">Buscar...</string>
     <string name="title_topanimestream_upgraded">Topanimestream actualizado a pro</string>
-    <string name="topanimestream_upgraded_message">Usted ahora tiene su versión pro. La aplicación no tiene anuncios* y usted tiene acceso a Chromecast
+    <string name="topanimestream_upgraded_message">Ahora tiene su versión pro. La aplicación no tiene anuncios* y tiene acceso a Chromecast
 \n*Algunos proveedores pueden mostrar anuncios en el vídeo.</string>
-    <string name="need_pro_chromecast">Usted necesita la versión Pro de Topanimestream para reproducir el vídeo en un dispositivo Chromecast.</string>
+    <string name="need_pro_chromecast">Necesita la versión Pro de Topanimestream para reproducir el vídeo en un dispositivo Chromecast.</string>
     <string name="pro_version_needed">Pro versión necesaria</string>
     <string name="buy_full_version">Comprar versión completa</string>
     <string name="action">Acción</string>
@@ -195,4 +195,5 @@
     <string name="video_spanish_only">El video está en español solamente, comprar la versión completa para buscar en otros idiomas.</string>
     <string name="bad">(Malo)</string>
     <string name="have_been_logged_out">Se le ha cerrado la sesión , por favor vuelva a introducir su nombre de usuario y contraseña</string>
+    <string name="latest_version_installed">Tiene la última versión</string>
 </resources>

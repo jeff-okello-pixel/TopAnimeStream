@@ -11,5 +11,5 @@
 <bool name="ga_dryRun">false</bool>
  
 <!-- The screen names that will appear in reports -->
-<string name="com.topanimestream.app">App</string>
+<string name="urf.animestream.app">App</string>
 </resources>

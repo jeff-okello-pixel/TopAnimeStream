@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/globalanime/CastCompanionLibrary-android-master/res/values-sw600dp-land/dimens.xml -->
-    <eat-comment />
-
-    <dimen name="ccl_castplayer_bgimage_width">500dp</dimen>
-
-</resources>

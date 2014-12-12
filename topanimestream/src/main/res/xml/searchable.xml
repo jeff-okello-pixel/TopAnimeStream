@@ -2,7 +2,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
    android:hint="@string/search_hint"
     android:label="@string/app_label"
-android:searchSuggestAuthority="com.topanimestream.SuggestionProvider"
+android:searchSuggestAuthority="urf.animestream.SuggestionProvider"
 android:searchSuggestSelection=" ?"
     >
 </searchable>
