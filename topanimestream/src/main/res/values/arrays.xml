@@ -11,5 +11,15 @@
         <item name="French">2</item>
         <item name="Spanish">4</item>
     </string-array>
+    <string-array name="players" tools:ignore="MissingTranslation">
+        <item name="Internal">Play video internally</item>
+        <item name="External">Play video on an external app</item>
+        <item name="Undefined">Always prompt for an option</item>
+    </string-array>
+    <string-array name="playersValues" tools:ignore="MissingTranslation">
+        <item name="Internal">true</item>
+        <item name="External">false</item>
+        <item name="Undefined">undefined</item>
+    </string-array>
      
 </resources>

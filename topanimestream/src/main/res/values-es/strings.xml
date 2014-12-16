@@ -196,4 +196,9 @@
     <string name="bad">(Malo)</string>
     <string name="have_been_logged_out">Se le ha cerrado la sesión , por favor vuelva a introducir su nombre de usuario y contraseña</string>
     <string name="latest_version_installed">Tiene la última versión</string>
+    <string name="title_choose_player">Elegir un reproductor multimedia</string>
+    <string name="choose_player_description">Elija si desea reproducir en el reproductor TopAnimeStream interna o en una de su aplicación, por ejemplo: VLC media player</string>
+    <string name="title_internal_player">Reproductor de medios interno</string>
+    <string name="title_external_app">Aplicación externa</string>
+    <string name="checkbox_player">Siempre realizar esta acción</string>
 </resources>

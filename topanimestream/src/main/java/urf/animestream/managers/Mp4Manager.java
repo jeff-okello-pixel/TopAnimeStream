@@ -6,9 +6,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -281,31 +284,14 @@ public class Mp4Manager {
                 public void onClick(DialogInterface dialog, int item) {
                     if(items[item].equals(act.getString(R.string.play_phone)))
                     {
-                            /*
-                            Intent intent = new Intent(act, VideoViewSubtitle.class);
-                            intent.putExtra("VideoPath", result);
-                            act.startActivity(intent);*/
-
-                        Intent intent = null;
-                        intent = new Intent(act, VideoActivity.class);
-                        intent.putExtra("Mp4Url", result);
-                        intent.putExtra("MirrorId", mirror.getMirrorId());
-                        act.startActivity(intent);
-                        /*
-                        String providerName = mirror.getProvider().getName().toLowerCase();
-                        if(providerName.equals("ignition s") || providerName.equals("ignition hd"))
-                        {
-                            String textToReplace = mirror.getSource().substring(mirror.getSource().indexOf("/1/") + 3);
-                            ignitionKey = result;
-                            String url = mirror.getSource().replace(textToReplace,result);
-                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            intent.setDataAndType(Uri.parse(url), "video/*");
-                        }
-                        else {
-                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
-                            intent.setDataAndType(Uri.parse(result), "video/*");
-                        }
-                        act.startActivity(Intent.createChooser(intent, "Complete action using"));*/
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
+                        String playInternal = prefs.getString("prefPlayInternal", "undefined");
+                        if(playInternal.equals("true"))
+                            PlayInternalVideo(act, result, mirror.getMirrorId());
+                        else if(playInternal.equals("false"))
+                            PlayExternalVideo(act, result);
+                        else
+                            DialogManager.ShowChoosePlayerDialog(act, result, mirror.getMirrorId());
                     }
                     else if(items[item].equals(act.getString(R.string.stream_chromecast)))
                     {
@@ -326,6 +312,7 @@ public class Mp4Manager {
                         {
                             DialogManager.ShowChromecastNotProErrorDialog(act);
                         }
+                        alertPlay.dismiss();
                     }
                     else
                     {
@@ -373,5 +360,21 @@ public class Mp4Manager {
         DialogManager.ShowChromecastConnectionErrorDialog(context);
 
 
+    }
+
+    public static void PlayInternalVideo(Context context, String mp4Url, int mirrorId)
+    {
+        Intent intent = null;
+        intent = new Intent(context, VideoActivity.class);
+        intent.putExtra("Mp4Url", mp4Url);
+        intent.putExtra("MirrorId", mirrorId);
+        context.startActivity(intent);
+    }
+    public static void PlayExternalVideo(Context context, String mp4Url)
+    {
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(mp4Url), "video/*");
+        context.startActivity(intent);
     }
 }

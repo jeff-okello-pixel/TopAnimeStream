@@ -24,6 +24,14 @@
             android:summary="@string/manually_check_updates"
             android:key="prefManuallyCheckUpdates"
             android:dependency="prefAutoCheckUpdates"/>
+
+        <ListPreference
+            android:key="prefPlayInternal"
+            android:defaultValue="undefined"
+            android:entries="@array/players"
+            android:summary="Always prompt for an option"
+            android:entryValues="@array/playersValues"
+            android:title="Video player" />
     </PreferenceCategory>
 
  

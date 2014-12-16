@@ -5,14 +5,13 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.astuetz.viewpager.extensions"
         minSdkVersion 8
         targetSdkVersion 8
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

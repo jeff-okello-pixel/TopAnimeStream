@@ -10,11 +10,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import urf.animestream.App;
 import urf.animestream.R;
 import urf.animestream.Utils;
+import urf.animestream.VideoActivity;
 
 public class DialogManager {
     public interface NetworkErrorDialogEvent
@@ -120,7 +124,43 @@ public class DialogManager {
             e.printStackTrace();
         }
     }
+    public static void ShowChoosePlayerDialog(final Context context, final String mp4Url, final int mirrorId)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        View checkBoxView = View.inflate(context, R.layout.dialog_choose_player, null);
+        final CheckBox chkAlwaysThis = (CheckBox) checkBoxView.findViewById(R.id.chkAlwaysThis);
+        chkAlwaysThis.setText(context.getString(R.string.checkbox_player));
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(checkBoxView);
+        builder.setTitle(context.getString(R.string.title_choose_player));
+        //builder.setIcon(R.drawable.icon);
+        builder.setMessage(context.getString(R.string.choose_player_description));
+
+        builder.setPositiveButton(context.getString(R.string.title_internal_player),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (chkAlwaysThis.isChecked()) {
+                            prefs.edit().putString("prefPlayInternal", "true").apply();
+                        }
+                        Mp4Manager.PlayInternalVideo(context, mp4Url, mirrorId);
+                    }
+                }
+        );
+
+        builder.setNegativeButton(context.getString(R.string.title_external_app),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (chkAlwaysThis.isChecked()) {
+                            prefs.edit().putString("prefPlayInternal", "false").apply();
+                        }
+                        Mp4Manager.PlayExternalVideo(context, mp4Url);
+                    }
+                });
+
+
+        ShowDialog(builder);
+    }
     public static void ShowUpdateDialog(final Context context, final urf.animestream.models.Package pkg){
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

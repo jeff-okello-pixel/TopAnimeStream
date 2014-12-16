@@ -139,6 +139,20 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     	else if(languageId.equals("4"))
     		language = getString(R.string.language_spanish);
     	prefLanguage.setSummary(language);
+
+        Preference prefPlayInternal = findPreference("prefPlayInternal");
+        String player = prefs.getString("prefPlayInternal", "undefined");
+        String[] summaries = getResources().getStringArray(R.array.players);
+        String summary;
+        if(player.equals("true"))
+            summary = summaries[0];
+        else if(player.equals("false"))
+            summary = summaries[1];
+        else
+            summary = summaries[2];
+
+        prefPlayInternal.setSummary(summary);
+
     }
 
 	@Override

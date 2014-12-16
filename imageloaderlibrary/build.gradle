@@ -5,14 +5,13 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.nostra13.universalimageloader"
         minSdkVersion 5
         targetSdkVersion 16
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/values-sw720dp-land/dimens.xml -->
-    <eat-comment />
-
+    <eat-comment/>
     <dimen name="activity_horizontal_margin">128dp</dimen>
     <dimen name="ccl_castplayer_bgimage_width">500dp</dimen>
-
 </resources>

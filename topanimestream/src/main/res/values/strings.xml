@@ -204,4 +204,9 @@
     <string name="bad">(Bad)</string>
     <string name="have_been_logged_out">You have been logged out, please re-enter your username and password</string>
     <string name="latest_version_installed">You have the latest version</string>
+    <string name="title_choose_player">Choose a player</string>
+    <string name="choose_player_description">Choose whether to play on the internal TopAnimeStream player or on one of your app, ex: VLC media player</string>
+    <string name="title_internal_player">Internal player</string>
+    <string name="title_external_app">External app</string>
+    <string name="checkbox_player">Always perform this action</string>
 </resources>

@@ -307,11 +307,11 @@ public final class R {
 		public static final int image = 0x7f090039;
 		public static final int listMode = 0x7f090001;
 		public static final int list_item = 0x7f09003b;
-		public static final int media_route_control_frame = 0x7f09009d;
-		public static final int media_route_disconnect_button = 0x7f09009e;
-		public static final int media_route_list = 0x7f09009a;
-		public static final int media_route_volume_layout = 0x7f09009b;
-		public static final int media_route_volume_slider = 0x7f09009c;
+		public static final int media_route_control_frame = 0x7f09009e;
+		public static final int media_route_disconnect_button = 0x7f09009f;
+		public static final int media_route_list = 0x7f09009b;
+		public static final int media_route_volume_layout = 0x7f09009c;
+		public static final int media_route_volume_slider = 0x7f09009d;
 		public static final int middle = 0x7f09000b;
 		public static final int never = 0x7f090010;
 		public static final int none = 0x7f090009;
@@ -370,10 +370,10 @@ public final class R {
 		public static final int abc_search_dropdown_item_icons_2line = 0x7f030015;
 		public static final int abc_search_view = 0x7f030016;
 		public static final int abc_simple_decor = 0x7f030017;
-		public static final int mr_media_route_chooser_dialog = 0x7f030030;
-		public static final int mr_media_route_controller_dialog = 0x7f030031;
-		public static final int mr_media_route_list_item = 0x7f030032;
-		public static final int support_simple_spinner_dropdown_item = 0x7f030037;
+		public static final int mr_media_route_chooser_dialog = 0x7f030031;
+		public static final int mr_media_route_controller_dialog = 0x7f030032;
+		public static final int mr_media_route_list_item = 0x7f030033;
+		public static final int support_simple_spinner_dropdown_item = 0x7f030038;
 	}
 	public static final class string {
 		public static final int abc_action_bar_home_description = 0x7f0c0000;
@@ -389,12 +389,12 @@ public final class R {
 		public static final int abc_searchview_description_voice = 0x7f0c000a;
 		public static final int abc_shareactionprovider_share_with = 0x7f0c000b;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0c000c;
-		public static final int mr_media_route_button_content_description = 0x7f0c00aa;
-		public static final int mr_media_route_chooser_searching = 0x7f0c00ab;
-		public static final int mr_media_route_chooser_title = 0x7f0c00ac;
-		public static final int mr_media_route_controller_disconnect = 0x7f0c00ad;
-		public static final int mr_system_route_name = 0x7f0c00ae;
-		public static final int mr_user_route_category_name = 0x7f0c00af;
+		public static final int mr_media_route_button_content_description = 0x7f0c00ac;
+		public static final int mr_media_route_chooser_searching = 0x7f0c00ad;
+		public static final int mr_media_route_chooser_title = 0x7f0c00ae;
+		public static final int mr_media_route_controller_disconnect = 0x7f0c00af;
+		public static final int mr_system_route_name = 0x7f0c00b0;
+		public static final int mr_user_route_category_name = 0x7f0c00b1;
 	}
 	public static final class style {
 		public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog = 0x7f0d0014;
