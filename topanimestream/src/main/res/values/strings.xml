@@ -209,4 +209,7 @@
     <string name="title_internal_player">Internal player</string>
     <string name="title_external_app">External app</string>
     <string name="checkbox_player">Always perform this action</string>
+    <string name="premium_account_needed">Premium account needed</string>
+    <string name="premium_account_needed_description">You need a premium account to play the video on a Chromecast device.</string>
+    <string name="get_premium_account">Get a premium account</string>
 </resources>

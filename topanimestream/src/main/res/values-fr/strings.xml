@@ -138,9 +138,9 @@
     <string name="loading_search">Recherche...</string>
     <string name="title_topanimestream_upgraded">Topanimestream upgraded to pro</string><string name="topanimestream_upgraded_message">Vous avez maintenant Topanimestream pro. L\'application est désormais sans annonce* et vous avez accès à Google Chromecast.
 *Certains fournisseurs peuvent afficher des annonces dans les vidéos.</string>
-    <string name="need_pro_chromecast">You need the pro version of Topanimestream to play the video on a Chromecast device.</string>
-    <string name="pro_version_needed">Pro version needed</string>
-    <string name="buy_full_version">Buy full version</string>
+    <string name="need_pro_chromecast">Vous avez besoin de la version pro de Topanimestream pour lire la vidéo sur un appareil Chromecast.</string>
+    <string name="pro_version_needed">Version pro nécessaire</string>
+    <string name="buy_full_version">Acheter la version pro</string>
     <string name="action">Action</string>
     <string name="adventure">Aventure</string>
     <string name="animation">Animation</string>
@@ -200,4 +200,7 @@
     <string name="title_internal_player">Lecteur interne</string>
     <string name="title_external_app">App externe</string>
     <string name="checkbox_player">Toujours effectuer cette action</string>
+    <string name="premium_account_needed">Compte premium nécessaire</string>
+    <string name="premium_account_needed_description">Vous avez besoin d\'un compte premium pour lire la vidéo sur un appareil Chromecast.</string>
+    <string name="get_premium_account">Obtenez un compte premium</string>
 </resources>

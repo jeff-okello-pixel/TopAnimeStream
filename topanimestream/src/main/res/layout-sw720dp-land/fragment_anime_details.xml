@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="urf.animestream.AnimeDetailsFragment">
+    tools:context="org.topanimestream.AnimeDetailsFragment">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

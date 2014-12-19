@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="urf.animestream"
+    package="org.topanimestream"
     android:versionCode="1"
     android:versionName="1" >
 
@@ -15,18 +15,18 @@
         android:targetSdkVersion="14" />
 
     <application
-        android:name="urf.animestream.App"
+        android:name="org.topanimestream.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="TopAnime\nStream"
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <provider
-            android:name="urf.animestream.SuggestionProvider"
-            android:authorities="urf.animestream.SuggestionProvider" />
+            android:name="org.topanimestream.SuggestionProvider"
+            android:authorities="org.topanimestream.SuggestionProvider" />
 
         <receiver
-            android:name="urf.animestream.NetworkChangeReceiver"
+            android:name="org.topanimestream.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -35,11 +35,11 @@
         </receiver>
 
         <activity
-            android:name="urf.animestream.MainActivity"
+            android:name="org.topanimestream.MainActivity"
             android:configChanges="locale|layoutDirection" >
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="urf.animestream.AnimeSearchActivity" />
+                android:value="org.topanimestream.AnimeSearchActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,28 +48,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="urf.animestream.Settings"
+            android:name="org.topanimestream.Settings"
             android:configChanges="locale|layoutDirection"
             android:label="Settings" >
         </activity>
         <activity
-            android:name="urf.animestream.FavoriteActivity"
+            android:name="org.topanimestream.FavoriteActivity"
             android:configChanges="locale|layoutDirection"
             android:label="Favorites" >
         </activity>
         <activity
-            android:name="urf.animestream.EpisodeDetailsActivity"
+            android:name="org.topanimestream.EpisodeDetailsActivity"
             android:theme="@style/PopupTheme"
             android:configChanges="locale|layoutDirection"
             android:label="Providers" >
         </activity>
         <activity
-            android:name="urf.animestream.HistoryActivity"
+            android:name="org.topanimestream.HistoryActivity"
             android:configChanges="locale|layoutDirection"
             android:label="History" >
         </activity>
         <activity
-            android:name="urf.animestream.AnimeSearchActivity"
+            android:name="org.topanimestream.AnimeSearchActivity"
             android:configChanges="locale|layoutDirection"
             android:label="@string/title_activity_anime_search"
             android:launchMode="singleTop" >
@@ -79,13 +79,13 @@
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="urf.animestream.AnimeSearchActivity" />
+                android:value="org.topanimestream.AnimeSearchActivity" />
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="urf.animestream.AnimeDetailsActivity"
+            android:name="org.topanimestream.AnimeDetailsActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
@@ -107,7 +107,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="urf.animestream.LoginActivity"
+            android:name="org.topanimestream.LoginActivity"
             android:launchMode="singleInstance"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateHidden" >
@@ -135,7 +135,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name="urf.animestream.VideoActivity"
+            android:name="org.topanimestream.VideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_video"
             android:theme="@style/FullScreenVideoTheme" >

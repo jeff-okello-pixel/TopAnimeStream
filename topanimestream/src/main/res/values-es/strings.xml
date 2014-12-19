@@ -201,4 +201,7 @@
     <string name="title_internal_player">Reproductor de medios interno</string>
     <string name="title_external_app">Aplicación externa</string>
     <string name="checkbox_player">Siempre realizar esta acción</string>
+    <string name="premium_account_needed">Cuenta premium necesaria</string>
+    <string name="premium_account_needed_description">Necesitas una cuenta Premium para reproducir el vídeo en un dispositivo Chromecast.</string>
+    <string name="get_premium_account">Obtén una cuenta premium</string>
 </resources>

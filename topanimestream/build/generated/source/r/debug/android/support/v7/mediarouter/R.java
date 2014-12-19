@@ -257,23 +257,23 @@ public final class R {
 		public static final int abc_textfield_searchview_holo_light = 0x7f02005a;
 		public static final int abc_textfield_searchview_right_holo_dark = 0x7f02005b;
 		public static final int abc_textfield_searchview_right_holo_light = 0x7f02005c;
-		public static final int mr_ic_audio_vol = 0x7f0200ce;
-		public static final int mr_ic_media_route_connecting_holo_dark = 0x7f0200cf;
-		public static final int mr_ic_media_route_connecting_holo_light = 0x7f0200d0;
-		public static final int mr_ic_media_route_disabled_holo_dark = 0x7f0200d1;
-		public static final int mr_ic_media_route_disabled_holo_light = 0x7f0200d2;
-		public static final int mr_ic_media_route_holo_dark = 0x7f0200d3;
-		public static final int mr_ic_media_route_holo_light = 0x7f0200d4;
-		public static final int mr_ic_media_route_off_holo_dark = 0x7f0200d5;
-		public static final int mr_ic_media_route_off_holo_light = 0x7f0200d6;
-		public static final int mr_ic_media_route_on_0_holo_dark = 0x7f0200d7;
-		public static final int mr_ic_media_route_on_0_holo_light = 0x7f0200d8;
-		public static final int mr_ic_media_route_on_1_holo_dark = 0x7f0200d9;
-		public static final int mr_ic_media_route_on_1_holo_light = 0x7f0200da;
-		public static final int mr_ic_media_route_on_2_holo_dark = 0x7f0200db;
-		public static final int mr_ic_media_route_on_2_holo_light = 0x7f0200dc;
-		public static final int mr_ic_media_route_on_holo_dark = 0x7f0200dd;
-		public static final int mr_ic_media_route_on_holo_light = 0x7f0200de;
+		public static final int mr_ic_audio_vol = 0x7f0200cd;
+		public static final int mr_ic_media_route_connecting_holo_dark = 0x7f0200ce;
+		public static final int mr_ic_media_route_connecting_holo_light = 0x7f0200cf;
+		public static final int mr_ic_media_route_disabled_holo_dark = 0x7f0200d0;
+		public static final int mr_ic_media_route_disabled_holo_light = 0x7f0200d1;
+		public static final int mr_ic_media_route_holo_dark = 0x7f0200d2;
+		public static final int mr_ic_media_route_holo_light = 0x7f0200d3;
+		public static final int mr_ic_media_route_off_holo_dark = 0x7f0200d4;
+		public static final int mr_ic_media_route_off_holo_light = 0x7f0200d5;
+		public static final int mr_ic_media_route_on_0_holo_dark = 0x7f0200d6;
+		public static final int mr_ic_media_route_on_0_holo_light = 0x7f0200d7;
+		public static final int mr_ic_media_route_on_1_holo_dark = 0x7f0200d8;
+		public static final int mr_ic_media_route_on_1_holo_light = 0x7f0200d9;
+		public static final int mr_ic_media_route_on_2_holo_dark = 0x7f0200da;
+		public static final int mr_ic_media_route_on_2_holo_light = 0x7f0200db;
+		public static final int mr_ic_media_route_on_holo_dark = 0x7f0200dc;
+		public static final int mr_ic_media_route_on_holo_light = 0x7f0200dd;
 	}
 	public static final class id {
 		public static final int action_bar = 0x7f09002e;
@@ -389,12 +389,12 @@ public final class R {
 		public static final int abc_searchview_description_voice = 0x7f0c000a;
 		public static final int abc_shareactionprovider_share_with = 0x7f0c000b;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0c000c;
-		public static final int mr_media_route_button_content_description = 0x7f0c00ac;
-		public static final int mr_media_route_chooser_searching = 0x7f0c00ad;
-		public static final int mr_media_route_chooser_title = 0x7f0c00ae;
-		public static final int mr_media_route_controller_disconnect = 0x7f0c00af;
-		public static final int mr_system_route_name = 0x7f0c00b0;
-		public static final int mr_user_route_category_name = 0x7f0c00b1;
+		public static final int mr_media_route_button_content_description = 0x7f0c00ad;
+		public static final int mr_media_route_chooser_searching = 0x7f0c00ae;
+		public static final int mr_media_route_chooser_title = 0x7f0c00af;
+		public static final int mr_media_route_controller_disconnect = 0x7f0c00b0;
+		public static final int mr_system_route_name = 0x7f0c00b1;
+		public static final int mr_user_route_category_name = 0x7f0c00b2;
 	}
 	public static final class style {
 		public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog = 0x7f0d0014;

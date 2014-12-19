@@ -2,17 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="urf.animestream.LoginActivity">
+    tools:context="org.topanimestream.LoginActivity">
     <ImageView
         android:id="@+id/imgBackdrop"
         android:layout_width="match_parent"
-        android:src="@drawable/attackontitanbackdrop"
         android:scaleType="centerCrop"
         android:layout_height="match_parent"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#A0000000"/>
+        android:background="#db000000"/>
     <LinearLayout
         android:id="@+id/layContent"
         android:layout_centerVertical="true"

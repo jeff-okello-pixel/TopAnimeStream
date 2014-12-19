@@ -5,7 +5,7 @@
     android:background="#000000"
     tools:context=".FullScreenImage" >
 
-   <urf.animestream.TouchImageView
+   <org.topanimestream.TouchImageView
        android:id="@+id/imgFullScreen"
        android:layout_width="fill_parent"
        android:layout_height="wrap_content"/>
