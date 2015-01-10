@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    tools:context="org.topanimestream.MovieVkFragment">
+    tools:context="com.topanimestream.MovieVkFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

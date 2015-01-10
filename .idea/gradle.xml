@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CastCompanionLibrary-android-master" />
+            <option value="$PROJECT_DIR$/drag-sort" />
             <option value="$PROJECT_DIR$/imageloaderlibrary" />
             <option value="$PROJECT_DIR$/librarytabstrip" />
             <option value="$PROJECT_DIR$/lightbox" />

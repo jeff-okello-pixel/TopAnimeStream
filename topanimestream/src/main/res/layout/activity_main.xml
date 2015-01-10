@@ -18,15 +18,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"/>
-                    <com.fwwjt.pacjz173199.AdView
-                        android:id="@+id/adView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        ap:animation="fade"
-                        ap:banner_type="inappad"
-                        ap:placementType="interstitial"
-                        ap:test_mode="false"
-                        ap:canShowMR="false"/>
+                <com.mopub.mobileads.MoPubView
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"/>
             </LinearLayout>
 
             <LinearLayout

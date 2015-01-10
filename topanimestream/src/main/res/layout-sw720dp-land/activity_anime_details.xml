@@ -32,7 +32,7 @@
         android:orientation="horizontal"
         android:id="@+id/layAnimeDetails">
         <fragment
-            class="org.topanimestream.AnimeDetailsFragment"
+            class="com.topanimestream.AnimeDetailsFragment"
             android:layout_weight="1"
             android:id="@+id/animeDetailsFragment"
             android:layout_width="match_parent"

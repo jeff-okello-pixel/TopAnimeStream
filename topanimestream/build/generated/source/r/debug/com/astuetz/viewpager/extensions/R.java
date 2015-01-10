@@ -8,17 +8,17 @@ package com.astuetz.viewpager.extensions;
 
 public final class R {
 	public static final class attr {
-		public static final int dividerColor = 0x7f01007f;
-		public static final int dividerPaddingTab = 0x7f010082;
-		public static final int indicatorColor = 0x7f01007d;
-		public static final int indicatorHeight = 0x7f010080;
-		public static final int scrollOffset = 0x7f010084;
-		public static final int shouldExpand = 0x7f010086;
-		public static final int tabBackground = 0x7f010085;
-		public static final int tabPaddingLeftRight = 0x7f010083;
-		public static final int textAllCapsTab = 0x7f010087;
-		public static final int underlineColor = 0x7f01007e;
-		public static final int underlineHeight = 0x7f010081;
+		public static final int dividerColor = 0x7f010091;
+		public static final int dividerPaddingTab = 0x7f010094;
+		public static final int indicatorColor = 0x7f01008f;
+		public static final int indicatorHeight = 0x7f010092;
+		public static final int scrollOffset = 0x7f010096;
+		public static final int shouldExpand = 0x7f010098;
+		public static final int tabBackground = 0x7f010097;
+		public static final int tabPaddingLeftRight = 0x7f010095;
+		public static final int textAllCapsTab = 0x7f010099;
+		public static final int underlineColor = 0x7f010090;
+		public static final int underlineHeight = 0x7f010093;
 	}
 	public static final class color {
 		public static final int background_tab_pressed = 0x7f080003;
@@ -30,16 +30,16 @@ public final class R {
 		public static final int background_tab_pressed_red = 0x7f080009;
 	}
 	public static final class drawable {
-		public static final int background_tab = 0x7f02005f;
-		public static final int background_tab_black = 0x7f020060;
-		public static final int background_tab_blue = 0x7f020061;
-		public static final int background_tab_darkblue = 0x7f020062;
-		public static final int background_tab_green = 0x7f020063;
-		public static final int background_tab_orange = 0x7f020064;
-		public static final int background_tab_red = 0x7f020065;
+		public static final int background_tab = 0x7f020060;
+		public static final int background_tab_black = 0x7f020061;
+		public static final int background_tab_blue = 0x7f020062;
+		public static final int background_tab_darkblue = 0x7f020063;
+		public static final int background_tab_green = 0x7f020064;
+		public static final int background_tab_orange = 0x7f020065;
+		public static final int background_tab_red = 0x7f020066;
 	}
 	public static final class styleable {
-		public static final int[] PagerSlidingTabStrip = { 0x7f01007d, 0x7f01007e, 0x7f01007f, 0x7f010080, 0x7f010081, 0x7f010082, 0x7f010083, 0x7f010084, 0x7f010085, 0x7f010086, 0x7f010087 };
+		public static final int[] PagerSlidingTabStrip = { 0x7f01008f, 0x7f010090, 0x7f010091, 0x7f010092, 0x7f010093, 0x7f010094, 0x7f010095, 0x7f010096, 0x7f010097, 0x7f010098, 0x7f010099 };
 		public static final int PagerSlidingTabStrip_dividerColor = 2;
 		public static final int PagerSlidingTabStrip_dividerPaddingTab = 5;
 		public static final int PagerSlidingTabStrip_indicatorColor = 0;
