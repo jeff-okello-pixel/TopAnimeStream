@@ -1,4 +1,4 @@
-include ':CastCompanionLibrary-android-master', ':lightbox'
+include ':CastCompanionLibrary-android-master', ':lightbox', ':gson-2.2.4'
 include ':imageloaderlibrary'
 include ':librarytabstrip'
 include ':topanimestream'

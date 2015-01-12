@@ -13,15 +13,9 @@
         app:showAsAction="never"
         android:title="@string/action_settings"/>
     <item
-        android:id="@+id/action_sortaz"
-        android:title="Sort a-z"
-        android:icon="@drawable/ic_action_sortaz"
-        android:visible="false"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_sortza"
-        android:title="Sort z-a"
-        android:icon="@drawable/ic_action_sortza"
+        android:id="@+id/action_filter"
+        android:title="Filter"
+        android:icon="@drawable/ic_action_filter"
         app:showAsAction="always" />
     <item
         android:id="@+id/media_route_menu_item"

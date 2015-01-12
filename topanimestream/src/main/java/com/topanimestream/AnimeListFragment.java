@@ -110,14 +110,14 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         super.onSaveInstanceState(outState);
 
     }
-    public void refresh()
+    public void refresh(String orderBy, String filter)
     {
         currentSkip = 0;
         if(adapter != null)
             adapter.clear();
         loadmore = false;
         isDesc = ((MainActivity)getActivity()).isDesc;
-        AsyncTaskTools.execute(new AnimeTask());
+        AsyncTaskTools.execute(new AnimeTask(orderBy, filter));
     }
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,13 +160,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                             currentSkip += currentLimit;
                             loadmore = true;
 
-                            task = new AnimeTask();
+                            task = new AnimeTask("", "");
                             AsyncTaskTools.execute(task);
                         }
                         else if(task == null)
                         {
                             loadmore = false;
-                            task = new AnimeTask();
+                            task = new AnimeTask("", "");
                             currentSkip = 0;
                             AsyncTaskTools.execute(task);
                         }
@@ -178,10 +178,12 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     }
     private class AnimeTask extends AsyncTask<Void, Void, String> {
         private ArrayList<Anime> newAnimes = new ArrayList<Anime>();
-
-        public AnimeTask()
+        private String customOrderBy;
+        private String customFilter;
+        public AnimeTask(String orderBy, String filter)
         {
-
+            this.customOrderBy = orderBy;
+            this.customFilter = filter;
         }
         private String URL;
 
@@ -190,7 +192,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             {
                 progressBarLoadMore.setVisibility(View.VISIBLE);
                 isLoading = true;
-                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations").orderby(isDesc ? "OriginalName%20desc" : "OriginalName").skip(currentSkip).top(currentLimit);
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations").skip(currentSkip).top(currentLimit);
                 String filter;
                 if(!App.isVkOnly) {
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
@@ -211,8 +213,16 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     else if(fragmentName.equals(getString(R.string.tab_serie)))
                         filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20as/vks/any(vk:vk/Id%20gt%200))%20and%20IsMovie%20eq%20false";
                 }
+                if(customFilter != null && !customFilter.equals(""))
+                    filter += customFilter;
 
-                URL = wcfCall.filter(filter).build();
+                wcfCall.filter(filter);
+
+                if(customOrderBy != null && !customOrderBy.equals(""))
+                    wcfCall.orderby(customOrderBy);
+
+
+                URL = wcfCall.build();
         };
         @Override
         protected String doInBackground(Void... params)

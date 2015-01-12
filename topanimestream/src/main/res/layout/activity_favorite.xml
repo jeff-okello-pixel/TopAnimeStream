@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layFavorite"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     	<TextView 
@@ -17,7 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:dividerHeight="1px"
+            dslv:track_drag_sort="false"
             dslv:drag_enabled="true"
             dslv:float_alpha="0.6"
-            dslv:use_default_controller="false" />
+            dslv:drag_scroll_start="0.7"
+            dslv:use_default_controller="true" />
 </RelativeLayout>

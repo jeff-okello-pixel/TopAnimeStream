@@ -29,11 +29,14 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.text.Html;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -78,8 +81,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private TextView txtNoConnection;
 	private MenuItem menuItem;
 	private ArrayList<String> mItems;
-    private MenuItem menuSortAz;
-    private MenuItem menuSortZa;
+    private MenuItem menuFilter;
     public boolean isDesc = false;
 	private ArrayList<Anime> animes;
     private PagerAdapter mAdapter;
@@ -522,19 +524,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         if(App.isPro)
             menuBuyPro.setVisible(false);
 
-        menuSortAz = menu.findItem(R.id.action_sortaz);
-        menuSortZa = menu.findItem(R.id.action_sortza);
-
-        if(isDesc)
-        {
-            menuSortAz.setVisible(true);
-            menuSortZa.setVisible(false);
-        }
-        else
-        {
-            menuSortAz.setVisible(false);
-            menuSortZa.setVisible(true);
-        }
 	    return true;
 	}
 	@Override
@@ -546,14 +535,17 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			    	else
 			    		mDrawerLayout.closeDrawer(listView);
 			    	break;
-                case R.id.action_sortaz:
-                    menuSortAz.setVisible(false);
-                    menuSortZa.setVisible(true);
-                    isDesc = false;
+                case R.id.action_filter:
+                    final Dialog dialog = new Dialog(this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.filter_dialog);
+                    dialog.setTitle("Filter");
+                    dialog.show();
+                    /*
                     refreshFragment(allFragment, isDesc);
                     refreshFragment(serieFragment, isDesc);
                     refreshFragment(movieFragment, isDesc);
-                    refreshFragment(cartoonFragment, isDesc);
+                    refreshFragment(cartoonFragment, isDesc);*/
                  break;
                 case R.id.action_buypro:
                     try {
@@ -563,27 +555,18 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                     }
 
                 break;
-                case R.id.action_sortza:
-                    menuSortAz.setVisible(true);
-                    menuSortZa.setVisible(false);
-                    isDesc = true;
-                    refreshFragment(allFragment, isDesc);
-                    refreshFragment(serieFragment, isDesc);
-                    refreshFragment(movieFragment, isDesc);
-                    refreshFragment(cartoonFragment, isDesc);
-                    break;
 			    case R.id.action_settings:
 			    	startActivity(new Intent(MainActivity.this,Settings.class));
 			    	break;
 			 }
 	    return true;
 	}
-    public void refreshFragment(AnimeListFragment frag, boolean isDesc)
+    public void refreshFragment(AnimeListFragment frag, String orderBy, String filter)
     {
         if(frag != null)
         {
             if(frag.isAdded())
-                frag.refresh();
+                frag.refresh(orderBy, filter);
         }
     }
 	@Override

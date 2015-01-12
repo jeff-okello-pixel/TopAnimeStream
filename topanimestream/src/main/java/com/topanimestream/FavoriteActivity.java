@@ -42,7 +42,7 @@ import com.topanimestream.models.Anime;
 import com.topanimestream.models.AnimeSource;
 import com.topanimestream.R;
 
-public class FavoriteActivity extends ActionBarActivity implements OnItemClickListener, OnItemLongClickListener {
+public class FavoriteActivity extends ActionBarActivity implements OnItemClickListener {
 	private DragSortListView listView;
 	private ArrayList<Anime> animes;
 	private int animeId;
@@ -53,35 +53,57 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
     private AnimeListAdapter adapter;
 
     @Override
-	  protected void onCreate(Bundle savedInstanceState) {
-		  setTheme(R.style.Theme_Blue);
-		  super.onCreate(savedInstanceState);
-		  setContentView(R.layout.activity_favorite);
-		  r = getResources();
-		  prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		  txtNoFavorite = (TextView)findViewById(R.id.txtNoFavorite);
-		  ActionBar actionBar = getSupportActionBar();
-		  actionBar.setDisplayHomeAsUpEnabled(true);
-          actionBar.setDisplayShowHomeEnabled(false);
-		  actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.title_favorites) + "</font>"));
-		  listView = (DragSortListView)findViewById(R.id.listView);
-		  listView.setOnItemClickListener(this);
-		  listView.setOnItemLongClickListener(this);
-          listView.setDropListener(onDrop);
-
+	protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Blue);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_favorite);
+        r = getResources();
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        txtNoFavorite = (TextView)findViewById(R.id.txtNoFavorite);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.title_favorites) + "</font>"));
+        listView = (DragSortListView)findViewById(R.id.listView);
+        listView.setOnItemClickListener(this);
+        listView.setDropListener(onDrop);
+        listView.setRemoveListener(onRemove);
         DragSortController controller = new DragSortController(listView);
-        controller.setDragHandleId(R.id.imgPoster);
         //controller.setClickRemoveId(R.id.);
-        controller.setRemoveEnabled(false);
+        controller.setRemoveEnabled(true);
         controller.setSortEnabled(true);
-        controller.setDragInitMode(1);
-        //controller.setRemoveMode(removeMode);
+        controller.setDragHandleId(R.id.layAnime);
+        controller.setBackgroundColor(getResources().getColor(R.color.blueTab));
+        controller.setDragInitMode(DragSortController.ON_LONG_PRESS);
 
         listView.setFloatViewManager(controller);
         listView.setOnTouchListener(controller);
         listView.setDragEnabled(true);
 
-	  }
+	}
+    private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
+        @Override
+        public void remove(int which) {
+            Anime anime = animes.get(which);
+            animes.remove(anime);
+            adapter.notifyDataSetChanged();
+            if(App.isGooglePlayVersion) {
+                SQLiteHelper sqlLite = new SQLiteHelper(FavoriteActivity.this);
+                sqlLite.removeFavorite(anime.getAnimeId());
+                populateList();
+                Toast.makeText(FavoriteActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
+            }
+
+            if (animes.size() > 0)
+                txtNoFavorite.setVisibility(View.GONE);
+            else
+                txtNoFavorite.setVisibility(View.VISIBLE);
+        }
+    };
         private DragSortListView.DropListener onDrop =
             new DragSortListView.DropListener() {
                 @Override
@@ -90,6 +112,8 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                         Anime item = adapter.getItem(from);
                         animes.remove(item);
                         animes.add(to, item);
+                        adapter.notifyDataSetChanged();
+                        AsyncTaskTools.execute(new ChangeFavoriteOrderTask(item.getAnimeId(), to + 1));
                     }
                 }
             };
@@ -131,49 +155,13 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                 animes = sqlLite.getFavorites(prefs.getString("prefLanguage", "1"));
                 sqlLite.close();
                 listView.setAdapter(new AnimeListAdapter(this, animes));
-                if (animes.size() > 0)
-                    txtNoFavorite.setVisibility(View.GONE);
-                else
-                    txtNoFavorite.setVisibility(View.VISIBLE);
             }
             else
             {
                 AsyncTaskTools.execute(new GetFavoriteTask());
             }
 		}
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view,
-                final int position, long id) {
-            final CharSequence[] items = {r.getString(R.string.remove_favorite),r.getString(R.string.cancel)};
-            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-            alertBuilder.setTitle(r.getString(R.string.title_favorites));
-            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    if(item == 0)
-                    {
-                        if(App.isGooglePlayVersion) {
-                            SQLiteHelper sqlLite = new SQLiteHelper(FavoriteActivity.this);
-                            sqlLite.removeFavorite(animes.get(position).getAnimeId());
-                            populateList();
-                            Toast.makeText(FavoriteActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
-                            AsyncTaskTools.execute(new RemoveFavoriteTask(animes.get(position).getAnimeId()));
-                        }
-                    }
-                    else
-                    {
-                        alertProviders.dismiss();
-                    }
 
-
-                }
-            });
-            alertProviders = alertBuilder.create();
-            alertProviders.show();
-            return true;
-        }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -196,8 +184,6 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                     busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_from_favorites), FavoriteActivity.this);
                     URL = getString(R.string.anime_service_path);
                 }
-
-                ;
 
                 @Override
                 protected String doInBackground(Void... params) {
@@ -240,11 +226,11 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                     }
                     else
                     {
-                        AsyncTaskTools.execute(new GetFavoriteTask());
                         Toast.makeText(FavoriteActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
+
     private class GetFavoriteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private String url;
@@ -294,14 +280,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
 
                         Anime anime = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), FavoriteActivity.this);
                         anime.setOrder(!jsonFavorites.getJSONObject(i).isNull("Order") ? jsonFavorites.getJSONObject(i).getInt("Order") : 0);
-                        for(AnimeSource animeSource : anime.getAnimeSources())
-                        {
-                            if(String.valueOf(animeSource.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                            {
-                                if(!animes.contains(anime))
-                                    animes.add(anime);
-                            }
-                        }
+                        animes.add(anime);
 
                     }
                     return null;
@@ -331,6 +310,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                 }
                 else {
                     Toast.makeText(FavoriteActivity.this, error, Toast.LENGTH_LONG).show();
+                    AsyncTaskTools.execute(new GetFavoriteTask());
                 }
             }
             else
@@ -342,6 +322,80 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                     txtNoFavorite.setVisibility(View.GONE);
                 else
                     txtNoFavorite.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private class ChangeFavoriteOrderTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String URL;
+        private String method = "ChangeFavoriteOrder";
+        private int order;
+        private int animeId;
+        public ChangeFavoriteOrderTask(int animeId, int order) {
+            this.animeId = animeId;
+            this.order = order;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.changing_favorite_order), FavoriteActivity.this);
+            URL = getString(R.string.anime_service_path);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("animeId", animeId);
+            request.addProperty("order", order);
+            envelope = Utils.addAuthentication(envelope);
+            envelope .dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try
+            {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive)envelope.getResponse();
+                return null;
+            }
+            catch (Exception e)
+            {
+                if(e instanceof SoapFault)
+                {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+            return getString(R.string.error_changing_order);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            DialogManager.dismissBusyDialog(busyDialog);
+            if(error != null)
+            {
+                if(error.equals("401"))
+                {
+                    Toast.makeText(FavoriteActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(FavoriteActivity.this, LoginActivity.class));
+                    finish();
+                }
+                else {
+                    Toast.makeText(FavoriteActivity.this, error, Toast.LENGTH_LONG).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(FavoriteActivity.this, getString(R.string.order_changed), Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -203,4 +203,7 @@
     <string name="premium_account_needed">Compte premium nécessaire</string>
     <string name="premium_account_needed_description">Vous avez besoin d\'un compte premium pour lire la vidéo sur un appareil Chromecast.</string>
     <string name="get_premium_account">Obtenez un compte premium</string>
+    <string name="changing_favorite_order">Changement de l\'ordre</string>
+    <string name="error_changing_order">Une erreur est survenue lors du changement de l\'ordre</string>
+    <string name="order_changed">L\'ordre a été changé</string>
 </resources>

@@ -69,7 +69,7 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
 
     private boolean mDragging = false;
 
-    private float mFlingSpeed = 500f;
+    private float mFlingSpeed = 1700f;
 
     private int mDragHandleId;
 
@@ -390,7 +390,7 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
                 if (mDragInitMode == ON_DRAG && Math.abs(y2 - y1) > mTouchSlop && mSortEnabled) {
                     startDrag(mHitPos, deltaX, deltaY);
                 }
-                else if (mDragInitMode != ON_DOWN && Math.abs(x2 - x1) > mTouchSlop && mRemoveEnabled)
+                else if (mDragInitMode != ON_DOWN && Math.abs(x2 - x1) > mTouchSlop && mRemoveEnabled && Math.abs(x2 - x1) > 3 * Math.abs(y2 - y1))
                 {
                     mIsRemoving = true;
                     startDrag(mFlingHitPos, deltaX, deltaY);

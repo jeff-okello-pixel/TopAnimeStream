@@ -21,5 +21,47 @@
         <item name="External">false</item>
         <item name="Undefined">undefined</item>
     </string-array>
-     
+    <string-array name="spinnerOrderByValues">
+        <item>Alphabetical (A-Z)</item>
+        <item>Alphabetical (Z-A)</item>
+        <item>Latest release</item>
+        <item>Oldest release</item>
+        <item>Recently added</item>
+        <item>Most popular</item>
+        <item>Less popular</item>
+    </string-array>
+    <string-array name="spinnerStatusValues">
+        <item>All</item>
+        <item>Complete</item>
+        <item>Ongoing</item>
+    </string-array>
+    <string-array name="spinnerDubbedSubbedValues">
+        <item>All</item>
+        <item>Dubbed</item>
+        <item>Subbed</item>
+    </string-array>
+    <string-array name="spinnerCategoryValues">
+        <item>All</item>
+        <item>@string/action</item>
+        <item>@string/adventure</item>
+        <item>@string/drama</item>
+        <item>@string/fantasy</item>
+        <item>@string/sciencefiction</item>
+        <item>@string/comedy</item>
+        <item>@string/mystery</item>
+        <item>@string/romance</item>
+        <item>@string/horror</item>
+        <item>@string/supernatural</item>
+        <item>@string/magic</item>
+        <item>@string/sliceoflife</item>
+        <item>@string/tournament</item>
+        <item>@string/psychological</item>
+        <item>@string/thriller</item>
+        <item>@string/animation</item>
+        <item>@string/children</item>
+        <item>@string/music</item>
+        <item>@string/school</item>
+        <item>@string/sports</item>
+        <item>@string/erotica</item>
+    </string-array>
 </resources>
