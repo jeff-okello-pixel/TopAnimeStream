@@ -29,6 +29,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -39,7 +40,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +53,8 @@ import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
@@ -103,6 +109,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private MenuItem menuBuyPro;
     private MenuArrayAdapter menuAdapter;
     private MoPubView moPubView;
+    private String spinnerOrderByValue;
+    private String spinnerStatusValue;
+    private String spinnerDubbedSubbedValue;
+    private String spinnerCategoryValue;
+    public String filter = "";
+    public String order = "";
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
@@ -133,11 +145,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         txtNoConnection = (TextView)findViewById(R.id.txtNoConnection);
 		viewPager = (ViewPager)findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-		
+
+        //fill default filter dialog spinner values
+        //spinnerOrderByValue =
 		if(savedInstanceState != null)
 		{
 			drawerIsOpened = savedInstanceState.getBoolean("drawerIsOpened");
-            isDesc = savedInstanceState.getBoolean("isDesc");
+            order = savedInstanceState.getString("order");
+            filter = savedInstanceState.getString("filter");
             allFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "allFragment");
             serieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "serieFragment");
             movieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "movieFragment");
@@ -396,19 +411,19 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    	{
 	    		//All
 	    		case 0:
-	    			allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all), isDesc);
+	    			allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all));
 	    			return allFragment;
 		    	//Serie
 		    	case 1:
-		    		serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), isDesc);
+		    		serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie));
 		    		return serieFragment;
 		    	//Movie
 		    	case 2:
-		    		movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), isDesc);
+		    		movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
 		    		return movieFragment;
 		    	//Cartoon
 		    	case 3:
-		    		cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon), isDesc);
+		    		cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon));
 		    		return cartoonFragment;
 	    	}
 	    	return null;
@@ -450,7 +465,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	@Override
 	protected void onSaveInstanceState (Bundle outState) {
 	    outState.putBoolean("drawerIsOpened", drawerIsOpened);
-        outState.putBoolean("isDesc", isDesc);
+        outState.putString("order", order);
+        outState.putString("filter", filter);
         if(allFragment != null && allFragment.isAdded())
             getSupportFragmentManager().putFragment(outState,"allFragment", allFragment);
         if(serieFragment != null && serieFragment.isAdded())
@@ -540,12 +556,35 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.filter_dialog);
                     dialog.setTitle("Filter");
+
+                    final Spinner spinnerOrderBy = (Spinner) dialog.findViewById(R.id.spinnerOrderBy);
+                    final Spinner spinnerStatus = (Spinner) dialog.findViewById(R.id.spinnerStatus);
+                    final Spinner spinnerDubbedSubbed = (Spinner) dialog.findViewById(R.id.spinnerDubbedSubbed);
+                    final Spinner spinnerCategory = (Spinner) dialog.findViewById(R.id.spinnerCategory);
+                    spinnerOrderBy.setSelection(((ArrayAdapter)spinnerOrderBy.getAdapter()).getPosition(spinnerOrderByValue));
+                    spinnerStatus.setSelection(((ArrayAdapter)spinnerStatus.getAdapter()).getPosition(spinnerStatusValue));
+                    spinnerDubbedSubbed.setSelection(((ArrayAdapter)spinnerDubbedSubbed.getAdapter()).getPosition(spinnerDubbedSubbedValue));
+                    spinnerCategory.setSelection(((ArrayAdapter)spinnerCategory.getAdapter()).getPosition(spinnerCategoryValue));
+                    Button btnApply = (Button) dialog.findViewById(R.id.btnApply);
+                    btnApply.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            spinnerOrderByValue = spinnerOrderBy.getSelectedItem().toString();
+                            spinnerStatusValue = spinnerStatus.getSelectedItem().toString();
+                            spinnerDubbedSubbedValue = spinnerDubbedSubbed.getSelectedItem().toString();
+                            spinnerCategoryValue = spinnerCategory.getSelectedItem().toString();
+                            filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
+
+                            refreshFragment(allFragment, order, filter);
+                            refreshFragment(serieFragment, order, filter);
+                            refreshFragment(movieFragment, order, filter);
+                            refreshFragment(cartoonFragment, order, filter);
+                            dialog.dismiss();
+
+                        }
+                    });
                     dialog.show();
-                    /*
-                    refreshFragment(allFragment, isDesc);
-                    refreshFragment(serieFragment, isDesc);
-                    refreshFragment(movieFragment, isDesc);
-                    refreshFragment(cartoonFragment, isDesc);*/
+
                  break;
                 case R.id.action_buypro:
                     try {
@@ -561,6 +600,56 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			 }
 	    return true;
 	}
+    private void filterToDataServiceQuery(String selectedOrder, String selectedStatus, String selectedDubbedSubbed, String selectCategory)
+    {
+        filter = "";
+        order = "";
+        String newFilter = "";
+        ArrayList<String> filters = new ArrayList<String>();
+
+
+        if(selectedOrder.equals(getString(R.string.alphabetical_az)))
+            order += "OriginalName";
+        else if(selectedOrder.equals(getString(R.string.alphabetical_za)))
+            order += "OriginalName%20desc";
+        else if(selectedOrder.equals(getString(R.string.latest_release)))
+            order += "ReleasedDate";
+        else if(selectedOrder.equals(getString(R.string.oldest_release))) {
+            order += "ReleasedDate";
+            filters.add("ReleasedDate%20ne%20null");
+        }
+        else if(selectedOrder.equals(getString(R.string.recently_added)))
+            order += "AddedDate";
+        else if(selectedOrder.equals(getString(R.string.most_popular))) {
+            order += "Rating%20desc";
+            filters.add("Rating%20ne%20null%20and%20VoteCount%20gt%200");
+        }
+        else if(selectedOrder.equals(getString(R.string.less_popular))) {
+            order += "Rating";
+            filters.add("Rating%20ne%20null%20and%20VoteCount%20gt%200");
+        }
+
+
+        if(selectedStatus.equals(getString(R.string.complete)))
+            filters.add("Status/StatusId%20eq%2063");
+        else if(selectedStatus.equals(getString(R.string.ongoing)))
+            filters.add("Status/StatusId%20eq%2064");
+
+
+        if(selectedDubbedSubbed.equals(getString(R.string.tab_dubbed)))
+            filters.add("AnimeSources/any(as:as/IsSubbed%20eq%20false)");
+        else if(selectedDubbedSubbed.equals(getString(R.string.tab_subbed)))
+            filters.add("AnimeSources/any(as:as/IsSubbed%20eq%20true)");
+
+
+        if(!selectCategory.equals(getString(R.string.tab_all)))
+            filters.add("Genres/any(g:g/GenreId%20eq%20" + Utils.GenreNameToId(selectCategory) + ")");
+
+        filter = TextUtils.join("%20and%20", filters);
+
+        if(!filter.equals(""))
+            filter = "%20and%20" + filter;
+    }
     public void refreshFragment(AnimeListFragment frag, String orderBy, String filter)
     {
         if(frag != null)
@@ -569,6 +658,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 frag.refresh(orderBy, filter);
         }
     }
+
 	@Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {

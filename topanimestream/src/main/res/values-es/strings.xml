@@ -207,4 +207,13 @@
     <string name="changing_favorite_order">Cambiar el orden</string>
     <string name="error_changing_order">Se ha producido un error durante la cambiar de el orden</string>
     <string name="order_changed">El orden se ha cambiado</string>
+    <string name="complete">Completo</string>
+    <string name="ongoing">En Emisión</string>
+    <string name="alphabetical_az">Alfabético (A-Z)</string>
+    <string name="alphabetical_za">Alfabético (Z-A)</string>
+    <string name="latest_release">Lo más reciente</string>
+    <string name="oldest_release">El más antiguo</string>
+    <string name="recently_added">Recientemente añadido</string>
+    <string name="most_popular">Más popular</string>
+    <string name="less_popular">Menos popular</string>
 </resources>

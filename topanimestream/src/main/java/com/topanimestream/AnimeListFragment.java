@@ -41,7 +41,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 	private ArrayList<Anime> animes;
     private ProgressBar progressBarLoadMore;
     private String fragmentName;
-    public boolean isDesc;
 	private Resources r;
 	App app;
 	public Dialog busyDialog;
@@ -51,16 +50,17 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private AnimeTask task;
     private AnimeListAdapter adapter;
     private TextView txtNoAnime;
+    private String customOrder;
+    private String customFilter;
     public AnimeListFragment()
 	{
 
 	}
 
-	public static AnimeListFragment newInstance(String fragmentName, boolean isDesc) {
+	public static AnimeListFragment newInstance(String fragmentName) {
 		AnimeListFragment ttFrag = new AnimeListFragment();
 	    Bundle args = new Bundle();
 	    args.putString("fragmentName", fragmentName);
-        args.putBoolean("isDesc", isDesc);
 	    ttFrag.setArguments(args);
 	    return ttFrag;
 	}
@@ -106,7 +106,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
-        outState.putBoolean("isDesc", isDesc);
         super.onSaveInstanceState(outState);
 
     }
@@ -116,8 +115,9 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         if(adapter != null)
             adapter.clear();
         loadmore = false;
-        isDesc = ((MainActivity)getActivity()).isDesc;
-        AsyncTaskTools.execute(new AnimeTask(orderBy, filter));
+        customOrder = orderBy;
+        customFilter = filter;
+        AsyncTaskTools.execute(new AnimeTask(customOrder, customFilter));
     }
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,7 +125,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
-        isDesc = ((MainActivity)getActivity()).isDesc;
+        customOrder = ((MainActivity)getActivity()).order;
+        customFilter = ((MainActivity)getActivity()).filter;
         /*
         if(savedInstanceState != null)
             isDesc = savedInstanceState.getBoolean("isDesc");
@@ -160,13 +161,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                             currentSkip += currentLimit;
                             loadmore = true;
 
-                            task = new AnimeTask("", "");
+                            task = new AnimeTask(customOrder, customFilter);
                             AsyncTaskTools.execute(task);
                         }
                         else if(task == null)
                         {
                             loadmore = false;
-                            task = new AnimeTask("", "");
+                            task = new AnimeTask(customOrder, customFilter);
                             currentSkip = 0;
                             AsyncTaskTools.execute(task);
                         }
@@ -192,7 +193,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             {
                 progressBarLoadMore.setVisibility(View.VISIBLE);
                 isLoading = true;
-                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations").skip(currentSkip).top(currentLimit);
+                WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
                 String filter;
                 if(!App.isVkOnly) {
                     filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";

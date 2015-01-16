@@ -644,7 +644,53 @@ public class Utils {
                 SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
         suggestions.saveRecentQuery(query, null);
 	}
-	
+	public static int GenreNameToId(String genreName)
+    {
+        if(genreName.equals(App.getContext().getString(R.string.action)))
+            return 1034;
+        else if(genreName.equals(App.getContext().getString(R.string.adventure)))
+            return 1035;
+        else if(genreName.equals(App.getContext().getString(R.string.drama)))
+            return 1036;
+        else if(genreName.equals(App.getContext().getString(R.string.fantasy)))
+            return 1037;
+        else if(genreName.equals(App.getContext().getString(R.string.sciencefiction)))
+            return 1038;
+        else if(genreName.equals(App.getContext().getString(R.string.comedy)))
+            return 1039;
+        else if(genreName.equals(App.getContext().getString(R.string.mystery)))
+            return 1040;
+        else if(genreName.equals(App.getContext().getString(R.string.romance)))
+            return 1041;
+        else if(genreName.equals(App.getContext().getString(R.string.horror)))
+            return 1042;
+        else if(genreName.equals(App.getContext().getString(R.string.supernatural)))
+            return 1043;
+        else if(genreName.equals(App.getContext().getString(R.string.magic)))
+            return 1044;
+        else if(genreName.equals(App.getContext().getString(R.string.sliceoflife)))
+            return 1045;
+        else if(genreName.equals(App.getContext().getString(R.string.tournament)))
+            return 1046;
+        else if(genreName.equals(App.getContext().getString(R.string.psychological)))
+            return 1047;
+        else if(genreName.equals(App.getContext().getString(R.string.thriller)))
+            return 1048;
+        else if(genreName.equals(App.getContext().getString(R.string.animation)))
+            return 1049;
+        else if(genreName.equals(App.getContext().getString(R.string.children)))
+            return 1050;
+        else if(genreName.equals(App.getContext().getString(R.string.music)))
+            return 1051;
+        else if(genreName.equals(App.getContext().getString(R.string.school)))
+            return 1052;
+        else if(genreName.equals(App.getContext().getString(R.string.sports)))
+            return 1053;
+        else if(genreName.equals(App.getContext().getString(R.string.erotica)))
+            return 1054;
+
+        return 0;
+    }
 	public static void lockScreen(Activity act)
 	{
 		int orientation = act.getRequestedOrientation();

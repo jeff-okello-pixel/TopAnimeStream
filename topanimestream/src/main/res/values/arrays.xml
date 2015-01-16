@@ -22,46 +22,46 @@
         <item name="Undefined">undefined</item>
     </string-array>
     <string-array name="spinnerOrderByValues">
-        <item>Alphabetical (A-Z)</item>
-        <item>Alphabetical (Z-A)</item>
-        <item>Latest release</item>
-        <item>Oldest release</item>
-        <item>Recently added</item>
-        <item>Most popular</item>
-        <item>Less popular</item>
+        <item>@string/alphabetical_az</item>
+        <item>@string/alphabetical_za</item>
+        <item>@string/latest_release</item>
+        <item>@string/oldest_release</item>
+        <item>@string/recently_added</item>
+        <item>@string/most_popular</item>
+        <item>@string/less_popular</item>
     </string-array>
     <string-array name="spinnerStatusValues">
-        <item>All</item>
-        <item>Complete</item>
-        <item>Ongoing</item>
+        <item>@string/tab_all</item>
+        <item>@string/complete</item>
+        <item>@string/ongoing</item>
     </string-array>
     <string-array name="spinnerDubbedSubbedValues">
-        <item>All</item>
-        <item>Dubbed</item>
-        <item>Subbed</item>
+        <item>@string/tab_all</item>
+        <item>@string/tab_dubbed</item>
+        <item>@string/tab_subbed</item>
     </string-array>
     <string-array name="spinnerCategoryValues">
-        <item>All</item>
+        <item>@string/tab_all</item>
         <item>@string/action</item>
         <item>@string/adventure</item>
-        <item>@string/drama</item>
-        <item>@string/fantasy</item>
-        <item>@string/sciencefiction</item>
-        <item>@string/comedy</item>
-        <item>@string/mystery</item>
-        <item>@string/romance</item>
-        <item>@string/horror</item>
-        <item>@string/supernatural</item>
-        <item>@string/magic</item>
-        <item>@string/sliceoflife</item>
-        <item>@string/tournament</item>
-        <item>@string/psychological</item>
-        <item>@string/thriller</item>
         <item>@string/animation</item>
         <item>@string/children</item>
-        <item>@string/music</item>
-        <item>@string/school</item>
-        <item>@string/sports</item>
+        <item>@string/comedy</item>
+        <item>@string/drama</item>
         <item>@string/erotica</item>
+        <item>@string/fantasy</item>
+        <item>@string/horror</item>
+        <item>@string/magic</item>
+        <item>@string/music</item>
+        <item>@string/mystery</item>
+        <item>@string/psychological</item>
+        <item>@string/romance</item>
+        <item>@string/school</item>
+        <item>@string/sciencefiction</item>
+        <item>@string/sliceoflife</item>
+        <item>@string/sports</item>
+        <item>@string/supernatural</item>
+        <item>@string/thriller</item>
+        <item>@string/tournament</item>
     </string-array>
 </resources>

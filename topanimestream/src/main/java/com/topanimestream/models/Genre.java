@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Genre implements Parcelable {
+
 	private int GenreId;
 	private String Name;
 	

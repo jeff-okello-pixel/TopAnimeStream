@@ -215,4 +215,13 @@
     <string name="changing_favorite_order">Changing favorites order</string>
     <string name="error_changing_order">An error has occurred while changing the order</string>
     <string name="order_changed">The order has been changed</string>
+    <string name="complete">Complete</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="alphabetical_az">Alphabetical (A-Z)</string>
+    <string name="alphabetical_za">Alphabetical (Z-A)</string>
+    <string name="latest_release">Latest release</string>
+    <string name="oldest_release">Oldest release</string>
+    <string name="recently_added">Recently added</string>
+    <string name="most_popular">Most popular</string>
+    <string name="less_popular">Less popular</string>
 </resources>

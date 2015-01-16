@@ -389,12 +389,12 @@ public final class R {
 		public static final int abc_searchview_description_voice = 0x7f0c000a;
 		public static final int abc_shareactionprovider_share_with = 0x7f0c000b;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0c000c;
-		public static final int mr_media_route_button_content_description = 0x7f0c00b6;
-		public static final int mr_media_route_chooser_searching = 0x7f0c00b7;
-		public static final int mr_media_route_chooser_title = 0x7f0c00b8;
-		public static final int mr_media_route_controller_disconnect = 0x7f0c00b9;
-		public static final int mr_system_route_name = 0x7f0c00ba;
-		public static final int mr_user_route_category_name = 0x7f0c00bb;
+		public static final int mr_media_route_button_content_description = 0x7f0c00bc;
+		public static final int mr_media_route_chooser_searching = 0x7f0c00bd;
+		public static final int mr_media_route_chooser_title = 0x7f0c00be;
+		public static final int mr_media_route_controller_disconnect = 0x7f0c00bf;
+		public static final int mr_system_route_name = 0x7f0c00c0;
+		public static final int mr_user_route_category_name = 0x7f0c00c1;
 	}
 	public static final class style {
 		public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog = 0x7f0d0014;

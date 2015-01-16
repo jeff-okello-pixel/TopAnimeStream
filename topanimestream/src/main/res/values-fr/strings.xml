@@ -206,4 +206,13 @@
     <string name="changing_favorite_order">Changement de l\'ordre</string>
     <string name="error_changing_order">Une erreur est survenue lors du changement de l\'ordre</string>
     <string name="order_changed">L\'ordre a été changé</string>
+    <string name="complete">Complete</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="alphabetical_az">Alphabétique (A-Z)</string>
+    <string name="alphabetical_za">Alphabétique (Z-A)</string>
+    <string name="latest_release">Plus récent</string>
+    <string name="oldest_release">Plus vieux</string>
+    <string name="recently_added">Récemment ajouté</string>
+    <string name="most_popular">Plus populaires</string>
+    <string name="less_popular">Moins populaires</string>
 </resources>
