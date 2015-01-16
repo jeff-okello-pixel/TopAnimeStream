@@ -206,6 +206,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 finish();
                 AnimationManager.ActivityFinish(this);
 			break;
+            case R.id.action_moreoptions:
+
+            break;
 			case R.id.action_favorite:
                if(App.isGooglePlayVersion)
                {
