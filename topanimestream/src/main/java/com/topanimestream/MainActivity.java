@@ -34,6 +34,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -64,6 +65,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -115,11 +117,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private String spinnerCategoryValue;
     public String filter = "";
     public String order = "";
+    private TextView txtTitle;
+    private ActionBar actionBar;
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Blue);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         App.accessToken = prefs.getString("AccessToken","");
         App.isPro = prefs.getBoolean("IsPro", false);
@@ -153,6 +158,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			drawerIsOpened = savedInstanceState.getBoolean("drawerIsOpened");
             order = savedInstanceState.getString("order");
             filter = savedInstanceState.getString("filter");
+            spinnerCategoryValue = savedInstanceState.getString("spinnerCategoryValue");
+            spinnerDubbedSubbedValue = savedInstanceState.getString("spinnerDubbedSubbedValue");
+            spinnerStatusValue = savedInstanceState.getString("spinnerStatusValue");
+            spinnerOrderByValue = savedInstanceState.getString("spinnerOrderByValue");
             allFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "allFragment");
             serieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "serieFragment");
             movieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "movieFragment");
@@ -160,7 +169,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		}
         else
         {
-
+            spinnerDubbedSubbedValue = getString(R.string.tab_all);
+            spinnerStatusValue = getString(R.string.tab_all);
+            spinnerCategoryValue = getString(R.string.tab_all);
+            spinnerOrderByValue = getString(R.string.most_popular);
+            filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
             if(App.isGooglePlayVersion)
             {
                 AppRater.app_launched(this);
@@ -189,9 +202,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             }
         }
 
-		ActionBar actionBar = getSupportActionBar();
+		actionBar = getSupportActionBar();
+
         actionBar.setIcon(android.R.color.transparent);
-		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.app_name) + "</font>"));
+
 		listView = (ListView)findViewById(R.id.left_drawer);
         listView.setOnItemClickListener(this);
         listView.setCacheColorHint(0);
@@ -210,6 +224,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		
 		if(mDrawerLayout != null)
         {
+            //actionBar.setDisplayShowCustomEnabled(true);
 		    actionBar.setDisplayHomeAsUpEnabled(true);
 		    actionBar.setHomeButtonEnabled(true);
             mDrawerLayout.setDrawerListener(new DrawerListener());
@@ -328,6 +343,21 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             mCastConsumer = new VideoCastConsumerImpl();
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
+
+        final int identifier = getResources().getIdentifier("action_bar_title", "id", "android");
+        txtTitle = (TextView) findViewById(identifier);
+        if(txtTitle != null) {
+            //txtTitle = (TextView) actionBar.getCustomView().findViewById(R.id.txtTitle);
+            txtTitle.setTextColor(Color.parseColor("#f5f5f5"));
+            txtTitle.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            txtTitle.setMarqueeRepeatLimit(1);
+            // in order to start strolling, it has to be focusable and focused
+            txtTitle.setFocusable(true);
+            txtTitle.setFocusableInTouchMode(true);
+            txtTitle.requestFocus();
+
+        }
+        setTitleWithFilter();
 	}
 
     @Override
@@ -335,7 +365,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         moPubView.destroy();
         super.onDestroy();
     }
-
     private void SetViewPager()
     {
         viewPager.setOffscreenPageLimit(1);
@@ -438,17 +467,49 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	        return tabTitles.length;
 	    }
 	} 
+    private void setTitleWithFilter()
+    {
+        String title = "Anime List";
+        if(!spinnerCategoryValue.equals(getString(R.string.tab_all)))
+        {
+            title += " - " + spinnerCategoryValue;
+        }
+        if(!spinnerDubbedSubbedValue.equals(getString(R.string.tab_all)))
+        {
+            title += " - " + spinnerDubbedSubbedValue;
+        }
+        if(!spinnerStatusValue.equals(getString(R.string.tab_all)))
+        {
+            title += " - " + spinnerStatusValue;
+        }
 
+        if(!spinnerOrderByValue.equals(getString(R.string.most_popular)))
+        {
+            title += "(" + spinnerOrderByValue + ")";
+        }
+        setTitle(Html.fromHtml("<font color=#f0f0f0>" + title + "</font>"));
+        if(txtTitle != null) {
+            txtTitle.setText(Html.fromHtml("<font color=#f0f0f0>" + title + "</font>"));
+            txtTitle.requestFocus();
+        }
+        else
+            setTitle(Html.fromHtml("<font color=#f0f0f0>" + title + "</font>"));
+    }
 	  private class DrawerListener implements DrawerLayout.DrawerListener {
 	        @Override
 	        public void onDrawerOpened(View drawerView) {
 	                mDrawerToggle.onDrawerOpened(drawerView);
+                    if(txtTitle != null)
+                        txtTitle.setText(getString(R.string.app_name));
+                    else
+                        setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.app_name) + "</font>"));
 	                drawerIsOpened = true;
 	        }
 
 	        @Override
 	        public void onDrawerClosed(View drawerView) {
 	                mDrawerToggle.onDrawerClosed(drawerView);
+                    setTitleWithFilter();
 	                drawerIsOpened = false;
 	        }
 
@@ -467,6 +528,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	    outState.putBoolean("drawerIsOpened", drawerIsOpened);
         outState.putString("order", order);
         outState.putString("filter", filter);
+        outState.putString("spinnerStatusValue", spinnerStatusValue);
+        outState.putString("spinnerDubbedSubbedValue", spinnerDubbedSubbedValue);
+        outState.putString("spinnerCategoryValue", spinnerCategoryValue);
+        outState.putString("spinnerOrderByValue", spinnerOrderByValue);
         if(allFragment != null && allFragment.isAdded())
             getSupportFragmentManager().putFragment(outState,"allFragment", allFragment);
         if(serieFragment != null && serieFragment.isAdded())
@@ -581,6 +646,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                             refreshFragment(cartoonFragment, order, filter);
                             dialog.dismiss();
 
+                            setTitleWithFilter();
+
                         }
                     });
                     dialog.show();
@@ -622,7 +689,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             order += "AddedDate";
         else if(selectedOrder.equals(getString(R.string.most_popular))) {
             order += "Rating%20desc";
-            filters.add("Rating%20ne%20null%20and%20VoteCount%20gt%200");
         }
         else if(selectedOrder.equals(getString(R.string.less_popular))) {
             order += "Rating";

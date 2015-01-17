@@ -2,6 +2,7 @@ package com.topanimestream;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -51,7 +52,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 	private Dialog busyDialog;
 	private Anime anime;
     private LinearLayout layAnimeDetails;
-	private MenuItem menuFavorite;
+	private MenuItem menuMoreOptions;
 	private Resources r;
 	private SharedPreferences prefs;
 	private SQLiteHelper db;
@@ -62,6 +63,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private MenuItem mediaRouteMenuItem;
     private LinearLayout layEpisodes;
     private MiniController mMini;
+    private boolean isFavorite;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -180,13 +182,13 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         {
             mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
-		menuFavorite = menu.findItem(R.id.action_favorite);
+		menuMoreOptions = menu.findItem(R.id.action_moreoptions);
 
         if(App.isGooglePlayVersion) {
             if (db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
-                menuFavorite.setIcon(R.drawable.ic_favorite);
+                isFavorite = true;
             else
-                menuFavorite.setIcon(R.drawable.ic_not_favorite);
+                isFavorite = false;
         }
         else
         {
@@ -207,8 +209,22 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 AnimationManager.ActivityFinish(this);
 			break;
             case R.id.action_moreoptions:
+                CharSequence[] items = new CharSequence[]{isFavorite ? "Remove from favorites" : "Add to favorite", "Add Vote", "Reviews", "Recommandations"};
 
+                if(items != null && items.length > 1) {
+                    final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AnimeDetailsActivity.this);
+                    alertBuilder.setTitle("Choose an option");
+                    final CharSequence[] finalItems = items;
+                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
+
+                        }
+                    });
+                    qualityDialog = alertBuilder.create();
+                    qualityDialog.show();
+                }
             break;
+            /*
 			case R.id.action_favorite:
                if(App.isGooglePlayVersion)
                {
@@ -240,7 +256,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                         AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
                     }
 				}
-			break;
+			break;*/
 		}
 
 		return true;
@@ -303,7 +319,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             }
             else
             {
-                menuFavorite.setIcon(R.drawable.ic_not_favorite);
+                isFavorite = false;
                 Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
             }
         }
@@ -366,7 +382,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             }
             else
             {
-                menuFavorite.setIcon(R.drawable.ic_favorite);
+                isFavorite = true;
                 Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
             }
         }
@@ -452,15 +468,15 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 else
                 {
                     Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-                    menuFavorite.setIcon(R.drawable.ic_not_favorite);
+                    isFavorite = false;
                 }
             }
             else
             {
                 if(isFavorite)
-                    menuFavorite.setIcon(R.drawable.ic_favorite);
+                    isFavorite = true;
                 else
-                    menuFavorite.setIcon(R.drawable.ic_not_favorite);
+                    isFavorite = false;
             }
         }
     }
