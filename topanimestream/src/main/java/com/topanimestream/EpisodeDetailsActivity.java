@@ -33,12 +33,12 @@ import com.topanimestream.R;
 
 public class EpisodeDetailsActivity extends ActionBarActivity {
 
-	private Resources r;
-	private SharedPreferences prefs;
-	private Episode episode;
+    private Resources r;
+    private SharedPreferences prefs;
+    private Episode episode;
     private ImageView imgScreenshot;
     private String type;
-	private ProviderListFragment providerListFragment;
+    private ProviderListFragment providerListFragment;
     private MiniController mMini;
     private Anime anime;
     private VideoCastConsumerImpl mCastConsumer;
@@ -47,20 +47,17 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
     private TextView txtDescription;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-        if(App.isTablet)
-        {
+    protected void onCreate(Bundle savedInstanceState) {
+        if (App.isTablet) {
             setTheme(R.style.PopupTheme);
-        }
-        else
-        {
+        } else {
             setTheme(R.style.Theme_Blue);
         }
-		super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         //To show activity as dialog and dim the background, you need to declare android:theme="@style/PopupTheme" on for the chosen activity on the manifest
 
 
-        if(App.isTablet) {
+        if (App.isTablet) {
             requestWindowFeature(Window.FEATURE_ACTION_BAR);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                     WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -70,7 +67,7 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
             WindowManager.LayoutParams params = getWindow().getAttributes();
             params.height = 850; //fixed height
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
                 params.width = Math.round(dpWidth / 2); //fixed width
             else
                 params.width = Math.round(dpWidth - (dpWidth / 8)); //fixed width
@@ -79,67 +76,62 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             getWindow().setAttributes((WindowManager.LayoutParams) params);
         }
         setContentView(R.layout.activity_episode_details);
-		r = getResources();
+        r = getResources();
 
-		Bundle bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
         episode = bundle.getParcelable("Episode");
         Bundle hackBundle = bundle.getBundle("hackBundle");
         anime = hackBundle.getParcelable("Anime");
         type = bundle.getString("Type");
 
-		if(episode == null)
-		{
-			Toast.makeText(this, getString(R.string.error_loading_episode_details), Toast.LENGTH_LONG).show();
-			finish();
-		}
-        imgScreenshot = (ImageView)findViewById(R.id.imgScreenshot);
-        txtEpisodeName = (TextView)findViewById(R.id.txtEpisodeName);
-        txtDescription = (TextView)findViewById(R.id.txtDescription);
+        if (episode == null) {
+            Toast.makeText(this, getString(R.string.error_loading_episode_details), Toast.LENGTH_LONG).show();
+            finish();
+        }
+        imgScreenshot = (ImageView) findViewById(R.id.imgScreenshot);
+        txtEpisodeName = (TextView) findViewById(R.id.txtEpisodeName);
+        txtDescription = (TextView) findViewById(R.id.txtDescription);
         String episodeName = "";
         EpisodeInformations episodeInfo = episode.getEpisodeInformations();
-        if(episodeInfo != null) {
+        if (episodeInfo != null) {
             if (episodeInfo.getEpisodeName() != null && !episodeInfo.getEpisodeName().equals("")) {
                 episodeName = episodeInfo.getEpisodeName();
-            }
-            else{
+            } else {
                 episodeName = getString(R.string.episode) + " " + episode.getEpisodeNumber();
             }
 
-            if(episodeInfo.getSummary() != null && !episodeInfo.getSummary().equals(""))
-            {
+            if (episodeInfo.getSummary() != null && !episodeInfo.getSummary().equals("")) {
                 txtDescription.setText(episodeInfo.getSummary());
-            }
-            else if(episodeInfo.getDescription() != null && !episodeInfo.getDescription().equals(""))
-            {
+            } else if (episodeInfo.getDescription() != null && !episodeInfo.getDescription().equals("")) {
                 txtDescription.setText(episodeInfo.getDescription());
             }
         }
         txtEpisodeName.setText(episodeName);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
 
             actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_solid_blue));
             actionBar.setDisplayShowHomeEnabled(false);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episode) + " " + episode.getEpisodeNumber() + "</font>"));
         }
-        if(episode.getScreenshot() != null && !episode.getScreenshot().equals(""))
-            App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(),imgScreenshot);
+        if (episode.getScreenshot() != null && !episode.getScreenshot().equals(""))
+            App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(), imgScreenshot);
         else
             imgScreenshot.setVisibility(View.GONE);
 
         FragmentManager fm = getSupportFragmentManager();
-        providerListFragment = (ProviderListFragment)fm.findFragmentByTag("providerFragment");
-        if(providerListFragment == null) {
+        providerListFragment = (ProviderListFragment) fm.findFragmentByTag("providerFragment");
+        if (providerListFragment == null) {
 
             FragmentTransaction ft = fm.beginTransaction();
             providerListFragment = ProviderListFragment.newInstance(-1, episode, type, anime);
             ft.add(R.id.layEpisodeDetails, providerListFragment, "providerFragment");
             ft.commit();
         }
-        if(App.isPro) {
-            AdView adView = (AdView)findViewById(R.id.adView);
-            ((ViewGroup)adView.getParent()).removeView(adView);
+        if (App.isPro) {
+            AdView adView = (AdView) findViewById(R.id.adView);
+            ((ViewGroup) adView.getParent()).removeView(adView);
             VideoCastManager.checkGooglePlaySevices(this);
 
             App.getCastManager(this);
@@ -151,20 +143,20 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             mCastConsumer = new VideoCastConsumerImpl();
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
-	}
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.cast, menu);
-        if(App.isPro)
-        {
+        if (App.isPro) {
             mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
         return true;
     }
+
     @Override
     protected void onResume() {
-        if(App.isPro)
-        {
+        if (App.isPro) {
             App.getCastManager(this);
             if (null != App.mCastMgr) {
                 App.mCastMgr.addVideoCastConsumer(mCastConsumer);
@@ -176,33 +168,32 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
-        if(App.isPro)
-        {
+        if (App.isPro) {
             App.mCastMgr.decrementUiCounter();
             App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
         }
         super.onPause();
 
     }
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId())
-		{
-			case android.R.id.home:
-                finish();
-                if(!App.isTablet)
-                    AnimationManager.ActivityFinish(this);
-			break;
-		}
 
-		return true;
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                if (!App.isTablet)
+                    AnimationManager.ActivityFinish(this);
+                break;
+        }
+
+        return true;
+    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        if(!App.isTablet)
+        if (!App.isTablet)
             AnimationManager.ActivityFinish(this);
     }
 }

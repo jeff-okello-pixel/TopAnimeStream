@@ -20,37 +20,33 @@ import com.topanimestream.Utils;
 import com.topanimestream.R;
 
 public class DialogManager {
-    public interface NetworkErrorDialogEvent
-    {
+    public interface NetworkErrorDialogEvent {
         public void onNetworkDialogTryAgain();
 
         public void onNetworkDialogCancelled();
 
     }
 
-    public interface GenericDialogEvent
-    {
+    public interface GenericDialogEvent {
         public void onGenericDialogOk();
 
     }
 
-    public interface GenericTryAgainDialogEvent
-    {
+    public interface GenericTryAgainDialogEvent {
         public void onGenericDialogTryAgain();
 
         public void onGenericDialogCancelled();
 
     }
 
-    public interface GenericTwoButtonDialogEvent
-    {
+    public interface GenericTwoButtonDialogEvent {
         public void onGenericDialogFirstButton();
 
         public void onGenericDialogSecondButton();
 
     }
-    public static void ShowNoServiceDialog(Context context)
-    {
+
+    public static void ShowNoServiceDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.title_service_unavailable));
         //builder.setIcon(R.drawable.icon);
@@ -61,12 +57,13 @@ public class DialogManager {
                         dialog.dismiss();
 
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
     }
-    public static void ShowChromecastConnectionErrorDialog(Context context)
-    {
+
+    public static void ShowChromecastConnectionErrorDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.title_connect_chromecast))
                 .setMessage(context.getString(R.string.message_connect_chromecast))
@@ -79,8 +76,9 @@ public class DialogManager {
                 });
         ShowDialog(builder);
     }
-    public static void ShowNetworkErrorDialog(final Context context){
-        if(!(context instanceof NetworkErrorDialogEvent))
+
+    public static void ShowNetworkErrorDialog(final Context context) {
+        if (!(context instanceof NetworkErrorDialogEvent))
             throw new ClassCastException("Activity must implement NetworkDialogEvent.");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -91,40 +89,42 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        ((NetworkErrorDialogEvent)context).onNetworkDialogTryAgain();
+                        ((NetworkErrorDialogEvent) context).onNetworkDialogTryAgain();
                     }
-                });
+                }
+        );
 
         builder.setNeutralButton(context.getString(R.string.network_settings),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         context.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
                     }
-                });
+                }
+        );
 
         builder.setNegativeButton(context.getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
-                        ((NetworkErrorDialogEvent)context).onNetworkDialogCancelled();
+                        ((NetworkErrorDialogEvent) context).onNetworkDialogCancelled();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
 
     }
-    private static void ShowDialog(AlertDialog.Builder builder)
-    {
-        try
-        {
+
+    private static void ShowDialog(AlertDialog.Builder builder) {
+        try {
             builder.show();
-        }catch(Exception e)//leaked error
+        } catch (Exception e)//leaked error
         {
             e.printStackTrace();
         }
     }
-    public static void ShowChoosePlayerDialog(final Context context, final String mp4Url, final int mirrorId)
-    {
+
+    public static void ShowChoosePlayerDialog(final Context context, final String mp4Url, final int mirrorId) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         View checkBoxView = View.inflate(context, R.layout.dialog_choose_player, null);
         final CheckBox chkAlwaysThis = (CheckBox) checkBoxView.findViewById(R.id.chkAlwaysThis);
@@ -155,12 +155,14 @@ public class DialogManager {
                         }
                         Mp4Manager.PlayExternalVideo(context, mp4Url);
                     }
-                });
+                }
+        );
 
 
         ShowDialog(builder);
     }
-    public static void ShowUpdateDialog(final Context context, final com.topanimestream.models.Package pkg){
+
+    public static void ShowUpdateDialog(final Context context, final com.topanimestream.models.Package pkg) {
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -194,7 +196,8 @@ public class DialogManager {
                     public void onClick(DialogInterface dialog, int id) {
                         prefs.edit().putBoolean("ShowUpdate", true);
                     }
-                });
+                }
+        );
 
         builder.setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
@@ -202,14 +205,16 @@ public class DialogManager {
                         dialog.dismiss();
                         prefs.edit().putBoolean("ShowUpdate", false).commit();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
 
     }
+
     /*not really usable since you can't have 2 of them in the same activity...*/
-    public static void ShowGenericTwoButtonDialog(final Context context, String title, String message, String firstButtonTitle, String secondButtonTitle){
-        if(!(context instanceof NetworkErrorDialogEvent))
+    public static void ShowGenericTwoButtonDialog(final Context context, String title, String message, String firstButtonTitle, String secondButtonTitle) {
+        if (!(context instanceof NetworkErrorDialogEvent))
             throw new ClassCastException("Activity must implement GenericTwoButtonDialogEvent.");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -219,22 +224,25 @@ public class DialogManager {
         builder.setPositiveButton(firstButtonTitle,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        ((GenericTwoButtonDialogEvent)context).onGenericDialogFirstButton();
+                        ((GenericTwoButtonDialogEvent) context).onGenericDialogFirstButton();
 
                     }
-                });
+                }
+        );
 
         builder.setNegativeButton(secondButtonTitle,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        ((GenericTwoButtonDialogEvent)context).onGenericDialogSecondButton();
+                        ((GenericTwoButtonDialogEvent) context).onGenericDialogSecondButton();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
 
     }
-    public static void ShowChromecastNotPremiumErrorDialog(final Context context){
+
+    public static void ShowChromecastNotPremiumErrorDialog(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         final String language = Utils.ToLanguageString(prefs.getString("prefLanguage", "1"));
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -244,19 +252,22 @@ public class DialogManager {
         builder.setPositiveButton(context.getString(R.string.get_premium_account),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                       context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.topanimestream_website) + language + "/" + "premium")));
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.topanimestream_website) + language + "/" + "premium")));
                     }
-                });
+                }
+        );
         builder.setNegativeButton(context.getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
     }
-    public static void ShowUpgradedToProDialog(final Context context){
+
+    public static void ShowUpgradedToProDialog(final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.title_topanimestream_upgraded));
@@ -267,18 +278,19 @@ public class DialogManager {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
 
     }
-    public static void ShowBuyProDialog(final Context context){
+
+    public static void ShowBuyProDialog(final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.title_buy_topanimestream));
         //builder.setIcon(R.drawable.icon);
-        if(App.isGooglePlayVersion && !App.isPro)
-        {
+        if (App.isGooglePlayVersion && !App.isPro) {
             builder.setMessage(context.getString(R.string.topanimestream_has_2_pro));
             builder.setPositiveButton(context.getString(R.string.all_languages),
                     new DialogInterface.OnClickListener() {
@@ -291,7 +303,8 @@ public class DialogManager {
                             prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
 
                         }
-                    });
+                    }
+            );
             builder.setNeutralButton(context.getString(R.string.spanish_only),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -301,16 +314,16 @@ public class DialogManager {
                                 context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.topanimestream.pro")));
                             }
                         }
-                    });
+                    }
+            );
             builder.setNegativeButton(context.getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
                         }
-                    });
-        }
-        else
-        {
+                    }
+            );
+        } else {
             builder.setMessage(context.getString(R.string.bored_animes_spanish));
             builder.setPositiveButton(context.getString(R.string.buy_full_version),
                     new DialogInterface.OnClickListener() {
@@ -322,19 +335,22 @@ public class DialogManager {
                             context.startActivity(intent);
                             prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
                         }
-                    });
+                    }
+            );
             builder.setNegativeButton(context.getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
                         }
-                    });
+                    }
+            );
         }
 
         ShowDialog(builder);
 
     }
-    public static void ShowWelcomeDialog(final Context context){
+
+    public static void ShowWelcomeDialog(final Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.welcome_topanimestream));
@@ -350,7 +366,8 @@ public class DialogManager {
                         context.startActivity(intent);
                         prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
                     }
-                });
+                }
+        );
 
         builder.setNegativeButton(context.getString(R.string.no_thanks),
                 new DialogInterface.OnClickListener() {
@@ -358,15 +375,16 @@ public class DialogManager {
                         dialog.dismiss();
                         prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
 
     }
 
 
-    public static void ShowGenericErrorDialog(final Context context, String errorMessage){
-        if(!(context instanceof GenericDialogEvent))
+    public static void ShowGenericErrorDialog(final Context context, String errorMessage) {
+        if (!(context instanceof GenericDialogEvent))
             throw new ClassCastException("Activity must implement GenericDialogEvent.");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -377,15 +395,16 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        ((GenericDialogEvent)context).onGenericDialogOk();
+                        ((GenericDialogEvent) context).onGenericDialogOk();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
     }
 
-    public static void ShowGenericTryAgainErrorDialog(final Context context, String errorMessage){
-        if(!(context instanceof GenericTryAgainDialogEvent))
+    public static void ShowGenericTryAgainErrorDialog(final Context context, String errorMessage) {
+        if (!(context instanceof GenericTryAgainDialogEvent))
             throw new ClassCastException("Activity must implement GenericTryAgainDialogEvent.");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -396,16 +415,18 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        ((GenericTryAgainDialogEvent)context).onGenericDialogTryAgain();
+                        ((GenericTryAgainDialogEvent) context).onGenericDialogTryAgain();
                     }
-                });
+                }
+        );
         builder.setNegativeButton(context.getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
-                        ((GenericTryAgainDialogEvent)context).onGenericDialogCancelled();
+                        ((GenericTryAgainDialogEvent) context).onGenericDialogCancelled();
                     }
-                });
+                }
+        );
 
         ShowDialog(builder);
 
@@ -415,10 +436,11 @@ public class DialogManager {
     public static Dialog showBusyDialog(String message, Context context) {
         Dialog busyDialog = new Dialog(context, R.style.lightbox_dialog);
         busyDialog.setContentView(R.layout.lightbox_dialog);
-        ((TextView)busyDialog.findViewById(R.id.dialogText)).setText(message);
-        try{
+        ((TextView) busyDialog.findViewById(R.id.dialogText)).setText(message);
+        try {
             busyDialog.show();
-        }catch(Exception e){}//leaked error
+        } catch (Exception e) {
+        }//leaked error
         return busyDialog;
     }
 

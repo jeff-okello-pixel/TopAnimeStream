@@ -50,10 +50,11 @@ public class Mp4Manager {
     public static Dialog chromecastDialog;
     public static Dialog qualityDialog;
     public static String ignitionKey = null;
-    public static void getMp4(Mirror mirror, Activity act, Anime anime, Episode episode)
-    {
+
+    public static void getMp4(Mirror mirror, Activity act, Anime anime, Episode episode) {
         AsyncTaskTools.execute(new GetWebPageTask(mirror, act, anime, episode));
     }
+
     public static class GetWebPageTask extends AsyncTask<Void, Void, String> {
         Mirror mirror;
         private Dialog busyDialog;
@@ -63,17 +64,18 @@ public class Mp4Manager {
         private Episode episode;
         private String providerName;
         private Document doc;
-        public GetWebPageTask(Mirror mirror, Activity act, Anime anime, Episode episode)
-        {
+
+        public GetWebPageTask(Mirror mirror, Activity act, Anime anime, Episode episode) {
             this.mirror = mirror;
             this.act = act;
             this.anime = anime;
             this.episode = episode;
         }
+
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(act.getString(R.string.loading_video), act);
-            if(!App.isPro) {
+            if (!App.isPro) {
                 Prm prm = new Prm(act, null, false);
                 try {
                     prm.runAppWall();
@@ -103,9 +105,7 @@ public class Mp4Manager {
                 if (providerName.equals(act.getString(R.string.play).toLowerCase())) {
                     providerName = "vk";
                 }
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
                 return null;
             }
 
@@ -118,23 +118,20 @@ public class Mp4Manager {
                 if (result == null) {
                     Toast.makeText(act, act.getString(R.string.error_loading_video), Toast.LENGTH_LONG).show();
                     AsyncTaskTools.execute(new Utils.ReportMirror(mirror.getMirrorId(), act));
-                }
-                else
-                {
-                    if(providerName.equals("vk") || providerName.equals("vk_gk") || providerName.equals("vkontakte"))
-                    {
+                } else {
+                    if (providerName.equals("vk") || providerName.equals("vk_gk") || providerName.equals("vkontakte")) {
                         String content = doc.html();
                         CharSequence[] items = null;
-                        if(content.indexOf("url720") != -1)
-                            items = new CharSequence[]{"720", "480", "360", "240" };
-                        else if(content.indexOf("url480") != -1)
-                            items = new CharSequence[]{"480", "360", "240" };
-                        else if(content.indexOf("url360") != -1)
-                            items = new CharSequence[]{"360", "240" };
-                        else if(content.indexOf("url240") != -1)
+                        if (content.indexOf("url720") != -1)
+                            items = new CharSequence[]{"720", "480", "360", "240"};
+                        else if (content.indexOf("url480") != -1)
+                            items = new CharSequence[]{"480", "360", "240"};
+                        else if (content.indexOf("url360") != -1)
+                            items = new CharSequence[]{"360", "240"};
+                        else if (content.indexOf("url240") != -1)
                             items = new CharSequence[]{"240"};
 
-                        if(items != null && items.length > 1) {
+                        if (items != null && items.length > 1) {
                             final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
                             alertBuilder.setTitle(act.getString(R.string.choose_quality));
                             final CharSequence[] finalItems = items;
@@ -145,22 +142,16 @@ public class Mp4Manager {
                             });
                             qualityDialog = alertBuilder.create();
                             qualityDialog.show();
-                        }
-                        else if(items != null)
-                        {
-                            Toast.makeText(act,act.getString(R.string.only_240p_available),Toast.LENGTH_SHORT).show();
+                        } else if (items != null) {
+                            Toast.makeText(act, act.getString(R.string.only_240p_available), Toast.LENGTH_SHORT).show();
                             AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, "240", doc, null));
-                        }
-                        else
-                        {
+                        } else {
                             throw new Exception("Vk not valid video");
                         }
 
 
                         DialogManager.dismissBusyDialog(busyDialog);
-                    }
-                    else
-                    {
+                    } else {
                         AsyncTaskTools.execute(new GetMp4(mirror, act, anime, episode, providerName, null, doc, busyDialog));
                     }
                 }
@@ -192,8 +183,8 @@ public class Mp4Manager {
         private String providerName;
         private String quality;
         private Document doc;
-        public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String providerName, String quality, Document doc, Dialog busyDialog)
-        {
+
+        public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String providerName, String quality, Document doc, Dialog busyDialog) {
             this.mirror = mirror;
             this.act = act;
             this.anime = anime;
@@ -207,16 +198,14 @@ public class Mp4Manager {
 
 
         @Override
-        protected void onPreExecute()
-        {
-            if(busyDialog == null)
-            {
+        protected void onPreExecute() {
+            if (busyDialog == null) {
                 busyDialog = Utils.showBusyDialog(act.getString(R.string.loading_video), act);
             }
         }
+
         @Override
-        protected String doInBackground(Void... params)
-        {
+        protected String doInBackground(Void... params) {
 
             try {
                 byte[] data = doc.html().getBytes("UTF-8");
@@ -226,12 +215,12 @@ public class Mp4Manager {
                 String URL = act.getString(R.string.anime_data_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost request = new HttpPost(URL);
-					/*
+                    /*
 					List<NameValuePair> listParam = new ArrayList<NameValuePair>();
 					listParam.add(new BasicNameValuePair("html", base64));
 		            UrlEncodedFormEntity ent = new UrlEncodedFormEntity(listParam);*/
                 request.setEntity(new StringEntity(base64));
-                if(App.accessToken != null && !App.accessToken.equals(""))
+                if (App.accessToken != null && !App.accessToken.equals(""))
                     request.setHeader("Authentication", App.accessToken);
                 else
                     request.setHeader("Authentication", App.getContext().getString(R.string.urc));
@@ -248,8 +237,7 @@ public class Mp4Manager {
                     e1.printStackTrace();
                     return null;
                 }
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
@@ -257,14 +245,12 @@ public class Mp4Manager {
         }
 
         @Override
-        protected void onPostExecute(final String result)
-        {
+        protected void onPostExecute(final String result) {
             Utils.dismissBusyDialog(busyDialog);
-            if(App.isGooglePlayVersion) {
+            if (App.isGooglePlayVersion) {
                 Toast.makeText(act, act.getString(R.string.video_spanish_only), Toast.LENGTH_LONG).show();
             }
-            if(result == null)
-            {
+            if (result == null) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 try {
                     i.setData(Uri.parse(URLDecoder.decode(mirror.getSource(), "UTF-8")));
@@ -282,20 +268,17 @@ public class Mp4Manager {
             alertBuilder.setTitle(act.getString(R.string.choose_option));
             alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
-                    if(items[item].equals(act.getString(R.string.play_phone)))
-                    {
+                    if (items[item].equals(act.getString(R.string.play_phone))) {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
                         String playInternal = prefs.getString("prefPlayInternal", "undefined");
-                        if(playInternal.equals("true"))
+                        if (playInternal.equals("true"))
                             PlayInternalVideo(act, result, mirror.getMirrorId());
-                        else if(playInternal.equals("false"))
+                        else if (playInternal.equals("false"))
                             PlayExternalVideo(act, result);
                         else
                             DialogManager.ShowChoosePlayerDialog(act, result, mirror.getMirrorId());
-                    }
-                    else if(items[item].equals(act.getString(R.string.stream_chromecast)))
-                    {
-                        if(App.isPro) {
+                    } else if (items[item].equals(act.getString(R.string.stream_chromecast))) {
+                        if (App.isPro) {
                             String subtitle = "";
                             if (episode != null && episode.getEpisodeInformations() != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName().equals("")) {
                                 subtitle = episode.getEpisodeInformations().getEpisodeName();
@@ -307,15 +290,11 @@ public class Mp4Manager {
 
                             MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
                             loadRemoteMedia(act, 0, true, info);
-                        }
-                        else
-                        {
+                        } else {
                             DialogManager.ShowChromecastNotPremiumErrorDialog(act);
                         }
                         alertPlay.dismiss();
-                    }
-                    else
-                    {
+                    } else {
                         alertPlay.dismiss();
                     }
                 }
@@ -343,8 +322,9 @@ public class Mp4Manager {
                 .setMetadata(movieMetadata)
                 .build();
     }
+
     private static void loadRemoteMedia(Context context, int position, boolean autoPlay, MediaInfo mediaInfo) {
-        if(App.mCastMgr != null) {
+        if (App.mCastMgr != null) {
             try {
                 App.mCastMgr.checkConnectivity();
                 App.mCastMgr.startCastControllerActivity(context, mediaInfo, position, autoPlay);
@@ -362,16 +342,15 @@ public class Mp4Manager {
 
     }
 
-    public static void PlayInternalVideo(Context context, String mp4Url, int mirrorId)
-    {
+    public static void PlayInternalVideo(Context context, String mp4Url, int mirrorId) {
         Intent intent = null;
         intent = new Intent(context, VideoActivity.class);
         intent.putExtra("Mp4Url", mp4Url);
         intent.putExtra("MirrorId", mirrorId);
         context.startActivity(intent);
     }
-    public static void PlayExternalVideo(Context context, String mp4Url)
-    {
+
+    public static void PlayExternalVideo(Context context, String mp4Url) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(mp4Url), "video/*");

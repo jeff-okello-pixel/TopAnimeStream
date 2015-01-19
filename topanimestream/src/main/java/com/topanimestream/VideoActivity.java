@@ -20,6 +20,7 @@ public class VideoActivity extends Activity {
     private String mp4Url;
     private ProgressBar progLoading;
     private int mirrorId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +61,6 @@ public class VideoActivity extends Activity {
         });
 
     }
-
-
 
 
 }

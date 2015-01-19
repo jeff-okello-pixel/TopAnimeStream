@@ -40,7 +40,8 @@ import java.util.Locale;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.R;
-
+import com.topanimestream.models.Account;
+import com.topanimestream.models.CurrentUser;
 
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
     private Button btnLogin;
@@ -52,6 +53,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Dialog busyDialog;
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not
     private SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -76,7 +78,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
         txtTitle.setTypeface(typeFace);
 
-        txtUserName.setText(prefs.getString("Username",""));
+        txtUserName.setText(prefs.getString("Username", ""));
     }
 
 
@@ -116,11 +118,11 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             case R.id.btnRegister:
                 String url = getString(R.string.topanimestream_website);
                 String lang = prefs.getString("prefLanguage", "");
-                if(lang.equals("1"))
+                if (lang.equals("1"))
                     lang = "en";
-                else if(lang.equals("2"))
+                else if (lang.equals("2"))
                     lang = "fr";
-                else if(lang.equals("4"))
+                else if (lang.equals("4"))
                     lang = "es";
                 else
                     lang = "en";
@@ -133,18 +135,20 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     }
 
     private class LoginTask extends AsyncTask<Void, Void, String> {
-        private String userName;
+        private String username;
         private String password;
 
         public LoginTask(String userName, String password) {
-            this.userName = userName;
+            this.username = userName;
             this.password = password;
         }
+
         private static final String NAMESPACE = "http://tempuri.org/";
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String URL;
         private String method = "Login";
         private String token;
+
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.logging), LoginActivity.this);
@@ -154,13 +158,11 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
         @Override
         protected String doInBackground(Void... params) {
-            if(!App.IsNetworkConnected())
-            {
+            if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
 
-            if(!Utils.IsServiceAvailable())
-            {
+            if (!Utils.IsServiceAvailable()) {
                 return getString(R.string.service_unavailable);
             }
             SoapObject request = new SoapObject(NAMESPACE, method);
@@ -170,29 +172,25 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             Element lang = new Element().createElement("", "Lang");
             lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
             envelope.headerOut[0] = lang;
-            request.addProperty("username", userName);
+            request.addProperty("username", username);
             request.addProperty("password", password);
             request.addProperty("application", "Android");
 
 
-            envelope .dotNet = true;
+            envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
 
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
             //androidHttpTransport.debug = true;
             SoapPrimitive result = null;
-            try
-            {
+            try {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
                 //String requestDump = androidHttpTransport.requestDump.toString();
-                result = (SoapPrimitive)envelope.getResponse();
+                result = (SoapPrimitive) envelope.getResponse();
                 token = result.toString();
                 return null;
-            }
-            catch (Exception e)
-            {
-                if(e instanceof SoapFault)
-                {
+            } catch (Exception e) {
+                if (e instanceof SoapFault) {
                     return e.getMessage();
                 }
 
@@ -204,37 +202,29 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         @Override
         protected void onPostExecute(String error) {
 
-            if(error != null)
-            {
-                if(error.equals(getString(R.string.service_unavailable)))
-                {
+            if (error != null) {
+                if (error.equals(getString(R.string.service_unavailable))) {
                     DialogManager.ShowNoServiceDialog(LoginActivity.this);
-                }
-                else
-                {
+                } else {
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
                 }
-            }
-            else
-            {
+            } else {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                 prefs.edit().putString("AccessToken", token).apply();
-                prefs.edit().putString("Username", userName).apply();
+                prefs.edit().putString("Username", username).apply();
                 App.accessToken = token;
-                AsyncTaskTools.execute(new PremiumAccountTask(LoginActivity.this, userName));
+                AsyncTaskTools.execute(new AccountTask(LoginActivity.this, username));
             }
         }
     }
 
-    public class PremiumAccountTask extends AsyncTask<Void, Void, String> {
+    public class AccountTask extends AsyncTask<Void, Void, String> {
         private Context context;
         private String username;
-        private ArrayList<Integer> roles;
         private ArrayList<Integer> premiumRoles = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 6));
-        public PremiumAccountTask(Context context, String username)
-        {
+
+        public AccountTask(Context context, String username) {
             this.context = context;
-            this.roles = new ArrayList<Integer>();
             this.username = username;
         }
 
@@ -245,26 +235,19 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
         @Override
         protected String doInBackground(Void... params) {
-            if(App.IsNetworkConnected())
-            {
-                try
-                {
+            if (App.IsNetworkConnected()) {
+                try {
                     JSONObject jsonAccount = Utils.GetJson(new WcfDataServiceUtility(context.getString(R.string.anime_data_service_path)).getEntity("Accounts").filter("Username%20eq%20%27" + username + "%27").expand("Roles").formatJson().build());
-                    JSONArray jsonRoles = jsonAccount.getJSONArray("value").getJSONObject(0).getJSONArray("Roles");
-                    for (int i = 0; i < jsonRoles.length(); i++)
-                    {
-                        roles.add(jsonRoles.getJSONObject(i).getInt("RoleId"));
-                    }
 
-                }
-                catch(Exception e)
-                {
+                    Gson gson = new Gson();
+                    Account account = gson.fromJson(jsonAccount.getJSONArray("value").getJSONObject(0), Account.class);
+                    //Set global current user
+                    CurrentUser.SetCurrentUser(account);
+                } catch (Exception e) {
                     return null;
                 }
 
-            }
-            else
-            {
+            } else {
                 return null;
             }
 
@@ -278,25 +261,19 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 if (result == null) {
                     //Failed to get the role
                     Toast.makeText(LoginActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    if (!Collections.disjoint(roles, premiumRoles))
-                    {
+                } else {
+                    if (!Collections.disjoint(CurrentUser.Roles, premiumRoles)) {
                         //is premium
                         prefs.edit().putBoolean("IsPro", true).apply();
                         App.isPro = true;
-                    }
-                    else
-                    {
+                    } else {
                         prefs.edit().putBoolean("IsPro", false).apply();
                         App.isPro = false;
                     }
 
                     Toast.makeText(LoginActivity.this, getString(R.string.login_successful), Toast.LENGTH_LONG).show();
-                    if(!shouldCloseOnly)
-                    {
-                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                    if (!shouldCloseOnly) {
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         AnimationManager.ActivityStart(LoginActivity.this);
                     }
                     finish();
@@ -309,6 +286,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         }
 
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

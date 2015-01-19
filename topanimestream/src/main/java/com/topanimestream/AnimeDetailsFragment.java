@@ -20,6 +20,7 @@ public class AnimeDetailsFragment extends Fragment {
     private TextView txtDescription;
     private TextView txtGenres;
     private RatingBar rtbRating;
+
     public AnimeDetailsFragment() {
         // Required empty public constructor
     }
@@ -43,9 +44,8 @@ public class AnimeDetailsFragment extends Fragment {
         return view;
     }
 
-    public void setAnime(Anime anime)
-    {
-        if(anime.getBackdropPath(null) != null)
+    public void setAnime(Anime anime) {
+        if (anime.getBackdropPath(null) != null)
             App.imageLoader.displayImage(anime.getBackdropPath("500"), imgBackdrop);
         else
             imgBackdrop.setVisibility(View.GONE);
@@ -53,7 +53,7 @@ public class AnimeDetailsFragment extends Fragment {
         txtTitle.setText(anime.getName());
         txtDescription.setText(anime.getDescription(getActivity()));
         txtGenres.setText(anime.getGenresFormatted());
-        if(anime.getRating() != null)
+        if (anime.getRating() != null)
             rtbRating.setRating((float) Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
 
     }

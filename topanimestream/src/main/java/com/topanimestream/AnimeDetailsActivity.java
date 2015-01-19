@@ -16,9 +16,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fwwjt.pacjz173199.AdView;
@@ -42,20 +46,22 @@ import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.AnimeInformation;
 import com.topanimestream.models.AnimeSource;
+import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Episode;
 import com.topanimestream.R;
+import com.topanimestream.models.Item;
 
-public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator{
-	private ListView listViewEpisodes;
-	private ArrayList<Episode> episodes;
-	public ArrayList<String> mItems;
-	private Dialog busyDialog;
-	private Anime anime;
+public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
+    private ListView listViewEpisodes;
+    private ArrayList<Episode> episodes;
+    public ArrayList<String> mItems;
+    private Dialog busyDialog;
+    private Anime anime;
     private LinearLayout layAnimeDetails;
-	private MenuItem menuMoreOptions;
-	private Resources r;
-	private SharedPreferences prefs;
-	private SQLiteHelper db;
+    private MenuItem menuMoreOptions;
+    private Resources r;
+    private SharedPreferences prefs;
+    private SQLiteHelper db;
     private EpisodesContainerFragment episodeContainerFragment;
     private MovieVkFragment movieVkFragment;
     private AlertDialog qualityDialog;
@@ -63,43 +69,41 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private MenuItem mediaRouteMenuItem;
     private LinearLayout layEpisodes;
     private MiniController mMini;
-    private boolean isFavorite;
-
+    private boolean isFavorite = false;
+    private int currentUserVote;
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		setTheme(R.style.Theme_Blue);
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_anime_details);
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Blue);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_anime_details);
         layAnimeDetails = (LinearLayout) findViewById(R.id.layAnimeDetails);
         layEpisodes = (LinearLayout) findViewById(R.id.layEpisodes);
-		r = getResources();
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		db = new SQLiteHelper(this);
-		mItems = new ArrayList<String>();
-		episodes = new ArrayList<Episode>();
+        r = getResources();
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        db = new SQLiteHelper(this);
+        mItems = new ArrayList<String>();
+        episodes = new ArrayList<Episode>();
 
-		Bundle bundle = getIntent().getExtras();
-		anime = bundle.getParcelable("Anime");
-		ActionBar actionBar = getSupportActionBar();
+        Bundle bundle = getIntent().getExtras();
+        anime = bundle.getParcelable("Anime");
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episodes_of) + " " + anime.getName() + "</font>"));
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episodes_of) + " " + anime.getName() + "</font>"));
 
-		if(anime == null || anime.getAnimeId() == 0)
-		{
-			Toast.makeText(this, r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
-			finish();
-		}
+        if (anime == null || anime.getAnimeId() == 0) {
+            Toast.makeText(this, r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
+            finish();
+        }
 
-        if(savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             anime = savedInstanceState.getParcelable("anime");
 
         }
-        if(App.isPro) {
+        if (App.isPro) {
 
-            AdView adView = (AdView)findViewById(R.id.adView);
-            ((ViewGroup)adView.getParent()).removeView(adView);
+            AdView adView = (AdView) findViewById(R.id.adView);
+            ((ViewGroup) adView.getParent()).removeView(adView);
             VideoCastManager.checkGooglePlaySevices(this);
 
             App.getCastManager(this);
@@ -115,26 +119,25 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
 
-        episodeContainerFragment = (EpisodesContainerFragment)fm.findFragmentByTag("episodeContainerFragment");
-            if(episodeContainerFragment == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.add(layEpisodes.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
-                ft.commit();
+        episodeContainerFragment = (EpisodesContainerFragment) fm.findFragmentByTag("episodeContainerFragment");
+        if (episodeContainerFragment == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(layEpisodes.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+            ft.commit();
         }
 
 
-        AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment)fm.findFragmentById(R.id.animeDetailsFragment);
-        if(animeDetailsFragment != null)
+        AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
+        if (animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
 
 
-	}
+    }
 
 
     @Override
     protected void onResume() {
-        if(App.isPro)
-        {
+        if (App.isPro) {
             App.getCastManager(this);
             if (null != App.mCastMgr) {
                 App.mCastMgr.addVideoCastConsumer(mCastConsumer);
@@ -146,8 +149,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
     @Override
     protected void onPause() {
-        if(App.isPro)
-        {
+        if (App.isPro) {
             App.mCastMgr.decrementUiCounter();
             App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
         }
@@ -176,56 +178,95 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     }
 
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.episodes, menu);
-        if(App.isPro)
-        {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.episodes, menu);
+        if (App.isPro) {
             mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
-		menuMoreOptions = menu.findItem(R.id.action_moreoptions);
+        menuMoreOptions = menu.findItem(R.id.action_moreoptions);
 
-        if(App.isGooglePlayVersion) {
+        if (App.isGooglePlayVersion) {
             if (db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
                 isFavorite = true;
             else
                 isFavorite = false;
-        }
-        else
-        {
+        } else {
             AsyncTaskTools.execute(new IsFavoriteTask());
         }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId())
-		{
-			case R.id.action_settings:
-			break;
-			case android.R.id.home:
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                break;
+            case android.R.id.home:
                 finish();
                 AnimationManager.ActivityFinish(this);
-			break;
+                break;
             case R.id.action_moreoptions:
-                CharSequence[] items = new CharSequence[]{isFavorite ? "Remove from favorites" : "Add to favorite", "Add Vote", "Reviews", "Recommandations"};
+                final Item[] items = {
+                        new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), R.drawable.ic_action_star_white),
+                        new Item(getString(R.string.add_vote), android.R.drawable.ic_menu_delete),
+                        new Item(getString(R.string.reviews), 0),
+                        new Item(getString(R.string.recommendations))//no icon for this one
+                };
 
-                if(items != null && items.length > 1) {
-                    final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AnimeDetailsActivity.this);
-                    alertBuilder.setTitle("Choose an option");
-                    final CharSequence[] finalItems = items;
-                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int item) {
+                ListAdapter adapter = new ArrayAdapter<Item>(
+                        this,
+                        android.R.layout.select_dialog_item,
+                        android.R.id.text1,
+                        items){
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        //User super class to create the View
+                        View v = super.getView(position, convertView, parent);
+                        TextView tv = (TextView)v.findViewById(android.R.id.text1);
 
-                        }
-                    });
-                    qualityDialog = alertBuilder.create();
-                    qualityDialog.show();
-                }
-            break;
+                        //Put the image on the TextView
+                        tv.setCompoundDrawablesWithIntrinsicBounds(items[position].icon, 0, 0, 0);
+
+                        //Add margin between image and text (support various screen densities)
+                        int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                        tv.setCompoundDrawablePadding(dp5);
+
+                        return v;
+                    }
+                };
+
+
+                new AlertDialog.Builder(AnimeDetailsActivity.this)
+                        .setTitle(getString(R.string.choose_option))
+                        .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                String selectedItem = items[item].toString();
+                                if (selectedItem.equals(getString(R.string.action_favorite)))
+                                {
+                                    AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
+                                }
+                                else if (selectedItem.equals(getString(R.string.remove_favorite)))
+                                {
+                                    AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
+                                }
+                                else if (selectedItem.equals(getString(R.string.add_vote)))
+                                {
+
+                                }
+                                else if (selectedItem.equals(getString(R.string.reviews)))
+                                {
+
+                                }
+                                else if (selectedItem.equals(getString(R.string.recommendations)))
+                                {
+
+                                }
+                            }
+                        }).show();
+
+                break;
             /*
-			case R.id.action_favorite:
+            case R.id.action_favorite:
                if(App.isGooglePlayVersion)
                {
                    //4 because it is spanish only
@@ -257,16 +298,19 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     }
 				}
 			break;*/
-		}
+        }
 
-		return true;
-	}
+        return true;
+    }
+
     private class RemoveFavoriteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private int animeId;
+
         public RemoveFavoriteTask(int animeId) {
             this.animeId = animeId;
         }
+
         private static final String NAMESPACE = "http://tempuri.org/";
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String URL;
@@ -280,28 +324,23 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected String doInBackground(Void... params) {
-            if(!App.IsNetworkConnected())
-            {
+            if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("animeId", animeId);
             envelope = Utils.addAuthentication(envelope);
-            envelope .dotNet = true;
+            envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
             SoapPrimitive result = null;
-            try
-            {
+            try {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive)envelope.getResponse();
+                result = (SoapPrimitive) envelope.getResponse();
                 return null;
-            }
-            catch (Exception e)
-            {
-                if(e instanceof SoapFault)
-                {
+            } catch (Exception e) {
+                if (e instanceof SoapFault) {
                     return e.getMessage();
                 }
 
@@ -313,23 +352,23 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         @Override
         protected void onPostExecute(String error) {
             Utils.dismissBusyDialog(busyDialog);
-            if(error != null)
-            {
+            if (error != null) {
                 Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-            }
-            else
-            {
+            } else {
                 isFavorite = false;
                 Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     private class AddFavoriteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private int animeId;
+
         public AddFavoriteTask(int animeId) {
             this.animeId = animeId;
         }
+
         private static final String NAMESPACE = "http://tempuri.org/";
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String URL;
@@ -343,28 +382,23 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected String doInBackground(Void... params) {
-            if(!App.IsNetworkConnected())
-            {
+            if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("animeId", animeId);
             envelope = Utils.addAuthentication(envelope);
-            envelope .dotNet = true;
+            envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
             SoapPrimitive result = null;
-            try
-            {
+            try {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive)envelope.getResponse();
+                result = (SoapPrimitive) envelope.getResponse();
                 return null;
-            }
-            catch (Exception e)
-            {
-                if(e instanceof SoapFault)
-                {
+            } catch (Exception e) {
+                if (e instanceof SoapFault) {
                     return e.getMessage();
                 }
 
@@ -376,80 +410,72 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         @Override
         protected void onPostExecute(String error) {
             Utils.dismissBusyDialog(busyDialog);
-            if(error != null)
-            {
+            if (error != null) {
                 Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-            }
-            else
-            {
+            } else {
                 isFavorite = true;
                 Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
-    private class IsFavoriteTask extends AsyncTask<Void, Void, String> {
-        private String url;
-        private String username;
-        private boolean isFavorite = false;
-        public IsFavoriteTask() {
+
+    private class AnimeDetailsTask extends AsyncTask<Void, Void, String> {
+        private String animeDetailsUrl;
+        private String userVoteUrl;
+
+        public AnimeDetailsTask() {
 
         }
 
         @Override
         protected void onPreExecute() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
-            username = prefs.getString("Username", null);
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Accounts").formatJson().expand("Favorites/Anime/AnimeSources").filter("Username%20eq%20%27" + username + "%27").select("Favorites").build();
-
+            animeDetailsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes(" + anime.getAnimeId() + ")").formatJson().expand("Reviews,Recommendations,Votes,Favorites").select("Votes,Recommendations,Reviews,Favorites").build();
         }
 
         @Override
         protected String doInBackground(Void... params) {
-            if(!App.IsNetworkConnected())
-            {
+            if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
 
-            try
-            {
-                if(username != null)
-                {
-                    JSONObject json = Utils.GetJson(url);
-                    if(!json.isNull("error"))
-                    {
-                        try {
-                            int error = json.getInt("error");
-                            if(error == 401)
-                            {
-                                return "401";
-                            }
-                        } catch (Exception e) {
-                            return getString(R.string.error_loading_anime_details);
-                        }
-                    }
-                    JSONArray jsonValue = json.getJSONArray("value");
-                    JSONArray jsonFavorites = jsonValue.getJSONObject(0).getJSONArray("Favorites");
-                    for(int i = 0; i < jsonFavorites.length(); i++)
-                    {
-                        Anime animeFavorite = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), AnimeDetailsActivity.this);
-                        for(AnimeSource animeSource : animeFavorite.getAnimeSources())
-                        {
-                            if(String.valueOf(animeSource.getLanguageId()).equals(prefs.getString("prefLanguage", "1")) && animeFavorite.getAnimeId() == anime.getAnimeId())
-                            {
-                                isFavorite = true;
-                            }
-                        }
+            try {
 
+                JSONObject json = Utils.GetJson(animeDetailsUrl);
+                if (!json.isNull("error")) {
+                    try {
+                        int error = json.getInt("error");
+                        if (error == 401) {
+                            return "401";
+                        }
+                    } catch (Exception e) {
+                        return getString(R.string.error_loading_anime_details);
                     }
-                    return null;
                 }
-                else
-                {
-                    return getString(R.string.error_loading_anime_details);
+
+                JSONArray jsonFavorites = json.getJSONArray("Favorites");
+                for (int i = 0; i < jsonFavorites.length(); i++) {
+                    JSONObject jsonFavorite = jsonFavorites.getJSONObject(i);
+                    if(jsonFavorite.getInt("AccountId") == CurrentUser.AccountId)
+                    {
+                        isFavorite = true;
+                        break;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
+
+                JSONArray jsonVotes = json.getJSONArray("Votes");
+                for (int i = 0; i < jsonVotes.length(); i++) {
+                    JSONObject jsonVote = jsonVotes.getJSONObject(i);
+                    if(jsonVote.getInt("AccountId") == CurrentUser.AccountId)
+                    {
+                        currentUserVote = jsonVote.getInt("Value");
+                        break;
+                    }
+                }
+
+                return null;
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return getString(R.string.error_loading_anime_details);
@@ -457,31 +483,21 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPostExecute(String error) {
-            if(error != null)
-            {
-                if(error.equals("401"))
-                {
+            if (error != null) {
+                if (error.equals("401")) {
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
                     AnimeDetailsActivity.this.startActivity(new Intent(AnimeDetailsActivity.this, LoginActivity.class));
                     AnimeDetailsActivity.this.finish();
-                }
-                else
-                {
+                } else {
                     Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
                     isFavorite = false;
                 }
             }
-            else
-            {
-                if(isFavorite)
-                    isFavorite = true;
-                else
-                    isFavorite = false;
-            }
         }
     }
-	@Override
-	public void onEpisodeSelected(final Episode episode, String type) {
+
+    @Override
+    public void onEpisodeSelected(final Episode episode, String type) {
         /*
         if(episode.getVks().size() > 0)
         {
@@ -501,19 +517,18 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
         else if(!App.isVkOnly)
         {*/
-            Intent intent = new Intent(this, EpisodeDetailsActivity.class);
-            intent.putExtra("Episode", episode);
-            intent.putExtra("Type", type);
-            //bug when episode + anime in the same bundle... still don't know why
-            Bundle hackBundle = new Bundle();
-            hackBundle.putParcelable("Anime", anime);
-            intent.putExtra("hackBundle", hackBundle);
-            startActivity(intent);
-            if(!App.isTablet)
-                AnimationManager.ActivityStart(this);
+        Intent intent = new Intent(this, EpisodeDetailsActivity.class);
+        intent.putExtra("Episode", episode);
+        intent.putExtra("Type", type);
+        //bug when episode + anime in the same bundle... still don't know why
+        Bundle hackBundle = new Bundle();
+        hackBundle.putParcelable("Anime", anime);
+        intent.putExtra("hackBundle", hackBundle);
+        startActivity(intent);
+        if (!App.isTablet)
+            AnimationManager.ActivityStart(this);
         //}
-	}
-
+    }
 
 
 }

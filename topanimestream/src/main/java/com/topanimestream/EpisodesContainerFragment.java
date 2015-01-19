@@ -34,29 +34,29 @@ import com.topanimestream.models.Mirror;
 import com.topanimestream.models.Vk;
 import com.topanimestream.R;
 
-public class EpisodesContainerFragment extends Fragment{
+public class EpisodesContainerFragment extends Fragment {
 
-	public boolean hasResults = false;
-	private ArrayList<Episode> subbedEpisodes;
+    public boolean hasResults = false;
+    private ArrayList<Episode> subbedEpisodes;
     private ArrayList<Episode> dubbedEpisodes;
-	private AlertDialog alertProviders;
-	private String[] tabTitles;
-	private ViewPager viewPager;
-	private PagerAdapter mAdapter;
-	private PagerSlidingTabStrip tabs;
-	private EpisodeListFragment subbedEpisodeFragment;
-	private EpisodeListFragment dubbedEpisodeFragment;
+    private AlertDialog alertProviders;
+    private String[] tabTitles;
+    private ViewPager viewPager;
+    private PagerAdapter mAdapter;
+    private PagerSlidingTabStrip tabs;
+    private EpisodeListFragment subbedEpisodeFragment;
+    private EpisodeListFragment dubbedEpisodeFragment;
     private ProviderListFragment subbedProviderFragment;
     private ProviderListFragment dubbedProviderFragment;
-	private ArrayList<Mirror> mirrors;
-	private Resources r;
+    private ArrayList<Mirror> mirrors;
+    private Resources r;
     private Anime anime;
     private ArrayList<Episode> episodes;
     private boolean subbed = false;
     private boolean dubbed = false;
-	App app;
-	public Dialog busyDialog;
-	private SharedPreferences prefs;
+    App app;
+    public Dialog busyDialog;
+    private SharedPreferences prefs;
 
     public static EpisodesContainerFragment newInstance(Anime anime) {
         EpisodesContainerFragment frag = new EpisodesContainerFragment();
@@ -65,64 +65,58 @@ public class EpisodesContainerFragment extends Fragment{
         frag.setArguments(args);
         return frag;
     }
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		app = (App)getActivity().getApplication();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        app = (App) getActivity().getApplication();
         anime = getArguments().getParcelable("anime");
 
-	}
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-		
+
     }
 
     @Override
     public void onResume() {
-    	super.onResume();
+        super.onResume();
     }
+
     @Override
     public void onPause() {
-    	super.onPause();
+        super.onPause();
     }
 
-	@Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final View rootView = inflater.inflate(R.layout.fragment_episodes, container, false);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-        {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
             rootView.setLayoutParams(params);
         }
         r = getResources();
-        viewPager = (ViewPager)rootView.findViewById(R.id.pager);
+        viewPager = (ViewPager) rootView.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
 
-        if(!anime.isMovie() && savedInstanceState == null)
+        if (!anime.isMovie() && savedInstanceState == null)
             AsyncTaskTools.execute(new EpisodesTask());
 
-        if(savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             subbed = savedInstanceState.getBoolean("subbed");
             dubbed = savedInstanceState.getBoolean("dubbed");
             createViewPager();
-        }
-        else if(anime.isMovie())
-        {
+        } else if (anime.isMovie()) {
             String language = prefs.getString("prefLanguage", "1");
-            for(AnimeSource animeSource: anime.getAnimeSources())
-            {
-                if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
-                {
+            for (AnimeSource animeSource : anime.getAnimeSources()) {
+                if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed()) {
                     subbed = true;
-                }
-                else if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
-                {
+                } else if (String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed()) {
                     dubbed = true;
                 }
             }
@@ -130,6 +124,7 @@ public class EpisodesContainerFragment extends Fragment{
         }
         return rootView;
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean("subbed", subbed);
@@ -139,134 +134,122 @@ public class EpisodesContainerFragment extends Fragment{
     }
 
     public class PagerAdapter extends FragmentPagerAdapter {
-		    public PagerAdapter(FragmentManager fm) {
-		        super(fm);
-		    }
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-		    @Override
-		    public Fragment getItem(int index) {
+        @Override
+        public Fragment getItem(int index) {
 
-                    switch(index)
-                    {
-                        //Subbed
-                        case 0:
-                            if(subbed)
-                            {
-                                return getSubbedPagerFragment();
-                            }
-                            else
-                            {
-                                return getDubbedPagerFragment();
-                            }
-                        //Dubbed
-                        case 1:
-                            return getDubbedPagerFragment();
-	
-		    	}
-		    	return null;
-		    }
-		    @Override
-	        public CharSequence getPageTitle(int position) {
-	            return tabTitles[position];
-	        }
-	
-		    @Override
-		    public int getCount() {
-		        return tabTitles.length;
-		    }
-		}
+            switch (index) {
+                //Subbed
+                case 0:
+                    if (subbed) {
+                        return getSubbedPagerFragment();
+                    } else {
+                        return getDubbedPagerFragment();
+                    }
+                    //Dubbed
+                case 1:
+                    return getDubbedPagerFragment();
+
+            }
+            return null;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+    }
 
     public interface ProviderFragmentCoordinator {
         void onEpisodeSelected(Episode episode, String type);
     }
-    private Fragment getSubbedPagerFragment()
-    {
+
+    private Fragment getSubbedPagerFragment() {
         String language = prefs.getString("prefLanguage", "1");
-        if(!anime.isMovie()) {
-            if(subbedEpisodeFragment == null)
+        if (!anime.isMovie()) {
+            if (subbedEpisodeFragment == null)
                 subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
             return subbedEpisodeFragment;
-        }
-        else
-        {
-            for(AnimeSource animeSource: anime.getAnimeSources())
-            {
-                if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed())
-                {
-                    if(subbedProviderFragment == null)
+        } else {
+            for (AnimeSource animeSource : anime.getAnimeSources()) {
+                if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed()) {
+                    if (subbedProviderFragment == null)
                         subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Subbed", anime);
                     return subbedProviderFragment;
                 }
             }
-            if(subbedProviderFragment == null)
+            if (subbedProviderFragment == null)
                 subbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Subbed", anime);
             return subbedProviderFragment;
 
         }
     }
-    private Fragment getDubbedPagerFragment()
-    {
+
+    private Fragment getDubbedPagerFragment() {
         String language = prefs.getString("prefLanguage", "1");
-        if(!anime.isMovie()) {
-            if(dubbedEpisodeFragment == null)
-                dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null),anime.getGenresFormatted(),String.valueOf(anime.getRating()));
+        if (!anime.isMovie()) {
+            if (dubbedEpisodeFragment == null)
+                dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
             return dubbedEpisodeFragment;
-        }
-        else
-        {
-            for(AnimeSource animeSource: anime.getAnimeSources())
-            {
-                if(String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed())
-                {
-                    if(dubbedProviderFragment == null)
+        } else {
+            for (AnimeSource animeSource : anime.getAnimeSources()) {
+                if (String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed()) {
+                    if (dubbedProviderFragment == null)
                         dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Dubbed", anime);
                     return dubbedProviderFragment;
                 }
             }
-            if(dubbedProviderFragment == null)
+            if (dubbedProviderFragment == null)
                 dubbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Dubbed", anime);
             return dubbedProviderFragment;
         }
     }
+
     private class EpisodesTask extends AsyncTask<Void, Void, String> {
 
-        public EpisodesTask()
-        {
+        public EpisodesTask() {
 
         }
 
         private String URL;
+
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             Utils.lockScreen(getActivity());
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
-            if(!App.isVkOnly)
+            if (!App.isVkOnly)
                 URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations,vks/AnimeSource").formatJson().build();
             else
                 URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20vks/any(vk:vk/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("EpisodeInformations,vks/AnimeSource").formatJson().build();
             episodes = new ArrayList<Episode>();
             subbedEpisodes = new ArrayList<Episode>();
             dubbedEpisodes = new ArrayList<Episode>();
-        };
+        }
+
+        ;
+
         @Override
-        protected String doInBackground(Void... params)
-        {
+        protected String doInBackground(Void... params) {
             JSONObject json = Utils.GetJson(URL);
-            if(!json.isNull("error"))
-            {
+            if (!json.isNull("error")) {
                 try {
                     int error = json.getInt("error");
-                    if(error == 401)
-                    {
+                    if (error == 401) {
                         return "401";
                     }
                 } catch (Exception e) {
                     return null;
                 }
             }
-            if(json == null)
-            {
+            if (json == null) {
                 return null;
             }
             JSONArray episodesArray = new JSONArray();
@@ -276,8 +259,7 @@ public class EpisodesContainerFragment extends Fragment{
             } catch (JSONException e) {
                 return null;
             }
-            for(int i = 0;i<episodesArray.length();i++)
-            {
+            for (int i = 0; i < episodesArray.length(); i++) {
                 JSONObject episodeJson;
                 try {
                     episodeJson = episodesArray.getJSONObject(i);
@@ -294,31 +276,26 @@ public class EpisodesContainerFragment extends Fragment{
         }
 
         @Override
-        protected void onPostExecute(String result)
-        {
+        protected void onPostExecute(String result) {
             try {
                 if (result == null) {
                     Toast.makeText(getActivity(), r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
-                }
-                else if(result.equals("401"))
-                {
+                } else if (result.equals("401")) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
                     getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
                     getActivity().finish();
-                }
-                else
-                {
+                } else {
                     if (episodes != null && episodes.size() > 0) {
 
                         for (Episode episode : episodes) {
-                            if(!App.isVkOnly) {
+                            if (!App.isVkOnly) {
                                 for (Mirror mirror : episode.getMirrors()) {
                                     if (!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                                       if(!dubbedEpisodes.contains(episode))
+                                        if (!dubbedEpisodes.contains(episode))
                                             dubbedEpisodes.add(episode);
 
                                     } else if (mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                                        if(!subbedEpisodes.contains(episode))
+                                        if (!subbedEpisodes.contains(episode))
                                             subbedEpisodes.add(episode);
                                     }
                                 }
@@ -326,9 +303,7 @@ public class EpisodesContainerFragment extends Fragment{
                                 //let's see if we have some source in vk
                                 if(!episodeAdded)
                                     getVkEpisode(episode);*/
-                            }
-                            else
-                            {
+                            } else {
                                 getVkEpisode(episode);
                             }
 
@@ -338,13 +313,13 @@ public class EpisodesContainerFragment extends Fragment{
                     dubbed = dubbedEpisodes.size() > 0;
                     createViewPager();
 
-                    if(subbedEpisodeFragment != null)
+                    if (subbedEpisodeFragment != null)
                         subbedEpisodeFragment.setEpisodes(subbedEpisodes);
-                    if(dubbedEpisodeFragment != null)
+                    if (dubbedEpisodeFragment != null)
                         dubbedEpisodeFragment.setEpisodes(dubbedEpisodes);
 
                 }
-            }catch(Exception e)//catch all exception, handle orientation change
+            } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
             }
@@ -353,8 +328,8 @@ public class EpisodesContainerFragment extends Fragment{
         }
 
     }
-    private void getVkEpisode(Episode episode)
-    {
+
+    private void getVkEpisode(Episode episode) {
         for (Vk vk : episode.getVks()) {
             if (!vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
                 dubbedEpisodes.add(episode);
@@ -363,15 +338,12 @@ public class EpisodesContainerFragment extends Fragment{
             }
         }
     }
-    private void createViewPager()
-    {
-        tabTitles = new String[] {r.getString(R.string.tab_subbed), r.getString(R.string.tab_dubbed)};
-        if(!dubbed)
-        {
+
+    private void createViewPager() {
+        tabTitles = new String[]{r.getString(R.string.tab_subbed), r.getString(R.string.tab_dubbed)};
+        if (!dubbed) {
             tabTitles = new String[]{getString(R.string.tab_subbed)};
-        }
-        else if(!subbed)
-        {
+        } else if (!subbed) {
             tabTitles = new String[]{getString(R.string.tab_dubbed)};
         }
 

@@ -32,7 +32,7 @@ import com.topanimestream.R;
 
 public class ProviderListFragment extends Fragment implements OnItemClickListener {
 
-	private Resources r;
+    private Resources r;
     App app;
     private ListView listView;
     private int animeSourceId;
@@ -44,17 +44,19 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     private Anime anime;
     private ArrayList<Mirror> filteredMirrors;
     private Dialog qualityDialog;
+
     @Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		app = (App)getActivity().getApplication();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        app = (App) getActivity().getApplication();
         animeSourceId = getArguments().getInt("animeSourceId");
         type = getArguments().getString("type");
         episode = getArguments().getParcelable("episode");
-        if(episode != null)
-          mirrors = episode.getMirrors();
+        if (episode != null)
+            mirrors = episode.getMirrors();
         anime = getArguments().getParcelable("anime");
-	}
+    }
+
     public static ProviderListFragment newInstance(int animeSourceId, Episode episode, String type, Anime anime) {
         ProviderListFragment frag = new ProviderListFragment();
 
@@ -67,6 +69,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
         return frag;
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -74,48 +77,43 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
     @Override
     public void onResume() {
-    	super.onResume();
-    }
-    @Override
-    public void onPause() {
-    	super.onPause();
+        super.onResume();
     }
 
-	@Override
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
         filteredMirrors = new ArrayList<Mirror>();
         txtNoProvider = (TextView) rootView.findViewById(R.id.txtNoProvider);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		listView = (ListView)rootView.findViewById(R.id.listView);
-		listView.setOnItemClickListener(this);
-		if(savedInstanceState != null)
-        {
+        listView = (ListView) rootView.findViewById(R.id.listView);
+        listView.setOnItemClickListener(this);
+        if (savedInstanceState != null) {
             mirrors = savedInstanceState.getParcelableArrayList("mirrors");
             episode = savedInstanceState.getParcelable("episode");
             filteredMirrors = mirrors;
             animeSourceId = savedInstanceState.getInt("animeSourceId");
             anime = savedInstanceState.getParcelable("anime");
-            if(filteredMirrors != null)
+            if (filteredMirrors != null)
                 listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
-            else
-            {
+            else {
                 txtNoProvider.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.GONE);
             }
-        }
-        else
-        {
-            if(animeSourceId != -1) //is a movie
+        } else {
+            if (animeSourceId != -1) //is a movie
             {
                 txtNoProvider.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
-                for(AnimeSource animeSource: anime.getAnimeSources())
-                {
+                for (AnimeSource animeSource : anime.getAnimeSources()) {
                     //we already know that this animesource correspond to the subbed/dubbed and language that we want (checked in EpisodesContainerFragment)
-                    if(animeSource.getAnimeSourceId() == animeSourceId)
-                    {
+                    if (animeSource.getAnimeSourceId() == animeSourceId) {
                         /*
                         if(animeSource.getVks().size() > 0)
                         {
@@ -130,38 +128,32 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                         }
                         else
                         {*/
-                            //We do not have anything in vk so we let the user choose the provider he wants
-                            AsyncTaskTools.execute(new LoadProvidersTask());
+                        //We do not have anything in vk so we let the user choose the provider he wants
+                        AsyncTaskTools.execute(new LoadProvidersTask());
                         //}
                     }
                 }
 
 
-
-
-            }
-            else if(mirrors != null && !mirrors.isEmpty())//is not a movie
+            } else if (mirrors != null && !mirrors.isEmpty())//is not a movie
             {
                 txtNoProvider.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
                 String language = prefs.getString("prefLanguage", "1");
-                for(Mirror mirror: mirrors)
-                {
-                    if(!String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(language))
+                for (Mirror mirror : mirrors) {
+                    if (!String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(language))
                         continue;
 
-                    if(type.equals("Subbed")) {
+                    if (type.equals("Subbed")) {
                         if (mirror.getAnimeSource().isSubbed())
                             filteredMirrors.add(mirror);
-                    }
-                    else {
+                    } else {
                         if (!mirror.getAnimeSource().isSubbed())
                             filteredMirrors.add(mirror);
                     }
                 }
                 listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
-            }
-            else//is a movie, but there's no provider in this tab
+            } else//is a movie, but there's no provider in this tab
             {
                 txtNoProvider.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.GONE);
@@ -172,9 +164,9 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if(animeSourceId != -1)
+        if (animeSourceId != -1)
             outState.putParcelableArrayList("mirrors", mirrors);
-        else if(mirrors != null && !mirrors.isEmpty())
+        else if (mirrors != null && !mirrors.isEmpty())
             outState.putParcelableArrayList("mirrors", filteredMirrors);
         else
             outState.putParcelableArrayList("mirrors", null);
@@ -185,28 +177,28 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         super.onSaveInstanceState(outState);
     }
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         Mp4Manager.getMp4(filteredMirrors.get(position), getActivity(), anime, episode);
-	}
+    }
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {
         private String URL;
         private Dialog busyDialog;
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntitySpecificRow("AnimeSources", animeSourceId,false).formatJson().expand("Mirrors/Provider").build();
-        };
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntitySpecificRow("AnimeSources", animeSourceId, false).formatJson().expand("Mirrors/Provider").build();
+        }
+
+        ;
+
         @Override
-        protected String doInBackground(Void... params)
-        {
+        protected String doInBackground(Void... params) {
 
             JSONObject json = Utils.GetJson(URL);
-            if(json == null)
-            {
+            if (json == null) {
                 return null;
             }
             JSONArray mirrorArray = new JSONArray();
@@ -216,8 +208,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             } catch (JSONException e) {
                 return null;
             }
-            for(int i = 0;i<mirrorArray.length();i++)
-            {
+            for (int i = 0; i < mirrorArray.length(); i++) {
                 try {
                     mirrors.add(new Mirror(mirrorArray.getJSONObject(i)));
                 } catch (Exception e) {
@@ -229,8 +220,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
         }
 
         @Override
-        protected void onPostExecute(String result)
-        {
+        protected void onPostExecute(String result) {
             try {
                 if (result == null) {
                     Toast.makeText(getActivity(), getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
@@ -240,7 +230,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                 }
 
                 Utils.dismissBusyDialog(busyDialog);
-            }catch(Exception e)//catch all exception, handle orientation change
+            } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
             }

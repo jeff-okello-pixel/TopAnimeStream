@@ -17,21 +17,16 @@ import com.topanimestream.R;
 public class LoadMoreListView extends ListView implements OnScrollListener {
 
 
-
     private static final String TAG = "LoadMoreListView";
 
 
-
     /**
-
      * Listener that will receive notifications every time the list scrolls.
-
      */
 
     private OnScrollListener mOnScrollListener;
 
     private LayoutInflater mInflater;
-
 
 
     // footer view
@@ -41,7 +36,6 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     // private TextView mLabLoadMore;
 
     private ProgressBar mProgressBarLoadMore;
-
 
 
     // Listener to process load more items when user reaches the end of the list
@@ -63,7 +57,6 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     public LoadMoreListView(Context context, AttributeSet attrs) {
 
         super(context, attrs);
@@ -71,7 +64,6 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
         init(context);
 
     }
-
 
 
     public LoadMoreListView(Context context, AttributeSet attrs, int defStyle) {
@@ -83,15 +75,12 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     private void init(Context context) {
-
 
 
         mInflater = (LayoutInflater) context
 
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
 
 
         // footer
@@ -113,15 +102,12 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
                 .findViewById(R.id.load_more_progressBar);
 
 
-
         addFooterView(mFooterView);
-
 
 
         super.setOnScrollListener(this);
 
     }
-
 
 
     @Override
@@ -133,19 +119,12 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     /**
-
      * Set the listener that will receive notifications every time the list
-
+     * <p/>
      * scrolls.
-
      *
-
-     * @param l
-
-     *            The scroll listener.
-
+     * @param l The scroll listener.
      */
 
     @Override
@@ -156,21 +135,13 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     /**
-
      * Register a callback to be invoked when this list reaches the end (last
-
+     * <p/>
      * item be visible)
-
      *
-
-     * @param onLoadMoreListener
-
-     *            The callback to run.
-
+     * @param onLoadMoreListener The callback to run.
      */
-
 
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
@@ -180,11 +151,9 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     public void onScroll(AbsListView view, int firstVisibleItem,
 
                          int visibleItemCount, int totalItemCount) {
-
 
 
         if (mOnScrollListener != null) {
@@ -196,9 +165,7 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
         }
 
 
-
         if (mOnLoadMoreListener != null) {
-
 
 
             if (visibleItemCount == totalItemCount) {
@@ -212,9 +179,7 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
             }
 
 
-
             boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount - 10;
-
 
 
             if (!mIsLoadingMore && loadMore
@@ -232,19 +197,15 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
             }
 
 
-
         }
-
 
 
     }
 
 
-
     public void onScrollStateChanged(AbsListView view, int scrollState) {
 
         mCurrentScrollState = scrollState;
-
 
 
         if (mOnScrollListener != null) {
@@ -254,9 +215,7 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
         }
 
 
-
     }
-
 
 
     public void onLoadMore() {
@@ -272,11 +231,8 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     /**
-
      * Notify the loading more operation has finished
-
      */
 
     public void onLoadMoreComplete() {
@@ -288,29 +244,23 @@ public class LoadMoreListView extends ListView implements OnScrollListener {
     }
 
 
-
     /**
-
      * Interface definition for a callback to be invoked when list reaches the
-
+     * <p/>
      * last item (the user load more items in the list)
-
      */
 
     public interface OnLoadMoreListener {
 
         /**
-
          * Called when the list reaches the last item (the last item is visible
-
+         * <p/>
          * to the user)
-
          */
 
         public void onLoadMore();
 
     }
-
 
 
 }

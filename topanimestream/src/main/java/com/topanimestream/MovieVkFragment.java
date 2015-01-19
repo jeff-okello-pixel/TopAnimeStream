@@ -34,6 +34,7 @@ public class MovieVkFragment extends Fragment implements View.OnClickListener {
         fragment.setArguments(args);
         return fragment;
     }
+
     public MovieVkFragment() {
 
     }
@@ -56,20 +57,18 @@ public class MovieVkFragment extends Fragment implements View.OnClickListener {
         btnSubbed.setOnClickListener(this);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String language = prefs.getString("prefLanguage", "1");
-        for(AnimeSource animeSource: anime.getAnimeSources())
-        {
-            if(String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.getVks().size() > 0)
-            {
-                if(animeSource.isSubbed())
+        for (AnimeSource animeSource : anime.getAnimeSources()) {
+            if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.getVks().size() > 0) {
+                if (animeSource.isSubbed())
                     subbedAnimeSource = animeSource;
                 else
                     dubbedAnimeSource = animeSource;
             }
         }
-        if(subbedAnimeSource == null)
+        if (subbedAnimeSource == null)
             btnSubbed.setVisibility(View.GONE);
 
-        if(dubbedAnimeSource == null)
+        if (dubbedAnimeSource == null)
             btnDubbed.setVisibility(View.GONE);
 
         return view;
@@ -78,8 +77,7 @@ public class MovieVkFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch(view.getId())
-        {
+        switch (view.getId()) {
             case R.id.btnDubbed:
                 ShowQualityDialog(false);
                 break;
@@ -89,10 +87,9 @@ public class MovieVkFragment extends Fragment implements View.OnClickListener {
 
         }
     }
-    
-    private void ShowQualityDialog(final boolean isSubbed)
-    {
-        final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240" };
+
+    private void ShowQualityDialog(final boolean isSubbed) {
+        final CharSequence[] items = new CharSequence[]{"720", "480", "360", "240"};
 
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
         alertBuilder.setTitle(getString(R.string.choose_quality));

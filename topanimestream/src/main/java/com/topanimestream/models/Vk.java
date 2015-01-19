@@ -17,10 +17,10 @@ public class Vk implements Parcelable {
 
     public Vk() {
     }
-    public Vk(JSONObject jsonVk)
-    {
+
+    public Vk(JSONObject jsonVk) {
         try {
-            if(!jsonVk.isNull("AnimeSource"))
+            if (!jsonVk.isNull("AnimeSource"))
                 this.AnimeSource = new com.topanimestream.models.AnimeSource(jsonVk.getJSONObject("AnimeSource"));
             this.VkId = !jsonVk.isNull("Id") ? jsonVk.getInt("Id") : 0;
             this.AnimeSourceId = !jsonVk.isNull("AnimeSourceId") ? jsonVk.getInt("AnimeSourceId") : 0;
@@ -33,6 +33,7 @@ public class Vk implements Parcelable {
             e.printStackTrace();
         }
     }
+
     public Vk(Parcel in) {
         AnimeSource = (com.topanimestream.models.AnimeSource) in.readParcelable(com.topanimestream.models.AnimeSource.class.getClassLoader());
         VkId = in.readInt();
@@ -42,6 +43,7 @@ public class Vk implements Parcelable {
         EpisodeId = in.readInt();
         AddedDate = in.readString();
     }
+
     public Vk(com.topanimestream.models.AnimeSource animeSource, int vkId, int animeSourceId, String quality, String source, int episodeId, String addedDate) {
         AnimeSource = animeSource;
         VkId = vkId;
@@ -112,6 +114,7 @@ public class Vk implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(AnimeSource, flags);
         dest.writeInt(VkId);
@@ -122,17 +125,14 @@ public class Vk implements Parcelable {
         dest.writeString(AddedDate);
 
 
-
     }
 
-    public static final Creator<Vk> CREATOR = new Creator<Vk>()
-    {
-        public Vk createFromParcel(Parcel in)
-        {
+    public static final Creator<Vk> CREATOR = new Creator<Vk>() {
+        public Vk createFromParcel(Parcel in) {
             return new Vk(in);
         }
-        public Vk[] newArray(int size)
-        {
+
+        public Vk[] newArray(int size) {
             return new Vk[size];
         }
     };

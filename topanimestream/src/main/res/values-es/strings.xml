@@ -216,4 +216,7 @@
     <string name="recently_added">Recientemente añadido</string>
     <string name="most_popular">Más popular</string>
     <string name="less_popular">Menos popular</string>
+    <string name="add_vote">Add Vote</string>
+    <string name="reviews">Reviews</string>
+    <string name="recommendations">Recommendations</string>
 </resources>
