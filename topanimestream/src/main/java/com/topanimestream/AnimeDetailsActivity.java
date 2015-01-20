@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fwwjt.pacjz173199.AdView;
+import com.google.gson.Gson;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.google.sample.castcompanionlibrary.widgets.MiniController;
@@ -50,6 +51,7 @@ import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Episode;
 import com.topanimestream.R;
 import com.topanimestream.models.Item;
+import com.topanimestream.models.Vote;
 
 public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
     private ListView listViewEpisodes;
@@ -70,7 +72,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private LinearLayout layEpisodes;
     private MiniController mMini;
     private boolean isFavorite = false;
-    private int currentUserVote;
+    private Vote currentUserVote;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -185,15 +187,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
         menuMoreOptions = menu.findItem(R.id.action_moreoptions);
 
-        if (App.isGooglePlayVersion) {
-            if (db.isFavorite(anime.getAnimeId(), prefs.getString("prefLanguage", "1")))
-                isFavorite = true;
-            else
-                isFavorite = false;
-        } else {
-            AsyncTaskTools.execute(new IsFavoriteTask());
-        }
-
         return true;
     }
 
@@ -211,7 +204,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                         new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), R.drawable.ic_action_star_white),
                         new Item(getString(R.string.add_vote), android.R.drawable.ic_menu_delete),
                         new Item(getString(R.string.reviews), 0),
-                        new Item(getString(R.string.recommendations))//no icon for this one
+                        new Item(getString(R.string.recommendations), 0)//no icon for this one
                 };
 
                 ListAdapter adapter = new ArrayAdapter<Item>(
@@ -420,9 +413,27 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     }
 
     private class AnimeDetailsTask extends AsyncTask<Void, Void, String> {
-        private String animeDetailsUrl;
+        private String isFavoriteUrl;
+        private String reviewsUrl;
+        private String recommendationsUrl;
         private String userVoteUrl;
+        private String checkServiceErrors(JSONObject json)
+        {
+            try {
+                if (!json.isNull("error")) {
 
+                        int error = json.getInt("error");
+                        if (error == 401) {
+                            return "401";
+                        }
+                    }
+                }
+            catch (Exception e) {
+                return getString(R.string.error_loading_anime_details);
+            }
+
+            return null;
+        }
         public AnimeDetailsTask() {
 
         }
@@ -430,7 +441,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         @Override
         protected void onPreExecute() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
-            animeDetailsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes(" + anime.getAnimeId() + ")").formatJson().expand("Reviews,Recommendations,Votes,Favorites").select("Votes,Recommendations,Reviews,Favorites").build();
+            isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20%27" + CurrentUser.AccountId + "%27%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            recommendationsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AnimeId%20eq%20" + anime.getAnimeId()).build();
+            reviewsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AnimeId%20eq%20" + anime.getAnimeId()).build();
         }
 
         @Override
@@ -441,36 +455,24 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
             try {
 
-                JSONObject json = Utils.GetJson(animeDetailsUrl);
-                if (!json.isNull("error")) {
-                    try {
-                        int error = json.getInt("error");
-                        if (error == 401) {
-                            return "401";
-                        }
-                    } catch (Exception e) {
-                        return getString(R.string.error_loading_anime_details);
-                    }
-                }
+                JSONObject jsonFavorite = Utils.GetJson(isFavoriteUrl);
+                String errors = checkServiceErrors(jsonFavorite);
+                if(errors != null)
+                    return errors;
 
-                JSONArray jsonFavorites = json.getJSONArray("Favorites");
-                for (int i = 0; i < jsonFavorites.length(); i++) {
-                    JSONObject jsonFavorite = jsonFavorites.getJSONObject(i);
-                    if(jsonFavorite.getInt("AccountId") == CurrentUser.AccountId)
-                    {
-                        isFavorite = true;
-                        break;
-                    }
-                }
+                if(jsonFavorite.getJSONArray("value").length() > 0)
+                    isFavorite = true;
+                else
+                    isFavorite = false;
 
-                JSONArray jsonVotes = json.getJSONArray("Votes");
-                for (int i = 0; i < jsonVotes.length(); i++) {
-                    JSONObject jsonVote = jsonVotes.getJSONObject(i);
-                    if(jsonVote.getInt("AccountId") == CurrentUser.AccountId)
-                    {
-                        currentUserVote = jsonVote.getInt("Value");
-                        break;
-                    }
+                JSONObject jsonVote = Utils.GetJson(userVoteUrl);
+                errors = checkServiceErrors(jsonFavorite);
+                if(errors != null)
+                    return errors;
+                if(jsonVote.getJSONArray("value").length() > 0)
+                {
+                    Gson gson = new Gson();
+                    currentUserVote = gson.fromJson(jsonVote.getJSONArray("value").getJSONObject(0).toString(), Vote.class);
                 }
 
                 return null;
