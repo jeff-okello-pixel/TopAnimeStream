@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/current_anime_rating"/>
+
+        <RatingBar
+            android:id="@+id/rtbCurrentRating"
+            android:focusable="false"
+            android:layout_marginBottom="10dp"
+            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:numStars="5"
+            android:isIndicator="true"
+            style="@style/RatingBar"  />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/your_rating"/>
+
+        <RatingBar
+            android:id="@+id/rtbUserRating"
+            android:focusable="true"
+            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:numStars="5"
+            android:isIndicator="false"
+            style="@style/RatingBar"
+            android:layout_marginBottom="10dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/button_gray"
+            android:textColor="#ffffff"
+            android:id="@+id/btnCancel"
+            android:text="@string/cancel" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:background="@drawable/button_green"
+            android:id="@+id/btnSave"
+            android:text="@string/save"/>
+
+    </LinearLayout>
+</LinearLayout>

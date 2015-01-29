@@ -19,9 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,8 @@ import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Episode;
 import com.topanimestream.R;
 import com.topanimestream.models.Item;
+import com.topanimestream.models.Recommendation;
+import com.topanimestream.models.Review;
 import com.topanimestream.models.Vote;
 
 public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
@@ -73,6 +77,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private MiniController mMini;
     private boolean isFavorite = false;
     private Vote currentUserVote;
+    private Review currentUserReview;
+    private Recommendation currentUserRecommendation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -201,10 +207,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 break;
             case R.id.action_moreoptions:
                 final Item[] items = {
-                        new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), R.drawable.ic_action_star_white),
-                        new Item(getString(R.string.add_vote), android.R.drawable.ic_menu_delete),
-                        new Item(getString(R.string.reviews), 0),
-                        new Item(getString(R.string.recommendations), 0)//no icon for this one
+                        new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), isFavorite ? R.drawable.ic_action_star : R.drawable.ic_action_star_empty),
+                        new Item(getString(R.string.add_vote), R.drawable.ic_vote),
+                        new Item(getString(R.string.reviews), R.drawable.ic_review),
+                        new Item(getString(R.string.recommendations), R.drawable.ic_recommendation)
                 };
 
                 ListAdapter adapter = new ArrayAdapter<Item>(
@@ -244,7 +250,33 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                 }
                                 else if (selectedItem.equals(getString(R.string.add_vote)))
                                 {
+                                    final Dialog dialogVote = new Dialog(AnimeDetailsActivity.this);
+                                    dialogVote.setContentView(R.layout.vote_dialog);
 
+                                    RatingBar rtbCurrentRating = (RatingBar) dialogVote.findViewById(R.id.rtbCurrentRating);
+                                    RatingBar rtbUserRating = (RatingBar) dialogVote.findViewById(R.id.rtbUserRating);
+                                    Button btnCancel = (Button) dialogVote.findViewById(R.id.btnCancel);
+                                    Button btnSave = (Button) dialogVote.findViewById(R.id.btnSave);
+
+                                    if (anime.getRating() != null)
+                                        rtbCurrentRating.setRating((float) Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
+
+                                    if(currentUserVote != null)
+                                        rtbUserRating.setRating(currentUserVote.getValue() / 2);
+
+                                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            dialogVote.dismiss();
+                                        }
+                                    });
+
+                                    btnSave.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            //TODO save vote
+                                        }
+                                    });
                                 }
                                 else if (selectedItem.equals(getString(R.string.reviews)))
                                 {
@@ -414,8 +446,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
     private class AnimeDetailsTask extends AsyncTask<Void, Void, String> {
         private String isFavoriteUrl;
-        private String reviewsUrl;
-        private String recommendationsUrl;
+        private String userReviewUrl;
+        private String userRecommendationUrl;
         private String userVoteUrl;
         private String checkServiceErrors(JSONObject json)
         {
@@ -443,8 +475,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
             isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20%27" + CurrentUser.AccountId + "%27%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            recommendationsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AnimeId%20eq%20" + anime.getAnimeId()).build();
-            reviewsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
         }
 
         @Override
@@ -465,14 +497,32 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 else
                     isFavorite = false;
 
+                Gson gson = new Gson();
                 JSONObject jsonVote = Utils.GetJson(userVoteUrl);
                 errors = checkServiceErrors(jsonFavorite);
                 if(errors != null)
                     return errors;
                 if(jsonVote.getJSONArray("value").length() > 0)
                 {
-                    Gson gson = new Gson();
                     currentUserVote = gson.fromJson(jsonVote.getJSONArray("value").getJSONObject(0).toString(), Vote.class);
+                }
+
+                JSONObject jsonReview = Utils.GetJson(userReviewUrl);
+                errors = checkServiceErrors(jsonReviews);
+                if(errors != null)
+                    return errors;
+                if(jsonReview.getJSONArray("value").length() > 0)
+                {
+                    currentUserReview = gson.fromJson(jsonReview.getJSONArray("value").getJSONObject(0).toString(), Review.class);
+                }
+
+                JSONObject jsonRecommendation = Utils.GetJson(userRecommendationUrl);
+                errors = checkServiceErrors(jsonRecommendation);
+                if(errors != null)
+                    return errors;
+                if(jsonRecommendation.getJSONArray("value").length() > 0)
+                {
+                    currentUserRecommendation = gson.fromJson(jsonRecommendation.getJSONArray("value").getJSONObject(0).toString(), Recommendation.class);
                 }
 
                 return null;

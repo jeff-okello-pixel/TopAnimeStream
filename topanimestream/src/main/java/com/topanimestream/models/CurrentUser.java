@@ -6,15 +6,15 @@ final public class CurrentUser {
     public static int AccountId;
     public static String Username;
     public static String ProfilePic;
-    public static String AddedDate;
-    public static String LastUpdatedDate;
-    public static String About;
-    public static boolean IsDisabled;
-    public static boolean IsBanned;
-    public static String BannedReason;
-    public static String LastLoginDate;
-    public static String LastActivityDate;
-    public static ArrayList<Role> Roles;
+        public static String AddedDate;
+        public static String LastUpdatedDate;
+        public static String About;
+        public static boolean IsDisabled;
+        public static boolean IsBanned;
+        public static String BannedReason;
+        public static String LastLoginDate;
+        public static String LastActivityDate;
+        public static ArrayList<Role> Roles;
     public static void SetCurrentUser(Account account)
     {
 

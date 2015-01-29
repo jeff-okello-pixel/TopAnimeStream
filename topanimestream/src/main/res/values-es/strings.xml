@@ -219,4 +219,7 @@
     <string name="add_vote">Add Vote</string>
     <string name="reviews">Reviews</string>
     <string name="recommendations">Recommendations</string>
+    <string name="current_anime_rating">Current anime rating</string>
+    <string name="your_rating">Your rating</string>
+    <string name="save">Save</string>
 </resources>
