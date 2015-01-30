@@ -42,6 +42,7 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 import com.topanimestream.managers.AnimationManager;
@@ -100,7 +101,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episodes_of) + " " + anime.getName() + "</font>"));
 
         if (anime == null || anime.getAnimeId() == 0) {
-            Toast.makeText(this, r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, r.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -138,6 +139,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
         if (animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
+
+
+        AsyncTaskTools.execute(new AnimeDetailsTask());
 
 
     }
@@ -254,8 +258,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                     dialogVote.setContentView(R.layout.vote_dialog);
 
                                     RatingBar rtbCurrentRating = (RatingBar) dialogVote.findViewById(R.id.rtbCurrentRating);
-                                    RatingBar rtbUserRating = (RatingBar) dialogVote.findViewById(R.id.rtbUserRating);
+                                    final RatingBar rtbUserRating = (RatingBar) dialogVote.findViewById(R.id.rtbUserRating);
                                     Button btnCancel = (Button) dialogVote.findViewById(R.id.btnCancel);
+                                    Button btnRemoveVote = (Button) dialogVote.findViewById(R.id.btnRemoveVote);
                                     Button btnSave = (Button) dialogVote.findViewById(R.id.btnSave);
 
                                     if (anime.getRating() != null)
@@ -271,12 +276,21 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                         }
                                     });
 
+                                    btnRemoveVote.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            AsyncTaskTools.execute(new RemoveVoteTask());
+                                        }
+                                    });
+
                                     btnSave.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            //TODO save vote
+                                            AsyncTaskTools.execute(new VoteTask((int)(rtbUserRating.getRating() * 2)));
                                         }
                                     });
+
+                                    dialogVote.show();
                                 }
                                 else if (selectedItem.equals(getString(R.string.reviews)))
                                 {
@@ -290,44 +304,126 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                         }).show();
 
                 break;
-            /*
-            case R.id.action_favorite:
-               if(App.isGooglePlayVersion)
-               {
-                   //4 because it is spanish only
-                    if(db.isFavorite(anime.getAnimeId(), "4")) {
-                        menuFavorite.setIcon(R.drawable.ic_not_favorite);
-                        db.removeFavorite(anime.getAnimeId());
-                        Toast.makeText(this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
-                    }else
-                    {
-                        menuFavorite.setIcon(R.drawable.ic_favorite);
-                        AnimeInformation info = anime.getAnimeInformation(this);
-                        String description = "";
-                        if(info != null)
-                        {
-                            description = info.getOverview() != null && !info.getOverview().equals("") ? info.getOverview() : info.getDescription();
-                        }
-                        db.addFavorite(anime.getAnimeId(), anime.getName(), anime.getRelativePosterPath(null), anime.getGenresFormatted(), description, String.valueOf(anime.getRating()), anime.getRelativeBackdropPath(null), 4);
-                        Toast.makeText(this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
-                    }
-                }
-				else
-				{
-                    if(menuFavorite.getIcon().getConstantState().equals(getResources().getDrawable(R.drawable.ic_favorite).getConstantState())) {
-                        AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
-                    }
-                    else
-                    {
-                        AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
-                    }
-				}
-			break;*/
         }
 
         return true;
     }
+    private class RemoveVoteTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        @Override
+        protected void onPreExecute() {
+            busyDialog = Utils.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
 
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if (!App.IsNetworkConnected()) {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("animeId", anime.getAnimeId());
+            envelope = Utils.addAuthentication(envelope);
+            envelope.dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive) envelope.getResponse();
+                return null;
+            } catch (Exception e) {
+                if (e instanceof SoapFault) {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+
+            return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (result == null) {
+                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_removing_vote), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_removed), Toast.LENGTH_LONG).show();
+                }
+
+                Utils.dismissBusyDialog(busyDialog);
+            } catch (Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
+            }
+
+
+        }
+
+    }
+    private class VoteTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        private int userVote;
+        public VoteTask(int UserVote)
+        {
+            userVote = UserVote;
+        }
+        @Override
+        protected void onPreExecute() {
+            busyDialog = Utils.showBusyDialog("Adding your vote...", AnimeDetailsActivity.this);
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if (!App.IsNetworkConnected()) {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("animeId", anime.getAnimeId());
+            request.addProperty("value", userVote);
+            envelope = Utils.addAuthentication(envelope);
+            envelope.dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive) envelope.getResponse();
+                return null;
+            } catch (Exception e) {
+                if (e instanceof SoapFault) {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+
+            return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (result == null) {
+                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_adding_vote), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_added), Toast.LENGTH_LONG).show();
+                }
+
+                Utils.dismissBusyDialog(busyDialog);
+            } catch (Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
+            }
+
+
+        }
+
+    }
     private class RemoveFavoriteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private int animeId;
@@ -385,7 +481,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             }
         }
     }
-
     private class AddFavoriteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private int animeId;
@@ -443,12 +538,12 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             }
         }
     }
-
     private class AnimeDetailsTask extends AsyncTask<Void, Void, String> {
         private String isFavoriteUrl;
         private String userReviewUrl;
         private String userRecommendationUrl;
         private String userVoteUrl;
+        private Dialog busyDialog;
         private String checkServiceErrors(JSONObject json)
         {
             try {
@@ -466,12 +561,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
             return null;
         }
-        public AnimeDetailsTask() {
-
-        }
 
         @Override
         protected void onPreExecute() {
+            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
             isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20%27" + CurrentUser.AccountId + "%27%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
@@ -545,6 +638,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     isFavorite = false;
                 }
             }
+            Utils.dismissBusyDialog(busyDialog);
         }
     }
 

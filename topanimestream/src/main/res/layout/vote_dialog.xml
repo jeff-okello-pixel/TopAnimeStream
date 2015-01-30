@@ -49,12 +49,19 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:background="@drawable/button_gray"
             android:textColor="#ffffff"
             android:id="@+id/btnCancel"
             android:text="@string/cancel" />
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:background="@drawable/button_blue"
+            android:id="@+id/btnRemoveVote"
+            android:text="@string/remove_your_vote"/>
         <Button
             android:layout_width="match_parent"
             android:layout_weight="1"

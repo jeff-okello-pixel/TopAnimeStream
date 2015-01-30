@@ -230,4 +230,10 @@
     <string name="current_anime_rating">Current anime rating</string>
     <string name="your_rating">Your rating</string>
     <string name="save">Save</string>
+    <string name="remove_your_vote">Remove your vote</string>
+    <string name="error_adding_vote">An error has occurred while adding your vote</string>
+    <string name="vote_added">Your vote has been added</string>
+    <string name="removing_vote">Removing your vote...</string>
+    <string name="error_removing_vote">An error has occurred while removing your vote</string>
+    <string name="vote_removed">Your vote has been removed</string>
 </resources>
