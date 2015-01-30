@@ -508,7 +508,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 }
 
                 JSONObject jsonReview = Utils.GetJson(userReviewUrl);
-                errors = checkServiceErrors(jsonReviews);
+                errors = checkServiceErrors(jsonReview);
                 if(errors != null)
                     return errors;
                 if(jsonReview.getJSONArray("value").length() > 0)

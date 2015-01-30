@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 
+import com.google.gson.Gson;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.R;
@@ -240,7 +241,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                     JSONObject jsonAccount = Utils.GetJson(new WcfDataServiceUtility(context.getString(R.string.anime_data_service_path)).getEntity("Accounts").filter("Username%20eq%20%27" + username + "%27").expand("Roles").formatJson().build());
 
                     Gson gson = new Gson();
-                    Account account = gson.fromJson(jsonAccount.getJSONArray("value").getJSONObject(0), Account.class);
+                    Account account = gson.fromJson(jsonAccount.getJSONArray("value").getJSONObject(0).toString(), Account.class);
                     //Set global current user
                     CurrentUser.SetCurrentUser(account);
                 } catch (Exception e) {
