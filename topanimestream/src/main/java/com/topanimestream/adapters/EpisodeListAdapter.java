@@ -118,10 +118,13 @@ public class EpisodeListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public Episode getItem(int position) {
+        return values.get(position);
     }
-
+    public ArrayList<Episode> getAllEpisodes()
+    {
+        return values;
+    }
     @Override
     public long getItemId(int position) {
         return 0;

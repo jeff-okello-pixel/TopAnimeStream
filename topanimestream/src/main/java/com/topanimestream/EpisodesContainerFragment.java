@@ -104,9 +104,6 @@ public class EpisodesContainerFragment extends Fragment {
         viewPager = (ViewPager) rootView.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
 
-        if (!anime.isMovie() && savedInstanceState == null)
-            AsyncTaskTools.execute(new EpisodesTask());
-
         if (savedInstanceState != null) {
             subbed = savedInstanceState.getBoolean("subbed");
             dubbed = savedInstanceState.getBoolean("dubbed");
@@ -120,6 +117,10 @@ public class EpisodesContainerFragment extends Fragment {
                     dubbed = true;
                 }
             }
+            createViewPager();
+        }
+        else
+        {
             createViewPager();
         }
         return rootView;
@@ -210,132 +211,6 @@ public class EpisodesContainerFragment extends Fragment {
             if (dubbedProviderFragment == null)
                 dubbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Dubbed", anime);
             return dubbedProviderFragment;
-        }
-    }
-
-    private class EpisodesTask extends AsyncTask<Void, Void, String> {
-
-        public EpisodesTask() {
-
-        }
-
-        private String URL;
-
-        @Override
-        protected void onPreExecute() {
-            Utils.lockScreen(getActivity());
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
-            if (!App.isVkOnly)
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations,vks/AnimeSource").formatJson().build();
-            else
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20vks/any(vk:vk/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("EpisodeInformations,vks/AnimeSource").formatJson().build();
-            episodes = new ArrayList<Episode>();
-            subbedEpisodes = new ArrayList<Episode>();
-            dubbedEpisodes = new ArrayList<Episode>();
-        }
-
-        ;
-
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONObject json = Utils.GetJson(URL);
-            if (!json.isNull("error")) {
-                try {
-                    int error = json.getInt("error");
-                    if (error == 401) {
-                        return "401";
-                    }
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-            if (json == null) {
-                return null;
-            }
-            JSONArray episodesArray = new JSONArray();
-
-            try {
-                episodesArray = json.getJSONArray("value");
-            } catch (JSONException e) {
-                return null;
-            }
-            for (int i = 0; i < episodesArray.length(); i++) {
-                JSONObject episodeJson;
-                try {
-                    episodeJson = episodesArray.getJSONObject(i);
-                    Episode episode = new Episode(episodeJson, getActivity());
-
-                    episodes.add(episode);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-
-            }
-            return "Success";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result == null) {
-                    Toast.makeText(getActivity(), r.getString(R.string.error_loading_episodes), Toast.LENGTH_LONG).show();
-                } else if (result.equals("401")) {
-                    Toast.makeText(getActivity(), getActivity().getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                    getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
-                    getActivity().finish();
-                } else {
-                    if (episodes != null && episodes.size() > 0) {
-
-                        for (Episode episode : episodes) {
-                            if (!App.isVkOnly) {
-                                for (Mirror mirror : episode.getMirrors()) {
-                                    if (!mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                                        if (!dubbedEpisodes.contains(episode))
-                                            dubbedEpisodes.add(episode);
-
-                                    } else if (mirror.getAnimeSource().isSubbed() && String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                                        if (!subbedEpisodes.contains(episode))
-                                            subbedEpisodes.add(episode);
-                                    }
-                                }
-                                /*
-                                //let's see if we have some source in vk
-                                if(!episodeAdded)
-                                    getVkEpisode(episode);*/
-                            } else {
-                                getVkEpisode(episode);
-                            }
-
-                        }
-                    }
-                    subbed = subbedEpisodes.size() > 0;
-                    dubbed = dubbedEpisodes.size() > 0;
-                    createViewPager();
-
-                    if (subbedEpisodeFragment != null)
-                        subbedEpisodeFragment.setEpisodes(subbedEpisodes);
-                    if (dubbedEpisodeFragment != null)
-                        dubbedEpisodeFragment.setEpisodes(dubbedEpisodes);
-
-                }
-            } catch (Exception e)//catch all exception, handle orientation change
-            {
-                e.printStackTrace();
-            }
-            Utils.dismissBusyDialog(busyDialog);
-            Utils.unlockScreen(getActivity());
-        }
-
-    }
-
-    private void getVkEpisode(Episode episode) {
-        for (Vk vk : episode.getVks()) {
-            if (!vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                dubbedEpisodes.add(episode);
-            } else if (vk.getAnimeSource().isSubbed() && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                subbedEpisodes.add(episode);
-            }
         }
     }
 

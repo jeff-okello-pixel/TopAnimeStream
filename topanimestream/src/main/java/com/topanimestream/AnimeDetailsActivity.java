@@ -310,10 +310,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     }
     private class RemoveVoteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String method = "RemoveVote";
+        private String URL;
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
-
+            URL = getString(R.string.anime_service_path);
         }
 
         @Override
@@ -370,10 +374,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         {
             userVote = UserVote;
         }
+        private String URL;
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String method = "Vote";
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog("Adding your vote...", AnimeDetailsActivity.this);
-
+            URL = getString(R.string.anime_service_path);
         }
 
         @Override
@@ -566,7 +574,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
-            isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20%27" + CurrentUser.AccountId + "%27%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();

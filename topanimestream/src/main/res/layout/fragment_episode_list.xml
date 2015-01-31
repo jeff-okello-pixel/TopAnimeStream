@@ -11,9 +11,19 @@
     		android:text="@string/no_episodes"
         	android:layout_width="wrap_content" 
 		    android:layout_height="wrap_content" />
-           	<ListView
-		    android:layout_width="fill_parent" 
-		    android:layout_height="fill_parent" 
+        <ProgressBar
+            android:id="@+id/progressBarLoadMore"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            android:padding="2dp" />
+        <ListView
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+            android:layout_above="@id/progressBarLoadMore"
 		    android:fastScrollEnabled="true"
-		    android:id="@+id/listView" />
+		    android:id="@+id/listViewEpisodes" />
 </RelativeLayout>
