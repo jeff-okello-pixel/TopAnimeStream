@@ -336,16 +336,13 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             try {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
                 result = (SoapPrimitive) envelope.getResponse();
-                return null;
+                return "success";
             } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
-                }
 
                 e.printStackTrace();
             }
 
-            return "Success";
+            return null;
         }
 
         @Override
@@ -401,16 +398,13 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             try {
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
                 result = (SoapPrimitive) envelope.getResponse();
-                return null;
+                return "success";
             } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
-                }
 
                 e.printStackTrace();
             }
 
-            return "Success";
+            return null;
         }
 
         @Override
