@@ -185,7 +185,8 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        episodes = ((EpisodeListAdapter)listViewEpisodes.getAdapter()).getAllEpisodes();
+        if(adapter != null)
+            episodes = ((EpisodeListAdapter)listViewEpisodes.getAdapter()).getAllEpisodes();
         outState.putParcelableArrayList("episodes", episodes);
         outState.putInt("animeId", animeId);
         outState.putString("animeName", animeName);
@@ -290,11 +291,15 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                     txtNoEpisode.setVisibility(View.GONE);
                     listViewEpisodes.setVisibility(View.VISIBLE);
                 }
+
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
             }
-            Utils.unlockScreen(getActivity());
+            try {
+                Utils.unlockScreen(getActivity());//User pressed back before the request is finished
+            }catch(Exception e)
+            {}
         }
     }
 

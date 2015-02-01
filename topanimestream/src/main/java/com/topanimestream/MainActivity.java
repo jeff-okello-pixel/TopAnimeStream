@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.fwwjt.pacjz173199.AdView;
+import com.google.gson.Gson;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.google.sample.castcompanionlibrary.widgets.MiniController;
@@ -67,6 +68,8 @@ import org.kxml2.kdom.Node;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 
 import com.mopub.mobileads.MoPubErrorCode;
@@ -75,8 +78,10 @@ import com.topanimestream.adapters.MenuArrayAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.managers.VersionManager;
+import com.topanimestream.models.Account;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
+import com.topanimestream.models.CurrentUser;
 
 public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection, MoPubView.BannerAdListener {
 
@@ -842,11 +847,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         private String URL;
         private String method = "IsValidToken";
         private boolean isValidToken = false;
+        private String username;
 
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.logging), MainActivity.this);
             URL = getString(R.string.anime_service_path);
+
+            username = prefs.getString("Username", null);
         }
 
         @Override
@@ -854,6 +862,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
+            if(username == null)
+                return getString(R.string.error_login);
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("token", App.accessToken);
@@ -870,6 +880,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 androidHttpTransport.call(SOAP_ACTION + method, envelope);
                 result = (SoapPrimitive) envelope.getResponse();
                 isValidToken = Boolean.valueOf(result.toString());
+                JSONObject jsonAccount = Utils.GetJson(new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Accounts").filter("Username%20eq%20%27" + username + "%27").expand("Roles").formatJson().build());
+                Gson gson = new Gson();
+                Account account = gson.fromJson(jsonAccount.getJSONArray("value").getJSONObject(0).toString(), Account.class);
+                //Set global current user
+                CurrentUser.SetCurrentUser(account);
                 return null;
             } catch (Exception e) {
                 if (e instanceof SoapFault) {
@@ -896,6 +911,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
                 }
+
             }
         }
     }

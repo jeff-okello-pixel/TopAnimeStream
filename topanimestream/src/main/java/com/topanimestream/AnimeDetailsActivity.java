@@ -244,30 +244,31 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                         .setAdapter(adapter, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int item) {
                                 String selectedItem = items[item].toString();
-                                if (selectedItem.equals(getString(R.string.action_favorite)))
-                                {
+                                if (selectedItem.equals(getString(R.string.action_favorite))) {
                                     AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
-                                }
-                                else if (selectedItem.equals(getString(R.string.remove_favorite)))
-                                {
+                                } else if (selectedItem.equals(getString(R.string.remove_favorite))) {
                                     AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
-                                }
-                                else if (selectedItem.equals(getString(R.string.add_vote)))
-                                {
+                                } else if (selectedItem.equals(getString(R.string.add_vote))) {
                                     final Dialog dialogVote = new Dialog(AnimeDetailsActivity.this);
                                     dialogVote.setContentView(R.layout.vote_dialog);
-
+                                    dialogVote.setTitle(getString(R.string.vote));
                                     RatingBar rtbCurrentRating = (RatingBar) dialogVote.findViewById(R.id.rtbCurrentRating);
                                     final RatingBar rtbUserRating = (RatingBar) dialogVote.findViewById(R.id.rtbUserRating);
                                     Button btnCancel = (Button) dialogVote.findViewById(R.id.btnCancel);
                                     Button btnRemoveVote = (Button) dialogVote.findViewById(R.id.btnRemoveVote);
                                     Button btnSave = (Button) dialogVote.findViewById(R.id.btnSave);
+                                    TextView lblVoteCount = (TextView) dialogVote.findViewById(R.id.lblVoteCount);
+
+                                    lblVoteCount.setText("(" + anime.getVoteCount() + " " + getString(R.string.votes) + ")");
 
                                     if (anime.getRating() != null)
                                         rtbCurrentRating.setRating((float) Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
 
-                                    if(currentUserVote != null)
+                                    if (currentUserVote != null) {
                                         rtbUserRating.setRating(currentUserVote.getValue() / 2);
+                                        btnRemoveVote.setVisibility(View.VISIBLE);
+                                    } else
+                                        btnRemoveVote.setVisibility(View.GONE);
 
                                     btnCancel.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -286,18 +287,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                     btnSave.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            AsyncTaskTools.execute(new VoteTask((int)(rtbUserRating.getRating() * 2)));
+                                            AsyncTaskTools.execute(new VoteTask((int) (rtbUserRating.getRating() * 2)));
                                         }
                                     });
 
                                     dialogVote.show();
-                                }
-                                else if (selectedItem.equals(getString(R.string.reviews)))
-                                {
+                                } else if (selectedItem.equals(getString(R.string.reviews))) {
 
-                                }
-                                else if (selectedItem.equals(getString(R.string.recommendations)))
-                                {
+                                } else if (selectedItem.equals(getString(R.string.recommendations))) {
 
                                 }
                             }

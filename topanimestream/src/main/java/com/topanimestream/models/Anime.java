@@ -40,6 +40,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
     private ArrayList<Theme> themes;
     private int Order;
+    private int VoteCount;
 
     public Anime() {
         super();
@@ -97,7 +98,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
         Rating = in.readDouble();
         SourceUrl = in.readString();
         Order = in.readInt();
-
+        VoteCount = in.readInt();
     }
 
     public Anime(JSONObject animeJson, Context context) {
@@ -121,7 +122,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
             this.setIsMovie(!animeJson.isNull("IsMovie") ? animeJson.getBoolean("IsMovie") : false);
             this.setCartoon(!animeJson.isNull("IsCartoon") ? animeJson.getBoolean("IsCartoon") : false);
             this.setOrder(!animeJson.isNull("Order") ? animeJson.getInt("Order") : 0);
-
+            this.setVoteCount(!animeJson.isNull("VoteCount") ? animeJson.getInt("VoteCount") : 0);
             if (!animeJson.isNull("AnimeInformations")) {
                 JSONArray jsonAnimeInformations = animeJson.getJSONArray("AnimeInformations");
                 for (int i = 0; i < jsonAnimeInformations.length(); i++) {
@@ -194,6 +195,14 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
         return null;
 
+    }
+
+    public int getVoteCount() {
+        return VoteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        VoteCount = voteCount;
     }
 
     public void setAnimeInformations(ArrayList<AnimeInformation> animeInformations) {
@@ -484,8 +493,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
         dest.writeByte((byte) (isCartoon ? 1 : 0));
         dest.writeDouble(Rating != null ? Rating : 0);
         dest.writeString(SourceUrl);
-        dest.writeString(LastUpdatedDate);
         dest.writeInt(Order);
+        dest.writeInt(VoteCount);
 
 
     }

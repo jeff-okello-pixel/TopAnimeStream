@@ -6,12 +6,24 @@
     android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-        <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:textSize="20sp"
-            android:text="@string/current_anime_rating"/>
+            android:orientation="horizontal">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/current_anime_rating"
+                    android:layout_marginRight="5dp"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="#999"
+                    android:id="@+id/lblVoteCount"/>
+            </LinearLayout>
+
 
         <RatingBar
             android:id="@+id/rtbCurrentRating"
@@ -27,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textSize="20sp"
-            android:text="@string/your_rating"/>
+            android:text="@string/your_vote"/>
 
         <RatingBar
             android:id="@+id/rtbUserRating"

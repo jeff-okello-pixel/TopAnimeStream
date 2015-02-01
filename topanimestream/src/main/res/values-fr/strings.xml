@@ -227,4 +227,7 @@
     <string name="removing_vote">Removing your vote...</string>
     <string name="error_removing_vote">An error has occurred while removing your vote</string>
     <string name="vote_removed">Your vote has been removed</string>
+    <string name="vote">Vote</string>
+    <string name="your_vote">Your vote</string>
+    <string name="votes">votes</string>
 </resources>
