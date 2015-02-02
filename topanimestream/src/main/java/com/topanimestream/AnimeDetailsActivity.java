@@ -80,6 +80,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private Vote currentUserVote;
     private Review currentUserReview;
     private Recommendation currentUserRecommendation;
+    private AnimeDetailsFragment animeDetailsFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -136,12 +137,12 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
 
 
-        AnimeDetailsFragment animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
+        animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
         if (animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
 
 
-        AsyncTaskTools.execute(new AnimeDetailsTask());
+        AsyncTaskTools.execute(new AnimeDetailsTask(false));
 
 
     }
@@ -242,7 +243,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 new AlertDialog.Builder(AnimeDetailsActivity.this)
                         .setTitle(getString(R.string.choose_option))
                         .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int item) {
+                            public void onClick(final DialogInterface dialog, int item) {
                                 String selectedItem = items[item].toString();
                                 if (selectedItem.equals(getString(R.string.action_favorite))) {
                                     AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
@@ -281,6 +282,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                         @Override
                                         public void onClick(View view) {
                                             AsyncTaskTools.execute(new RemoveVoteTask());
+                                            dialog.dismiss();
                                         }
                                     });
 
@@ -288,6 +290,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                         @Override
                                         public void onClick(View view) {
                                             AsyncTaskTools.execute(new VoteTask((int) (rtbUserRating.getRating() * 2)));
+                                            dialog.dismiss();
                                         }
                                     });
 
@@ -349,14 +352,15 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_removing_vote), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_removed), Toast.LENGTH_LONG).show();
+                    AsyncTaskTools.execute(new AnimeDetailsTask(true));
                 }
 
-                Utils.dismissBusyDialog(busyDialog);
+
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
             }
-
+            Utils.dismissBusyDialog(busyDialog);
 
         }
 
@@ -374,7 +378,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         private String method = "Vote";
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog("Adding your vote...", AnimeDetailsActivity.this);
+            busyDialog = Utils.showBusyDialog(getString(R.string.adding_vote), AnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -411,14 +415,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_adding_vote), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_added), Toast.LENGTH_LONG).show();
+                    AsyncTaskTools.execute(new AnimeDetailsTask(true));
                 }
 
-                Utils.dismissBusyDialog(busyDialog);
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
             }
-
+            Utils.dismissBusyDialog(busyDialog);
 
         }
 
@@ -542,7 +546,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         private String userReviewUrl;
         private String userRecommendationUrl;
         private String userVoteUrl;
+        private String animeDetailUrl;
         private Dialog busyDialog;
+        private boolean isReload;
+        public AnimeDetailsTask(boolean IsReload)
+        {
+            this.isReload = IsReload;
+
+        }
         private String checkServiceErrors(JSONObject json)
         {
             try {
@@ -569,6 +580,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            animeDetailUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntitySpecificRow("Animes", anime.getAnimeId(), false).expand("AnimeSources,Genres,AnimeInformations,Status").formatJson().build();
         }
 
         @Override
@@ -616,7 +628,15 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 {
                     currentUserRecommendation = gson.fromJson(jsonRecommendation.getJSONArray("value").getJSONObject(0).toString(), Recommendation.class);
                 }
-
+                if(isReload) {
+                    JSONObject jsonAnime = Utils.GetJson(animeDetailUrl);
+                    errors = checkServiceErrors(jsonAnime);
+                    if (errors != null)
+                        return errors;
+                    anime = gson.fromJson(jsonAnime, Anime.class);
+                    if (animeDetailsFragment != null)
+                        animeDetailsFragment.setAnime(anime);
+                }
                 return null;
 
             } catch (Exception e) {
@@ -634,7 +654,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     AnimeDetailsActivity.this.finish();
                 } else {
                     Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-                    isFavorite = false;
                 }
             }
             Utils.dismissBusyDialog(busyDialog);
@@ -643,25 +662,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
     @Override
     public void onEpisodeSelected(final Episode episode, String type) {
-        /*
-        if(episode.getVks().size() > 0)
-        {
-            boolean isSubbed = type.equals("Subbed") ? true : false;
-            String language = prefs.getString("prefLanguage", "1");
-            for(final Vk vk: episode.getVks())
-            {
-                if(vk.getAnimeSource().isSubbed() == isSubbed && String.valueOf(vk.getAnimeSource().getLanguageId()).equals(language))
-                {
-                    Mirror mirror = new Mirror(vk);
-                    Mp4Manager.getMp4(mirror, AnimeDetailsActivity.this, anime, episode);
-
-                    break;
-                }
-
-            }
-        }
-        else if(!App.isVkOnly)
-        {*/
         Intent intent = new Intent(this, EpisodeDetailsActivity.class);
         intent.putExtra("Episode", episode);
         intent.putExtra("Type", type);
@@ -672,7 +672,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         startActivity(intent);
         if (!App.isTablet)
             AnimationManager.ActivityStart(this);
-        //}
     }
 
 

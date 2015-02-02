@@ -239,4 +239,5 @@
     <string name="vote">Vote</string>
     <string name="your_vote">Your vote</string>
     <string name="votes">votes</string>
+    <string name="adding_vote">Adding your vote...</string>
 </resources>

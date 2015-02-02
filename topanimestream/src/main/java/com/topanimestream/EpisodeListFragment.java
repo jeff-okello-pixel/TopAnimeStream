@@ -99,8 +99,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                             long id) {
 
         final Episode episode = (Episode)listViewEpisodes.getAdapter().getItem(position);
-
-
         EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
         providerFragmentCoordinator.onEpisodeSelected(episode, fragmentName);
 

@@ -193,26 +193,16 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,AnimeSources/vks,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
+            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
             String filter;
-            if (!App.isVkOnly) {
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
+            filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
 
-                if (fragmentName.equals(getString(R.string.tab_cartoon)))
-                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
-                else if (fragmentName.equals(getString(R.string.tab_movie)))
-                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20true";
-                else if (fragmentName.equals(getString(R.string.tab_serie)))
-                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20false";
-            } else {
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20as/vks/any(vk:vk/Id%20gt%200))";
-                if (fragmentName.equals(getString(R.string.tab_cartoon)))
-                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20as/vks/any(vk:vk/Id%20gt%200))%20and%20IsCartoon%20eq%20true";
-                else if (fragmentName.equals(getString(R.string.tab_movie)))
-                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20as/vks/any(vk:vk/Id%20gt%200))%20and%20IsMovie%20eq%20true";
-                else if (fragmentName.equals(getString(R.string.tab_serie)))
-                    filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20as/vks/any(vk:vk/Id%20gt%200))%20and%20IsMovie%20eq%20false";
-            }
+            if (fragmentName.equals(getString(R.string.tab_cartoon)))
+                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
+            else if (fragmentName.equals(getString(R.string.tab_movie)))
+                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20true";
+            else if (fragmentName.equals(getString(R.string.tab_serie)))
+                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20false";
             if (customFilter != null && !customFilter.equals(""))
                 filter += customFilter;
 

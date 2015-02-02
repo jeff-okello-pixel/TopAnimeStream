@@ -604,10 +604,12 @@ public class Utils {
     }
 
     public static void dismissBusyDialog(Dialog busyDialog) {
-        if (busyDialog != null)
-            busyDialog.dismiss();
+        try {
+            if (busyDialog != null)
+                busyDialog.dismiss();
 
-        busyDialog = null;
+            busyDialog = null;
+        }catch(Exception e){}
     }
 
     public static void SaveRecentSearch(Activity act, String query) {
