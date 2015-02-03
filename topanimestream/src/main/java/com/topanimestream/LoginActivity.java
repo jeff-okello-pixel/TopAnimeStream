@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,8 +19,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,12 +57,12 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Dialog busyDialog;
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not
     private SharedPreferences prefs;
-
+    private VideoView videoView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_awesome_login);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
         shouldCloseOnly = intent.getBooleanExtra("ShouldCloseOnly", false);
@@ -73,6 +76,19 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         txtPassword = (EditText) findViewById(R.id.txtPassword);
         txtTitle = (TextView) findViewById(R.id.txtTitle);
         layContent = (LinearLayout) findViewById(R.id.layContent);
+        videoView = (VideoView) findViewById(R.id.videoView);
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test));
+        MediaController ctrl = new MediaController(this);
+        ctrl.setVisibility(View.GONE);
+        videoView.setMediaController(ctrl);
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
+        videoView.start();
+
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
 

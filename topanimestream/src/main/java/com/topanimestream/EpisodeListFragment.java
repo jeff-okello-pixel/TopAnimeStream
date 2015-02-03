@@ -274,7 +274,11 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                         adapter.update();
                     } else {
                         adapter = new EpisodeListAdapter(getActivity(), newEpisodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating);
-                        listViewEpisodes.setAdapter(adapter);
+                        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                        swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);
+                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
+                        listViewEpisodes.setAdapter(swingBottomInAnimationAdapter);
                     }
                 }
 
