@@ -633,7 +633,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     errors = checkServiceErrors(jsonAnime);
                     if (errors != null)
                         return errors;
-                    anime = gson.fromJson(jsonAnime, Anime.class);
+                    anime = gson.fromJson(jsonAnime.toString(), Anime.class);
                     if (animeDetailsFragment != null)
                         animeDetailsFragment.setAnime(anime);
                 }

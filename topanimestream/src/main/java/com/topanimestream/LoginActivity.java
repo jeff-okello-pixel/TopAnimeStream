@@ -77,7 +77,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         txtTitle = (TextView) findViewById(R.id.txtTitle);
         layContent = (LinearLayout) findViewById(R.id.layContent);
         videoView = (VideoView) findViewById(R.id.videoView);
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test));
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test2));
         MediaController ctrl = new MediaController(this);
         ctrl.setVisibility(View.GONE);
         videoView.setMediaController(ctrl);
