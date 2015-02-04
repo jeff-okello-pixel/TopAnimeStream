@@ -240,4 +240,8 @@
     <string name="your_vote">Your vote</string>
     <string name="votes">votes</string>
     <string name="adding_vote">Adding your vote...</string>
+    <string name="your_review">Your review</string>
+    <string name="other_reviews">Other reviews</string>
+    <string name="error_loading_reviews">An error has occurred while loading the reviews</string>
+    <string name="loading_reviews">Loading reviews...</string>
 </resources>

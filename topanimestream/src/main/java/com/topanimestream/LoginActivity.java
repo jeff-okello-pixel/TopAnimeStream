@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,6 +17,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +39,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +63,8 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not
     private SharedPreferences prefs;
     private VideoView videoView;
+    private MediaPlayer mMediaPlayer;
+    private TextureView surface;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -76,6 +83,9 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         txtPassword = (EditText) findViewById(R.id.txtPassword);
         txtTitle = (TextView) findViewById(R.id.txtTitle);
         layContent = (LinearLayout) findViewById(R.id.layContent);
+        surface = (TextureView) findViewById(R.id.surface);
+        surface.setSurfaceTextureListener(this);
+        /*
         videoView = (VideoView) findViewById(R.id.videoView);
         videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test2));
         MediaController ctrl = new MediaController(this);
@@ -87,7 +97,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 mp.setLooping(true);
             }
         });
-        videoView.start();
+        videoView.start();*/
 
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
@@ -98,7 +108,32 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         txtUserName.setText(prefs.getString("Username", ""));
     }
 
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height){
+        Surface s = new Surface(surface);
 
+        try {
+            mMediaPlayer= new MediaPlayer();
+            mMediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+            mMediaPlayer.setDataSource(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test2));
+            mMediaPlayer.setSurface(s);
+            mMediaPlayer.prepare();
+            /*
+            mMediaPlayer.setOnBufferingUpdateListener(this);
+            mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.setOnVideoSizeChangedListener(this);*/
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.start();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.login, menu);

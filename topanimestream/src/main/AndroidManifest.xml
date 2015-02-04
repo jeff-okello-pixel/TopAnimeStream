@@ -89,6 +89,10 @@
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
+            android:name="com.topanimestream.ReviewsActivity"
+            android:configChanges="locale|layoutDirection" >
+        </activity>
+        <activity
             android:name="com.google.sample.castcompanionlibrary.cast.player.VideoCastControllerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"

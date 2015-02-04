@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TableLayout
@@ -10,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
         <TableRow
-            android:id="@+id/tableRow3"
+            android:id="@+id/tableRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -23,7 +24,7 @@
                     android:gravity="center_vertical"
                     android:textSize="15sp"
                     android:layout_weight="1"
-                    android:text="4/5 "/>
+                    android:id="@+id/txtArtRating"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -32,7 +33,7 @@
                     android:gravity="center_vertical"
                     android:textSize="15sp"
                     android:layout_weight="1"
-                    android:text="5/5 "/>
+                    android:id="@+id/txtCharacterRating"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -42,7 +43,8 @@
                     android:drawablePadding="3dp"
                     android:layout_weight ="1"
                     android:textSize="15sp"
-                    android:text="2/5 "/>
+                    android:id="@+id/txtStoryRating"/>
+ />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -52,7 +54,7 @@
                     android:drawablePadding="3dp"
                     android:layout_weight="1"
                     android:textSize="15sp"
-                    android:text="2/5 "/>
+                    android:id="@+id/txtSoundRating"/>
 
 
                 <TextView
@@ -63,7 +65,7 @@
                     android:drawablePadding="3dp"
                     android:layout_weight="1"
                     android:textSize="15sp"
-                    android:text="2/5 "/>
+                    android:id="@+id/txtEnjoymentRating"/>
 
         </TableRow>
     </TableLayout>
@@ -72,7 +74,6 @@
         android:layout_below="@id/layRatings"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/attackontitanbackdrop"
         android:scaleType="centerCrop"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="10dp"/>
@@ -82,14 +83,13 @@
         android:layout_toRightOf="@id/imgProfilePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:text="Overall rating: 4/5"/>
+        android:textSize="15sp"/>
     <TextView
+        android:id="@+id/txtReview"
         android:layout_toRightOf="@id/imgProfilePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15sp"
-        android:layout_below="@id/txtOverallRating"
-        android:text="Awesome anime, enjoyed it from the beginning to the end. I watched it more than once and I still watch it from time to time. A Must-See. Awesome anime, enjoyed it from the beginning to the end. I watched it more than once and I still watch it from time to time. A Must-See."/>
+        android:layout_below="@id/txtOverallRating"/>
 
 </RelativeLayout>
