@@ -1,8 +1,11 @@
 package com.topanimestream.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class Account {
+public class Account implements Parcelable {
     private int AccountId;
     private String Username;
     private String ProfilePic;
@@ -31,7 +34,19 @@ public class Account {
         LastLoginDate = lastLoginDate;
         LastActivityDate = lastActivityDate;
     }
-
+    public Account(Parcel in) {
+        AccountId = in.readInt();
+        Username = in.readString();
+        ProfilePic = in.readString();
+        AddedDate = in.readString();
+        LastUpdatedDate = in.readString();
+        About = in.readString();
+        IsDisabled = in.readByte() != 0;
+        IsBanned = in.readByte() != 0;
+        BannedReason = in.readString();
+        LastLoginDate = in.readString();
+        LastActivityDate = in.readString();
+    }
     public ArrayList<Role> getRoles() {
         return Roles;
     }
@@ -129,4 +144,24 @@ public class Account {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(AccountId);
+        dest.writeString(Username);
+        dest.writeString(ProfilePic);
+        dest.writeString(AddedDate);
+        dest.writeString(LastUpdatedDate);
+        dest.writeString(About);
+        dest.writeByte((byte) (IsDisabled ? 1 : 0));
+        dest.writeByte((byte) (IsBanned ? 1 : 0));
+        dest.writeString(BannedReason);
+        dest.writeString(LastLoginDate);
+        dest.writeString(LastActivityDate);
+
+    }
 }
