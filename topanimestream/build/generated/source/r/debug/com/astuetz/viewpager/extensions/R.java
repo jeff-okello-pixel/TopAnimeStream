@@ -21,13 +21,13 @@ public final class R {
 		public static final int underlineHeight = 0x7f010093;
 	}
 	public static final class color {
-		public static final int background_tab_pressed = 0x7f080003;
-		public static final int background_tab_pressed_black = 0x7f080004;
-		public static final int background_tab_pressed_blue = 0x7f080005;
-		public static final int background_tab_pressed_darkblue = 0x7f080006;
-		public static final int background_tab_pressed_green = 0x7f080007;
-		public static final int background_tab_pressed_orange = 0x7f080008;
-		public static final int background_tab_pressed_red = 0x7f080009;
+		public static final int background_tab_pressed = 0x7f090003;
+		public static final int background_tab_pressed_black = 0x7f090004;
+		public static final int background_tab_pressed_blue = 0x7f090005;
+		public static final int background_tab_pressed_darkblue = 0x7f090006;
+		public static final int background_tab_pressed_green = 0x7f090007;
+		public static final int background_tab_pressed_orange = 0x7f090008;
+		public static final int background_tab_pressed_red = 0x7f090009;
 	}
 	public static final class drawable {
 		public static final int background_tab = 0x7f020060;

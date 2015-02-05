@@ -2,6 +2,27 @@
 <items version="2" >
 
     <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.nhaarman.listviewanimations\lib-manipulation\3.1.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="5660e4bf78904137e90e62a5d4cc2e987258f02c">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-00c6a46c1da5f7310188a81e8602aebde3e0cf35.jar" />
+    </item>
+    <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\libs\jsoup-1.7.3.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="ab1f22cadc2f8b514e55ba368f5128056fe304da">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\jsoup-1.7.3-be16791e22af4067d12181badadb180738e0849b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="35a88c9d605c36273dfb1d472f9b68bbd08acf7b">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-9d54e09b5bf61f801ea3a501dceb6c9e99a39e20.jar" />
+    </item>
+    <item
         jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\topanimestream\librarytabstrip\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
@@ -9,11 +30,32 @@
         <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-b0a96ad75ce3e9e04416b1c05f65f5521350703a.jar" />
     </item>
     <item
-        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.mopub.mobileads\mopub-android\1.0\classes.jar"
+        jar="C:\Users\Marc-André\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="f98c98eb93c06a32b654556cbd2466275f474ddc">
-        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-a5d986eb86308811d3a609dec212fb0477094c3e.jar" />
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\library-2.4.0-3535cdec219f40157166fe1752c7d9e715d4b2fa.jar" />
+    </item>
+    <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.nhaarman.listviewanimations\lib-core-slh\3.1.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="49223278ec2ede1d05d00868c5ce3e077b4016f8">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-efb8f04c850c515300183cc3d5f939358bffd3c5.jar" />
+    </item>
+    <item
+        jar="C:\android-sdk\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-b25170ee11cc0bdfad01dfaecd9d360b0a28be75.jar" />
+    </item>
+    <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.nhaarman.listviewanimations\lib-core\3.1.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="acf66033b1418ccf9e15c8e77750981e4809c4ea">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-e191d1f39bdb5d41a90f1b513d21cf9954cb5b41.jar" />
     </item>
     <item
         jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\topanimestream\imageloaderlibrary\unspecified\classes.jar"
@@ -21,6 +63,13 @@
         revision="20.0.0"
         sha1="b63bc1d0e5ea84204ce2a1b8320d241e2bf60a3b">
         <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-5e2e7b7d4906fbc1edb5d1db1a41602e5e5224cc.jar" />
+    </item>
+    <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.mopub.mobileads\mopub-android\1.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f98c98eb93c06a32b654556cbd2466275f474ddc">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-a5d986eb86308811d3a609dec212fb0477094c3e.jar" />
     </item>
     <item
         jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\topanimestream\CastCompanionLibrary-android-master\unspecified\release\classes.jar"
@@ -37,11 +86,25 @@
         <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-da76d93cd9b23af2357864e3bf9a6260d6d76fe6.jar" />
     </item>
     <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-141b6e52c11cfa1bbdfef5cc50b5b7137a7eb651.jar" />
+    </item>
+    <item
         jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\libs\ksoap2.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="ddcd1698b4bc242e26bfd99e3779688ab311b918">
         <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\ksoap2-6e9a898ff4fa507595bc07c966845e0340043acd.jar" />
+    </item>
+    <item
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\libs\com-fwwjt-pacjz173199.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="d8f9514aa93eb8d87d37ce979393a9dee454935f">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\com-fwwjt-pacjz173199-1eb4425ecd095a90efa7d619489ac0d228421d34.jar" />
     </item>
     <item
         jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.11\classes.jar"
@@ -72,39 +135,11 @@
         <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-6150c435e9e61a9ecce3fdde3065e279660a9e81.jar" />
     </item>
     <item
-        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\libs\jsoup-1.7.3.jar"
+        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\libs\gson-2.2.4.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="ab1f22cadc2f8b514e55ba368f5128056fe304da">
-        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\jsoup-1.7.3-be16791e22af4067d12181badadb180738e0849b.jar" />
-    </item>
-    <item
-        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\20.0.0\classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="35a88c9d605c36273dfb1d472f9b68bbd08acf7b">
-        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\classes-9d54e09b5bf61f801ea3a501dceb6c9e99a39e20.jar" />
-    </item>
-    <item
-        jar="C:\android-sdk\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa">
-        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-b25170ee11cc0bdfad01dfaecd9d360b0a28be75.jar" />
-    </item>
-    <item
-        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d">
-        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-141b6e52c11cfa1bbdfef5cc50b5b7137a7eb651.jar" />
-    </item>
-    <item
-        jar="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\libs\com-fwwjt-pacjz173199.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="d8f9514aa93eb8d87d37ce979393a9dee454935f">
-        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\com-fwwjt-pacjz173199-1eb4425ecd095a90efa7d619489ac0d228421d34.jar" />
+        sha1="973e832af433b44c3ed11c426f2f390b29f3f3f8">
+        <dex dex="C:\Users\Marc-André\AndroidStudioProjects\topanimestream\topanimestream\build\intermediates\pre-dexed\debug\gson-2.2.4-2d003cb59695ac0b61d0e0050682cec039a9654d.jar" />
     </item>
 
 </items>

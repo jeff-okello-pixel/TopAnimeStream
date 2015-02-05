@@ -310,6 +310,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
 
+
         moPubView = (MoPubView) findViewById(R.id.adView);
         moPubView.setAdUnitId("d27711328dc54dc1808eba8c42a07e35");
         moPubView.loadAd();

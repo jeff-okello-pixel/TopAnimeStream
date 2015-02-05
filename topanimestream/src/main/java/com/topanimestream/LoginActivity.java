@@ -1,9 +1,11 @@
 package com.topanimestream;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
 import android.media.AudioManager;
@@ -15,13 +17,17 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -63,8 +69,12 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not
     private SharedPreferences prefs;
     private VideoView videoView;
+    private TextureViewVideo mTextureVideoView;
     private MediaPlayer mMediaPlayer;
-    private TextureView surface;
+
+    public LoginActivity() {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -73,6 +83,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
         shouldCloseOnly = intent.getBooleanExtra("ShouldCloseOnly", false);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
@@ -83,8 +94,21 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         txtPassword = (EditText) findViewById(R.id.txtPassword);
         txtTitle = (TextView) findViewById(R.id.txtTitle);
         layContent = (LinearLayout) findViewById(R.id.layContent);
-        surface = (TextureView) findViewById(R.id.surface);
-        surface.setSurfaceTextureListener(this);
+        Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
+        txtTitle.setTypeface(typeFace);
+        videoView = (VideoView) findViewById(R.id.videoView);
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.loginbackground));
+        MediaController ctrl = new MediaController(this);
+        ctrl.setVisibility(View.GONE);
+        videoView.setMediaController(ctrl);
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
+        videoView.start();
+
         /*
         videoView = (VideoView) findViewById(R.id.videoView);
         videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test2));
@@ -98,42 +122,17 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             }
         });
         videoView.start();*/
-
+/*
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
 
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
         txtTitle.setTypeface(typeFace);
 
-        txtUserName.setText(prefs.getString("Username", ""));
+        txtUserName.setText(prefs.getString("Username", ""));*/
     }
 
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height){
-        Surface s = new Surface(surface);
 
-        try {
-            mMediaPlayer= new MediaPlayer();
-            mMediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-            mMediaPlayer.setDataSource(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test2));
-            mMediaPlayer.setSurface(s);
-            mMediaPlayer.prepare();
-            /*
-            mMediaPlayer.setOnBufferingUpdateListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnVideoSizeChangedListener(this);*/
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.start();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.login, menu);
