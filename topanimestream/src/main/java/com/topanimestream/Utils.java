@@ -617,7 +617,23 @@ public class Utils {
                 SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
         suggestions.saveRecentQuery(query, null);
     }
+    public static String checkDataServiceErrors(JSONObject json, String errorMessage)
+    {
+        try {
+            if (!json.isNull("error")) {
 
+                int error = json.getInt("error");
+                if (error == 401) {
+                    return "401";
+                }
+            }
+        }
+        catch (Exception e) {
+            return errorMessage;
+        }
+
+        return null;
+    }
     public static int GenreNameToId(String genreName) {
         if (genreName.equals(App.getContext().getString(R.string.action)))
             return 1034;

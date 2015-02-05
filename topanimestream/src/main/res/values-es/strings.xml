@@ -236,4 +236,6 @@
     <string name="other_reviews">Other reviews</string>
     <string name="error_loading_reviews">An error has occurred while loading the reviews</string>
     <string name="loading_reviews">Loading reviews...</string>
+    <string name="no_review_yet">You did not review this anime yet. Review it now!</string>
+    <string name="nobody_reviewed_yet">Nobody has reviewed this anime yet. Add yours!</string>
 </resources>

@@ -108,7 +108,9 @@ public class EpisodesContainerFragment extends Fragment {
             subbed = savedInstanceState.getBoolean("subbed");
             dubbed = savedInstanceState.getBoolean("dubbed");
             createViewPager();
-        } else if (anime.isMovie()) {
+        }
+        else
+        {
             String language = prefs.getString("prefLanguage", "1");
             for (AnimeSource animeSource : anime.getAnimeSources()) {
                 if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed()) {
@@ -117,10 +119,6 @@ public class EpisodesContainerFragment extends Fragment {
                     dubbed = true;
                 }
             }
-            createViewPager();
-        }
-        else
-        {
             createViewPager();
         }
         return rootView;

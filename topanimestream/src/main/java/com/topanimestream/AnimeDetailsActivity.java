@@ -296,6 +296,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
                                     dialogVote.show();
                                 } else if (selectedItem.equals(getString(R.string.reviews))) {
+                                    Intent intent = new Intent(AnimeDetailsActivity.this, ReviewsActivity.class);
+                                    intent.putExtra("currentUserReview", currentUserReview);
+                                    intent.putExtra("animeId", anime.getAnimeId());
+                                    startActivity(intent);
 
                                 } else if (selectedItem.equals(getString(R.string.recommendations))) {
 
@@ -554,23 +558,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             this.isReload = IsReload;
 
         }
-        private String checkServiceErrors(JSONObject json)
-        {
-            try {
-                if (!json.isNull("error")) {
 
-                        int error = json.getInt("error");
-                        if (error == 401) {
-                            return "401";
-                        }
-                    }
-                }
-            catch (Exception e) {
-                return getString(R.string.error_loading_anime_details);
-            }
-
-            return null;
-        }
 
         @Override
         protected void onPreExecute() {
@@ -592,7 +580,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             try {
 
                 JSONObject jsonFavorite = Utils.GetJson(isFavoriteUrl);
-                String errors = checkServiceErrors(jsonFavorite);
+                String errors = Utils.checkDataServiceErrors(jsonFavorite, getString(R.string.error_loading_anime_details));
                 if(errors != null)
                     return errors;
 
@@ -603,7 +591,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
                 Gson gson = new Gson();
                 JSONObject jsonVote = Utils.GetJson(userVoteUrl);
-                errors = checkServiceErrors(jsonFavorite);
+                errors = Utils.checkDataServiceErrors(jsonVote, getString(R.string.error_loading_anime_details));
                 if(errors != null)
                     return errors;
                 if(jsonVote.getJSONArray("value").length() > 0)
@@ -612,7 +600,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 }
 
                 JSONObject jsonReview = Utils.GetJson(userReviewUrl);
-                errors = checkServiceErrors(jsonReview);
+                errors = Utils.checkDataServiceErrors(jsonReview, getString(R.string.error_loading_anime_details));
                 if(errors != null)
                     return errors;
                 if(jsonReview.getJSONArray("value").length() > 0)
@@ -621,7 +609,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 }
 
                 JSONObject jsonRecommendation = Utils.GetJson(userRecommendationUrl);
-                errors = checkServiceErrors(jsonRecommendation);
+                errors = Utils.checkDataServiceErrors(jsonRecommendation, getString(R.string.error_loading_anime_details));
                 if(errors != null)
                     return errors;
                 if(jsonRecommendation.getJSONArray("value").length() > 0)
@@ -630,7 +618,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 }
                 if(isReload) {
                     JSONObject jsonAnime = Utils.GetJson(animeDetailUrl);
-                    errors = checkServiceErrors(jsonAnime);
+                    errors = Utils.checkDataServiceErrors(jsonAnime, getString(R.string.error_loading_anime_details));;
                     if (errors != null)
                         return errors;
                     anime = gson.fromJson(jsonAnime.toString(), Anime.class);

@@ -1,31 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ProgressBar
+        android:id="@+id/progressBarLoadMore"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/your_review"
-        android:padding="5dp"
-        android:textColor="#f5f5f5"
-        android:background="#ff595959"
-        android:textSize="20sp"/>
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/row_review" />
-    <TextView
-        android:layout_marginTop="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/other_reviews"
-        android:padding="5dp"
-        android:textColor="#f5f5f5"
-        android:background="#ff595959"
-        android:textSize="20sp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:padding="2dp" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/progressBarLoadMore"
         android:id="@+id/listViewReviews"/>
-</LinearLayout>
+</RelativeLayout>

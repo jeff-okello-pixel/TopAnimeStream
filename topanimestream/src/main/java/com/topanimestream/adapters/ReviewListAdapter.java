@@ -21,8 +21,10 @@ public class ReviewListAdapter extends BaseAdapter {
     private ViewHolder holder;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_SEPARATOR = 1;
-    private static final int TYPE_MAX_COUNT = TYPE_SEPARATOR + 1;
+    private static final int TYPE_EMPTY = 2;
+    private static final int TYPE_MAX_COUNT = 3;
     private TreeSet mSeparatorsSet = new TreeSet();
+    private TreeSet mEmptySet = new TreeSet();
     App app;
 
     public ReviewListAdapter(Context context, ArrayList<Review> values) {
@@ -45,6 +47,15 @@ public class ReviewListAdapter extends BaseAdapter {
         mSeparatorsSet.add(values.size() - 1);
         notifyDataSetChanged();
     }
+    //Used to add empty review when there is not record for the current user review or the other review list
+    //we use the separator title as the message we want to display
+    public void addEmptyItem(Review emptyReview) {
+        assert (emptyReview.getSeparatorTitle() != null && !emptyReview.equals(""));
+        values.add(emptyReview);
+        // save separator position
+        mEmptySet.add(values.size() - 1);
+        notifyDataSetChanged();
+    }
 
 
     public void remove(Review review) {
@@ -52,7 +63,12 @@ public class ReviewListAdapter extends BaseAdapter {
     }
     @Override
     public int getItemViewType(int position) {
-        return mSeparatorsSet.contains(position) ? TYPE_SEPARATOR : TYPE_ITEM;
+        if(mSeparatorsSet.contains(position))
+            return TYPE_SEPARATOR;
+        else if(mEmptySet.contains(position))
+            return TYPE_EMPTY;
+        else
+            return TYPE_ITEM;
     }
 
     @Override
@@ -88,6 +104,11 @@ public class ReviewListAdapter extends BaseAdapter {
                     holder = new ViewHolder();
                     holder.txtSeparatorTitle = (TextView) vi.findViewById(R.id.txtSeparatorTitle);
                     break;
+                case TYPE_EMPTY:
+                    vi = inflater.inflate(R.layout.row_empty_review, null);
+                    holder = new ViewHolder();
+                    holder.txtEmptyReview = (TextView) vi.findViewById(R.id.txtEmptyReview);
+                    break;
             }
             vi.setTag(holder);
         } else {
@@ -108,6 +129,9 @@ public class ReviewListAdapter extends BaseAdapter {
                 break;
             case TYPE_SEPARATOR:
                 holder.txtSeparatorTitle.setText(review.getSeparatorTitle());
+                break;
+            case TYPE_EMPTY:
+                holder.txtEmptyReview.setText(review.getSeparatorTitle());
                 break;
         }
 
@@ -130,6 +154,7 @@ public class ReviewListAdapter extends BaseAdapter {
         TextView txtOverallRating;
         TextView txtReview;
         TextView txtSeparatorTitle;
+        TextView txtEmptyReview;
     }
 
     @Override
