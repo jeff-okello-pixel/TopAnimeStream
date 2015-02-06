@@ -21,10 +21,12 @@ public class ReviewListAdapter extends BaseAdapter {
     private ViewHolder holder;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_SEPARATOR = 1;
-    private static final int TYPE_EMPTY = 2;
-    private static final int TYPE_MAX_COUNT = 3;
+    private static final int TYPE_NOREVIEW = 2;
+    private static final int TYPE_ADDREVIEW = 3;
+    private static final int TYPE_MAX_COUNT = 4;
     private TreeSet mSeparatorsSet = new TreeSet();
-    private TreeSet mEmptySet = new TreeSet();
+    private TreeSet mNoReviewSet = new TreeSet();
+    private TreeSet mAddReviewSet = new TreeSet();
     App app;
 
     public ReviewListAdapter(Context context, ArrayList<Review> values) {
@@ -47,13 +49,20 @@ public class ReviewListAdapter extends BaseAdapter {
         mSeparatorsSet.add(values.size() - 1);
         notifyDataSetChanged();
     }
-    //Used to add empty review when there is not record for the current user review or the other review list
-    //we use the separator title as the message we want to display
-    public void addEmptyItem(Review emptyReview) {
-        assert (emptyReview.getSeparatorTitle() != null && !emptyReview.equals(""));
-        values.add(emptyReview);
+
+    public void addNoReviewItem(Review noReview) {
+        assert (noReview.getSeparatorTitle() != null && !noReview.equals(""));
+        values.add(noReview);
         // save separator position
-        mEmptySet.add(values.size() - 1);
+        mNoReviewSet.add(values.size() - 1);
+        notifyDataSetChanged();
+    }
+
+    public void addAddReviewItem(Review addReview) {
+        assert (addReview.getSeparatorTitle() != null && !addReview.equals(""));
+        values.add(addReview);
+        // save separator position
+        mAddReviewSet.add(values.size() - 1);
         notifyDataSetChanged();
     }
 
@@ -65,8 +74,10 @@ public class ReviewListAdapter extends BaseAdapter {
     public int getItemViewType(int position) {
         if(mSeparatorsSet.contains(position))
             return TYPE_SEPARATOR;
-        else if(mEmptySet.contains(position))
-            return TYPE_EMPTY;
+        else if(mNoReviewSet.contains(position))
+            return TYPE_NOREVIEW;
+        else if(mAddReviewSet.contains(position))
+            return TYPE_ADDREVIEW;
         else
             return TYPE_ITEM;
     }
@@ -104,7 +115,12 @@ public class ReviewListAdapter extends BaseAdapter {
                     holder = new ViewHolder();
                     holder.txtSeparatorTitle = (TextView) vi.findViewById(R.id.txtSeparatorTitle);
                     break;
-                case TYPE_EMPTY:
+                case TYPE_NOREVIEW:
+                    vi = inflater.inflate(R.layout.row_empty_review, null);
+                    holder = new ViewHolder();
+                    holder.txtEmptyReview = (TextView) vi.findViewById(R.id.txtEmptyReview);
+                    break;
+                case TYPE_ADDREVIEW:
                     vi = inflater.inflate(R.layout.row_empty_review, null);
                     holder = new ViewHolder();
                     holder.txtEmptyReview = (TextView) vi.findViewById(R.id.txtEmptyReview);
@@ -130,7 +146,7 @@ public class ReviewListAdapter extends BaseAdapter {
             case TYPE_SEPARATOR:
                 holder.txtSeparatorTitle.setText(review.getSeparatorTitle());
                 break;
-            case TYPE_EMPTY:
+            case TYPE_NOREVIEW:
                 holder.txtEmptyReview.setText(review.getSeparatorTitle());
                 break;
         }

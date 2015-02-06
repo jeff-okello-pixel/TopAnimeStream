@@ -41,6 +41,7 @@ import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.AnimeSource;
 import com.topanimestream.R;
+import com.topanimestream.models.CurrentUser;
 
 public class FavoriteActivity extends ActionBarActivity implements OnItemClickListener {
     private DragSortListView listView;
@@ -227,7 +228,6 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
     private class GetFavoriteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private String url;
-        private String username;
 
         public GetFavoriteTask() {
 
@@ -237,9 +237,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_favorites), FavoriteActivity.this);
             animes = new ArrayList<Anime>();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FavoriteActivity.this);
-            username = prefs.getString("Username", null);
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Accounts").formatJson().expand("Favorites/Anime/AnimeSources,Favorites/Anime/AnimeInformations,Favorites/Anime/Genres").filter("Username%20eq%20%27" + username + "%27").select("Favorites").build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime/AnimeSources,Anime/AnimeInformations,Anime/Genres").filter("AccountId%20eq%20" + CurrentUser.AccountId).build();
 
         }
 
@@ -250,31 +248,27 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
             }
 
             try {
-                if (username != null) {
-                    JSONObject json = Utils.GetJson(url);
-                    if (!json.isNull("error")) {
-                        try {
-                            int error = json.getInt("error");
-                            if (error == 401) {
-                                return "401";
-                            }
-                        } catch (Exception e) {
-                            return null;
+                JSONObject json = Utils.GetJson(url);
+                if (!json.isNull("error")) {
+                    try {
+                        int error = json.getInt("error");
+                        if (error == 401) {
+                            return "401";
                         }
+                    } catch (Exception e) {
+                        return null;
                     }
-                    JSONArray jsonValue = json.getJSONArray("value");
-                    JSONArray jsonFavorites = jsonValue.getJSONObject(0).getJSONArray("Favorites");
-                    for (int i = 0; i < jsonFavorites.length(); i++) {
-
-                        Anime anime = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), FavoriteActivity.this);
-                        anime.setOrder(!jsonFavorites.getJSONObject(i).isNull("Order") ? jsonFavorites.getJSONObject(i).getInt("Order") : 0);
-                        animes.add(anime);
-
-                    }
-                    return null;
-                } else {
-                    return getString(R.string.error_loading_favorites);
                 }
+                JSONArray jsonValue = json.getJSONArray("value");
+                JSONArray jsonFavorites = jsonValue.getJSONObject(0).getJSONArray("Favorites");
+                for (int i = 0; i < jsonFavorites.length(); i++) {
+
+                    Anime anime = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), FavoriteActivity.this);
+                    anime.setOrder(!jsonFavorites.getJSONObject(i).isNull("Order") ? jsonFavorites.getJSONObject(i).getInt("Order") : 0);
+                    animes.add(anime);
+
+                }
+                return null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
