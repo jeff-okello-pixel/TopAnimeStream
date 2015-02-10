@@ -25,6 +25,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -64,13 +66,15 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private TextView txtTitle;
     private EditText txtUserName;
     private EditText txtPassword;
-    private LinearLayout layContent;
     private Dialog busyDialog;
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not
     private SharedPreferences prefs;
     private VideoView videoView;
+    private Button btnBottomLogin;
+    private Button btnCancel;
     private TextureViewVideo mTextureVideoView;
     private MediaPlayer mMediaPlayer;
+    private LinearLayout layLogin;
 
     public LoginActivity() {
     }
@@ -89,18 +93,17 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
         actionBar.hide();
         btnLogin = (Button) findViewById(R.id.btnLogin);
+        layLogin = (LinearLayout) findViewById(R.id.layLogin);
         btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnCancel = (Button) findViewById(R.id.btnCancel);
         txtUserName = (EditText) findViewById(R.id.txtUsername);
         txtPassword = (EditText) findViewById(R.id.txtPassword);
         txtTitle = (TextView) findViewById(R.id.txtTitle);
-        layContent = (LinearLayout) findViewById(R.id.layContent);
+        btnBottomLogin = (Button) findViewById(R.id.btnBottomLogin);
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
         txtTitle.setTypeface(typeFace);
         videoView = (VideoView) findViewById(R.id.videoView);
         videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.loginbackground));
-        MediaController ctrl = new MediaController(this);
-        ctrl.setVisibility(View.GONE);
-        videoView.setMediaController(ctrl);
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -109,27 +112,10 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         });
         videoView.start();
 
-        /*
-        videoView = (VideoView) findViewById(R.id.videoView);
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.test2));
-        MediaController ctrl = new MediaController(this);
-        ctrl.setVisibility(View.GONE);
-        videoView.setMediaController(ctrl);
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-            }
-        });
-        videoView.start();*/
-/*
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
-
-        Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
-        txtTitle.setTypeface(typeFace);
-
-        txtUserName.setText(prefs.getString("Username", ""));*/
+        btnBottomLogin.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
     }
 
 
@@ -154,17 +140,29 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             case R.id.btnLogin:
                 if (txtUserName.getText().toString().equals("")) {
                     txtUserName.setError(getString(R.string.error_username_empty));
-                    AnimationManager.Shake(layContent);
+                    AnimationManager.Shake(layLogin);
                     return;
                 }
 
                 if (txtPassword.getText().toString().equals("")) {
                     txtPassword.setError(getString(R.string.error_password_empty));
-                    AnimationManager.Shake(layContent);
+                    AnimationManager.Shake(layLogin);
                     return;
                 }
 
                 AsyncTaskTools.execute(new LoginTask(txtUserName.getText().toString(), txtPassword.getText().toString()));
+                break;
+            case R.id.btnCancel:
+                btnBottomLogin.setVisibility(View.VISIBLE);
+                Animation animFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
+                layLogin.setAnimation(animFadeOut);
+                layLogin.setVisibility(View.INVISIBLE);
+                break;
+            case R.id.btnBottomLogin:
+                btnBottomLogin.setVisibility(View.GONE);
+                Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
+                layLogin.setAnimation(animFadeIn);
+                layLogin.setVisibility(View.VISIBLE);
                 break;
             case R.id.btnRegister:
                 String url = getString(R.string.topanimestream_website);

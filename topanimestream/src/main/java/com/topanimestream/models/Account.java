@@ -164,4 +164,13 @@ public class Account implements Parcelable {
         dest.writeString(LastActivityDate);
 
     }
+    public static final Creator<Account> CREATOR = new Creator<Account>() {
+        public Account createFromParcel(Parcel in) {
+            return new Account(in);
+        }
+
+        public Account[] newArray(int size) {
+            return new Account[size];
+        }
+    };
 }

@@ -2,14 +2,18 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="10dp">
     <ImageView
         android:id="@+id/imgAddReview"
+        android:src="@drawable/ic_add"
+        android:padding="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"/>
     <TextView
-        android:id="@+id/txtEmptyReview"
+        android:id="@+id/txtAddReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/imgAddReview"

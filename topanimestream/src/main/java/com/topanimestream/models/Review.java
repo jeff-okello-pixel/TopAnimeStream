@@ -48,7 +48,7 @@ public class Review implements Parcelable {
         NotHelpfulCount = in.readInt();
         SoundRating = in.readInt();
         OverallRating = in.readInt();
-        Account = (Account)in.readParcelable(Account.getClass().getClassLoader());
+        Account = in.readParcelable(com.topanimestream.models.Account.class.getClassLoader());
         SeparatorTitle = in.readString();
     }
     public String getSeparatorTitle() {
@@ -203,4 +203,14 @@ public class Review implements Parcelable {
         dest.writeParcelable(Account, flags);
         dest.writeString(SeparatorTitle);
     }
+    public static final Creator<Review> CREATOR = new Creator<Review>() {
+        public Review createFromParcel(Parcel in) {
+            return new Review(in);
+        }
+
+        public Review[] newArray(int size) {
+            return new Review[size];
+        }
+    };
+
 }

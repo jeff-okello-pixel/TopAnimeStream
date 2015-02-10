@@ -19,10 +19,10 @@ public class ReviewListAdapter extends BaseAdapter {
     private final Context context;
     private ArrayList<Review> values;
     private ViewHolder holder;
-    private static final int TYPE_ITEM = 0;
-    private static final int TYPE_SEPARATOR = 1;
-    private static final int TYPE_NOREVIEW = 2;
-    private static final int TYPE_ADDREVIEW = 3;
+    public static final int TYPE_ITEM = 0;
+    public static final int TYPE_SEPARATOR = 1;
+    public static final int TYPE_NOREVIEW = 2;
+    public static final int TYPE_ADDREVIEW = 3;
     private static final int TYPE_MAX_COUNT = 4;
     private TreeSet mSeparatorsSet = new TreeSet();
     private TreeSet mNoReviewSet = new TreeSet();
@@ -121,9 +121,9 @@ public class ReviewListAdapter extends BaseAdapter {
                     holder.txtEmptyReview = (TextView) vi.findViewById(R.id.txtEmptyReview);
                     break;
                 case TYPE_ADDREVIEW:
-                    vi = inflater.inflate(R.layout.row_empty_review, null);
+                    vi = inflater.inflate(R.layout.row_add_review, null);
                     holder = new ViewHolder();
-                    holder.txtEmptyReview = (TextView) vi.findViewById(R.id.txtEmptyReview);
+                    holder.txtAddReview = (TextView) vi.findViewById(R.id.txtAddReview);
                     break;
             }
             vi.setTag(holder);
@@ -139,7 +139,8 @@ public class ReviewListAdapter extends BaseAdapter {
                 holder.txtStoryRating.setText(review.getStoryRating() / 2 + "/5");
                 holder.txtSoundRating.setText(review.getSoundRating() /2 + "/5");
                 holder.txtEnjoymentRating.setText(review.getEnjoymentRating() / 2 + "/5");
-                App.imageLoader.displayImage(App.getContext().getString(R.string.image_host_path) + review.getAccount().getProfilePic(), holder.imgProfilePic);
+                if(review.getAccount() != null)
+                    App.imageLoader.displayImage(App.getContext().getString(R.string.image_host_path) + review.getAccount().getProfilePic(), holder.imgProfilePic);
                 holder.txtOverallRating.setText(review.getOverallRating() / 2 + "/5");
                 holder.txtReview.setText(review.getValue());
                 break;
@@ -148,6 +149,9 @@ public class ReviewListAdapter extends BaseAdapter {
                 break;
             case TYPE_NOREVIEW:
                 holder.txtEmptyReview.setText(review.getSeparatorTitle());
+                break;
+            case TYPE_ADDREVIEW:
+                holder.txtAddReview.setText(review.getSeparatorTitle());
                 break;
         }
 
@@ -171,6 +175,7 @@ public class ReviewListAdapter extends BaseAdapter {
         TextView txtReview;
         TextView txtSeparatorTitle;
         TextView txtEmptyReview;
+        TextView txtAddReview;
     }
 
     @Override

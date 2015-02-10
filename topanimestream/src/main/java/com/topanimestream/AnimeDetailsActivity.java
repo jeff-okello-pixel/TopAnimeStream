@@ -567,7 +567,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).expand("Account").build();
             animeDetailUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntitySpecificRow("Animes", anime.getAnimeId(), false).expand("AnimeSources,Genres,AnimeInformations,Status").formatJson().build();
         }
 

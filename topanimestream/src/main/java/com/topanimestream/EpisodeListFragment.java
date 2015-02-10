@@ -186,7 +186,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if(adapter != null)
-            episodes = ((EpisodeListAdapter)listViewEpisodes.getAdapter()).getAllEpisodes();
+            episodes = adapter.getAllEpisodes();
         outState.putParcelableArrayList("episodes", episodes);
         outState.putInt("animeId", animeId);
         outState.putString("animeName", animeName);

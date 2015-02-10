@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.adapters.ReviewListAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.CurrentUser;
@@ -55,8 +57,8 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.reviews) + "</font>"));
-
-
+        listViewReviews = (ListView) findViewById(R.id.listViewReviews);
+        progressBarLoadMore = (ProgressBar) findViewById(R.id.progressBarLoadMore);
 
         listViewReviews.setFastScrollEnabled(true);
         listViewReviews.setOnItemClickListener(this);
@@ -172,6 +174,7 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                         }
                         adapter.update();
                     } else {
+                        adapter = new ReviewListAdapter(ReviewsActivity.this, new ArrayList<Review>());
                         //create the separators / empty reviews
                         Review yourReviewSeparator = Review.CreateReviewSeparator(getString(R.string.your_review));
                         Review otherReviewSeparator = Review.CreateReviewSeparator(getString(R.string.other_reviews));
@@ -183,14 +186,24 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                         if(newReviews.size() < 1)
                             noOtherReview = Review.CreateReviewSeparator(getString(R.string.nobody_reviewed_yet));
 
+                        adapter.addSeparatorItem(yourReviewSeparator);
+
+                        if(currentUserReview.getSeparatorTitle() != null && !currentUserReview.getSeparatorTitle().equals(""))
+                            adapter.addAddReviewItem(currentUserReview);
+                        else
+                            adapter.add(currentUserReview);
+
+                        adapter.addSeparatorItem(otherReviewSeparator);
+
                         //add all reparator and empty reviews
                         if(noOtherReview != null)
-                            newReviews.add(0, noOtherReview);
-                        newReviews.add(0, otherReviewSeparator);
-                        newReviews.add(0, currentUserReview);
-                        newReviews.add(0, yourReviewSeparator);
+                            adapter.addNoReviewItem(noOtherReview);
 
-                        adapter = new ReviewListAdapter(ReviewsActivity.this, newReviews);
+                        for(int i = 0; i < newReviews.size(); i++)
+                            adapter.add(newReviews.get(i));
+
+                        adapter.update();
+
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                         swingBottomInAnimationAdapter.setAbsListView(listViewReviews);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
