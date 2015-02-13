@@ -259,8 +259,7 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
                         return null;
                     }
                 }
-                JSONArray jsonValue = json.getJSONArray("value");
-                JSONArray jsonFavorites = jsonValue.getJSONObject(0).getJSONArray("Favorites");
+                JSONArray jsonFavorites = json.getJSONArray("value");
                 for (int i = 0; i < jsonFavorites.length(); i++) {
 
                     Anime anime = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), FavoriteActivity.this);
