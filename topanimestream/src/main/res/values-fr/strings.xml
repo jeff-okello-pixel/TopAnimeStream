@@ -237,4 +237,9 @@
     <string name="loading_reviews">Loading reviews...</string>
     <string name="no_review_yet">You did not review this anime yet. Review it now!</string>
     <string name="nobody_reviewed_yet">Nobody has reviewed this anime yet. Add yours!</string>
+    <string name="add_review">Add review</string>
+    <string name="art">Art</string>
+    <string name="character">Character</string>
+    <string name="story">Story</string>
+    <string name="sound">Sound</string>
 </resources>
