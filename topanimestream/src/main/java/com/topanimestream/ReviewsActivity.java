@@ -113,8 +113,14 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Review review = (Review) adapterView.getItemAtPosition(position);
+        if(review.getSeparatorTitle() != null && review.getSeparatorTitle().equals(getString(R.string.no_review_yet)))
+        {
+            Intent intent = new Intent(ReviewsActivity.this, AddReviewActivity.class);
+            intent.putExtra("animeId", animeId);
+            startActivity(intent);
+        }
     }
 
     public class ReviewsTask extends AsyncTask<Void, Void, String> {
