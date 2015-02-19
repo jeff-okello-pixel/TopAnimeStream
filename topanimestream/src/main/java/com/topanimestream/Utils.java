@@ -101,7 +101,10 @@ public class Utils {
         }
         return s1;
     }
-
+    public static String floatToStringWithoutDot(float d) {
+        int i = (int) d;
+        return d == i ? String.valueOf(i) : String.valueOf(d);
+    }
     public static void createLoginDialog(final Activity act) {
         Utils.lockScreen(act);
         final Dialog loginDialog = new Dialog(act);

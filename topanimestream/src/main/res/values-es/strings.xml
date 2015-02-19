@@ -243,4 +243,8 @@
     <string name="character">Character</string>
     <string name="story">Story</string>
     <string name="sound">Sound</string>
+    <string name="your_review_hint">your review...</string>
+    <string name="review_created">Your review has been created</string>
+    <string name="overall_rating">"Overall rating: "</string>
+    <string name="no_other_review">There is no other review</string>
 </resources>

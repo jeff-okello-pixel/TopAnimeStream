@@ -78,7 +78,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private MiniController mMini;
     private boolean isFavorite = false;
     private Vote currentUserVote;
-    private Review currentUserReview;
+    public static Review currentUserReview;
     private Recommendation currentUserRecommendation;
     private AnimeDetailsFragment animeDetailsFragment;
     @Override

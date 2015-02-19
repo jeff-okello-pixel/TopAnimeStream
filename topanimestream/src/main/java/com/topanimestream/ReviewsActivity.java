@@ -44,6 +44,7 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
     private int animeId;
     private ReviewListAdapter adapter;
     private Review currentUserReview;
+    private final int ADD_REVIEW = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -79,11 +80,11 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                         if (hasResults) {
                             currentSkip += currentLimit;
                             loadmore = true;
-                            task = new ReviewsTask();
+                            task = new ReviewsTask(false);
                             AsyncTaskTools.execute(task);
                         } else if (task == null) {
                             loadmore = false;
-                            task = new ReviewsTask();
+                            task = new ReviewsTask(false);
                             currentSkip = 0;
                             AsyncTaskTools.execute(task);
                         }
@@ -111,7 +112,24 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
         finish();
         AnimationManager.ActivityFinish(this);
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == ADD_REVIEW) {
+            if(data != null) {
+                int reviewId = data.getIntExtra("reviewId", 0);
+                if (reviewId > 0) {
+                    loadmore = false;
+                    task = new ReviewsTask(true);
+                    currentSkip = 0;
+                    AsyncTaskTools.execute(task);
 
+                }
+            }
+        }
+
+    }
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Review review = (Review) adapterView.getItemAtPosition(position);
@@ -119,20 +137,27 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
         {
             Intent intent = new Intent(ReviewsActivity.this, AddReviewActivity.class);
             intent.putExtra("animeId", animeId);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_REVIEW);
         }
     }
 
     public class ReviewsTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private String url;
+        private String userReviewUrl;
+        private boolean loadUserReview = false;
         private ArrayList<Review> newReviews = new ArrayList<Review>();
+        public ReviewsTask(boolean loadUserReview)
+        {
+            this.loadUserReview = loadUserReview;
+        }
         @Override
         protected void onPreExecute() {
             busyDialog = Utils.showBusyDialog(getString(R.string.loading_reviews), ReviewsActivity.this);
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
             url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").filter("AnimeId%20eq%20" + animeId + "%20and%20AccountId%20ne%20" + CurrentUser.AccountId).expand("Account").skip(currentSkip).top(currentLimit).formatJson().build();
+            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + animeId).expand("Account").build();
         }
 
 
@@ -143,9 +168,20 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                 String errors = Utils.checkDataServiceErrors(json, getString(R.string.error_loading_reviews));
                 if (errors != null)
                     return errors;
+                Gson gson = new Gson();
+                if(loadUserReview) {
+                    JSONObject jsonUserReview = Utils.GetJson(userReviewUrl);
+                    errors = Utils.checkDataServiceErrors(jsonUserReview, getString(R.string.error_loading_anime_details));
+                    if (errors != null)
+                        return errors;
+                    if (jsonUserReview.getJSONArray("value").length() > 0) {
+                        currentUserReview = gson.fromJson(jsonUserReview.getJSONArray("value").getJSONObject(0).toString(), Review.class);
+                    }
+                    AnimeDetailsActivity.currentUserReview = currentUserReview;
+                }
 
                 JSONArray jsonReviews = json.getJSONArray("value");
-                Gson gson = new Gson();
+
                 for(int i = 0; i < jsonReviews.length(); i++)
                 {
                     newReviews.add(gson.fromJson(jsonReviews.getJSONObject(i).toString(), Review.class));
@@ -189,8 +225,10 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                             currentUserReview = Review.CreateReviewSeparator(getString(R.string.no_review_yet));
 
                         Review noOtherReview = null;
-                        if(newReviews.size() < 1)
+                        if(newReviews.size() < 1 && currentUserReview == null)
                             noOtherReview = Review.CreateReviewSeparator(getString(R.string.nobody_reviewed_yet));
+                        else if(newReviews.size() < 1)
+                            noOtherReview = Review.CreateReviewSeparator(getString(R.string.no_other_review));
 
                         adapter.addSeparatorItem(yourReviewSeparator);
 

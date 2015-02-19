@@ -141,7 +141,7 @@ public class ReviewListAdapter extends BaseAdapter {
                 holder.txtEnjoymentRating.setText(review.getEnjoymentRating() / 2 + "/5");
                 if(review.getAccount() != null)
                     App.imageLoader.displayImage(App.getContext().getString(R.string.image_host_path) + review.getAccount().getProfilePic(), holder.imgProfilePic);
-                holder.txtOverallRating.setText(review.getOverallRating() / 2 + "/5");
+                holder.txtOverallRating.setText(context.getString(R.string.overall_rating) + review.getOverallRating() / 2 + "/5");
                 holder.txtReview.setText(review.getValue());
                 break;
             case TYPE_SEPARATOR:
