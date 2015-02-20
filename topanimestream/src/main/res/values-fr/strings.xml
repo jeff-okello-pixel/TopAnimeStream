@@ -246,4 +246,15 @@
     <string name="review_created">Your review has been created</string>
     <string name="overall_rating">"Overall rating: "</string>
     <string name="no_other_review">There is no other review</string>
+    <string name="adding_your_review">Adding your review...</string>
+    <string name="edit_your_review">Edit your review</string>
+    <string name="delete">Delete</string>
+    <string name="review_updated">Your review has been updated.</string>
+    <string name="updating_review">Updating your review</string>
+    <string name="really_sure_delete_vote">Do you really want to delete your vote?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="deleting_review">Deleting your review...</string>
+    <string name="review_deleted">Your review has been deleted</string>
+    <string name="really_sure_delete_review">Are you really sure to delete your review?</string>
 </resources>

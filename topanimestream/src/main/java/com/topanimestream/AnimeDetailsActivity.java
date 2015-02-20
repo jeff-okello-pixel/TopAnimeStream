@@ -86,6 +86,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anime_details);
+        currentUserReview = null;
         layAnimeDetails = (LinearLayout) findViewById(R.id.layAnimeDetails);
         layEpisodes = (LinearLayout) findViewById(R.id.layEpisodes);
         r = getResources();
@@ -256,7 +257,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                     RatingBar rtbCurrentRating = (RatingBar) dialogVote.findViewById(R.id.rtbCurrentRating);
                                     final RatingBar rtbUserRating = (RatingBar) dialogVote.findViewById(R.id.rtbUserRating);
                                     Button btnCancel = (Button) dialogVote.findViewById(R.id.btnCancel);
-                                    Button btnRemoveVote = (Button) dialogVote.findViewById(R.id.btnRemoveVote);
+                                    Button btnDelete = (Button) dialogVote.findViewById(R.id.btnDelete);
                                     Button btnSave = (Button) dialogVote.findViewById(R.id.btnSave);
                                     TextView lblVoteCount = (TextView) dialogVote.findViewById(R.id.lblVoteCount);
 
@@ -267,9 +268,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
                                     if (currentUserVote != null) {
                                         rtbUserRating.setRating(currentUserVote.getValue() / 2);
-                                        btnRemoveVote.setVisibility(View.VISIBLE);
+                                        btnDelete.setVisibility(View.VISIBLE);
                                     } else
-                                        btnRemoveVote.setVisibility(View.GONE);
+                                        btnDelete.setVisibility(View.GONE);
 
                                     btnCancel.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -278,10 +279,28 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                         }
                                     });
 
-                                    btnRemoveVote.setOnClickListener(new View.OnClickListener() {
+                                    btnDelete.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            AsyncTaskTools.execute(new RemoveVoteTask());
+                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    switch (which){
+                                                        case DialogInterface.BUTTON_POSITIVE:
+                                                            AsyncTaskTools.execute(new RemoveVoteTask());
+                                                            break;
+
+                                                        case DialogInterface.BUTTON_NEGATIVE:
+                                                            dialog.dismiss();
+                                                            break;
+                                                    }
+                                                }
+                                            };
+
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(AnimeDetailsActivity.this);
+                                            builder.setMessage(getString(R.string.really_sure_delete_vote)).setPositiveButton(getString(R.string.yes), dialogClickListener)
+                                                    .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+
                                             dialog.dismiss();
                                         }
                                     });
@@ -290,7 +309,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                         @Override
                                         public void onClick(View view) {
                                             AsyncTaskTools.execute(new VoteTask((int) (rtbUserRating.getRating() * 2)));
-                                            dialog.dismiss();
+                                            dialogVote.dismiss();
                                         }
                                     });
 

@@ -89,7 +89,7 @@
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.AddReviewActivity"
+            android:name=".ManageReviewActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity

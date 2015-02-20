@@ -60,29 +60,31 @@
         <Button
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_gray"
-            android:textColor="#ffffff"
-            android:id="@+id/btnCancel"
-            android:text="@string/cancel" />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_height="wrap_content"
-            android:textColor="#ffffff"
-            android:background="@drawable/button_blue"
-            android:id="@+id/btnRemoveVote"
-            android:text="@string/remove_your_vote"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
+            android:layout_margin="5dp"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
             android:background="@drawable/button_green"
             android:id="@+id/btnSave"
             android:text="@string/save"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:background="@drawable/button_red"
+            android:id="@+id/btnDelete"
+            android:text="@string/delete"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_gray"
+            android:textColor="#ffffff"
+            android:layout_margin="5dp"
+            android:id="@+id/btnCancel"
+            android:text="@string/cancel" />
     </LinearLayout>
 </LinearLayout>

@@ -133,9 +133,16 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Review review = (Review) adapterView.getItemAtPosition(position);
-        if(review.getSeparatorTitle() != null && review.getSeparatorTitle().equals(getString(R.string.no_review_yet)))
+        if(review.getAccountId() == CurrentUser.AccountId)
         {
-            Intent intent = new Intent(ReviewsActivity.this, AddReviewActivity.class);
+            Intent intent = new Intent(ReviewsActivity.this, ManageReviewActivity.class);
+            intent.putExtra("animeId", animeId);
+            intent.putExtra("currentUserReview", currentUserReview);
+            startActivityForResult(intent, ADD_REVIEW);
+        }
+        else if(review.getSeparatorTitle() != null && review.getSeparatorTitle().equals(getString(R.string.no_review_yet)))
+        {
+            Intent intent = new Intent(ReviewsActivity.this, ManageReviewActivity.class);
             intent.putExtra("animeId", animeId);
             startActivityForResult(intent, ADD_REVIEW);
         }
@@ -176,8 +183,14 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                         return errors;
                     if (jsonUserReview.getJSONArray("value").length() > 0) {
                         currentUserReview = gson.fromJson(jsonUserReview.getJSONArray("value").getJSONObject(0).toString(), Review.class);
+                        AnimeDetailsActivity.currentUserReview = currentUserReview;
                     }
-                    AnimeDetailsActivity.currentUserReview = currentUserReview;
+                    else
+                    {
+                        AnimeDetailsActivity.currentUserReview = null;
+                        currentUserReview = null;
+                    }
+
                 }
 
                 JSONArray jsonReviews = json.getJSONArray("value");

@@ -79,10 +79,22 @@ public class FavoriteActivity extends ActionBarActivity implements OnItemClickLi
 
         listView.setFloatViewManager(controller);
         listView.setOnTouchListener(controller);
+        listView.setDragScrollProfile(ssProfile);
         listView.setDragEnabled(true);
 
     }
-
+    private DragSortListView.DragScrollProfile ssProfile =
+            new DragSortListView.DragScrollProfile() {
+                @Override
+                public float getSpeed(float w, long t) {
+                    if (w > 0.8f) {
+                        // Traverse all views in a millisecond
+                        return ((float) adapter.getCount()) / 0.001f;
+                    } else {
+                        return 6.0f * w;
+                    }
+                }
+            };
     private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
         @Override
         public void remove(int which) {

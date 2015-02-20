@@ -1,5 +1,7 @@
 package com.topanimestream;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -8,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.view.DragEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +31,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 
-public class AddReviewActivity extends ActionBarActivity implements View.OnTouchListener, RatingBar.OnRatingBarChangeListener, View.OnClickListener {
+public class ManageReviewActivity extends ActionBarActivity implements View.OnTouchListener, RatingBar.OnRatingBarChangeListener, View.OnClickListener {
 
 
     private SharedPreferences prefs;
@@ -50,16 +51,21 @@ public class AddReviewActivity extends ActionBarActivity implements View.OnTouch
 
     private Button btnSave;
     private Button btnCancel;
+    private Button btnDelete;
 
     private EditText txtYourReview;
+
+    private Review currentUserReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_review);
+        setContentView(R.layout.activity_manage_review);
+
         btnSave = (Button)findViewById(R.id.btnSave);
         btnCancel = (Button)findViewById(R.id.btnCancel);
+        btnDelete = (Button)findViewById(R.id.btnDelete);
 
         lblArtRating = (TextView) findViewById(R.id.lblArtRating);
         lblCharacterRating = (TextView) findViewById(R.id.lblCharacterRating);
@@ -78,6 +84,7 @@ public class AddReviewActivity extends ActionBarActivity implements View.OnTouch
 
         btnCancel.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+        btnDelete.setOnClickListener(this);
 
         rtbArtRating.setOnTouchListener(this);
         rtbCharacterRating.setOnTouchListener(this);
@@ -92,13 +99,25 @@ public class AddReviewActivity extends ActionBarActivity implements View.OnTouch
         rtbEnjoymentRating.setOnRatingBarChangeListener(this);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Intent intent = getIntent();
-        animeId = intent.getExtras().getInt("animeId");
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.add_review) + "</font>"));
+        Intent intent = getIntent();
+        animeId = intent.getExtras().getInt("animeId");
+        currentUserReview = intent.getExtras().getParcelable("currentUserReview");
+        if(currentUserReview != null)
+        {
+            rtbArtRating.setRating(currentUserReview.getArtRating() / 2);
+            rtbCharacterRating.setRating(currentUserReview.getCharacterRating() / 2);
+            rtbStoryRating.setRating(currentUserReview.getStoryRating() / 2);
+            rtbSoundRating.setRating(currentUserReview.getSoundRating() / 2);
+            rtbEnjoymentRating.setRating(currentUserReview.getEnjoymentRating() / 2);
+            txtYourReview.setText(currentUserReview.getValue());
+            btnDelete.setVisibility(View.VISIBLE);
+            actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.edit_your_review) + "</font>"));
+
+        }
 
     }
 
@@ -185,24 +204,104 @@ public class AddReviewActivity extends ActionBarActivity implements View.OnTouch
             case R.id.btnSave:
                 AsyncTaskTools.execute(new AddReviewTask());
                 break;
+            case R.id.btnDelete:
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                AsyncTaskTools.execute(new RemoveReviewTask());
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ManageReviewActivity.this);
+                builder.setMessage(getString(R.string.really_sure_delete_review)).setPositiveButton(getString(R.string.yes), dialogClickListener)
+                        .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+
+                break;
             case R.id.btnCancel:
                 finish();
                 break;
 
         }
     }
+    private class RemoveReviewTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
 
+        private static final String NAMESPACE = "http://tempuri.org/";
+        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+        private String URL;
+        private String method = "RemoveReview";
+        @Override
+        protected void onPreExecute() {
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_review), ManageReviewActivity.this);
+            URL = getString(R.string.anime_service_path);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if (!App.IsNetworkConnected()) {
+                return getString(R.string.error_internet_connection);
+            }
+            SoapObject request = new SoapObject(NAMESPACE, method);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            request.addProperty("reviewId", currentUserReview.getReviewId());
+            envelope = Utils.addAuthentication(envelope);
+            envelope.dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            SoapPrimitive result = null;
+            try {
+                androidHttpTransport.call(SOAP_ACTION + method, envelope);
+                result = (SoapPrimitive) envelope.getResponse();
+                return null;
+            } catch (Exception e) {
+                if (e instanceof SoapFault) {
+                    return e.getMessage();
+                }
+
+                e.printStackTrace();
+            }
+            return getString(R.string.error_remove_favorite);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            Utils.dismissBusyDialog(busyDialog);
+            if (error != null) {
+                Toast.makeText(ManageReviewActivity.this, error, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(ManageReviewActivity.this, getString(R.string.review_deleted), Toast.LENGTH_LONG).show();
+                //Starting the previous Intent
+                Intent previousActivity = new Intent(getApplicationContext(), ReviewsActivity.class);
+                previousActivity.putExtra("reviewId", currentUserReview.getReviewId());
+                setResult(0, previousActivity);
+                finish();
+            }
+        }
+    }
     private class AddReviewTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
 
         private static final String NAMESPACE = "http://tempuri.org/";
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String URL;
-        private String method = "CreateReview";
+        private String method = "Review";
         private int reviewId;
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog("Adding your review...", AddReviewActivity.this);
+            if(currentUserReview != null) {
+                busyDialog = DialogManager.showBusyDialog(getString(R.string.updating_review), ManageReviewActivity.this);
+            }else
+            {
+                busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_your_review), ManageReviewActivity.this);
+            }
             URL = getString(R.string.anime_service_path);
         }
 
@@ -245,9 +344,14 @@ public class AddReviewActivity extends ActionBarActivity implements View.OnTouch
         protected void onPostExecute(String error) {
             Utils.dismissBusyDialog(busyDialog);
             if (error != null) {
-                Toast.makeText(AddReviewActivity.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(ManageReviewActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(AddReviewActivity.this, getString(R.string.review_created), Toast.LENGTH_SHORT).show();
+                if(currentUserReview != null){
+                    Toast.makeText(ManageReviewActivity.this, getString(R.string.review_updated), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(ManageReviewActivity.this, getString(R.string.review_created), Toast.LENGTH_SHORT).show();
+                }
                 //Starting the previous Intent
                 Intent previousActivity = new Intent(getApplicationContext(), ReviewsActivity.class);
                 previousActivity.putExtra("reviewId", reviewId);

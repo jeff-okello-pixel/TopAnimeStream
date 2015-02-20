@@ -730,13 +730,15 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         } else if (menuItem.equals(getString(R.string.menu_share))) {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
+            /*
             if (App.isPro) {
                 sendIntent.putExtra(Intent.EXTRA_TEXT,
                         "https://play.google.com/store/apps/details?id=com.topanimestream.pro");
             } else {
                 sendIntent.putExtra(Intent.EXTRA_TEXT,
                         "https://play.google.com/store/apps/details?id=com.topanimestream");
-            }
+            }*/
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "http://www.topanimestream.com/en/android/");
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
         } else if (menuItem.equals(getString(R.string.menu_settings))) {

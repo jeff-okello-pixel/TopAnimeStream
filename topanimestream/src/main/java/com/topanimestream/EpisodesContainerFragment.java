@@ -55,7 +55,6 @@ public class EpisodesContainerFragment extends Fragment {
     private boolean subbed = false;
     private boolean dubbed = false;
     App app;
-    public Dialog busyDialog;
     private SharedPreferences prefs;
 
     public static EpisodesContainerFragment newInstance(Anime anime) {

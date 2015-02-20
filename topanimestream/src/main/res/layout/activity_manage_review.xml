@@ -268,19 +268,29 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_weight="1"
+                    android:layout_margin="5dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
                     android:background="@drawable/button_green"
                     android:textColor="#ffffff"
                     android:id="@+id/btnSave"
                     android:text="@string/save" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:textColor="#ffffff"
+                    android:background="@drawable/button_red"
+                    android:visibility="gone"
+                    android:id="@+id/btnDelete"
+                    android:text="@string/delete"/>
 
                 <Button
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
                     android:layout_height="wrap_content"
                     android:textColor="#ffffff"
+                    android:layout_margin="5dp"
                     android:background="@drawable/button_gray"
                     android:id="@+id/btnCancel"
                     android:text="@string/cancel"/>

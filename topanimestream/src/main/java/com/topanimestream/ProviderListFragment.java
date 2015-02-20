@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     private Anime anime;
     private ArrayList<Mirror> filteredMirrors;
     private Dialog qualityDialog;
+    private ProgressBar progressBarLoadMore;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
         filteredMirrors = new ArrayList<Mirror>();
+        progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
         txtNoProvider = (TextView) rootView.findViewById(R.id.txtNoProvider);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         listView = (ListView) rootView.findViewById(R.id.listView);
@@ -184,15 +187,12 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
 
     public class LoadProvidersTask extends AsyncTask<Void, Void, String> {
         private String URL;
-        private Dialog busyDialog;
 
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), getActivity());
+            progressBarLoadMore.setVisibility(View.VISIBLE);
             URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntitySpecificRow("AnimeSources", animeSourceId, false).formatJson().expand("Mirrors/Provider").build();
         }
-
-        ;
 
         @Override
         protected String doInBackground(Void... params) {
@@ -229,10 +229,12 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                     listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
                 }
 
-                Utils.dismissBusyDialog(busyDialog);
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();
+            }
+            finally {
+                progressBarLoadMore.setVisibility(View.GONE);
             }
 
 
