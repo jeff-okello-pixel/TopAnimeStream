@@ -89,6 +89,14 @@
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
+            android:name="com.topanimestream.MyProfileActivity"
+            android:configChanges="locale|layoutDirection" >
+        </activity>
+        <activity
+            android:name="com.topanimestream.RegisterActivity"
+            android:configChanges="locale|layoutDirection" >
+        </activity>
+        <activity
             android:name=".ManageReviewActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
@@ -117,6 +125,8 @@
         <activity
             android:name="com.topanimestream.LoginActivity"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>

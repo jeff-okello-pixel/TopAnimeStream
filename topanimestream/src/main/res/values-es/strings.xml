@@ -258,4 +258,6 @@
     <string name="deleting_review">Deleting your review...</string>
     <string name="review_deleted">Your review has been deleted</string>
     <string name="really_sure_delete_review">Are you really sure to delete your review?</string>
+    <string name="creating_your_account">Creating your account...</string>
+    <string name="my_profile">My profile</string>
 </resources>
