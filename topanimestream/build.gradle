@@ -29,8 +29,9 @@ dependencies {
     compile files('libs/ksoap2.jar')
     compile files('libs/com-fwwjt-pacjz173199.jar')
     compile files('libs/gson-2.2.4.jar')
+    compile 'com.github.nirhart:parallaxscroll:1.0'
     compile 'com.android.support:support-v4:20.0.0'
-    compile 'com.android.support:appcompat-v7:20.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:mediarouter-v7:20.0.0'
     compile 'com.google.android.gms:play-services:6.1.11'
     compile 'com.mopub.mobileads:mopub-android:+@aar'

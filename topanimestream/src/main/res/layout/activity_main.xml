@@ -1,63 +1,70 @@
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ap="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
+
+    <include layout="@layout/toolbar" />
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-            <LinearLayout
-                android:id="@+id/layBottom"
-                android:layout_alignParentBottom="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                    <com.google.sample.castcompanionlibrary.widgets.MiniController
-                        android:id="@+id/miniController"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <LinearLayout
+                    android:id="@+id/layBottom"
+                    android:layout_alignParentBottom="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                        <com.google.sample.castcompanionlibrary.widgets.MiniController
+                            android:id="@+id/miniController"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"/>
+                    <com.mopub.mobileads.MoPubView
+                        android:id="@+id/adView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"/>
-                <com.mopub.mobileads.MoPubView
-                    android:id="@+id/adView"
+                        android:layout_height="50dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_above="@id/layBottom"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_above="@id/layBottom"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
-                    android:id="@+id/tabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp" />
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
-            <TextView
-                android:id="@+id/txtNoConnection"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:visibility="gone"
-                android:text="@string/no_connection"/>
-        </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+                        android:id="@+id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp" />
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/txtNoConnection"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"
+                    android:text="@string/no_connection"/>
+            </RelativeLayout>
 
 
 
-	    <ListView android:id="@+id/left_drawer"
-	        	  android:paddingTop="10dp"
-	        	  android:layout_width="250dp"
-	              android:layout_height="match_parent"
-	              android:layout_gravity="left"
-	              android:scrollbars="none"
-	              android:background="@color/blueDrawer"
-	              android:divider="@android:color/transparent"
-	    		  android:dividerHeight="8dp"/>
-</android.support.v4.widget.DrawerLayout>
+            <ListView android:id="@+id/left_drawer"
+                      android:paddingTop="10dp"
+                      android:layout_width="250dp"
+                      android:layout_height="match_parent"
+                      android:layout_gravity="left"
+                      android:scrollbars="none"
+                      android:background="@color/blueDrawer"
+                      android:divider="@android:color/transparent"
+                      android:dividerHeight="8dp"/>
+    </android.support.v4.widget.DrawerLayout>
+</LinearLayout>
 

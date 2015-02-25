@@ -36,10 +36,12 @@ public class MenuArrayAdapter extends ArrayAdapter<String> {
         TextView textView = (TextView) convertView.findViewById(R.id.txtMenu);
         textView.setText(values[position]);
         Drawable textViewIcon = null;
-        if (values[position].equals(re.getString(R.string.menu_favorites))) {
+        if(values[position].equals(re.getString(R.string.my_profile))){
+            textViewIcon = re.getDrawable(R.drawable.ic_action_profile);
+        }else if (values[position].equals(re.getString(R.string.menu_favorites))) {
             textViewIcon = re.getDrawable(R.drawable.ic_favorite);
         } else if (values[position].equals(re.getString(R.string.menu_history))) {
-            textViewIcon = re.getDrawable(R.drawable.ic_history);
+            textViewIcon = re.getDrawable(R.drawable.ic_history_white);
         } else if (values[position].equals(re.getString(R.string.menu_share))) {
             textViewIcon = re.getDrawable(R.drawable.ic_share);
         } else if (values[position].equals(re.getString(R.string.menu_settings))) {

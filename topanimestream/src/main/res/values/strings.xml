@@ -64,6 +64,7 @@
     <string name="error_loading_providers">An error has occurred while loading the providers</string>
 
     <!-- Menu drawer -->
+    <string name="menu_myprofile">My profile</string>
     <string name="menu_favorites">Favorites</string>
     <string name="menu_history">Watchlist</string>
     <string name="menu_share">Share</string>
@@ -86,6 +87,7 @@
         <item>Upgrade to pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
+        <item>My profile</item>
         <item>Favorites</item>
         <item>Watchlist</item>
         <item>Share</item>

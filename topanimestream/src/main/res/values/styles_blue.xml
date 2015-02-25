@@ -36,7 +36,9 @@
         <item name="searchViewSearchIcon">@drawable/abc_ic_search</item>
         <item name="searchViewGoIcon">@drawable/abc_ic_go</item>
         <item name="searchViewVoiceIcon">@drawable/abc_ic_voice_search</item>
-        
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
     </style>
     <style name="PopupTheme" parent="Theme.AppCompat.Light">
         <item name="actionBarItemBackground">@drawable/selectable_background_blue</item>
@@ -101,5 +103,8 @@
         <item name="popupMenuStyle">@style/PopupMenu.Blue</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Blue</item>
     </style>
-
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
 </resources>

@@ -55,6 +55,7 @@
     <string name="error_loading_providers">Se ha producido un error al cargar los proveedores</string>
 
     <!-- Menu drawer -->
+    <string name="menu_myprofile">Mi perfil</string>
     <string name="menu_favorites">Favoritos</string>
     <string name="menu_history">Vistos</string>
     <string name="menu_share">Compartir</string>
@@ -77,6 +78,7 @@
         <item>Actualiza a pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
+        <item>Mi perfil</item>
         <item>Favoritos</item>
         <item>Vistos</item>
         <item>Compartir</item>

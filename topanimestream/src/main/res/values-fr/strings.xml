@@ -55,6 +55,7 @@
     <string name="error_loading_providers">Une erreur est survenue pendant le chargement des fournisseurs</string>
 
     <!-- Menu drawer -->
+    <string name="menu_myprofile">Mon profil</string>
     <string name="menu_favorites">Favoris</string>
     <string name="menu_history">Liste de visionnage</string>
     <string name="menu_share">Partager</string>
@@ -77,6 +78,7 @@
         <item>Acheter la version pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
+        <item>Mon profil</item>
         <item>Favoris</item>
         <item>Liste de visionnage</item>
         <item>Partager</item>
