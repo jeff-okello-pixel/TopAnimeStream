@@ -275,4 +275,7 @@
     <string name="edit_my_profile">Edit my profile</string>
     <string name="my_votes">My votes</string>
     <string name="my_reviews">My reviews</string>
+    <string name="loading_your_profile">Loading your profile</string>
+    <string name="error_loading_your_profile">An error has occurred while loading your profile</string>
+    <string name="rank">Rank: </string>
 </resources>

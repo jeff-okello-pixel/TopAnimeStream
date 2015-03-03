@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -28,8 +29,12 @@ import android.widget.Toast;
 import com.nirhart.parallaxscroll.views.ParallaxListView;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
+import com.topanimestream.models.Anime;
+import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Item;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
@@ -47,6 +52,12 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
     private SharedPreferences prefs;
     private ParallaxListView listView;
     private ListAdapter adapter;
+    private ImageView imgBackdrop;
+    private ImageView imgProfilePic;
+    private TextView txtUsername;
+    private TextView txtJoinedDate;
+    private TextView txtRank;
+    private String firstFavoriteBackDropUrl;
     public MyProfileActivity() {
     }
 
@@ -57,6 +68,12 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         setContentView(R.layout.activity_myprofile);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         listView = (ParallaxListView) findViewById(R.id.listView);
+        imgBackdrop = (ImageView) findViewById(R.id.imgBackdrop);
+        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
+        txtUsername = (TextView) findViewById(R.id.txtUsername);
+        txtJoinedDate = (TextView) findViewById(R.id.txtJoinedDate);
+        txtRank = (TextView) findViewById(R.id.txtRank);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.my_profile) + "</font>"));
@@ -97,6 +114,12 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
 
         listView.setOnItemClickListener(this);
 
+        //TODO resize image
+        App.imageLoader.displayImage(getString(R.string.image_host_path) + CurrentUser.ProfilePic, imgProfilePic);
+        txtUsername.setText(CurrentUser.Username);
+        txtJoinedDate.setText(CurrentUser.AddedDate);
+        txtRank.setText(getString(R.string.rank) + CurrentUser.Roles.get(0));
+
 
     }
 
@@ -132,5 +155,76 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         }else if(txtMenuTitle.getText().equals(getString(R.string.changes))) {
 
         }
+    }
+
+    public class ProfileTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        private String firstFavoriteUrl;
+        @Override
+        protected void onPreExecute() {
+            busyDialog = Utils.showBusyDialog(getString(R.string.loading_your_profile), getActivity());
+            firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if (!App.IsNetworkConnected()) {
+                return getString(R.string.error_internet_connection);
+            }
+
+            try {
+                JSONObject json = Utils.GetJson(firstFavoriteUrl);
+                String errors = Utils.checkDataServiceErrors(json, getString(R.string.error_loading_your_profile));
+                if (errors != null)
+                    return errors;
+                if (!json.isNull("error")) {
+                    try {
+                        int error = json.getInt("error");
+                        if (error == 401) {
+                            return "401";
+                        }
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+                Gson gson = new Gson();
+                JSONArray jsonAnimes = json.getJSONArray("value");
+                if(jsonAnimes.length() > 0) {
+                    firstFavoriteBackDropUrl = ((Anime)gson.fromJson(jsonAnimes.getJSONObject(0).toString(), Anime.class)).getBackdropPath("500");
+                }
+
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return getString(R.string.error_loading_your_profile);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (error != null) {
+                    if (error.equals("401")) {
+                        Toast.makeText(MyProfileActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
+                        MyProfileActivity.this.startActivity(new Intent(MyProfileActivity.this, LoginActivity.class));
+                        MyProfileActivity.this.finish();
+                    } else {
+                        Toast.makeText(MyProfileActivity.this, error, Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    App.imageLoader.displayImage(firstFavoriteBackDropUrl, imgBackdrop);
+
+                }
+
+
+            } catch (Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
+            }
+            Utils.dismissBusyDialog(busyDialog);
+
+        }
+
     }
 }

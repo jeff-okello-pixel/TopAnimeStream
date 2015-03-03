@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:scaleType="centerCrop"
         android:layout_height="180dp"
-        android:src="@drawable/attackontitanbackdrop"
         android:id="@+id/imgBackdrop"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +26,6 @@
             android:padding="2dp"
             android:layout_marginLeft="20dp"
             android:cropToPadding="true"
-            android:src="@drawable/attackontitanbackdrop"
             android:scaleType="centerCrop"/>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -37,24 +35,24 @@
             android:layout_marginLeft="10dp"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/txtUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#f5f5f5"
-                android:text="Latuff"
                 android:textSize="25sp"/>
 
             <TextView
+                android:id="@+id/txtJoinedDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#f5f5f5"
-                android:text="Joined: 3 months ago"
                 android:textSize="15sp"/>
 
             <TextView
+                android:id="@+id/txtRank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#f5f5f5"
-                android:text="Rank: administrator"
                 android:textSize="15sp"/>
 
         </LinearLayout>
