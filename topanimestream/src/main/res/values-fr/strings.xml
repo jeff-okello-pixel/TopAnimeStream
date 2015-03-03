@@ -263,4 +263,7 @@
     <string name="my_profile">My profile</string>
     <string name="edit_profile">Edit profile</string>
     <string name="friends">Friends</string>
+    <string name="edit_my_profile">Edit my profile</string>
+    <string name="my_votes">My votes</string>
+    <string name="my_reviews">My reviews</string>
 </resources>

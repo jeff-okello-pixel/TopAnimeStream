@@ -67,7 +67,6 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
                 new Item(getString(R.string.menu_history), R.drawable.ic_history_black),
                 new Item(getString(R.string.votes), R.drawable.ic_vote),
                 new Item(getString(R.string.reviews), R.drawable.ic_review),
-                new Item(getString(R.string.recommendations), R.drawable.ic_recommendation),
                 new Item(getString(R.string.friends), R.drawable.ic_friends),
                 new Item(getString(R.string.changes), R.drawable.ic_changes)};
 
@@ -117,6 +116,21 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        TextView txtMenuTitle = (TextView)view.findViewById(android.R.id.text1);
+        if(txtMenuTitle.getText().equals(getString(R.string.edit_profile))){
+            startActivity(new Intent(EditProfileActivity.this, FavoriteActivity.class));
+        }else if(txtMenuTitle.getText().equals(getString(R.string.menu_favorites))){
+            startActivity(new Intent(MyProfileActivity.this, FavoriteActivity.class));
+        }else if(txtMenuTitle.getText().equals(getString(R.string.menu_history))){
+            startActivity(new Intent(MyProfileActivity.this, HistoryActivity.class));
+        }else if(txtMenuTitle.getText().equals(getString(R.string.votes))) {
+            startActivity(new Intent(MyProfileActivity.this, MyVotesActivity.class));
+        }else if(txtMenuTitle.getText().equals(getString(R.string.reviews))) {
+            startActivity(new Intent(MyProfileActivity.this, MyReviewsActivity.class));
+        }else if(txtMenuTitle.getText().equals(getString(R.string.friends))) {
 
+        }else if(txtMenuTitle.getText().equals(getString(R.string.changes))) {
+
+        }
     }
 }

@@ -89,7 +89,19 @@
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
+            android:name="com.topanimestream.EditProfileActivity"
+            android:configChanges="locale|layoutDirection" >
+        </activity>
+        <activity
             android:name="com.topanimestream.MyProfileActivity"
+            android:configChanges="locale|layoutDirection" >
+        </activity>
+        <activity
+            android:name="com.topanimestream.MyReviewsActivity"
+            android:configChanges="locale|layoutDirection" >
+        </activity>
+        <activity
+            android:name="com.topanimestream.MyVotesActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
