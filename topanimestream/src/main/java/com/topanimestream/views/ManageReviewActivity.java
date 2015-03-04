@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.topanimestream.App;
-import com.topanimestream.Utilities.AsyncTaskTools;
+import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
-import com.topanimestream.Utilities.Utils;
+import com.topanimestream.utilities.Utils;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Review;

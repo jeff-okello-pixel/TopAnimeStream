@@ -19,7 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.topanimestream.Utilities.SQLiteHelper;
+import com.topanimestream.utilities.SQLiteHelper;
 import com.topanimestream.adapters.HistoryListAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.Anime;

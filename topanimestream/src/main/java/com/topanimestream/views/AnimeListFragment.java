@@ -25,9 +25,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
-import com.topanimestream.Utilities.AsyncTaskTools;
-import com.topanimestream.Utilities.Utils;
-import com.topanimestream.Utilities.WcfDataServiceUtility;
+import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.Utils;
+import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.AnimeListAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.Anime;

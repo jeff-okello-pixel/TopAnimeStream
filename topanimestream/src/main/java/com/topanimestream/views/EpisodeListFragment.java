@@ -22,10 +22,10 @@ import java.util.ArrayList;
 
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
-import com.topanimestream.Utilities.AsyncTaskTools;
+import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
-import com.topanimestream.Utilities.Utils;
-import com.topanimestream.Utilities.WcfDataServiceUtility;
+import com.topanimestream.utilities.Utils;
+import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.EpisodeListAdapter;
 import com.topanimestream.models.Episode;
 import com.topanimestream.views.profile.LoginActivity;
