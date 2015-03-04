@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
-import com.topanimestream.Utils;
+import com.topanimestream.Utilities.Utils;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 

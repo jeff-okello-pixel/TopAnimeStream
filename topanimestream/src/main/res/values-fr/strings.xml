@@ -269,4 +269,6 @@
     <string name="loading_your_profile">Loading your profile</string>
     <string name="error_loading_your_profile">An error has occurred while loading your profile</string>
     <string name="rank">Rank: </string>
+    <string name="my_friends">My friends</string>
+    <string name="menu_votes">Votes</string>
 </resources>

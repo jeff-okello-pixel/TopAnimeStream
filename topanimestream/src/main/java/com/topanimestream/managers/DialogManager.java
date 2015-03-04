@@ -16,7 +16,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.topanimestream.App;
-import com.topanimestream.Utils;
+import com.topanimestream.Utilities.Utils;
 import com.topanimestream.R;
 
 public class DialogManager {

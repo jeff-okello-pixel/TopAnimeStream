@@ -8,8 +8,8 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import com.topanimestream.App;
-import com.topanimestream.AsyncTaskTools;
-import com.topanimestream.Utils;
+import com.topanimestream.Utilities.AsyncTaskTools;
+import com.topanimestream.Utilities.Utils;
 import com.topanimestream.models.Package;
 import com.topanimestream.R;
 

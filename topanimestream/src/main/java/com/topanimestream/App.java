@@ -14,7 +14,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.Locale;
 
-import com.topanimestream.R;
+import com.topanimestream.Utilities.NetworkChangeReceiver;
+import com.topanimestream.Utilities.NetworkUtil;
+import com.topanimestream.Utilities.Utils;
 
 public class App extends Application implements NetworkChangeReceiver.NetworkEvent {
     public static int networkConnection;

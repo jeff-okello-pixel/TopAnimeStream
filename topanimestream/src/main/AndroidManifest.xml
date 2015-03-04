@@ -22,11 +22,11 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <provider
-            android:name="com.topanimestream.SuggestionProvider"
-            android:authorities="com.topanimestream.SuggestionProvider" />
+            android:name=".Utilities.SuggestionProvider"
+            android:authorities="com.topanimestream.Utilities.SuggestionProvider" />
 
         <receiver
-            android:name="com.topanimestream.NetworkChangeReceiver"
+            android:name=".Utilities.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -35,7 +35,7 @@
         </receiver>
 
         <activity
-            android:name="com.topanimestream.MainActivity"
+            android:name=".views.MainActivity"
             android:configChanges="locale|layoutDirection" >
             <meta-data
                 android:name="android.app.default_searchable"
@@ -48,28 +48,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.topanimestream.Settings"
+            android:name=".views.Settings"
             android:configChanges="locale|layoutDirection"
             android:label="Settings" >
         </activity>
         <activity
-            android:name="com.topanimestream.FavoriteActivity"
+            android:name=".views.profile.MyFavoritesActivity"
             android:configChanges="locale|layoutDirection"
             android:label="Favorites" >
         </activity>
         <activity
-            android:name="com.topanimestream.EpisodeDetailsActivity"
+            android:name=".views.EpisodeDetailsActivity"
             android:theme="@style/PopupTheme"
             android:configChanges="locale|layoutDirection"
             android:label="Providers" >
         </activity>
         <activity
-            android:name="com.topanimestream.HistoryActivity"
+            android:name=".views.profile.MyWatchlistActivity"
             android:configChanges="locale|layoutDirection"
             android:label="History" >
         </activity>
         <activity
-            android:name="com.topanimestream.AnimeSearchActivity"
+            android:name=".views.AnimeSearchActivity"
             android:configChanges="locale|layoutDirection"
             android:label="@string/title_activity_anime_search"
             android:launchMode="singleTop" >
@@ -85,35 +85,35 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.topanimestream.AnimeDetailsActivity"
+            android:name=".views.AnimeDetailsActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.EditProfileActivity"
+            android:name=".views.profile.EditProfileActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.MyProfileActivity"
+            android:name=".views.profile.MyProfileActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.MyReviewsActivity"
+            android:name=".views.profile.MyReviewsActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.MyVotesActivity"
+            android:name=".views.profile.MyVotesActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.RegisterActivity"
+            android:name=".views.profile.RegisterActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name=".ManageReviewActivity"
+            android:name=".views.ManageReviewActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name="com.topanimestream.ReviewsActivity"
+            android:name=".views.ReviewsActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
@@ -135,7 +135,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.topanimestream.LoginActivity"
+            android:name=".views.profile.LoginActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -165,7 +165,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name="com.topanimestream.VideoActivity"
+            android:name=".views.VideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_video"
             android:theme="@style/FullScreenVideoTheme" >
