@@ -31,7 +31,6 @@ public class EditProfileActivity extends ActionBarActivity implements View.OnCli
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);

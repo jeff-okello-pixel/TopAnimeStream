@@ -19,9 +19,11 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nirhart.parallaxscroll.views.ParallaxListView;
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
@@ -62,11 +64,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         setContentView(R.layout.activity_myprofile);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         listView = (ParallaxListView) findViewById(R.id.listView);
-        imgBackdrop = (ImageView) findViewById(R.id.imgBackdrop);
-        imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
-        txtUsername = (TextView) findViewById(R.id.txtUsername);
-        txtJoinedDate = (TextView) findViewById(R.id.txtJoinedDate);
-        txtRank = (TextView) findViewById(R.id.txtRank);
+
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
@@ -102,7 +100,11 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
             }
         };
         View view = getLayoutInflater().inflate(R.layout.profile_header, null);
-
+        imgBackdrop = (ImageView) view.findViewById(R.id.imgBackdrop);
+        imgProfilePic = (ImageView) view.findViewById(R.id.imgProfilePic);
+        txtUsername = (TextView) view.findViewById(R.id.txtUsername);
+        txtJoinedDate = (TextView) view.findViewById(R.id.txtJoinedDate);
+        txtRank = (TextView) view.findViewById(R.id.txtRank);
         listView.addParallaxedHeaderView(view);
         listView.setAdapter(adapter);
 
@@ -112,9 +114,10 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         App.imageLoader.displayImage(getString(R.string.image_host_path) + CurrentUser.ProfilePic, imgProfilePic);
         txtUsername.setText(CurrentUser.Username);
         txtJoinedDate.setText(CurrentUser.AddedDate);
-        txtRank.setText(getString(R.string.rank) + CurrentUser.Roles.get(0));
+        //TODO get best role
+        txtRank.setText(getString(R.string.rank) + CurrentUser.Roles.get(0).getName());
 
-
+        AsyncTaskTools.execute(new ProfileTask());
     }
 
     @Override
@@ -132,10 +135,16 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        AsyncTaskTools.execute(new ProfileTask());
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         TextView txtMenuTitle = (TextView)view.findViewById(android.R.id.text1);
         if(txtMenuTitle.getText().equals(getString(R.string.edit_profile))){
-            startActivity(new Intent(EditProfileActivity.this, MyFavoritesActivity.class));
+            startActivity(new Intent(MyProfileActivity.this, EditProfileActivity.class));
         }else if(txtMenuTitle.getText().equals(getString(R.string.menu_favorites))){
             startActivity(new Intent(MyProfileActivity.this, MyFavoritesActivity.class));
         }else if(txtMenuTitle.getText().equals(getString(R.string.menu_history))){
@@ -156,7 +165,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         private String firstFavoriteUrl;
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_your_profile), getActivity());
+            busyDialog = Utils.showBusyDialog(getString(R.string.loading_your_profile), MyProfileActivity.this);
             firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
         }
 
@@ -184,7 +193,9 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
                 Gson gson = new Gson();
                 JSONArray jsonAnimes = json.getJSONArray("value");
                 if(jsonAnimes.length() > 0) {
-                    firstFavoriteBackDropUrl = ((Anime)gson.fromJson(jsonAnimes.getJSONObject(0).toString(), Anime.class)).getBackdropPath("500");
+                    String jsonAnime = jsonAnimes.getJSONObject(0).getJSONObject("Anime").toString();
+                    Anime anime = gson.fromJson(jsonAnime, Anime.class);
+                    firstFavoriteBackDropUrl = anime.getBackdropPath("500");
                 }
 
                 return null;
@@ -195,7 +206,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String error) {
             try {
                 if (error != null) {
                     if (error.equals("401")) {
