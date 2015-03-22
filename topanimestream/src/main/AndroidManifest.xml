@@ -22,11 +22,11 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <provider
-            android:name=".utilities.SuggestionProvider"
+            android:name="com.topanimestream.utilities.SuggestionProvider"
             android:authorities="com.topanimestream.utilities.SuggestionProvider" />
 
         <receiver
-            android:name=".utilities.NetworkChangeReceiver"
+            android:name="com.topanimestream.utilities.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -39,7 +39,7 @@
             android:configChanges="locale|layoutDirection" >
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.topanimestream.AnimeSearchActivity" />
+                android:value=".views.AnimeSearchActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,7 +79,7 @@
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.topanimestream.AnimeSearchActivity" />
+                android:value="com.topanimestream.views.AnimeSearchActivity" />
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
