@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.models.Anime;
 import com.topanimestream.models.Vote;
 import com.topanimestream.utilities.Utils;
 
