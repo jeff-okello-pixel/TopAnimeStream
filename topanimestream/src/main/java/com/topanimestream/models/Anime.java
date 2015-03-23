@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import com.topanimestream.App;
-import com.topanimestream.utils.Utils;
+import com.topanimestream.utilities.Utils;
 import com.topanimestream.R;
 
 public class Anime implements Parcelable, Comparator<Anime> {

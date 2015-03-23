@@ -11,9 +11,9 @@ import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
-import com.topanimestream.utils.AsyncTaskTools;
+import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
-import com.topanimestream.utils.Utils;
+import com.topanimestream.utilities.Utils;
 
 public class VideoActivity extends Activity {
 

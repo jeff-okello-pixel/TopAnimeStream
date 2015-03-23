@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.topanimestream.App;
-import com.topanimestream.utils.Utils;
+import com.topanimestream.utilities.Utils;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.VersionManager;
 import com.topanimestream.R;

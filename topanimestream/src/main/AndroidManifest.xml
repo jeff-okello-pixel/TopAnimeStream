@@ -22,11 +22,11 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <provider
-            android:name=".utils.SuggestionProvider"
-            android:authorities="com.topanimestream.utils.SuggestionProvider" />
+            android:name=".utilities.SuggestionProvider"
+            android:authorities="com.topanimestream.utilities.SuggestionProvider" />
 
         <receiver
-            android:name=".utils.NetworkChangeReceiver"
+            android:name=".utilities.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

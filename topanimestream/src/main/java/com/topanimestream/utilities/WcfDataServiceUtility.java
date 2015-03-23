@@ -1,4 +1,4 @@
-package com.topanimestream.utils;
+package com.topanimestream.utilities;
 
 import android.text.TextUtils;
 

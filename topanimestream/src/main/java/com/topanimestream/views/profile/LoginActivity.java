@@ -42,10 +42,10 @@ import java.util.Locale;
 
 import com.google.gson.Gson;
 import com.topanimestream.App;
-import com.topanimestream.utils.AsyncTaskTools;
+import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.custom.TextureViewVideo;
-import com.topanimestream.utils.Utils;
-import com.topanimestream.utils.WcfDataServiceUtility;
+import com.topanimestream.utilities.Utils;
+import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.R;

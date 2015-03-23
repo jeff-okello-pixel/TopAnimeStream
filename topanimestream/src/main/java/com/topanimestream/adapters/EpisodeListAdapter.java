@@ -17,7 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
-import com.topanimestream.utils.SQLiteHelper;
+import com.topanimestream.utilities.SQLiteHelper;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.EpisodeInformations;
 import com.topanimestream.R;

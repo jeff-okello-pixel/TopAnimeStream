@@ -11,7 +11,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.topanimestream.App;
-import com.topanimestream.utils.Utils;
+import com.topanimestream.utilities.Utils;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 

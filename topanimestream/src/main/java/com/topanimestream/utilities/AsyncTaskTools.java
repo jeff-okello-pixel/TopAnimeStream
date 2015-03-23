@@ -1,4 +1,4 @@
-package com.topanimestream.utils;
+package com.topanimestream.utilities;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
