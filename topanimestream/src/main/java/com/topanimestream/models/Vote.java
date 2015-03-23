@@ -5,7 +5,7 @@ public class Vote {
     private int AnimeId;
     private int Value;
     private String AddedDate;
-
+    private Anime anime;
     public Vote() {
     }
 
@@ -46,5 +46,13 @@ public class Vote {
 
     public void setAddedDate(String addedDate) {
         AddedDate = addedDate;
+    }
+
+    public Anime getAnime() {
+        return anime;
+    }
+
+    public void setAnime(Anime anime) {
+        this.anime = anime;
     }
 }

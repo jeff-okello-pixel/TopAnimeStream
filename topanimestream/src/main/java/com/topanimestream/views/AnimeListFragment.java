@@ -220,8 +220,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             URL = wcfCall.build();
         }
 
-        ;
-
         @Override
         protected String doInBackground(Void... params) {
 

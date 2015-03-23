@@ -445,9 +445,11 @@ public class DialogManager {
     }
 
     public static void dismissBusyDialog(Dialog busyDialog) {
-        if (busyDialog != null)
-            busyDialog.dismiss();
-
+        try {
+            if (busyDialog != null)
+                busyDialog.dismiss();
+        } catch (Exception e) {
+        }//leaked error
         busyDialog = null;
     }
 }
