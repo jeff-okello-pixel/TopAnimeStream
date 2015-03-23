@@ -20,8 +20,8 @@ import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Vote;
-import com.topanimestream.utilities.Utils;
-import com.topanimestream.utilities.WcfDataServiceUtility;
+import com.topanimestream.utils.Utils;
+import com.topanimestream.utils.WcfDataServiceUtility;
 import com.topanimestream.views.AnimeDetailsActivity;
 
 import org.json.JSONArray;

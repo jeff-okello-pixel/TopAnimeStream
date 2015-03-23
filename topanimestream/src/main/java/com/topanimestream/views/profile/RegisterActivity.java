@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.utilities.Utils;
+import com.topanimestream.utils.Utils;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 

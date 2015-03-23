@@ -38,8 +38,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import com.topanimestream.App;
-import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.Utils;
+import com.topanimestream.utils.AsyncTaskTools;
+import com.topanimestream.utils.Utils;
 import com.topanimestream.views.VideoActivity;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;

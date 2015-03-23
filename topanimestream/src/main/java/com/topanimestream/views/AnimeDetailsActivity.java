@@ -44,10 +44,10 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
-import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.SQLiteHelper;
-import com.topanimestream.utilities.Utils;
-import com.topanimestream.utilities.WcfDataServiceUtility;
+import com.topanimestream.utils.AsyncTaskTools;
+import com.topanimestream.utils.SQLiteHelper;
+import com.topanimestream.utils.Utils;
+import com.topanimestream.utils.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;

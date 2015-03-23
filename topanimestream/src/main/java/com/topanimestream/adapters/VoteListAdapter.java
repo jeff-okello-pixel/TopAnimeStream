@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.models.Vote;
-import com.topanimestream.utilities.Utils;
+import com.topanimestream.utils.Utils;
 
 import java.util.ArrayList;
 
