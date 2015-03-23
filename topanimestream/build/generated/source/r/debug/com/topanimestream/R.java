@@ -1619,7 +1619,7 @@ containing a value of this type.
         public static final int ic_device_access_volume_on=0x7f0200b9;
         public static final int ic_enjoyment=0x7f0200ba;
         public static final int ic_favorite=0x7f0200bb;
-        public static final int ic_history=0x7f0200bc;
+        public static final int ic_history_white =0x7f0200bc;
         public static final int ic_launcher=0x7f0200bd;
         public static final int ic_mini_controller_pause=0x7f0200be;
         public static final int ic_mini_controller_play=0x7f0200bf;

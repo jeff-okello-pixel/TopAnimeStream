@@ -93,13 +93,13 @@ MERGED from com.android.support:support-v4:20.0.0:17:5
 		ADDED from AndroidManifest.xml:22:9
 	android:name
 		ADDED from AndroidManifest.xml:18:9
-provider#com.topanimestream.SuggestionProvider
+provider#com.topanimestream.Utilities.SuggestionProvider
 ADDED from AndroidManifest.xml:24:9
 	android:authorities
 		ADDED from AndroidManifest.xml:26:13
 	android:name
 		ADDED from AndroidManifest.xml:25:13
-receiver#com.topanimestream.NetworkChangeReceiver
+receiver#com.topanimestream.Utilities.NetworkChangeReceiver
 ADDED from AndroidManifest.xml:28:9
 	android:label
 		ADDED from AndroidManifest.xml:30:13
@@ -115,7 +115,7 @@ action#android.net.wifi.WIFI_STATE_CHANGED
 ADDED from AndroidManifest.xml:33:17
 	android:name
 		ADDED from AndroidManifest.xml:33:25
-activity#com.topanimestream.MainActivity
+activity#com.topanimestream.views.MainActivity
 ADDED from AndroidManifest.xml:37:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:39:13
@@ -137,7 +137,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:47:17
 	android:name
 		ADDED from AndroidManifest.xml:47:27
-activity#com.topanimestream.Settings
+activity#com.topanimestream.views.Settings
 ADDED from AndroidManifest.xml:50:9
 	android:label
 		ADDED from AndroidManifest.xml:53:13
@@ -145,7 +145,7 @@ ADDED from AndroidManifest.xml:50:9
 		ADDED from AndroidManifest.xml:52:13
 	android:name
 		ADDED from AndroidManifest.xml:51:13
-activity#com.topanimestream.FavoriteActivity
+activity#com.topanimestream.views.FavoriteActivity
 ADDED from AndroidManifest.xml:55:9
 	android:label
 		ADDED from AndroidManifest.xml:58:13
@@ -153,7 +153,7 @@ ADDED from AndroidManifest.xml:55:9
 		ADDED from AndroidManifest.xml:57:13
 	android:name
 		ADDED from AndroidManifest.xml:56:13
-activity#com.topanimestream.EpisodeDetailsActivity
+activity#com.topanimestream.views.EpisodeDetailsActivity
 ADDED from AndroidManifest.xml:60:9
 	android:label
 		ADDED from AndroidManifest.xml:64:13
@@ -163,7 +163,7 @@ ADDED from AndroidManifest.xml:60:9
 		ADDED from AndroidManifest.xml:62:13
 	android:name
 		ADDED from AndroidManifest.xml:61:13
-activity#com.topanimestream.HistoryActivity
+activity#com.topanimestream.views.HistoryActivity
 ADDED from AndroidManifest.xml:66:9
 	android:label
 		ADDED from AndroidManifest.xml:69:13
@@ -171,7 +171,7 @@ ADDED from AndroidManifest.xml:66:9
 		ADDED from AndroidManifest.xml:68:13
 	android:name
 		ADDED from AndroidManifest.xml:67:13
-activity#com.topanimestream.AnimeSearchActivity
+activity#com.topanimestream.views.AnimeSearchActivity
 ADDED from AndroidManifest.xml:71:9
 	android:label
 		ADDED from AndroidManifest.xml:74:13
@@ -193,7 +193,7 @@ ADDED from AndroidManifest.xml:83:13
 		ADDED from AndroidManifest.xml:85:17
 	android:name
 		ADDED from AndroidManifest.xml:84:17
-activity#com.topanimestream.AnimeDetailsActivity
+activity#com.topanimestream.views.AnimeDetailsActivity
 ADDED from AndroidManifest.xml:87:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:89:13
@@ -223,7 +223,7 @@ ADDED from AndroidManifest.xml:105:9
 		ADDED from AndroidManifest.xml:106:13
 	android:value
 		ADDED from AndroidManifest.xml:107:13
-activity#com.topanimestream.LoginActivity
+activity#com.topanimestream.views.profile.LoginActivity
 ADDED from AndroidManifest.xml:109:9
 	android:windowSoftInputMode
 		ADDED from AndroidManifest.xml:113:13
@@ -271,7 +271,7 @@ ADDED from AndroidManifest.xml:131:9
 		ADDED from AndroidManifest.xml:135:13
 	android:name
 		ADDED from AndroidManifest.xml:132:13
-activity#com.topanimestream.VideoActivity
+activity#com.topanimestream.views.VideoActivity
 ADDED from AndroidManifest.xml:137:9
 	android:label
 		ADDED from AndroidManifest.xml:140:13
