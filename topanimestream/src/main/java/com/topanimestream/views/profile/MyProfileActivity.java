@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.nirhart.parallaxscroll.views.ParallaxListView;
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.models.Role;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -110,12 +111,10 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
 
         listView.setOnItemClickListener(this);
 
-        //TODO resize image
-        App.imageLoader.displayImage(getString(R.string.image_host_path) + CurrentUser.ProfilePic, imgProfilePic);
+        App.imageLoader.displayImage(CurrentUser.GetProfilePicResize("185"), imgProfilePic);
         txtUsername.setText(CurrentUser.Username);
         txtJoinedDate.setText(CurrentUser.AddedDate);
-        //TODO get best role
-        txtRank.setText(getString(R.string.rank) + CurrentUser.Roles.get(0).getName());
+        txtRank.setText(getString(R.string.rank) +  CurrentUser.GetRole().getName());
 
         AsyncTaskTools.execute(new ProfileTask());
     }

@@ -3,6 +3,9 @@ package com.topanimestream.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.topanimestream.App;
+import com.topanimestream.R;
+
 import java.util.ArrayList;
 
 public class Account implements Parcelable {
@@ -18,6 +21,7 @@ public class Account implements Parcelable {
     private String LastLoginDate;
     private String LastActivityDate;
     private ArrayList<Role> Roles;
+    private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
     public Account() {
     }
 
@@ -78,9 +82,22 @@ public class Account implements Parcelable {
     public void setUsername(String username) {
         Username = username;
     }
+    public String getProfilePic()
+    {
+        return this.getProfilePic();
+    }
+    public String getProfilePicResize(String size) {
 
-    public String getProfilePic() {
-        return ProfilePic;
+        if (ProfilePic == null)
+            return null;
+
+        if (size == null || size.equals(""))
+            return imageHostPath + ProfilePic;
+
+        String imageName = ProfilePic.substring(ProfilePic.lastIndexOf("/") + 1);
+        imageName = "w" + size + "_" + imageName;
+        String fullProfilePicPath = imageHostPath + ProfilePic.substring(0, ProfilePic.lastIndexOf("/") + 1) + imageName;
+        return fullProfilePicPath;
     }
 
     public void setProfilePic(String profilePic) {
