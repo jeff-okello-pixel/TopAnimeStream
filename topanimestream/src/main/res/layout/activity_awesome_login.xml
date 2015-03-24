@@ -88,6 +88,15 @@
             android:textColor="#ffffff"
             android:id="@+id/btnBottomLogin"
             android:text="@string/login" />
+        <Button
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_yellow"
+            android:textColor="#ffffff"
+            android:id="@+id/btnPasswordRecovery"
+            android:text="@string/password_recovery" />
 
         <Button
             android:layout_width="match_parent"

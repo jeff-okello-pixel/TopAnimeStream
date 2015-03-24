@@ -56,6 +56,7 @@ import com.topanimestream.views.MainActivity;
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
     private Button btnLogin;
     private Button btnRegister;
+    private Button btnPasswordRecovery;
     private TextView txtTitle;
     private EditText txtUserName;
     private EditText txtPassword;
@@ -86,6 +87,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
         actionBar.hide();
         btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnPasswordRecovery = (Button) findViewById(R.id.btnPasswordRecovery);
         layLogin = (LinearLayout) findViewById(R.id.layLogin);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnCancel = (Button) findViewById(R.id.btnCancel);
@@ -106,6 +108,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         videoView.start();
 
         btnLogin.setOnClickListener(this);
+        btnPasswordRecovery.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
         btnBottomLogin.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
@@ -129,6 +132,15 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
+        String lang = prefs.getString("prefLanguage", "");
+        if (lang.equals("1"))
+            lang = "en";
+        else if (lang.equals("2"))
+            lang = "fr";
+        else if (lang.equals("4"))
+            lang = "es";
+        else
+            lang = "en";
         switch (view.getId()) {
             case R.id.btnLogin:
                 if (txtUserName.getText().toString().equals("")) {
@@ -147,31 +159,31 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 break;
             case R.id.btnCancel:
                 btnBottomLogin.setVisibility(View.VISIBLE);
+                btnPasswordRecovery.setVisibility(View.GONE);
                 Animation animFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
                 layLogin.setAnimation(animFadeOut);
                 layLogin.setVisibility(View.INVISIBLE);
                 break;
             case R.id.btnBottomLogin:
                 btnBottomLogin.setVisibility(View.GONE);
+                btnPasswordRecovery.setVisibility(View.VISIBLE);
                 Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
                 layLogin.setAnimation(animFadeIn);
                 layLogin.setVisibility(View.VISIBLE);
                 break;
+            case R.id.btnPasswordRecovery:
+                String passwordRecoveryUrl = getString(R.string.topanimestream_website);
+                passwordRecoveryUrl += lang + "/forgot-password";
+                Intent intentPasswordRecovery = new Intent(Intent.ACTION_VIEW);
+                intentPasswordRecovery.setData(Uri.parse(passwordRecoveryUrl));
+                startActivity(intentPasswordRecovery);
+                break;
             case R.id.btnRegister:
-                String url = getString(R.string.topanimestream_website);
-                String lang = prefs.getString("prefLanguage", "");
-                if (lang.equals("1"))
-                    lang = "en";
-                else if (lang.equals("2"))
-                    lang = "fr";
-                else if (lang.equals("4"))
-                    lang = "es";
-                else
-                    lang = "en";
-                url += lang + "/register";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
+                String registerUrl = getString(R.string.topanimestream_website);
+                registerUrl += lang + "/register";
+                Intent intentRegister = new Intent(Intent.ACTION_VIEW);
+                intentRegister.setData(Uri.parse(registerUrl));
+                startActivity(intentRegister);
                 break;
         }
     }

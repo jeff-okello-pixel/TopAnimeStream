@@ -275,4 +275,5 @@
     <string name="loading_your_votes">Loading your votes</string>
     <string name="error_loading_your_votes">An error has occurred while loading your votes</string>
     <string name="no_votes">You don\'t have any votes</string>
+    <string name="password_recovery">Password recovery</string>
 </resources>
