@@ -341,7 +341,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         private String URL;
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -385,7 +385,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             {
                 e.printStackTrace();
             }
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
 
         }
 
@@ -403,7 +403,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         private String method = "Vote";
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.adding_vote), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_vote), AnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -447,7 +447,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             {
                 e.printStackTrace();
             }
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
 
         }
 
@@ -500,7 +500,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPostExecute(String error) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
@@ -557,7 +557,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPostExecute(String error) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
@@ -583,7 +583,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
             isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
@@ -665,7 +665,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
         }
     }
 

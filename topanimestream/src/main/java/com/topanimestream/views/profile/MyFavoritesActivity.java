@@ -230,7 +230,7 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
 
         @Override
         protected void onPostExecute(String error) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 Toast.makeText(MyFavoritesActivity.this, error, Toast.LENGTH_LONG).show();
             } else {

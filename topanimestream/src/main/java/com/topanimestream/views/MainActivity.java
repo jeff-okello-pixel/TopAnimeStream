@@ -769,7 +769,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.logging_out), MainActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging_out), MainActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -809,7 +809,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         @Override
         protected void onPostExecute(String error) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
@@ -860,7 +860,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.logging), MainActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), MainActivity.this);
             URL = getString(R.string.anime_service_path);
 
             username = prefs.getString("Username", null);
@@ -908,7 +908,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         @Override
         protected void onPostExecute(String error) {
             try {
-                Utils.dismissBusyDialog(busyDialog);
+                DialogManager.dismissBusyDialog(busyDialog);
             } catch (Exception e) {
             }
             if (error != null) {

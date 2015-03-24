@@ -92,7 +92,7 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
 
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.creating_your_account), RegisterActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.creating_your_account), RegisterActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 

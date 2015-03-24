@@ -84,7 +84,7 @@ public class Account implements Parcelable {
     }
     public String getProfilePic()
     {
-        return this.getProfilePic();
+        return ProfilePic;
     }
     public String getProfilePicResize(String size) {
 

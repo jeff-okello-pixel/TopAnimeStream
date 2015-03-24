@@ -193,7 +193,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
 
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.logging), LoginActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), LoginActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -299,7 +299,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         @Override
         protected void onPostExecute(String result) {
             try {
-                Utils.dismissBusyDialog(busyDialog);
+                DialogManager.dismissBusyDialog(busyDialog);
                 if (result == null) {
                     //Failed to get the role
                     Toast.makeText(LoginActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG).show();

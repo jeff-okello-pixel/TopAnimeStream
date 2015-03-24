@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import com.topanimestream.managers.DialogManager;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.AnimeListAdapter;
@@ -190,7 +191,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_search), AnimeSearchActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_search), AnimeSearchActivity.this);
             animes = new ArrayList<Anime>();
             mItems = new ArrayList<String>();
             listView.setAdapter(null);
@@ -250,7 +251,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
             } else {
                 txtNoResult.setVisibility(View.VISIBLE);
             }
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
         }
 
     }

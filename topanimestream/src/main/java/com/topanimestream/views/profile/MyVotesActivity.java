@@ -21,6 +21,7 @@ import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Vote;
+import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.views.AnimeDetailsActivity;
@@ -50,6 +51,8 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.my_votes) + "</font>"));
 
         listViewMyVotes.setOnItemClickListener(this);
+
+        AsyncTaskTools.execute(new MyVoteTask());
 
     }
 
@@ -88,7 +91,7 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_votes), MyVotesActivity.this);
             votes = new ArrayList<Vote>();
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").expand("Anime").build();
         }
 
         @Override
@@ -112,7 +115,7 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
                 JSONArray jsonVotes = json.getJSONArray("value");
                 Gson gson = new Gson();
                 for (int i = 0; i < jsonVotes.length(); i++) {
-                    votes.add(gson.fromJson(jsonVotes.toString(), Vote.class));
+                    votes.add(gson.fromJson(jsonVotes.getJSONObject(0).toString(), Vote.class));
                 }
                 return null;
             } catch (Exception e) {

@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.nirhart.parallaxscroll.views.ParallaxListView;
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Role;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
@@ -164,7 +165,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
         private String firstFavoriteUrl;
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_your_profile), MyProfileActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_profile), MyProfileActivity.this);
             firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
         }
 
@@ -226,7 +227,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
             {
                 e.printStackTrace();
             }
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
 
         }
 

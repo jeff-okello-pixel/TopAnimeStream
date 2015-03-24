@@ -277,7 +277,7 @@ public class ManageReviewActivity extends ActionBarActivity implements View.OnTo
 
         @Override
         protected void onPostExecute(String error) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 Toast.makeText(ManageReviewActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
@@ -346,7 +346,7 @@ public class ManageReviewActivity extends ActionBarActivity implements View.OnTo
 
         @Override
         protected void onPostExecute(String error) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 Toast.makeText(ManageReviewActivity.this, error, Toast.LENGTH_LONG).show();
             } else {

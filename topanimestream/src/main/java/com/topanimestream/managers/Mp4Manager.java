@@ -200,7 +200,7 @@ public class Mp4Manager {
         @Override
         protected void onPreExecute() {
             if (busyDialog == null) {
-                busyDialog = Utils.showBusyDialog(act.getString(R.string.loading_video), act);
+                busyDialog = DialogManager.showBusyDialog(act.getString(R.string.loading_video), act);
             }
         }
 
@@ -246,7 +246,7 @@ public class Mp4Manager {
 
         @Override
         protected void onPostExecute(final String result) {
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
             if (App.isGooglePlayVersion) {
                 Toast.makeText(act, act.getString(R.string.video_spanish_only), Toast.LENGTH_LONG).show();
             }

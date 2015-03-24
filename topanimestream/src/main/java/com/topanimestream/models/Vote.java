@@ -5,7 +5,7 @@ public class Vote {
     private int AnimeId;
     private int Value;
     private String AddedDate;
-    private Anime anime;
+    private Anime Anime;
     public Vote() {
     }
 
@@ -49,10 +49,10 @@ public class Vote {
     }
 
     public Anime getAnime() {
-        return anime;
+        return Anime;
     }
 
     public void setAnime(Anime anime) {
-        this.anime = anime;
+        this.Anime = anime;
     }
 }

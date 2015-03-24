@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
+import com.topanimestream.managers.DialogManager;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
 import com.topanimestream.utilities.Utils;
@@ -166,7 +167,7 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
         }
         @Override
         protected void onPreExecute() {
-            busyDialog = Utils.showBusyDialog(getString(R.string.loading_reviews), ReviewsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_reviews), ReviewsActivity.this);
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
             url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").filter("AnimeId%20eq%20" + animeId + "%20and%20AccountId%20ne%20" + CurrentUser.AccountId).expand("Account").skip(currentSkip).top(currentLimit).formatJson().build();
@@ -285,7 +286,7 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
                 e.printStackTrace();
             }
 
-            Utils.dismissBusyDialog(busyDialog);
+            DialogManager.dismissBusyDialog(busyDialog);
         }
 
     }
