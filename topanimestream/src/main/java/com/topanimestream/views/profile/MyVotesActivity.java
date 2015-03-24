@@ -131,7 +131,7 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_votes), MyVotesActivity.this);
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").expand("Anime").build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").expand("Anime/Genres,Anime/AnimeInformations,Anime/Status").build();
         }
 
         @Override
@@ -205,8 +205,6 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
 
 
             }
-
-
         }
 
     }
