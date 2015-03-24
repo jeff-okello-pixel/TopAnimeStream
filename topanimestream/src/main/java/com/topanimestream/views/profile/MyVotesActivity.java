@@ -8,8 +8,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
@@ -33,9 +35,16 @@ import java.util.ArrayList;
 
 public class MyVotesActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private ListView listViewMyVotes;
-    private ArrayList<Vote> votes;
     private TextView txtNoVotes;
     private VoteListAdapter adapter;
+    private int currentSkip = 0;
+    private int currentLimit = 40;
+    private boolean isLoading = false;
+    private boolean loadmore = false;
+    private boolean hasResults = false;
+    private MyVoteTask task;
+    private ProgressBar progressBarLoadMore;
+
     public MyVotesActivity() {
     }
 
@@ -45,13 +54,42 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_votes);
         listViewMyVotes = (ListView) findViewById(R.id.listViewMyVotes);
+        progressBarLoadMore = (ProgressBar) findViewById(R.id.progressBarLoadMore);
         txtNoVotes = (TextView) findViewById(R.id.txtNoVotes);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.my_votes) + "</font>"));
 
         listViewMyVotes.setOnItemClickListener(this);
+        listViewMyVotes.setOnScrollListener(new AbsListView.OnScrollListener() {
 
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if (App.IsNetworkConnected()) {
+                    int lastInScreen = firstVisibleItem + visibleItemCount;
+
+                    if ((lastInScreen >= totalItemCount - 6) && !(isLoading)) {
+                        if (hasResults) {
+                            currentSkip += currentLimit;
+                            loadmore = true;
+                            task = new MyVoteTask();
+                            AsyncTaskTools.execute(task);
+                        } else if (task == null) {
+                            loadmore = false;
+                            task = new MyVoteTask();
+                            currentSkip = 0;
+                            AsyncTaskTools.execute(task);
+                        }
+                    }
+                }
+            }
+        });
         AsyncTaskTools.execute(new MyVoteTask());
 
     }
@@ -87,15 +125,18 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
     public class MyVoteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private String url;
+        private ArrayList<Vote> newVotes = new ArrayList<Vote>();
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_votes), MyVotesActivity.this);
-            votes = new ArrayList<Vote>();
+            progressBarLoadMore.setVisibility(View.VISIBLE);
+            isLoading = true;
             url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").expand("Anime").build();
         }
 
         @Override
         protected String doInBackground(Void... params) {
+            hasResults = false;
             if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
@@ -113,9 +154,12 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
                     }
                 }
                 JSONArray jsonVotes = json.getJSONArray("value");
+                if(jsonVotes.length() > 0)
+                    hasResults = true;
+
                 Gson gson = new Gson();
                 for (int i = 0; i < jsonVotes.length(); i++) {
-                    votes.add(gson.fromJson(jsonVotes.getJSONObject(0).toString(), Vote.class));
+                    newVotes.add(gson.fromJson(jsonVotes.getJSONObject(i).toString(), Vote.class));
                 }
                 return null;
             } catch (Exception e) {
@@ -137,13 +181,24 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
                     Toast.makeText(MyVotesActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             } else {
-                adapter = new VoteListAdapter(MyVotesActivity.this, votes);
-                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
-                swingBottomInAnimationAdapter.setAbsListView(listViewMyVotes);
-                assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
-                listViewMyVotes.setAdapter(swingBottomInAnimationAdapter);
-                if (votes.size() > 0)
+                if (loadmore) {
+                    for (Vote vote : newVotes) {
+                        adapter.add(vote);
+                    }
+                    adapter.update();
+                } else {
+                    adapter = new VoteListAdapter(MyVotesActivity.this, newVotes);
+                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                    swingBottomInAnimationAdapter.setAbsListView(listViewMyVotes);
+                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
+                    listViewMyVotes.setAdapter(swingBottomInAnimationAdapter);
+                }
+
+                isLoading = false;
+                progressBarLoadMore.setVisibility(View.GONE);
+
+                if (listViewMyVotes.getAdapter().getCount() > 0)
                     txtNoVotes.setVisibility(View.GONE);
                 else
                     txtNoVotes.setVisibility(View.VISIBLE);

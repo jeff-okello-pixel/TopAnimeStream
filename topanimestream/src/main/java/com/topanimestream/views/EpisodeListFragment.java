@@ -223,6 +223,9 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         @Override
         protected String doInBackground(Void... params) {
             hasResults = false;
+            if (!App.IsNetworkConnected()) {
+                return getString(R.string.error_internet_connection);
+            }
             JSONObject json = Utils.GetJson(URL);
             if (!json.isNull("error")) {
                 try {
