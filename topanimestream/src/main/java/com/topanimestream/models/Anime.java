@@ -22,7 +22,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private int AnimeId;
     private String Description;
     private int StatusId;
-    private String Name;
+    private String OriginalName;
     private String AddedDate;
     private String LastUpdatedDate;
     private boolean IsMovie;
@@ -33,12 +33,12 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private boolean isCartoon;
     private Double Rating;
     private String SourceUrl;
-    private ArrayList<Episode> episodes;
-    private ArrayList<Genre> genres;
-    private ArrayList<AnimeInformation> animeInformations;
-    private ArrayList<AnimeSource> animeSources;
+    private ArrayList<Episode> Episodes;
+    private ArrayList<Genre> Genres;
+    private ArrayList<AnimeInformation> AnimeInformations;
+    private ArrayList<AnimeSource> AnimeSources;
     private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
-    private ArrayList<Theme> themes;
+    private ArrayList<Theme> Themes;
     private int Order;
     private int VoteCount;
 
@@ -52,41 +52,41 @@ public class Anime implements Parcelable, Comparator<Anime> {
         Episode[] resultEpisodeArray = null;
         if (parcelableEpisodeArray != null) {
             resultEpisodeArray = Arrays.copyOf(parcelableEpisodeArray, parcelableEpisodeArray.length, Episode[].class);
-            episodes = new ArrayList<Episode>(Arrays.asList(resultEpisodeArray));
+            Episodes = new ArrayList<Episode>(Arrays.asList(resultEpisodeArray));
         }
 
         Parcelable[] parcelableGenreArray = in.readParcelableArray(Genre.class.getClassLoader());
         Genre[] resultGenreArray = null;
         if (parcelableGenreArray != null) {
             resultGenreArray = Arrays.copyOf(parcelableGenreArray, parcelableGenreArray.length, Genre[].class);
-            genres = new ArrayList<Genre>(Arrays.asList(resultGenreArray));
+            Genres = new ArrayList<Genre>(Arrays.asList(resultGenreArray));
         }
 
         Parcelable[] parcelableAnimeInformationArray = in.readParcelableArray(AnimeInformation.class.getClassLoader());
         AnimeInformation[] resultAnimeInformationArray = null;
         if (parcelableAnimeInformationArray != null) {
             resultAnimeInformationArray = Arrays.copyOf(parcelableAnimeInformationArray, parcelableAnimeInformationArray.length, AnimeInformation[].class);
-            animeInformations = new ArrayList<AnimeInformation>(Arrays.asList(resultAnimeInformationArray));
+            AnimeInformations = new ArrayList<AnimeInformation>(Arrays.asList(resultAnimeInformationArray));
         }
 
         Parcelable[] parcelableThemeArray = in.readParcelableArray(Theme.class.getClassLoader());
         Theme[] resultThemeArray = null;
         if (parcelableThemeArray != null) {
             resultThemeArray = Arrays.copyOf(parcelableThemeArray, parcelableThemeArray.length, Theme[].class);
-            themes = new ArrayList<Theme>(Arrays.asList(resultThemeArray));
+            Themes = new ArrayList<Theme>(Arrays.asList(resultThemeArray));
         }
 
         Parcelable[] parcelableAnimeSourceArray = in.readParcelableArray(AnimeSource.class.getClassLoader());
         AnimeSource[] resultAnimeSourceArray = null;
         if (parcelableAnimeSourceArray != null) {
             resultAnimeSourceArray = Arrays.copyOf(parcelableAnimeSourceArray, parcelableAnimeSourceArray.length, AnimeSource[].class);
-            animeSources = new ArrayList<AnimeSource>(Arrays.asList(resultAnimeSourceArray));
+            AnimeSources = new ArrayList<AnimeSource>(Arrays.asList(resultAnimeSourceArray));
         }
 
         AnimeId = in.readInt();
         Description = in.readString();
         StatusId = in.readInt();
-        Name = in.readString();
+        OriginalName = in.readString();
         AddedDate = in.readString();
         LastUpdatedDate = in.readString();
         IsMovie = in.readByte() != 0;
@@ -103,11 +103,11 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
     public Anime(JSONObject animeJson, Context context) {
         try {
-            animeSources = new ArrayList<AnimeSource>();
-            episodes = new ArrayList<Episode>();
-            genres = new ArrayList<Genre>();
-            animeInformations = new ArrayList<AnimeInformation>();
-            themes = new ArrayList<Theme>();
+            AnimeSources = new ArrayList<AnimeSource>();
+            Episodes = new ArrayList<Episode>();
+            Genres = new ArrayList<Genre>();
+            AnimeInformations = new ArrayList<AnimeInformation>();
+            Themes = new ArrayList<Theme>();
             this.setAnimeId(!animeJson.isNull("AnimeId") ? animeJson.getInt("AnimeId") : 0);
             this.setStatusId(!animeJson.isNull("StatusId") ? animeJson.getInt("StatusId") : 0);
             this.setAddedDate(!animeJson.isNull("AddedDate") ? animeJson.getString("AddedDate") : null);
@@ -126,7 +126,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
             if (!animeJson.isNull("AnimeInformations")) {
                 JSONArray jsonAnimeInformations = animeJson.getJSONArray("AnimeInformations");
                 for (int i = 0; i < jsonAnimeInformations.length(); i++) {
-                    animeInformations.add(new AnimeInformation(jsonAnimeInformations.getJSONObject(i)));
+                    AnimeInformations.add(new AnimeInformation(jsonAnimeInformations.getJSONObject(i)));
                 }
 
             }
@@ -134,25 +134,25 @@ public class Anime implements Parcelable, Comparator<Anime> {
             if (!animeJson.isNull("Genres")) {
                 JSONArray jsonGenres = animeJson.getJSONArray("Genres");
                 for (int i = 0; i < jsonGenres.length(); i++) {
-                    genres.add(new Genre(jsonGenres.getJSONObject(i)));
+                    Genres.add(new Genre(jsonGenres.getJSONObject(i)));
                 }
             }
             if (!animeJson.isNull("Episodes")) {
                 JSONArray jsonEpisodes = animeJson.getJSONArray("Episodes");
                 for (int i = 0; i < jsonEpisodes.length(); i++) {
-                    episodes.add(new Episode(jsonEpisodes.getJSONObject(i), context));
+                    Episodes.add(new Episode(jsonEpisodes.getJSONObject(i), context));
                 }
             }
             if (!animeJson.isNull("AnimeSources")) {
                 JSONArray jsonAnimeSources = animeJson.getJSONArray("AnimeSources");
                 for (int i = 0; i < jsonAnimeSources.length(); i++) {
-                    animeSources.add(new AnimeSource(jsonAnimeSources.getJSONObject(i)));
+                    AnimeSources.add(new AnimeSource(jsonAnimeSources.getJSONObject(i)));
                 }
             }
             if (!animeJson.isNull("Themes")) {
                 JSONArray jsonThemes = animeJson.getJSONArray("Themes");
                 for (int i = 0; i < jsonThemes.length(); i++) {
-                    themes.add(new Theme(jsonThemes.getJSONObject(i)));
+                    Themes.add(new Theme(jsonThemes.getJSONObject(i)));
                 }
             }
 
@@ -170,20 +170,20 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public ArrayList<AnimeSource> getAnimeSources() {
-        return animeSources;
+        return AnimeSources;
     }
 
     public void setAnimeSources(ArrayList<AnimeSource> animeSources) {
-        this.animeSources = animeSources;
+        this.AnimeSources = animeSources;
     }
 
     public ArrayList<AnimeInformation> getAnimeInformations() {
-        return this.animeInformations;
+        return this.AnimeInformations;
     }
 
     public AnimeInformation getAnimeInformation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        for (AnimeInformation info : this.animeInformations) {
+        for (AnimeInformation info : this.AnimeInformations) {
             if (App.isGooglePlayVersion) {
                 if (String.valueOf(info.getLanguageId()).equals(App.phoneLanguage))
                     return info;
@@ -206,19 +206,19 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public void setAnimeInformations(ArrayList<AnimeInformation> animeInformations) {
-        this.animeInformations = animeInformations;
+        this.AnimeInformations = animeInformations;
     }
 
     public ArrayList<Genre> getGenres() {
-        return genres;
+        return Genres;
     }
 
     public ArrayList<Theme> getThemes() {
-        return this.themes;
+        return this.Themes;
     }
 
     public void setGenres(ArrayList<Genre> genres) {
-        this.genres = genres;
+        this.Genres = genres;
     }
 
     public String getSourceUrl() {
@@ -248,11 +248,11 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
 
     public ArrayList<Episode> getEpisodes() {
-        return episodes;
+        return Episodes;
     }
 
     public void setEpisodes(ArrayList<Episode> episodes) {
-        this.episodes = episodes;
+        this.Episodes = episodes;
     }
 
     public int getAnimeId() {
@@ -308,7 +308,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String language = prefs.getString("prefLanguage", "1");
 
-        for (Genre genre : this.genres) {
+        for (Genre genre : this.Genres) {
             if (!language.equals("1")) {
                 if (App.isGooglePlayVersion && App.phoneLanguage.equals("1")) {
                     translatedGenres.add(genre.getName());
@@ -321,7 +321,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
         }
 
         String genresFormatted = "";
-        if (this.genres != null) {
+        if (this.Genres != null) {
             int counter = 0;
             for (String genre : translatedGenres) {
                 if (counter == 4)
@@ -338,11 +338,11 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public String getName() {
-        return Name;
+        return OriginalName;
     }
 
     public void setName(String name) {
-        Name = name;
+        OriginalName = name;
     }
 
     public String getAddedDate() {
@@ -453,36 +453,36 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (episodes == null)
-            episodes = new ArrayList<Episode>();
-        if (genres == null)
-            genres = new ArrayList<Genre>();
-        if (animeInformations == null)
-            animeInformations = new ArrayList<AnimeInformation>();
-        if (themes == null)
-            themes = new ArrayList<Theme>();
-        if (animeSources == null)
-            animeSources = new ArrayList<AnimeSource>();
+        if (Episodes == null)
+            Episodes = new ArrayList<Episode>();
+        if (Genres == null)
+            Genres = new ArrayList<Genre>();
+        if (AnimeInformations == null)
+            AnimeInformations = new ArrayList<AnimeInformation>();
+        if (Themes == null)
+            Themes = new ArrayList<Theme>();
+        if (AnimeSources == null)
+            AnimeSources = new ArrayList<AnimeSource>();
 
-        Parcelable[] parcelableEpisodeArray = new Parcelable[episodes.size()];
-        dest.writeParcelableArray(episodes.toArray(parcelableEpisodeArray), flags);
+        Parcelable[] parcelableEpisodeArray = new Parcelable[Episodes.size()];
+        dest.writeParcelableArray(Episodes.toArray(parcelableEpisodeArray), flags);
 
-        Parcelable[] parcelableGenreArray = new Parcelable[genres.size()];
-        dest.writeParcelableArray(genres.toArray(parcelableGenreArray), flags);
+        Parcelable[] parcelableGenreArray = new Parcelable[Genres.size()];
+        dest.writeParcelableArray(Genres.toArray(parcelableGenreArray), flags);
 
-        Parcelable[] parcelableAnimeInformationArray = new Parcelable[animeInformations.size()];
-        dest.writeParcelableArray(animeInformations.toArray(parcelableAnimeInformationArray), flags);
+        Parcelable[] parcelableAnimeInformationArray = new Parcelable[AnimeInformations.size()];
+        dest.writeParcelableArray(AnimeInformations.toArray(parcelableAnimeInformationArray), flags);
 
-        Parcelable[] parcelableThemeArray = new Parcelable[themes.size()];
-        dest.writeParcelableArray(themes.toArray(parcelableThemeArray), flags);
+        Parcelable[] parcelableThemeArray = new Parcelable[Themes.size()];
+        dest.writeParcelableArray(Themes.toArray(parcelableThemeArray), flags);
 
-        Parcelable[] parcelableAnimeSourceArray = new Parcelable[animeSources.size()];
-        dest.writeParcelableArray(animeSources.toArray(parcelableAnimeSourceArray), flags);
+        Parcelable[] parcelableAnimeSourceArray = new Parcelable[AnimeSources.size()];
+        dest.writeParcelableArray(AnimeSources.toArray(parcelableAnimeSourceArray), flags);
 
         dest.writeInt(AnimeId);
         dest.writeString(Description);
         dest.writeInt(StatusId);
-        dest.writeString(Name);
+        dest.writeString(OriginalName);
         dest.writeString(AddedDate);
         dest.writeString(LastUpdatedDate);
         dest.writeByte((byte) (IsMovie ? 1 : 0));

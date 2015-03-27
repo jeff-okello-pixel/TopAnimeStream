@@ -16,8 +16,8 @@ public class AnimeSource implements Parcelable {
     private int LanguageId;
     private String SourceUrl;
     private String AddedDate;
-    private ArrayList<Mirror> mirrors;
-    private ArrayList<Vk> vks;
+    private ArrayList<Mirror> Mirrors = new ArrayList<Mirror>();
+    private ArrayList<Vk> vks = new ArrayList<Vk>();
 
     public AnimeSource() {
         super();
@@ -46,7 +46,7 @@ public class AnimeSource implements Parcelable {
         Mirror[] resultMirrorArray = null;
         if (parcelableMirrorArray != null) {
             resultMirrorArray = Arrays.copyOf(parcelableMirrorArray, parcelableMirrorArray.length, Mirror[].class);
-            mirrors = new ArrayList<Mirror>(Arrays.asList(resultMirrorArray));
+            Mirrors = new ArrayList<Mirror>(Arrays.asList(resultMirrorArray));
         }
 
         AnimeSourceId = in.readInt();
@@ -60,7 +60,7 @@ public class AnimeSource implements Parcelable {
 
     public AnimeSource(JSONObject jsonAnimeSource) {
         try {
-            mirrors = new ArrayList<Mirror>();
+            Mirrors = new ArrayList<Mirror>();
             vks = new ArrayList<Vk>();
 
             this.AnimeSourceId = !jsonAnimeSource.isNull("AnimeSourceId") ? jsonAnimeSource.getInt("AnimeSourceId") : 0;
@@ -72,7 +72,7 @@ public class AnimeSource implements Parcelable {
             if (!jsonAnimeSource.isNull("Mirrors")) {
                 JSONArray jsonMirrors = jsonAnimeSource.getJSONArray("Mirrors");
                 for (int i = 0; i < jsonMirrors.length(); i++) {
-                    mirrors.add(new Mirror(jsonMirrors.getJSONObject(i)));
+                    Mirrors.add(new Mirror(jsonMirrors.getJSONObject(i)));
                 }
             }
 
@@ -96,11 +96,11 @@ public class AnimeSource implements Parcelable {
     }
 
     public ArrayList<Mirror> getMirrors() {
-        return mirrors;
+        return Mirrors;
     }
 
     public void setMirrors(ArrayList<Mirror> mirrors) {
-        this.mirrors = mirrors;
+        this.Mirrors = mirrors;
     }
 
     public int getAnimeSourceId() {
@@ -160,8 +160,8 @@ public class AnimeSource implements Parcelable {
         Parcelable[] parcelableVkArray = new Parcelable[vks.size()];
         dest.writeParcelableArray(vks.toArray(parcelableVkArray), flags);
 
-        Parcelable[] parcelableMirrorArray = new Parcelable[mirrors.size()];
-        dest.writeParcelableArray(mirrors.toArray(parcelableMirrorArray), flags);
+        Parcelable[] parcelableMirrorArray = new Parcelable[Mirrors.size()];
+        dest.writeParcelableArray(Mirrors.toArray(parcelableMirrorArray), flags);
 
         dest.writeInt(AnimeSourceId);
         dest.writeInt(AnimeId);

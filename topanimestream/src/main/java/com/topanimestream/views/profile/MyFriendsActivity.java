@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
@@ -28,7 +29,16 @@ public class MyFriendsActivity extends ActionBarActivity implements View.OnClick
 
 
     }
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                AnimationManager.ActivityFinish(this);
+                break;
+        }
+        return true;
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

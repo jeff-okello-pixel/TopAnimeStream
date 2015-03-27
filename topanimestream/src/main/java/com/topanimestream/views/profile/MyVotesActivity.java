@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -58,6 +59,7 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         txtNoVotes = (TextView) findViewById(R.id.txtNoVotes);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.my_votes) + "</font>"));
 
         listViewMyVotes.setOnItemClickListener(this);
@@ -90,10 +92,18 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
                 }
             }
         });
-        AsyncTaskTools.execute(new MyVoteTask());
 
     }
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                AnimationManager.ActivityFinish(this);
+                break;
+        }
+        return true;
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -128,10 +138,9 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         private ArrayList<Vote> newVotes = new ArrayList<Vote>();
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_votes), MyVotesActivity.this);
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").expand("Anime/Genres,Anime/AnimeInformations,Anime/Status").build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").skip(currentSkip).top(currentLimit).expand("Anime/Genres,Anime/AnimeInformations,Anime/Status,Anime/AnimeSources").build();
         }
 
         @Override

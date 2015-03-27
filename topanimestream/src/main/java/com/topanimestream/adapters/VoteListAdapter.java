@@ -57,6 +57,7 @@ public class VoteListAdapter extends BaseAdapter {
             holder.txtName = (TextView) vi.findViewById(R.id.txtName);
             holder.rtbRating = (RatingBar)vi.findViewById(R.id.rtbRating);
             holder.txtVote = (TextView) vi.findViewById(R.id.txtVote);
+            holder.txtAddedDate = (TextView) vi.findViewById(R.id.txtAddedDate);
             vi.setTag(holder);
         } else {
             holder = (ViewHolder) vi.getTag();
@@ -65,7 +66,7 @@ public class VoteListAdapter extends BaseAdapter {
         holder.txtName.setText(vote.getAnime().getName());
         holder.rtbRating.setRating((float) Utils.roundToHalf(vote.getValue() != 0 ? vote.getValue() / 2 : vote.getValue()));
         holder.txtVote.setText(String.valueOf(Utils.roundToHalf(vote.getValue() != 0 ? vote.getValue() / 2 : vote.getValue())));
-
+        holder.txtAddedDate.setText("Added " + vote.getAddedDate());
         return vi;
     }
 
@@ -74,6 +75,7 @@ public class VoteListAdapter extends BaseAdapter {
         TextView txtName;
         RatingBar rtbRating;
         TextView txtVote;
+        TextView txtAddedDate;
     }
 
     @Override
