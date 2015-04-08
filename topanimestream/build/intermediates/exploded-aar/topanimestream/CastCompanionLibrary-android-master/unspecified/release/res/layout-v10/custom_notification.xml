@@ -40,4 +40,4 @@
         android:maxLines="1"
         android:textAppearance="@style/android:TextAppearance.StatusBar.EventContent" />
 
-</RelativeLayout><!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/layout-v10/custom_notification.xml -->
+</RelativeLayout><!-- From: file:/C:/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/layout-v10/custom_notification.xml -->

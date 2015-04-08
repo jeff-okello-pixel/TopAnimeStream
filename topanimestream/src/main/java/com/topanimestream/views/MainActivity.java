@@ -15,7 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -28,6 +28,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -125,14 +126,16 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     public String filter = "";
     public String order = "";
     private TextView txtTitle;
-    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         App.accessToken = prefs.getString("AccessToken", "");
         App.isPro = prefs.getBoolean("IsPro", false);
@@ -198,10 +201,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 }
             }
         }
-
+        /*
         actionBar = getSupportActionBar();
 
-        actionBar.setIcon(android.R.color.transparent);
+        actionBar.setIcon(android.R.color.transparent);*/
 
         listView = (ListView) findViewById(R.id.left_drawer);
         listView.setOnItemClickListener(this);
@@ -220,13 +223,14 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (mDrawerLayout != null) {
-            //actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
+            //actionBar.setDisplayHomeAsUpEnabled(true);
+            //actionBar.setHomeButtonEnabled(true);
             mDrawerLayout.setDrawerListener(new DrawerListener());
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_navigation_drawer, R.string.app_name, R.string.app_name);
+            mDrawerToggle = new ActionBarDrawerToggle(
+                    this,  mDrawerLayout, toolbar,
+                    R.string.app_name, R.string.app_name);
             mDrawerToggle.syncState();
 
             if (firstTime) {
@@ -235,8 +239,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 firstTime = false;
             }
         } else {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setHomeButtonEnabled(false);
+            //actionBar.setDisplayHomeAsUpEnabled(false);
+            //actionBar.setHomeButtonEnabled(false);
         }
 
 
@@ -467,12 +471,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         if (!spinnerOrderByValue.equals(getString(R.string.most_popular))) {
             title += "(" + spinnerOrderByValue + ")";
         }
-        setTitle(Html.fromHtml("<font color=#f0f0f0>" + title + "</font>"));
+        setTitle(title);
         if (txtTitle != null) {
-            txtTitle.setText(Html.fromHtml("<font color=#f0f0f0>" + title + "</font>"));
+            txtTitle.setText(title + "</font>");
             txtTitle.requestFocus();
         } else
-            setTitle(Html.fromHtml("<font color=#f0f0f0>" + title + "</font>"));
+            setTitle(title);
     }
 
     private class DrawerListener implements DrawerLayout.DrawerListener {
@@ -482,7 +486,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             if (txtTitle != null)
                 txtTitle.setText(getString(R.string.app_name));
             else
-                setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.app_name) + "</font>"));
+                setTitle(getString(R.string.app_name));
             drawerIsOpened = true;
         }
 

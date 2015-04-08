@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -77,8 +78,6 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             getWindow().setAttributes((WindowManager.LayoutParams) params);
         }
         setContentView(R.layout.activity_episode_details);
-        r = getResources();
-
         Bundle bundle = getIntent().getExtras();
         episode = bundle.getParcelable("Episode");
         Bundle hackBundle = bundle.getBundle("hackBundle");
@@ -89,6 +88,15 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             Toast.makeText(this, getString(R.string.error_loading_episode_details), Toast.LENGTH_LONG).show();
             finish();
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            //toolbar.setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_solid_blue));
+            toolbar.setTitle(getString(R.string.episode) + " " + episode.getEpisodeNumber());
+            setSupportActionBar(toolbar);
+        }
+
+
         imgScreenshot = (ImageView) findViewById(R.id.imgScreenshot);
         txtEpisodeName = (TextView) findViewById(R.id.txtEpisodeName);
         txtDescription = (TextView) findViewById(R.id.txtDescription);
@@ -108,14 +116,6 @@ public class EpisodeDetailsActivity extends ActionBarActivity {
             }
         }
         txtEpisodeName.setText(episodeName);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-
-            actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_solid_blue));
-            actionBar.setDisplayShowHomeEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.episode) + " " + episode.getEpisodeNumber() + "</font>"));
-        }
         if (episode.getScreenshot() != null && !episode.getScreenshot().equals(""))
             App.imageLoader.displayImage(getString(R.string.image_host_path) + episode.getScreenshot(), imgScreenshot);
         else

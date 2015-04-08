@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/layAnimeDetails">
+    <include layout="@layout/toolbar"/>
     <fragment
         class="com.topanimestream.views.AnimeDetailsFragment"
         android:id="@+id/animeDetailsFragment"

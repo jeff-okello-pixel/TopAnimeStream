@@ -81,11 +81,11 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
         shouldCloseOnly = intent.getBooleanExtra("ShouldCloseOnly", false);
-
+        /*
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
-        actionBar.hide();
+        actionBar.hide();*/
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnPasswordRecovery = (Button) findViewById(R.id.btnPasswordRecovery);
         layLogin = (LinearLayout) findViewById(R.id.layLogin);

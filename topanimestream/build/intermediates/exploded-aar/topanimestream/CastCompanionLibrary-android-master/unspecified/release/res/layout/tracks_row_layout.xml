@@ -25,4 +25,4 @@
         android:textSize="@dimen/captions_dialog_row_text_size"
         android:layout_toLeftOf="@+id/radio"
         android:layout_toStartOf="@+id/radio" />
-</RelativeLayout><!-- From: file:/C:/Users/Marc-André/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/layout/tracks_row_layout.xml -->
+</RelativeLayout><!-- From: file:/C:/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/layout/tracks_row_layout.xml -->

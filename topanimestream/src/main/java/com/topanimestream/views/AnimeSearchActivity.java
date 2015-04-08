@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,12 +52,12 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
     public ArrayList<String> mItems;
     private Dialog busyDialog;
     private TextView txtNoResult;
-    private ActionBar actionBar;
     private MenuItem menuItem;
     public AlertDialog alertType;
     private Resources r;
     public ArrayList<AnimeSource> animeSources;
     private AlertDialog alertProviders;
+    private Toolbar toolbar;
     public int animeId;
     SharedPreferences prefs;
 
@@ -67,18 +68,22 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
         setContentView(R.layout.activity_anime_search);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         r = getResources();
-        actionBar = getSupportActionBar();
-        actionBar.setIcon(android.R.color.transparent);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         txtNoResult = (TextView) findViewById(R.id.txtNoResult);
         animes = new ArrayList<Anime>();
         mItems = new ArrayList<String>();
         query = getIntent().getStringExtra(SearchManager.QUERY);
         Utils.SaveRecentSearch(this, query);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + query + "</font>"));
         query = query.replace(" ", "%20");
         listView = (ListView) findViewById(R.id.listView);
         listView.setOnItemClickListener(this);
+
+        if (toolbar != null) {
+            toolbar.setTitle(query);
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            setSupportActionBar(toolbar);
+        }
         (new SearchAnimeTask()).execute();
     }
 
@@ -163,7 +168,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
     protected void onNewIntent(Intent intent) {
         query = intent.getStringExtra(SearchManager.QUERY);
         MenuItemCompat.collapseActionView(menuItem);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + query + "</font>"));
+        toolbar.setTitle(query);
         Utils.SaveRecentSearch(this, query);
         query = query.replace(" ", "%20");
         (new SearchAnimeTask()).execute();
