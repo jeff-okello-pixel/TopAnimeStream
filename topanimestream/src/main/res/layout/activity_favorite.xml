@@ -3,6 +3,7 @@
     android:id="@+id/layFavorite"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+        <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
     	<TextView 
     	    android:id="@+id/txtNoFavorite"
     	    android:visibility="gone"
@@ -14,6 +15,7 @@
         <com.mobeta.android.dslv.DragSortListView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:dslv="http://schemas.android.com/apk/res/com.topanimestream"
+            android:layout_below="@id/toolbar"
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

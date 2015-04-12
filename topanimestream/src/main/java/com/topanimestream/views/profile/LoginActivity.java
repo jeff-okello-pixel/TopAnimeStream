@@ -113,7 +113,12 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         btnBottomLogin.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(videoView != null)
+            videoView.start();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

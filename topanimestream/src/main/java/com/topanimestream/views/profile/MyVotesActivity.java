@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,10 +58,13 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         listViewMyVotes = (ListView) findViewById(R.id.listViewMyVotes);
         progressBarLoadMore = (ProgressBar) findViewById(R.id.progressBarLoadMore);
         txtNoVotes = (TextView) findViewById(R.id.txtNoVotes);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.my_votes) + "</font>"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.my_votes));
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            setSupportActionBar(toolbar);
+        }
 
         listViewMyVotes.setOnItemClickListener(this);
         listViewMyVotes.setOnScrollListener(new AbsListView.OnScrollListener() {

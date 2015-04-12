@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,10 +44,14 @@ public class MyWatchlistActivity extends ActionBarActivity implements OnItemClic
         r = getResources();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         txtNoWatch = (TextView) findViewById(R.id.txtNoWatch);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.title_history) + "</font>"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.title_history));
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            setSupportActionBar(toolbar);
+        }
+
         listView = (ListView) findViewById(R.id.listView);
         listView.setOnItemClickListener(this);
 

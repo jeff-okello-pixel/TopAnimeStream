@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,10 +64,14 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
         r = getResources();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         txtNoFavorite = (TextView) findViewById(R.id.txtNoFavorite);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.title_favorites) + "</font>"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.title_favorites));
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            setSupportActionBar(toolbar);
+        }
+
         listView = (DragSortListView) findViewById(R.id.listView);
         listView.setOnItemClickListener(this);
         listView.setDropListener(onDrop);

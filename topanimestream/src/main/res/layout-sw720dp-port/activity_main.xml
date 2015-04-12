@@ -3,7 +3,9 @@
     xmlns:ap="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-   	    <ListView 
+        <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
+   	    <ListView
+            android:layout_below="@id/toolbar"
    	        android:id="@+id/left_drawer"
         	android:paddingTop="10dp"
         	android:layout_width="250dp"
@@ -24,6 +26,7 @@
 		    android:text="@string/no_connection"/>
         <LinearLayout
             android:id="@+id/layBottom"
+            android:layout_below="@id/toolbar"
             android:layout_toRightOf="@id/left_drawer"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"

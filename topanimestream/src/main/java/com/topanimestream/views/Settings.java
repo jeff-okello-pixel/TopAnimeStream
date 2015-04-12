@@ -28,7 +28,6 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     private AlertDialog dialog;
 
     protected void onCreate(final Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         app = (App) this.getApplication();
 

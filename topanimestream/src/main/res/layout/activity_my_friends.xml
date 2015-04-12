@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
     <ProgressBar
         android:id="@+id/progressBarLoadMore"
         style="?android:attr/progressBarStyle"
@@ -14,6 +15,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
         android:layout_above="@id/progressBarLoadMore"
         android:id="@+id/listViewMyFriends"/>
 </RelativeLayout>

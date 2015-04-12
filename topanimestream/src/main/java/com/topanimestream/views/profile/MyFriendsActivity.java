@@ -3,6 +3,7 @@ package com.topanimestream.views.profile;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,9 +24,13 @@ public class MyFriendsActivity extends ActionBarActivity implements View.OnClick
         setContentView(R.layout.activity_my_friends);
         listViewMyFriends = (ListView) findViewById(R.id.listViewMyFriends);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.my_friends) + "</font>"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.my_friends));
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            setSupportActionBar(toolbar);
+        }
 
 
     }

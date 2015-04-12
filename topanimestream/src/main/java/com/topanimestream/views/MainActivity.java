@@ -35,6 +35,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -65,8 +66,6 @@ import org.kxml2.kdom.Node;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.mopub.mobileads.MoPubErrorCode;
-import com.mopub.mobileads.MoPubView;
 import com.topanimestream.App;
 import com.topanimestream.managers.AppRaterManager;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -86,7 +85,7 @@ import com.topanimestream.views.profile.MyFavoritesActivity;
 import com.topanimestream.views.profile.MyProfileActivity;
 import com.topanimestream.views.profile.MyWatchlistActivity;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection, MoPubView.BannerAdListener {
+public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection {
 
     private DrawerLayout mDrawerLayout;
     private boolean firstTime;
@@ -118,7 +117,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private MenuItem mediaRouteMenuItem;
     private MenuItem menuBuyPro;
     private MenuArrayAdapter menuAdapter;
-    private MoPubView moPubView;
     private String spinnerOrderByValue;
     private String spinnerStatusValue;
     private String spinnerDubbedSubbedValue;
@@ -317,13 +315,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         setPagerVisibility(App.networkConnection);
 
 
-        moPubView = (MoPubView) findViewById(R.id.adView);
-        moPubView.setAdUnitId("d27711328dc54dc1808eba8c42a07e35");
-        moPubView.loadAd();
-        moPubView.setBannerAdListener(this);
-
         if (App.isPro) {
-            //moPubView.setVisibility(View.GONE);
+            AdView adView = (AdView) findViewById(R.id.adView);
+            ((ViewGroup) adView.getParent()).removeView(adView);
             VideoCastManager.checkGooglePlaySevices(this);
 
             App.getCastManager(this);
@@ -354,7 +348,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
     @Override
     protected void onDestroy() {
-        moPubView.destroy();
         super.onDestroy();
     }
 
@@ -390,32 +383,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             tabs.setVisibility(View.GONE);
         }
     }
-
-    @Override
-    public void onBannerLoaded(MoPubView moPubView) {
-
-    }
-
-    @Override
-    public void onBannerFailed(MoPubView moPubView, MoPubErrorCode moPubErrorCode) {
-
-    }
-
-    @Override
-    public void onBannerClicked(MoPubView moPubView) {
-
-    }
-
-    @Override
-    public void onBannerExpanded(MoPubView moPubView) {
-
-    }
-
-    @Override
-    public void onBannerCollapsed(MoPubView moPubView) {
-
-    }
-
 
     public class PagerAdapter extends FragmentStatePagerAdapter {
         public PagerAdapter(FragmentManager fm) {

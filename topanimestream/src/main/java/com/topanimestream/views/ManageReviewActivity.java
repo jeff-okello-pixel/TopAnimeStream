@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -40,6 +41,7 @@ public class ManageReviewActivity extends ActionBarActivity implements View.OnTo
 
     private SharedPreferences prefs;
     private int animeId;
+    private Toolbar toolbar;
     private TextView lblArtRating;
     private TextView lblCharacterRating;
     private TextView lblStoryRating;
@@ -103,10 +105,13 @@ public class ManageReviewActivity extends ActionBarActivity implements View.OnTo
         rtbEnjoymentRating.setOnRatingBarChangeListener(this);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.add_review) + "</font>"));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.add_review));
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            setSupportActionBar(toolbar);
+        }
         Intent intent = getIntent();
         animeId = intent.getExtras().getInt("animeId");
         currentUserReview = intent.getExtras().getParcelable("currentUserReview");
@@ -119,7 +124,7 @@ public class ManageReviewActivity extends ActionBarActivity implements View.OnTo
             rtbEnjoymentRating.setRating(currentUserReview.getEnjoymentRating() / 2);
             txtYourReview.setText(currentUserReview.getValue());
             btnDelete.setVisibility(View.VISIBLE);
-            actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.edit_your_review) + "</font>"));
+            toolbar.setTitle(getString(R.string.edit_your_review));
 
         }
 
