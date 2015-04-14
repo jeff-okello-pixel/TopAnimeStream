@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+    <TextView
+        android:id="@+id/lblQuality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quality"/>
+    <Spinner
+        android:id="@+id/spinnerQuality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"/>
+    <TextView
+        android:id="@+id/lblLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:text="Quality"/>
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"/>
+    <TextView
+        android:id="@+id/lblSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:text="Quality"/>
+    <Spinner
+        android:id="@+id/spinnerSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"/>
+    <CheckBox
+        android:id="@+id/chkAlwaysThis"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:text="Always choose these options if possible. You can change these settings in the setting page."/>
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:background="@drawable/button_green"
+        android:textColor="#f5f5f5"
+        android:text="Play"/>
+
+</LinearLayout>
