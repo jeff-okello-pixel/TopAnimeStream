@@ -130,6 +130,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startActivity(new Intent(MainActivity.this, VideoPlayerActivity.class));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);

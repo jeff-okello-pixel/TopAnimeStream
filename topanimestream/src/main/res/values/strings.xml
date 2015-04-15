@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources
     xmlns:tools="http://schemas.android.com/tools">
-
+    <string name="description">Media Controls</string>
     <string name="app_name">Topanimestream</string>
     <string name="app_name_login">TopAnimeStream</string>
     <string name="app_id" tools:ignore="MissingTranslation">43F674AF</string>w
