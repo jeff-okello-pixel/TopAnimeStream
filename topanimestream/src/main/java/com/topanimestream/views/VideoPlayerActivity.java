@@ -12,12 +12,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.VideoView;
 
 import com.topanimestream.R;
 
 public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
 
-    SurfaceView videoSurface;
+    VideoView videoView;
     MediaPlayer player;
     VideoControllerView controller;
 
@@ -25,9 +26,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
-        
-        videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
-        SurfaceHolder videoHolder = videoSurface.getHolder();
+
+        videoView = (VideoView) findViewById(R.id.videoView);
+        SurfaceHolder videoHolder = videoView.getHolder();
         videoHolder.addCallback(this);
 
         player = new MediaPlayer();
@@ -76,7 +77,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void onPrepared(MediaPlayer mp) {
         controller.setMediaPlayer(this);
-        controller.setAnchorView((RelativeLayout) findViewById(R.id.videoSurfaceContainer));
+        controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
         player.start();
     }
     // End MediaPlayer.OnPreparedListener
