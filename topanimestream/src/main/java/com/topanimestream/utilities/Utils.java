@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.SearchRecentSuggestions;
+import android.view.Display;
 import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -76,7 +77,21 @@ public class Utils {
 
 
     public static int getJsonCount = 0;
-
+    public static int getScreenOrientation(Activity act)
+    {
+        Display getOrient = act.getWindowManager().getDefaultDisplay();
+        int orientation = Configuration.ORIENTATION_UNDEFINED;
+        if(getOrient.getWidth()==getOrient.getHeight()){
+            orientation = Configuration.ORIENTATION_SQUARE;
+        } else{
+            if(getOrient.getWidth() < getOrient.getHeight()){
+                orientation = Configuration.ORIENTATION_PORTRAIT;
+            }else {
+                orientation = Configuration.ORIENTATION_LANDSCAPE;
+            }
+        }
+        return orientation;
+    }
     public static String unGunzip(String str) {
         String s1 = null;
 

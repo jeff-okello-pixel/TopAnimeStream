@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/video_container"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/videoSurfaceContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:gravity="center_horizontal|center_vertical"
-    android:orientation="vertical" >
+    android:background="@android:color/black">
 
-    <FrameLayout
-        android:id="@+id/videoSurfaceContainer"
+
+    <SurfaceView
+        android:id="@+id/videoSurface"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"/>
 
-        <VideoView
-            android:id="@+id/videoView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
-
-</LinearLayout>
+</RelativeLayout>

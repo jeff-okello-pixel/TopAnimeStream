@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -73,7 +74,7 @@ public class VideoControllerView extends FrameLayout {
     
     private MediaPlayerControl  mPlayer;
     private Context             mContext;
-    private View           mAnchor;
+    private RelativeLayout mAnchor;
     private View                mRoot;
     private SeekBar             mProgress;
     private TextView            mEndTime, mCurrentTime;
@@ -137,7 +138,7 @@ public class VideoControllerView extends FrameLayout {
      * This can for example be a VideoView, or your Activity's main view.
      * @param view The view to which to anchor the controller when it is visible.
      */
-    public void setAnchorView(View view) {
+    public void setAnchorView(RelativeLayout view) {
         mAnchor = view;
 
         LayoutParams frameParams = new LayoutParams(
@@ -270,13 +271,7 @@ public class VideoControllerView extends FrameLayout {
             }
             disableUnsupportedButtons();
 
-            LayoutParams tlp = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.BOTTOM
-            );
-            
-            mAnchor.addView(this, tlp);
+            mAnchor.addView(this);
             mShowing = true;
         }
         updatePausePlay();

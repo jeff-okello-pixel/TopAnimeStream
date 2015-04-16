@@ -3,6 +3,7 @@ package com.topanimestream.views;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,20 +16,22 @@ import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 import com.topanimestream.R;
+import com.topanimestream.utilities.Utils;
 
 public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
 
-    VideoView videoView;
+    SurfaceView surfaceView;
     MediaPlayer player;
     VideoControllerView controller;
-
+    private int mVideoWidth;
+    private int mVideoHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
 
-        videoView = (VideoView) findViewById(R.id.videoView);
-        SurfaceHolder videoHolder = videoView.getHolder();
+        surfaceView = (SurfaceView) findViewById(R.id.videoSurface);
+        SurfaceHolder videoHolder = surfaceView.getHolder();
         videoHolder.addCallback(this);
 
         player = new MediaPlayer();
@@ -48,7 +51,39 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             e.printStackTrace();
         }
     }
+    private void setVideoSize() {
 
+        if(Utils.getScreenOrientation(VideoPlayerActivity.this) == Configuration.ORIENTATION_PORTRAIT) {
+            // // Get the dimensions of the video
+            int videoWidth = player.getVideoWidth();
+            int videoHeight = player.getVideoHeight();
+            float videoProportion = (float) videoWidth / (float) videoHeight;
+
+            // Get the width of the screen
+            int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+            int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+            float screenProportion = (float) screenWidth / (float) screenHeight;
+
+            // Get the SurfaceView layout parameters
+            android.view.ViewGroup.LayoutParams lp = surfaceView.getLayoutParams();
+            if (videoProportion > screenProportion) {
+                lp.width = screenWidth;
+                lp.height = (int) ((float) screenWidth / videoProportion);
+            } else {
+                lp.width = (int) (videoProportion * (float) screenHeight);
+                lp.height = screenHeight;
+            }
+
+            // Commit the layout parameters
+            surfaceView.setLayoutParams(lp);
+        }
+        else
+        {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            surfaceView.setLayoutParams(params);
+        }
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         controller.show();
@@ -71,13 +106,21 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     public void surfaceDestroyed(SurfaceHolder holder) {
         
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setVideoSize();
+
+
+    }
     // End SurfaceHolder.Callback
 
     // Implement MediaPlayer.OnPreparedListener
     @Override
     public void onPrepared(MediaPlayer mp) {
         controller.setMediaPlayer(this);
-        controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
+        controller.setAnchorView((RelativeLayout) findViewById(R.id.videoSurfaceContainer));
+        setVideoSize();
         player.start();
     }
     // End MediaPlayer.OnPreparedListener
