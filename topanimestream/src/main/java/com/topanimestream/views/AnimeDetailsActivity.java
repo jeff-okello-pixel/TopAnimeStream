@@ -674,19 +674,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
     @Override
     public void onEpisodeSelected(final Episode episode, String type) {
-        final Dialog dialogChoosePlayOptions = new Dialog(AnimeDetailsActivity.this);
-        dialogChoosePlayOptions.setContentView(R.layout.dialog_play_options);
-        dialogChoosePlayOptions.setTitle("Play options");
-        //TODO add spinner values
-        Button btnPlay = (Button)dialogChoosePlayOptions.findViewById(R.id.btnPlay);
-        btnPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        dialogChoosePlayOptions.show();
-        /*
         Intent intent = new Intent(this, EpisodeDetailsActivity.class);
         intent.putExtra("Episode", episode);
         intent.putExtra("Type", type);
@@ -696,7 +683,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         intent.putExtra("hackBundle", hackBundle);
         startActivity(intent);
         if (!App.isTablet)
-            AnimationManager.ActivityStart(this);*/
+            AnimationManager.ActivityStart(this);
     }
 
 

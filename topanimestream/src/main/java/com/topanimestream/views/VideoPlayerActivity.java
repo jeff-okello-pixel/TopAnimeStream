@@ -27,6 +27,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private int mVideoHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
 
@@ -35,7 +36,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoHolder.addCallback(this);
 
         player = new MediaPlayer();
-        controller = new VideoControllerView(this);
+        controller = new VideoControllerView(this, true);
         
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);

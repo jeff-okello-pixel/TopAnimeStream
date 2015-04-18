@@ -27,6 +27,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -35,6 +37,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.topanimestream.App;
 import com.topanimestream.R;
 
 import java.lang.ref.WeakReference;
@@ -96,7 +99,6 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mPrevButton;
     private ImageButton         mFullscreenButton;
     private Handler             mHandler = new MessageHandler(this);
-
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = null;
@@ -270,8 +272,10 @@ public class VideoControllerView extends FrameLayout {
                 mPauseButton.requestFocus();
             }
             disableUnsupportedButtons();
-
             mAnchor.addView(this);
+            Animation animation = AnimationUtils.loadAnimation(App.getContext(), R.anim.abc_fade_in);
+            animation.setStartOffset(0);
+            this.startAnimation(animation);
             mShowing = true;
         }
         updatePausePlay();
@@ -302,6 +306,9 @@ public class VideoControllerView extends FrameLayout {
         }
 
         try {
+            Animation animation = AnimationUtils.loadAnimation(App.getContext(), R.anim.abc_fade_out);
+            animation.setStartOffset(0);
+            this.startAnimation(animation);
             mAnchor.removeView(this);
             mHandler.removeMessages(SHOW_PROGRESS);
         } catch (IllegalArgumentException ex) {
@@ -352,7 +359,12 @@ public class VideoControllerView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        show(sDefaultTimeout);
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (!mShowing)
+                show(sDefaultTimeout);
+            else
+                hide();
+        }
         return true;
     }
 
@@ -367,11 +379,11 @@ public class VideoControllerView extends FrameLayout {
         if (mPlayer == null) {
             return true;
         }
-        
+
         int keyCode = event.getKeyCode();
         final boolean uniqueDown = event.getRepeatCount() == 0
                 && event.getAction() == KeyEvent.ACTION_DOWN;
-        if (keyCode ==  KeyEvent.KEYCODE_HEADSETHOOK
+        if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK
                 || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
                 || keyCode == KeyEvent.KEYCODE_SPACE) {
             if (uniqueDown) {
