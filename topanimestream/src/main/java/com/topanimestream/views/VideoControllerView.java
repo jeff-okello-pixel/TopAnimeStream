@@ -5,6 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -99,6 +100,7 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mPrevButton;
     private ImageButton         mFullscreenButton;
     private Handler             mHandler = new MessageHandler(this);
+    public  Boolean             mCanTouchAgain = true;
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = null;
@@ -108,12 +110,10 @@ public class VideoControllerView extends FrameLayout {
         
         Log.i(TAG, TAG);
     }
-
     public VideoControllerView(Context context, boolean useFastForward) {
         super(context);
         mContext = context;
         mUseFastForward = useFastForward;
-        
         Log.i(TAG, TAG);
     }
 
@@ -266,15 +266,23 @@ public class VideoControllerView extends FrameLayout {
      * the controller until hide() is called.
      */
     public void show(int timeout) {
+
         if (!mShowing && mAnchor != null) {
+            mCanTouchAgain = false;
             setProgress();
             if (mPauseButton != null) {
                 mPauseButton.requestFocus();
             }
             disableUnsupportedButtons();
             mAnchor.addView(this);
+
             Animation animation = AnimationUtils.loadAnimation(App.getContext(), R.anim.abc_fade_in);
             animation.setStartOffset(0);
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    mCanTouchAgain = true;
+                }
+            }, animation.getDuration() + 50);
             this.startAnimation(animation);
             mShowing = true;
         }
@@ -301,6 +309,7 @@ public class VideoControllerView extends FrameLayout {
      * Remove the controller from the screen.
      */
     public void hide() {
+        mCanTouchAgain = false;
         if (mAnchor == null) {
             return;
         }
@@ -308,6 +317,11 @@ public class VideoControllerView extends FrameLayout {
         try {
             Animation animation = AnimationUtils.loadAnimation(App.getContext(), R.anim.abc_fade_out);
             animation.setStartOffset(0);
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    mCanTouchAgain = true;
+                }
+            }, animation.getDuration() + 50);
             this.startAnimation(animation);
             mAnchor.removeView(this);
             mHandler.removeMessages(SHOW_PROGRESS);
@@ -360,10 +374,12 @@ public class VideoControllerView extends FrameLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (!mShowing)
-                show(sDefaultTimeout);
-            else
-                hide();
+            if(mCanTouchAgain) {
+                if (!mShowing)
+                    show(sDefaultTimeout);
+                else
+                    hide();
+            }
         }
         return true;
     }
@@ -376,6 +392,7 @@ public class VideoControllerView extends FrameLayout {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+
         if (mPlayer == null) {
             return true;
         }
@@ -422,6 +439,7 @@ public class VideoControllerView extends FrameLayout {
         }
 
         show(sDefaultTimeout);
+
         return super.dispatchKeyEvent(event);
     }
 

@@ -87,7 +87,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        controller.show();
+        if(controller.mCanTouchAgain && event.getAction() == MotionEvent.ACTION_DOWN)
+            controller.show();
         return false;
     }
 
