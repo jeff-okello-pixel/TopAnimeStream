@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
@@ -29,7 +31,10 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 
         surfaceView = (SurfaceView) findViewById(R.id.videoSurface);
         SurfaceHolder videoHolder = surfaceView.getHolder();
@@ -37,6 +42,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         player = new MediaPlayer();
         controller = new VideoControllerView(this, true);
+
         
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -80,6 +86,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         }
         else
         {
+
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             params.addRule(RelativeLayout.CENTER_IN_PARENT);
             surfaceView.setLayoutParams(params);

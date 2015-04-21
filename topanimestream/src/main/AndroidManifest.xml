@@ -50,8 +50,7 @@
         <activity
             android:name=".views.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_video"
-            android:theme="@style/FullScreenVideoTheme" >
+            android:label="@string/title_activity_video" >
         </activity>
 
         <activity

@@ -32,6 +32,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -73,7 +74,7 @@ import java.util.Locale;
  *   with the boolean set to false
  * </ul>
  */
-public class VideoControllerView extends FrameLayout {
+public class VideoControllerView extends FrameLayout implements View.OnTouchListener {
     private static final String TAG = "VideoControllerView";
     
     private MediaPlayerControl  mPlayer;
@@ -98,9 +99,10 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mRewButton;
     private ImageButton         mNextButton;
     private ImageButton         mPrevButton;
-    private ImageButton         mFullscreenButton;
     private Handler             mHandler = new MessageHandler(this);
     public  Boolean             mCanTouchAgain = true;
+    private LinearLayout        layBottom;
+    private LinearLayout        layTop;
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = null;
@@ -114,6 +116,7 @@ public class VideoControllerView extends FrameLayout {
         super(context);
         mContext = context;
         mUseFastForward = useFastForward;
+        this.setOnTouchListener(this);
         Log.i(TAG, TAG);
     }
 
@@ -132,7 +135,6 @@ public class VideoControllerView extends FrameLayout {
     public void setMediaPlayer(MediaPlayerControl player) {
         mPlayer = player;
         updatePausePlay();
-        updateFullScreen();
     }
 
     /**
@@ -169,16 +171,18 @@ public class VideoControllerView extends FrameLayout {
     }
 
     private void initControllerView(View v) {
+        layBottom = (LinearLayout) v.findViewById(R.id.layBottom);
+        if(layBottom != null)
+            layBottom.setOnTouchListener(this);
+
+        layTop = (LinearLayout) v.findViewById(R.id.layTop);
+        if(layTop != null)
+            layTop.setOnTouchListener(this);
+
         mPauseButton = (ImageButton) v.findViewById(R.id.pause);
         if (mPauseButton != null) {
             mPauseButton.requestFocus();
             mPauseButton.setOnClickListener(mPauseListener);
-        }
-        
-        mFullscreenButton = (ImageButton) v.findViewById(R.id.fullscreen);
-        if (mFullscreenButton != null) {
-            mFullscreenButton.requestFocus();
-            mFullscreenButton.setOnClickListener(mFullscreenListener);
         }
 
         mFfwdButton = (ImageButton) v.findViewById(R.id.ffwd);
@@ -287,7 +291,6 @@ public class VideoControllerView extends FrameLayout {
             mShowing = true;
         }
         updatePausePlay();
-        updateFullScreen();
         
         // cause the progress bar to be updated even if mShowing
         // was already true.  This happens, for example, if we're
@@ -319,11 +322,15 @@ public class VideoControllerView extends FrameLayout {
             animation.setStartOffset(0);
             new Handler().postDelayed(new Runnable() {
                 public void run() {
+                    mAnchor.removeView(VideoControllerView.this);
+                }
+            }, animation.getDuration());
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
                     mCanTouchAgain = true;
                 }
             }, animation.getDuration() + 50);
             this.startAnimation(animation);
-            mAnchor.removeView(this);
             mHandler.removeMessages(SHOW_PROGRESS);
         } catch (IllegalArgumentException ex) {
             Log.w("MediaController", "already removed");
@@ -369,19 +376,6 @@ public class VideoControllerView extends FrameLayout {
             mCurrentTime.setText(stringForTime(position));
 
         return position;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if(mCanTouchAgain) {
-                if (!mShowing)
-                    show(sDefaultTimeout);
-                else
-                    hide();
-            }
-        }
-        return true;
     }
 
     @Override
@@ -469,19 +463,6 @@ public class VideoControllerView extends FrameLayout {
         }
     }
 
-    public void updateFullScreen() {
-        if (mRoot == null || mFullscreenButton == null || mPlayer == null) {
-            return;
-        }
-        
-        if (mPlayer.isFullScreen()) {
-            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_shrink);
-        }
-        else {
-            mFullscreenButton.setImageResource(R.drawable.ic_media_fullscreen_stretch);
-        }
-    }
-
     private void doPauseResume() {
         if (mPlayer == null) {
             return;
@@ -516,16 +497,18 @@ public class VideoControllerView extends FrameLayout {
     // we will simply apply the updated position without suspending regular updates.
     private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
         public void onStartTrackingTouch(SeekBar bar) {
-            show(3600000);
+            if(mCanTouchAgain) {
+                show(3600000);
 
-            mDragging = true;
+                mDragging = true;
 
-            // By removing these pending progress messages we make sure
-            // that a) we won't update the progress while the user adjusts
-            // the seekbar and b) once the user is done dragging the thumb
-            // we will post one of these messages to the queue again and
-            // this ensures that there will be exactly one message queued up.
-            mHandler.removeMessages(SHOW_PROGRESS);
+                // By removing these pending progress messages we make sure
+                // that a) we won't update the progress while the user adjusts
+                // the seekbar and b) once the user is done dragging the thumb
+                // we will post one of these messages to the queue again and
+                // this ensures that there will be exactly one message queued up.
+                mHandler.removeMessages(SHOW_PROGRESS);
+            }
         }
 
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
@@ -641,7 +624,25 @@ public class VideoControllerView extends FrameLayout {
             }
         }
     }
-    
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            if(mCanTouchAgain) {
+                if(view.getId() == R.id.layBottom || view.getId() == R.id.layTop)
+                    show(sDefaultTimeout);
+                else {
+                    if (!mShowing)
+                        show(sDefaultTimeout);
+                    else
+                        hide();
+                }
+            }
+        }
+
+        return true;
+    }
+
     public interface MediaPlayerControl {
         void    start();
         void    pause();
