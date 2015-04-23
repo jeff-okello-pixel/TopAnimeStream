@@ -17,14 +17,20 @@
 
 package com.topanimestream.views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +39,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
@@ -102,7 +110,13 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private Handler             mHandler = new MessageHandler(this);
     public  Boolean             mCanTouchAgain = true;
     private LinearLayout        layBottom;
-    private LinearLayout        layTop;
+    private Toolbar             toolbar;
+    private DrawerLayout        mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private boolean             drawerIsOpened;
+    private ListView            leftDrawer;
+    private boolean             mIsSliding;
+    private boolean             mShowMenuSlide;
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = null;
@@ -116,7 +130,6 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         super(context);
         mContext = context;
         mUseFastForward = useFastForward;
-        this.setOnTouchListener(this);
         Log.i(TAG, TAG);
     }
 
@@ -169,15 +182,58 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         return mRoot;
     }
+    private void toggle() {
+        if (mDrawerLayout.isDrawerVisible(GravityCompat.START)) {
+            Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+            layBottom.setAnimation(animFadeIn);
+            layBottom.setVisibility(View.VISIBLE);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
 
+
+        } else {
+            Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
+            layBottom.setAnimation(animFadeOut);
+            layBottom.setVisibility(View.GONE);
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
     private void initControllerView(View v) {
         layBottom = (LinearLayout) v.findViewById(R.id.layBottom);
         if(layBottom != null)
             layBottom.setOnTouchListener(this);
 
-        layTop = (LinearLayout) v.findViewById(R.id.layTop);
-        if(layTop != null)
-            layTop.setOnTouchListener(this);
+        leftDrawer = (ListView) v.findViewById(R.id.leftDrawer);
+        if(leftDrawer != null)
+            leftDrawer.setOnTouchListener(this);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        if(toolbar != null) {
+            //toolbar.inflateMenu(R.menu.media_controller);
+            mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
+
+            if (mDrawerLayout != null) {
+                mDrawerLayout.setDrawerListener(new DrawerListener());
+                mDrawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
+                //mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+                mDrawerToggle = new ActionBarDrawerToggle(
+                        (Activity)mContext,  mDrawerLayout, toolbar, 0, 0);
+
+                mDrawerToggle.syncState();
+            }
+
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch(menuItem.getItemId())
+                    {
+                        case R.id.episodesList:
+                            break;
+                    }
+                    return true;
+                }
+            });
+            toolbar.setOnTouchListener(this);
+        }
 
         mPauseButton = (ImageButton) v.findViewById(R.id.pause);
         if (mPauseButton != null) {
@@ -227,7 +283,51 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         installPrevNextListeners();
     }
+    private class DrawerListener implements DrawerLayout.DrawerListener {
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
+            layBottom.setAnimation(animFadeOut);
+            layBottom.setVisibility(View.GONE);
+            drawerIsOpened = true;
+            mDrawerToggle.onDrawerOpened(drawerView);
 
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+            layBottom.setAnimation(animFadeIn);
+            layBottom.setVisibility(View.VISIBLE);
+            drawerIsOpened = false;
+            mDrawerToggle.onDrawerClosed(drawerView);
+
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            if(!mShowMenuSlide && mCanTouchAgain) {
+                mShowMenuSlide = true;
+                //notify the user action
+                show(sDefaultTimeout);
+                //We need a handler... if not, the show function is being called wayyyyy to often and it lags.
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        mShowMenuSlide = false;
+                    }
+                }, 500);
+
+            }
+            mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+
+            mDrawerToggle.onDrawerStateChanged(newState);
+
+        }
+    }
     /**
      * Show the controller on screen. It will go away
      * automatically after 3 seconds of inactivity.
@@ -627,16 +727,10 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            if(mCanTouchAgain) {
-                if(view.getId() == R.id.layBottom || view.getId() == R.id.layTop)
-                    show(sDefaultTimeout);
-                else {
-                    if (!mShowing)
-                        show(sDefaultTimeout);
-                    else
-                        hide();
-                }
+        if(mCanTouchAgain) {
+            if(view.getId() != R.id.drawer_layout)
+            {
+                show(sDefaultTimeout);
             }
         }
 

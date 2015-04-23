@@ -8,6 +8,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.topanimestream.R;
@@ -92,6 +94,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             surfaceView.setLayoutParams(params);
         }
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(controller.mCanTouchAgain && event.getAction() == MotionEvent.ACTION_DOWN)
