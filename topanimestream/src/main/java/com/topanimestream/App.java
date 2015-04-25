@@ -32,7 +32,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     private static Context context;
     public static VideoCastManager mCastMgr = null;
     public static String phoneLanguage;
-
+    public static int sdkVersion;
     public static Context getContext() {
         return context;
     }
@@ -40,6 +40,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     @Override
     public void onCreate() {
         super.onCreate();
+        sdkVersion = android.os.Build.VERSION.SDK_INT;
         isTablet = Utils.isTablet(getApplicationContext());
         phoneLanguage = Locale.getDefault().getLanguage();
         if (phoneLanguage.equals(Locale.FRENCH.getLanguage()))

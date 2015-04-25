@@ -17,6 +17,7 @@
 
 package com.topanimestream.views;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -34,6 +35,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -117,6 +119,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private ListView            leftDrawer;
     private boolean             mIsSliding;
     private boolean             mShowMenuSlide;
+    private Float               layBottomAlpha = 1.0f;// used for older devices
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = null;
@@ -286,9 +289,6 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private class DrawerListener implements DrawerLayout.DrawerListener {
         @Override
         public void onDrawerOpened(View drawerView) {
-            Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
-            layBottom.setAnimation(animFadeOut);
-            layBottom.setVisibility(View.GONE);
             drawerIsOpened = true;
             mDrawerToggle.onDrawerOpened(drawerView);
 
@@ -296,16 +296,27 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         @Override
         public void onDrawerClosed(View drawerView) {
-            Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
-            layBottom.setAnimation(animFadeIn);
-            layBottom.setVisibility(View.VISIBLE);
             drawerIsOpened = false;
             mDrawerToggle.onDrawerClosed(drawerView);
 
         }
 
+        @SuppressLint("NewApi")
         @Override
         public void onDrawerSlide(View drawerView, float slideOffset) {
+            if(App.sdkVersion < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+
+                AlphaAnimation alpha = new AlphaAnimation(layBottomAlpha, 1 - slideOffset);
+                alpha.setDuration(0); // Make animation instant
+                alpha.setFillAfter(true); // Tell it to persist after the animation ends
+                layBottom.startAnimation(alpha);
+                layBottomAlpha = 1 - slideOffset;
+            }
+            else
+            {
+                layBottom.setAlpha(1 - slideOffset);
+            }
+
             if(!mShowMenuSlide && mCanTouchAgain) {
                 mShowMenuSlide = true;
                 //notify the user action
