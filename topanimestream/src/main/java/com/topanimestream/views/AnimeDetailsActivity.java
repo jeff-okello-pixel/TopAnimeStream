@@ -293,10 +293,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                                     switch (which){
                                                         case DialogInterface.BUTTON_POSITIVE:
                                                             AsyncTaskTools.execute(new RemoveVoteTask());
+                                                            dialog.dismiss();
+                                                            dialogVote.dismiss();
+
                                                             break;
 
                                                         case DialogInterface.BUTTON_NEGATIVE:
                                                             dialog.dismiss();
+                                                            dialogVote.dismiss();
                                                             break;
                                                     }
                                                 }
@@ -342,6 +346,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String method = "RemoveVote";
         private String URL;
+
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
@@ -380,6 +385,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_removing_vote), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_removed), Toast.LENGTH_LONG).show();
+                    currentUserVote = null;
                     AsyncTaskTools.execute(new AnimeDetailsTask(true));
                 }
 
@@ -646,8 +652,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     if (errors != null)
                         return errors;
                     anime = gson.fromJson(jsonAnime.toString(), Anime.class);
-                    if (animeDetailsFragment != null)
-                        animeDetailsFragment.setAnime(anime);
                 }
                 return null;
 
@@ -666,6 +670,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     AnimeDetailsActivity.this.finish();
                 } else {
                     Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
+                }
+            }
+            else
+            {
+                if(isReload)
+                {
+                    if (animeDetailsFragment != null)
+                        animeDetailsFragment.setAnime(anime);
                 }
             }
             DialogManager.dismissBusyDialog(busyDialog);

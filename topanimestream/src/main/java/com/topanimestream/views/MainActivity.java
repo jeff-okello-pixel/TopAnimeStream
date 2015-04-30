@@ -553,10 +553,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menuBuyPro = menu.findItem(R.id.action_buypro);
-        if (App.isPro)
-            menuBuyPro.setVisible(false);
-
         return true;
     }
 
@@ -606,6 +602,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 dialog.show();
 
                 break;
+            /*
             case R.id.action_buypro:
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.topanimestream.pro")));
@@ -613,7 +610,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.topanimestream.pro")));
                 }
 
-                break;
+                break;*/
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, Settings.class));
                 break;

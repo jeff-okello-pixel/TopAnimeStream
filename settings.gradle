@@ -1,5 +1,5 @@
-include ':CastCompanionLibrary-android-master', ':lightbox'
+include ':CastCompanionLibrary-android-master'
 include ':imageloaderlibrary'
 include ':librarytabstrip'
-include ':topanimestream'
 include ':drag-sort'
+include ':topanimestream'
