@@ -210,7 +210,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             leftDrawer.setOnTouchListener(this);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         if(toolbar != null) {
-            //toolbar.inflateMenu(R.menu.media_controller);
+            toolbar.inflateMenu(R.menu.media_controller);
             mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
 
             if (mDrawerLayout != null) {

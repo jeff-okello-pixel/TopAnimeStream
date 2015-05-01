@@ -1,6 +1,7 @@
 package com.topanimestream.views;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -8,6 +9,11 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -20,6 +26,9 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.topanimestream.R;
+import com.topanimestream.custom.StrokedRobotoTextView;
+import com.topanimestream.models.subs.Caption;
+import com.topanimestream.models.subs.TimedTextObject;
 import com.topanimestream.utilities.Utils;
 
 public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
@@ -29,15 +38,19 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     VideoControllerView controller;
     private int mVideoWidth;
     private int mVideoHeight;
+    private TimedTextObject mSubs;
+    private Handler mDisplayHandler;
+    private Caption mLastSub = null;
+    private StrokedRobotoTextView txtSubtitle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
+        mDisplayHandler = new Handler(Looper.getMainLooper());
         surfaceView = (SurfaceView) findViewById(R.id.videoSurface);
         SurfaceHolder videoHolder = surfaceView.getHolder();
         videoHolder.addCallback(this);
@@ -59,6 +72,54 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private long getCurrentTime()
+    {
+        return player.getCurrentPosition();
+    }
+    protected void checkSubs() {
+        if(mSubs != null) {
+            Collection<Caption> subtitles = mSubs.captions.values();
+            double currentTime = getCurrentTime();
+            if (mLastSub != null && currentTime >= mLastSub.start.getMilliseconds() && currentTime <= mLastSub.end.getMilliseconds()) {
+                showTimedCaptionText(mLastSub);
+            } else {
+                for (Caption caption : subtitles) {
+                    if (currentTime >= caption.start.getMilliseconds() && currentTime <= caption.end.getMilliseconds()) {
+                        mLastSub = caption;
+
+                        showTimedCaptionText(caption);
+                        break;
+                    } else if (currentTime > caption.end.getMilliseconds()) {
+                        showTimedCaptionText(null);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void showTimedCaptionText(final Caption text) {
+        mDisplayHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (text == null) {
+                    if (txtSubtitle.getText().length() > 0) {
+                        txtSubtitle.setText("");
+                    }
+                    return;
+                }
+                SpannableStringBuilder styledString = (SpannableStringBuilder) Html.fromHtml(text.content);
+
+                ForegroundColorSpan[] toRemoveSpans = styledString.getSpans(0, styledString.length(), ForegroundColorSpan.class);
+                for (ForegroundColorSpan remove : toRemoveSpans) {
+                    styledString.removeSpan(remove);
+                }
+
+                if (!txtSubtitle.getText().toString().equals(styledString.toString())) {
+                    txtSubtitle.setText(styledString);
+                }
+            }
+        });
     }
     private void setVideoSize() {
 

@@ -30,6 +30,8 @@ dependencies {
     compile files('libs/ksoap2.jar')
     compile files('libs/com-fwwjt-pacjz173199.jar')
     compile files('libs/gson-2.2.4.jar')
+    compile files('libs/juniversalchardet-1.0.3.jar')
+    compile 'com.github.johnkil.android-robototextview:robototextview:2.+'
     compile 'com.github.nirhart:parallaxscroll:1.0'
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
