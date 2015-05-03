@@ -276,4 +276,5 @@
     <string name="no_votes">You don\'t have any votes</string>
     <string name="password_recovery">Password recovery</string>
     <string name="subtitles">Subtitles</string>
+    <string name="error_downloading_subtitle">Error downloading subtitles</string>
 </resources>

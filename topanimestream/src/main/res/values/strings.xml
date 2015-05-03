@@ -14,6 +14,7 @@
     <string name="anime_data_service_path_no_dash" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeDataService.svc</string>
     <string name="anime_data_service_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeDataService.svc/</string>
     <string name="image_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/ImageHost/</string>
+    <string name="sub_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/SubHost/</string>
     <!-- Menu actions -->
     <string name="action_favorite">Add to favorite</string>
     <string name="action_settings">Settings</string>
@@ -285,4 +286,5 @@
     <string name="no_votes">You don\'t have any votes</string>
     <string name="password_recovery">Password recovery</string>
     <string name="subtitles">Subtitles</string>
+    <string name="error_downloading_subtitle">Error downloading subtitles</string>
 </resources>

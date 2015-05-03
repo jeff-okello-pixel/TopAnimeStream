@@ -19,15 +19,13 @@
 
 <resources>
 
-    <style name="Theme.Blue" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Blue" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
         <item name="android:seekBarStyle">@style/SeekBarAppTheme</item>
         <item name="colorPrimary">#245169</item>
         <item name="colorPrimaryDark">#245169</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="colorAccent">@android:color/black</item><!--Checkbox checked color !-->
         <item name="android:textColorSecondary">@android:color/black</item><!--Checkbox text color !-->

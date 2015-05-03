@@ -19,7 +19,9 @@ package com.topanimestream.views;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.GravityCompat;
@@ -28,7 +30,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,19 +39,20 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.models.Item;
 
 import java.lang.ref.WeakReference;
 import java.util.Formatter;
@@ -87,7 +89,7 @@ import java.util.Locale;
 public class VideoControllerView extends FrameLayout implements View.OnTouchListener {
     private static final String TAG = "VideoControllerView";
     
-    private MediaPlayerControl  mPlayer;
+    private VideoControllerCallback mCallback;
     private Context             mContext;
     private RelativeLayout mAnchor;
     private View                mRoot;
@@ -120,13 +122,13 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private boolean             mIsSliding;
     private boolean             mShowMenuSlide;
     private Float               layBottomAlpha = 1.0f;// used for older devices
+    private VideoControllerCallback callback;
     public VideoControllerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = null;
         mContext = context;
         mUseFastForward = true;
         mFromXml = true;
-        
         Log.i(TAG, TAG);
     }
     public VideoControllerView(Context context, boolean useFastForward) {
@@ -138,7 +140,6 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
     public VideoControllerView(Context context) {
         this(context, true);
-
         Log.i(TAG, TAG);
     }
 
@@ -148,8 +149,8 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             initControllerView(mRoot);
     }
     
-    public void setMediaPlayer(MediaPlayerControl player) {
-        mPlayer = player;
+    public void setMediaPlayer(VideoControllerCallback player) {
+        mCallback = player;
         updatePausePlay();
     }
 
@@ -229,9 +230,18 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch(menuItem.getItemId())
                     {
-                        case R.id.episodesList:
+                        case R.id.menuSubtitles:
+                            ShowSubtitleMenu();
                             break;
+                        case R.id.menuLanguage:
+                            ShowLanguageMenu();
+                            break;
+                        case R.id.menuSettings:
+                            ShowQualityMenu();
+                            break;
+
                     }
+                    show(sDefaultTimeout);
                     return true;
                 }
             });
@@ -285,6 +295,51 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
         installPrevNextListeners();
+    }
+    private void ShowLanguageMenu()
+    {
+
+    }
+    private void ShowQualityMenu()
+    {
+
+    }
+    private void ShowSubtitleMenu()
+    {
+        final Item[] items = {
+                new Item(mContext.getString(R.string.language_english), R.drawable.flag_us),
+                new Item("Japanese", R.drawable.flag_jp)
+        };
+
+        ListAdapter adapter = new ArrayAdapter<Item>(
+                mContext,
+                android.R.layout.select_dialog_item,
+                android.R.id.text1,
+                items){
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //User super class to create the View
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView)v.findViewById(android.R.id.text1);
+
+                //Put the image on the TextView
+                tv.setCompoundDrawablesWithIntrinsicBounds(items[position].icon, 0, 0, 0);
+
+                //Add margin between image and text (support various screen densities)
+                int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                tv.setCompoundDrawablePadding(dp5);
+
+                return v;
+            }
+        };
+
+        new AlertDialog.Builder(mContext)
+                .setTitle(mContext.getString(R.string.choose_option))
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int item) {
+                        String selectedItem = items[item].toString();
+                        mCallback.SubtitleSelected();
+                    }
+                }).show();
     }
     private class DrawerListener implements DrawerLayout.DrawerListener {
         @Override
@@ -352,18 +407,18 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
      * This requires the control interface to be a MediaPlayerControlExt
      */
     private void disableUnsupportedButtons() {
-        if (mPlayer == null) {
+        if (mCallback == null) {
             return;
         }
         
         try {
-            if (mPauseButton != null && !mPlayer.canPause()) {
+            if (mPauseButton != null && !mCallback.canPause()) {
                 mPauseButton.setEnabled(false);
             }
-            if (mRewButton != null && !mPlayer.canSeekBackward()) {
+            if (mRewButton != null && !mCallback.canSeekBackward()) {
                 mRewButton.setEnabled(false);
             }
-            if (mFfwdButton != null && !mPlayer.canSeekForward()) {
+            if (mFfwdButton != null && !mCallback.canSeekForward()) {
                 mFfwdButton.setEnabled(false);
             }
         } catch (IncompatibleClassChangeError ex) {
@@ -465,19 +520,19 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     }
 
     private int setProgress() {
-        if (mPlayer == null || mDragging) {
+        if (mCallback == null || mDragging) {
             return 0;
         }
         
-        int position = mPlayer.getCurrentPosition();
-        int duration = mPlayer.getDuration();
+        int position = mCallback.getCurrentPosition();
+        int duration = mCallback.getDuration();
         if (mProgress != null) {
             if (duration > 0) {
                 // use long to avoid overflow
                 long pos = 1000L * position / duration;
                 mProgress.setProgress( (int) pos);
             }
-            int percent = mPlayer.getBufferPercentage();
+            int percent = mCallback.getBufferPercentage();
             mProgress.setSecondaryProgress(percent * 10);
         }
 
@@ -498,7 +553,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
-        if (mPlayer == null) {
+        if (mCallback == null) {
             return true;
         }
 
@@ -517,16 +572,16 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-            if (uniqueDown && !mPlayer.isPlaying()) {
-                mPlayer.start();
+            if (uniqueDown && !mCallback.isPlaying()) {
+                mCallback.start();
                 updatePausePlay();
                 show(sDefaultTimeout);
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
                 || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-            if (uniqueDown && mPlayer.isPlaying()) {
-                mPlayer.pause();
+            if (uniqueDown && mCallback.isPlaying()) {
+                mCallback.pause();
                 updatePausePlay();
                 show(sDefaultTimeout);
             }
@@ -563,11 +618,11 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     };
 
     public void updatePausePlay() {
-        if (mRoot == null || mPauseButton == null || mPlayer == null) {
+        if (mRoot == null || mPauseButton == null || mCallback == null) {
             return;
         }
 
-        if (mPlayer.isPlaying()) {
+        if (mCallback.isPlaying()) {
             mPauseButton.setImageResource(R.drawable.ic_media_pause);
         } else {
             mPauseButton.setImageResource(R.drawable.ic_media_play);
@@ -575,24 +630,24 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     }
 
     private void doPauseResume() {
-        if (mPlayer == null) {
+        if (mCallback == null) {
             return;
         }
         
-        if (mPlayer.isPlaying()) {
-            mPlayer.pause();
+        if (mCallback.isPlaying()) {
+            mCallback.pause();
         } else {
-            mPlayer.start();
+            mCallback.start();
         }
         updatePausePlay();
     }
 
     private void doToggleFullscreen() {
-        if (mPlayer == null) {
+        if (mCallback == null) {
             return;
         }
         
-        mPlayer.toggleFullScreen();
+        mCallback.toggleFullScreen();
     }
 
     // There are two scenarios that can trigger the seekbar listener to trigger:
@@ -623,7 +678,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         }
 
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
-            if (mPlayer == null) {
+            if (mCallback == null) {
                 return;
             }
             
@@ -633,9 +688,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 return;
             }
 
-            long duration = mPlayer.getDuration();
+            long duration = mCallback.getDuration();
             long newposition = (duration * progress) / 1000L;
-            mPlayer.seekTo( (int) newposition);
+            mCallback.seekTo((int) newposition);
             if (mCurrentTime != null)
                 mCurrentTime.setText(stringForTime( (int) newposition));
         }
@@ -679,13 +734,13 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
     private OnClickListener mRewListener = new OnClickListener() {
         public void onClick(View v) {
-            if (mPlayer == null) {
+            if (mCallback == null) {
                 return;
             }
             
-            int pos = mPlayer.getCurrentPosition();
+            int pos = mCallback.getCurrentPosition();
             pos -= 5000; // milliseconds
-            mPlayer.seekTo(pos);
+            mCallback.seekTo(pos);
             setProgress();
 
             show(sDefaultTimeout);
@@ -694,19 +749,18 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
     private OnClickListener mFfwdListener = new OnClickListener() {
         public void onClick(View v) {
-            if (mPlayer == null) {
+            if (mCallback == null) {
                 return;
             }
             
-            int pos = mPlayer.getCurrentPosition();
+            int pos = mCallback.getCurrentPosition();
             pos += 15000; // milliseconds
-            mPlayer.seekTo(pos);
+            mCallback.seekTo(pos);
             setProgress();
 
             show(sDefaultTimeout);
         }
     };
-
     private void installPrevNextListeners() {
         if (mNextButton != null) {
             mNextButton.setOnClickListener(mNextListener);
@@ -748,7 +802,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         return true;
     }
 
-    public interface MediaPlayerControl {
+    public interface VideoControllerCallback {
         void    start();
         void    pause();
         int     getDuration();
@@ -761,6 +815,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         boolean canSeekForward();
         boolean isFullScreen();
         void    toggleFullScreen();
+        void SubtitleSelected();
     }
     
     private static class MessageHandler extends Handler {
@@ -772,7 +827,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         @Override
         public void handleMessage(Message msg) {
             VideoControllerView view = mView.get();
-            if (view == null || view.mPlayer == null) {
+            if (view == null || view.mCallback == null) {
                 return;
             }
             
@@ -783,7 +838,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                     break;
                 case SHOW_PROGRESS:
                     pos = view.setProgress();
-                    if (!view.mDragging && view.mShowing && view.mPlayer.isPlaying()) {
+                    if (!view.mDragging && view.mShowing && view.mCallback.isPlaying()) {
                         msg = obtainMessage(SHOW_PROGRESS);
                         sendMessageDelayed(msg, 1000 - (pos % 1000));
                     }

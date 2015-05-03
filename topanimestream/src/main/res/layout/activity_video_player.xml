@@ -11,4 +11,12 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"/>
 
+    <com.topanimestream.custom.StrokedRobotoTextView
+        android:id="@+id/txtSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:textDirection="anyRtl"
+        android:gravity="center_horizontal" />
 </RelativeLayout>

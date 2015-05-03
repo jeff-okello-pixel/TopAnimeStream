@@ -1,13 +1,22 @@
 package com.topanimestream.views;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collection;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,13 +34,19 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
 import com.topanimestream.models.subs.Caption;
+import com.topanimestream.models.subs.FormatASS;
+import com.topanimestream.models.subs.FormatSRT;
 import com.topanimestream.models.subs.TimedTextObject;
+import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.FileUtils;
+import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
 
-public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.MediaPlayerControl {
+public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.VideoControllerCallback {
 
     SurfaceView surfaceView;
     MediaPlayer player;
@@ -42,12 +57,36 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private Handler mDisplayHandler;
     private Caption mLastSub = null;
     private StrokedRobotoTextView txtSubtitle;
+    private File mSubsFile;
+    private boolean checkForSubtitle;
+    Thread threadCheckSubs = new Thread() {
+        @Override
+        public void run() {
+            try {
+                while(checkForSubtitle) {
+                    checkSubs();
+                    sleep(50);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+    public static File getStorageLocation(Context context) {
+        return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
+
+        txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
+        txtSubtitle.setTextColor(Color.WHITE);
+        txtSubtitle.setTextSize(16);
+        txtSubtitle.setStrokeColor(Color.BLACK);
+        txtSubtitle.setStrokeWidth(2,2);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mDisplayHandler = new Handler(Looper.getMainLooper());
@@ -97,7 +136,112 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             }
         }
     }
+    private void startSubtitles() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    FileInputStream fileInputStream = new FileInputStream(mSubsFile);
+                    FormatSRT formatSRT = new FormatSRT();
+                    mSubs = formatSRT.parseFile(mSubsFile.toString(), FileUtils.inputstreamToCharsetString(fileInputStream).split("\n"));
+                    checkForSubtitle = true;
+                    threadCheckSubs.start();
 
+                } catch (FileNotFoundException e) {
+                    if (e.getMessage().contains("EBUSY")) {
+                        startSubtitles();
+                    }
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
+    private class SubtitleTask extends AsyncTask<Void, Void, String> {
+
+
+            public SubtitleTask() {
+
+            }
+            private static final String NAMESPACE = "http://tempuri.org/";
+            final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
+            private String subUrl;
+
+            @Override
+            protected void onPreExecute() {
+                subUrl = getString(R.string.sub_host_path) + "10/5_Centimeters_Per_Second_en.srt";
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                if(!App.IsNetworkConnected())
+                {
+                    return getString(R.string.error_internet_connection);
+                }
+                InputStream input = null;
+                HttpURLConnection connection = null;
+                try
+                {
+                    final File subsDirectory = getStorageLocation(VideoPlayerActivity.this);
+                    //final String fileName = media.videoId + "-" + languageCode;
+                    //TODO choose a unique name per subtitle
+                    final String fileName = "subtitle";
+                    final File srtPath = new File(subsDirectory, fileName + ".srt");
+
+                    if (srtPath.exists()) {
+                        return null;
+                    }
+                    URL url = new URL(subUrl);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.connect();
+
+                    if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                        return getString(R.string.error_downloading_subtitle);
+                    }
+
+                    input = connection.getInputStream();
+
+                    TimedTextObject subtitleObject = null;
+
+                    String inputString = FileUtils.inputstreamToCharsetString(input);
+                    String[] inputText = inputString.split("\n|\r\n");
+
+                    if (subUrl.contains(".ass") || subUrl.contains(".ssa")) {
+                        FormatASS formatASS = new FormatASS();
+                        subtitleObject = formatASS.parseFile(subUrl, inputText);
+                    } else if (subUrl.contains(".srt")) {
+                        FormatSRT formatSRT = new FormatSRT();
+                        subtitleObject = formatSRT.parseFile(subUrl, inputText);
+                    }
+
+                    if (subtitleObject != null) {
+                        FileUtils.saveStringFile(subtitleObject.toSRT(), srtPath);
+                    }
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                return getString(R.string.error_downloading_subtitle);
+            }
+
+            @Override
+            protected void onPostExecute(String error) {
+                if(error != null)
+                {
+                    Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    //TODO choose another srt name
+                    mSubsFile = new File(getStorageLocation(VideoPlayerActivity.this), "subtitle.srt");
+                    startSubtitles();
+                }
+            }
+        }
     protected void showTimedCaptionText(final Caption text) {
         mDisplayHandler.post(new Runnable() {
             @Override
@@ -258,6 +402,10 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     public void toggleFullScreen() {
         
     }
-    // End VideoMediaController.MediaPlayerControl
+
+    @Override
+    public void SubtitleSelected() {
+        AsyncTaskTools.execute(new SubtitleTask());
+    }
 
 }
