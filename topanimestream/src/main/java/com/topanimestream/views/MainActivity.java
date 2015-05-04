@@ -156,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         animes = new ArrayList<Anime>();
         mItems = new ArrayList<String>();
 
-        tabTitles = new String[]{r.getString(R.string.tab_all), r.getString(R.string.tab_serie), r.getString(R.string.tab_movie), r.getString(R.string.tab_cartoon)};
+        tabTitles = new String[]{getString(R.string.tab_all), getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_episodes)};
         app = (App) getApplication();
         txtNoConnection = (TextView) findViewById(R.id.txtNoConnection);
         viewPager = (ViewPager) findViewById(R.id.pager);
