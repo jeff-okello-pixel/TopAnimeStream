@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="150dp"
+            android:layout_height="110dp">
+                <ImageView
+                    android:id="@+id/imgScreenshot"
+                    android:layout_width="150dp"
+                    android:scaleType="centerCrop"
+                    android:layout_height="110dp"/>
+
+                <TextView
+                    android:id="@+id/txtAddedDate"
+                    android:textSize="10sp"
+                    android:textColor="#f5f5f5"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#A0000000"/>
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:focusable="false"
+                    android:textSize="18sp"
+                    android:marqueeRepeatLimit ="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+                <TextView
+                    android:id="@+id/txtEpisodeNumber"
+                    android:paddingTop="5dp"
+                    android:textSize="18sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
+</LinearLayout>

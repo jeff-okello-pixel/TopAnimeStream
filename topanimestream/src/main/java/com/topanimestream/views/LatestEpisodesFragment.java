@@ -22,8 +22,10 @@ import android.widget.Toast;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.AnimeListAdapter;
+import com.topanimestream.adapters.LatestEpisodesAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.Anime;
+import com.topanimestream.models.Link;
 import com.topanimestream.models.Mirror;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
@@ -43,7 +45,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
     public boolean loadmore = false;
     public boolean hasResults = false;
     private GridView gridView;
-    private ArrayList<Anime> animes;
+    private ArrayList<Link> links;
     private ProgressBar progressBarLoadMore;
     private String fragmentName;
     private Resources r;
@@ -52,11 +54,9 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
     public ArrayList<Mirror> mirrors;
     public int animeId;
     private SharedPreferences prefs;
-    private AnimeTask task;
-    private AnimeListAdapter adapter;
-    private TextView txtNoAnime;
-    private String customOrder;
-    private String customFilter;
+    private LatestEpisodesTask task;
+    private LatestEpisodesAdapter adapter;
+    private TextView txtNoEpisodes;
 
     public LatestEpisodesFragment() {
 
@@ -99,15 +99,8 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
-        Anime anime = (Anime) gridView.getAdapter().getItem(position);
-        animeId = anime.getAnimeId();
-
-        Intent intent = new Intent(this.getActivity(), AnimeDetailsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("Anime", anime);
-        intent.putExtras(bundle);
-        startActivity(intent);
-        AnimationManager.ActivityStart(getActivity());
+        Link link = (Link) gridView.getAdapter().getItem(position);
+        //TODO play episode
 
     }
 
@@ -117,32 +110,20 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
 
     }
 
-    public void refresh(String orderBy, String filter) {
-        currentSkip = 0;
-        if (adapter != null)
-            adapter.clear();
-        loadmore = false;
-        customOrder = orderBy;
-        customFilter = filter;
-        AsyncTaskTools.execute(new AnimeTask(customOrder, customFilter));
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_latest_episodes_list, container, false);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
-        customOrder = ((MainActivity) getActivity()).order;
-        customFilter = ((MainActivity) getActivity()).filter;
         /*
         if(savedInstanceState != null)
             isDesc = savedInstanceState.getBoolean("isDesc");
         else
             isDesc = getArguments().getBoolean("isDesc");*/
-        animes = new ArrayList<Anime>();
+        links = new ArrayList<Link>();
         fragmentName = getArguments().getString("fragmentName");
-        txtNoAnime = (TextView) rootView.findViewById(R.id.txtNoAnime);
+        txtNoEpisodes = (TextView) rootView.findViewById(R.id.txtNoEpisodes);
         progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         gridView.setFastScrollEnabled(true);
@@ -167,11 +148,11 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                             currentSkip += currentLimit;
                             loadmore = true;
 
-                            task = new AnimeTask(customOrder, customFilter);
+                            task = new LatestEpisodesTask();
                             AsyncTaskTools.execute(task);
                         } else if (task == null) {
                             loadmore = false;
-                            task = new AnimeTask(customOrder, customFilter);
+                            task = new LatestEpisodesTask();
                             currentSkip = 0;
                             AsyncTaskTools.execute(task);
                         }
@@ -182,14 +163,10 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
         return rootView;
     }
 
-    private class AnimeTask extends AsyncTask<Void, Void, String> {
-        private ArrayList<Anime> newAnimes = new ArrayList<Anime>();
-        private String customOrderBy;
-        private String customFilter;
+    private class LatestEpisodesTask extends AsyncTask<Void, Void, String> {
+        private ArrayList<Link> newLinks = new ArrayList<Link>();
 
-        public AnimeTask(String orderBy, String filter) {
-            this.customOrderBy = orderBy;
-            this.customFilter = filter;
+        public LatestEpisodesTask() {
         }
 
         private String URL;
@@ -198,26 +175,8 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
-            String filter;
-            filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Links").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).build();
 
-            if (fragmentName.equals(getString(R.string.tab_cartoon)))
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
-            else if (fragmentName.equals(getString(R.string.tab_movie)))
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20true";
-            else if (fragmentName.equals(getString(R.string.tab_serie)))
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20false";
-            if (customFilter != null && !customFilter.equals(""))
-                filter += customFilter;
-
-            wcfCall.filter(filter);
-
-            if (customOrderBy != null && !customOrderBy.equals(""))
-                wcfCall.orderby(customOrderBy);
-
-
-            URL = wcfCall.build();
         }
 
         @Override
@@ -237,21 +196,20 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                     return null;
                 }
             }
-            JSONArray animeArray = new JSONArray();
+            JSONArray linksArray = new JSONArray();
 
             try {
-                animeArray = json.getJSONArray("value");
+                linksArray = json.getJSONArray("value");
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
             hasResults = false;
-            for (int i = 0; i < animeArray.length(); i++) {
+            Gson gson = new Gson();
+            for (int i = 0; i < linksArray.length(); i++) {
                 hasResults = true;
-                JSONObject animeJson;
                 try {
-                    animeJson = animeArray.getJSONObject(i);
-                    newAnimes.add(new Anime(animeJson, getActivity()));
+                    newLinks.add(gson.fromJson(linksArray.getJSONObject(i).toString(), Link.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -269,12 +227,12 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                 } else if (result.equals("Success")) {
                     if (loadmore) {
 
-                        for (Anime anime : newAnimes) {
-                            adapter.add(anime);
+                        for (Link link : newLinks) {
+                            adapter.add(link);
                         }
                         adapter.update();
                     } else {
-                        adapter = new AnimeListAdapter(LatestEpisodesFragment.this.getActivity(), newAnimes);
+                        adapter = new LatestEpisodesAdapter(LatestEpisodesFragment.this.getActivity(), newLinks);
                         gridView.setAdapter(adapter);
                     }
 
@@ -290,10 +248,10 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                 progressBarLoadMore.setVisibility(View.GONE);
 
                 if (gridView.getAdapter().getCount() == 0) {
-                    txtNoAnime.setVisibility(View.VISIBLE);
+                    txtNoEpisodes.setVisibility(View.VISIBLE);
                     gridView.setVisibility(View.GONE);
                 } else {
-                    txtNoAnime.setVisibility(View.GONE);
+                    txtNoEpisodes.setVisibility(View.GONE);
                     gridView.setVisibility(View.VISIBLE);
                 }
             } catch (Exception e)//catch all exception... handle orientation change

@@ -104,10 +104,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private ViewPager viewPager;
     private PagerSlidingTabStrip tabs;
     private String[] tabTitles;
-    private AnimeListFragment allFragment;
     private AnimeListFragment serieFragment;
     private AnimeListFragment movieFragment;
-    private AnimeListFragment cartoonFragment;
+    private LatestEpisodesFragment latestEpisodesFragment;
     private Dialog busyDialog;
     private SharedPreferences prefs;
     private App app;
@@ -172,10 +171,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             spinnerDubbedSubbedValue = savedInstanceState.getString("spinnerDubbedSubbedValue");
             spinnerStatusValue = savedInstanceState.getString("spinnerStatusValue");
             spinnerOrderByValue = savedInstanceState.getString("spinnerOrderByValue");
-            allFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "allFragment");
+
             serieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "serieFragment");
             movieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "movieFragment");
-            cartoonFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "cartoonFragment");
+            latestEpisodesFragment = (LatestEpisodesFragment) getSupportFragmentManager().getFragment(savedInstanceState, "latestEpisodesFragment");
         } else {
             spinnerDubbedSubbedValue = getString(R.string.tab_all);
             spinnerStatusValue = getString(R.string.tab_all);
@@ -394,22 +393,18 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         @Override
         public Fragment getItem(int index) {
             switch (index) {
-                //All
-                case 0:
-                    allFragment = AnimeListFragment.newInstance(getString(R.string.tab_all));
-                    return allFragment;
                 //Serie
-                case 1:
+                case 0:
                     serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie));
                     return serieFragment;
                 //Movie
-                case 2:
+                case 1:
                     movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
                     return movieFragment;
                 //Cartoon
-                case 3:
-                    cartoonFragment = AnimeListFragment.newInstance(getString(R.string.tab_cartoon));
-                    return cartoonFragment;
+                case 2:
+                    latestEpisodesFragment = LatestEpisodesFragment.newInstance("Latest Episodes");
+                    return latestEpisodesFragment;
             }
             return null;
         }
@@ -492,8 +487,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             getSupportFragmentManager().putFragment(outState, "serieFragment", serieFragment);
         if (movieFragment != null && movieFragment.isAdded())
             getSupportFragmentManager().putFragment(outState, "movieFragment", movieFragment);
-        if (cartoonFragment != null && cartoonFragment.isAdded())
-            getSupportFragmentManager().putFragment(outState, "cartoonFragment", cartoonFragment);
+        if (latestEpisodesFragment != null && latestEpisodesFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, "latestEpisodesFragment", latestEpisodesFragment);
         super.onSaveInstanceState(outState);
 
 
@@ -589,10 +584,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                         spinnerCategoryValue = spinnerCategory.getSelectedItem().toString();
                         filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
 
-                        refreshFragment(allFragment, order, filter);
                         refreshFragment(serieFragment, order, filter);
                         refreshFragment(movieFragment, order, filter);
-                        refreshFragment(cartoonFragment, order, filter);
+
                         dialog.dismiss();
 
                         setTitleWithFilter();

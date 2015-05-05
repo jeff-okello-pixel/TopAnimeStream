@@ -26,6 +26,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
     private EpisodeInformations EpisodeInformations;
     private String Screenshot;
     private int Order;
+    private String ScreenshotHD;
 
     public Episode() {
         super();
@@ -111,6 +112,14 @@ public class Episode implements Parcelable, Comparator<Episode> {
         EpisodeNumber = episodeNumber;
         EpisodeName = episodeName;
         AiredDate = airedDate;
+    }
+
+    public String getScreenshotHD() {
+        return ScreenshotHD;
+    }
+
+    public void setScreenshotHD(String screenshotHD) {
+        ScreenshotHD = screenshotHD;
     }
 
     public int getOrder() {
