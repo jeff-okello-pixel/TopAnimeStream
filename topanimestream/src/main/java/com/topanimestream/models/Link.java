@@ -11,26 +11,26 @@ public class Link {
     private String PicasaAlbumId;
     private String PicasaUserName;
     private String Thumbnail;
-    private Anime anime;
-    private Episode episode;
+    private Anime Anime;
+    private Episode Episode;
 
     public Link() {
     }
 
     public Anime getAnime() {
-        return anime;
+        return Anime;
     }
 
     public void setAnime(Anime anime) {
-        this.anime = anime;
+        Anime = anime;
     }
 
     public Episode getEpisode() {
-        return episode;
+        return Episode;
     }
 
     public void setEpisode(Episode episode) {
-        this.episode = episode;
+        Episode = episode;
     }
 
     public int getLinkId() {

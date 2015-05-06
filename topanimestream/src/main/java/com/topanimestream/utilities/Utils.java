@@ -77,6 +77,19 @@ public class Utils {
 
 
     public static int getJsonCount = 0;
+    public static String resizeImage(String image, String size) {
+        if (image == null)
+            return null;
+
+        if (size == null || size.equals(""))
+            return image;
+
+        String imageNameToReplace = image.substring(image.lastIndexOf("/") + 1);
+        String imageName = "w" + size + "_" + imageNameToReplace;
+
+        image = image.replace(imageNameToReplace, imageName);
+        return image;
+    }
     public static int getScreenOrientation(Activity act)
     {
         Display getOrient = act.getWindowManager().getDefaultDisplay();

@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.AnimeListAdapter;
@@ -175,7 +176,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Links").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Links").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).orderby("AddedDate%20desc").build();
 
         }
 

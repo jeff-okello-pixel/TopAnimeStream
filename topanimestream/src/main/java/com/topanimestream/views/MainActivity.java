@@ -129,7 +129,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startActivity(new Intent(MainActivity.this, VideoPlayerActivity.class));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -155,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         animes = new ArrayList<Anime>();
         mItems = new ArrayList<String>();
 
-        tabTitles = new String[]{getString(R.string.tab_all), getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_episodes)};
+        tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_episodes)};
         app = (App) getApplication();
         txtNoConnection = (TextView) findViewById(R.id.txtNoConnection);
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -401,7 +400,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 case 1:
                     movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
                     return movieFragment;
-                //Cartoon
+                //Latest episode
                 case 2:
                     latestEpisodesFragment = LatestEpisodesFragment.newInstance("Latest Episodes");
                     return latestEpisodesFragment;
@@ -481,8 +480,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         outState.putString("spinnerDubbedSubbedValue", spinnerDubbedSubbedValue);
         outState.putString("spinnerCategoryValue", spinnerCategoryValue);
         outState.putString("spinnerOrderByValue", spinnerOrderByValue);
-        if (allFragment != null && allFragment.isAdded())
-            getSupportFragmentManager().putFragment(outState, "allFragment", allFragment);
         if (serieFragment != null && serieFragment.isAdded())
             getSupportFragmentManager().putFragment(outState, "serieFragment", serieFragment);
         if (movieFragment != null && movieFragment.isAdded())
