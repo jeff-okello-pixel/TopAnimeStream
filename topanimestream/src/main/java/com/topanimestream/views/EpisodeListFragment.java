@@ -119,9 +119,14 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
-        final Episode episode = (Episode)listViewEpisodes.getAdapter().getItem(position);
+        final Episode episode = (Episode)episodes.get(position);
+        /*
         EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
-        providerFragmentCoordinator.onEpisodeSelected(episode, fragmentName);
+        providerFragmentCoordinator.onEpisodeSelected(episode, fragmentName);*/
+        Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+        intent.putParcelableArrayListExtra("episodes", episodes);
+        intent.putExtra("episodeToPlay", episode);
+        getActivity().startActivity(intent);
 
     }
 
@@ -162,7 +167,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
         listViewEpisodes.setFastScrollEnabled(true);
         listViewEpisodes.setOnItemClickListener(this);
-        listViewEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
+        /*listViewEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -191,7 +196,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                     }
                 }
             }
-        });
+        });*/
 
 
         return rootView;
@@ -199,8 +204,9 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        /*
         if(adapter != null)
-            episodes = adapter.getAllEpisodes();
+            episodes = adapter.getAllEpisodes();*/
         outState.putParcelableArrayList("episodes", episodes);
         outState.putInt("animeId", animeId);
         outState.putString("animeName", animeName);
@@ -212,7 +218,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
 
     private class EpisodesTask extends AsyncTask<Void, Void, String> {
-        private ArrayList<Episode> newEpisodes = new ArrayList<Episode>();
+        //private ArrayList<Episode> newEpisodes = new ArrayList<Episode>();
         public EpisodesTask() {
 
         }
@@ -224,7 +230,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Links/any()").expand("EpisodeInformations,Links").skip(currentSkip).top(currentLimit).formatJson().build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Links/any()").expand("EpisodeInformations,Links,Subtitles").formatJson().build();
             episodes = new ArrayList<Episode>();
         }
 
@@ -262,8 +268,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             Gson gson = new Gson();
             for (int i = 0; i < episodesArray.length(); i++) {
                 try {
-                    String stringJson = episodesArray.getJSONObject(i).toString();
-                    newEpisodes.add(gson.fromJson(episodesArray.getJSONObject(i).toString(), Episode.class));
+                    episodes.add(gson.fromJson(episodesArray.getJSONObject(i).toString(), Episode.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -283,20 +288,21 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                     getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
                     getActivity().finish();
                 } else {
+                    /*
                     if (loadmore) {
 
                         for (Episode episode : newEpisodes) {
                                 adapter.add(episode);
                         }
                         adapter.update();
-                    } else {
-                        adapter = new EpisodeListAdapter(getActivity(), newEpisodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating);
+                    } else {*/
+                        adapter = new EpisodeListAdapter(getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                         swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
                         listViewEpisodes.setAdapter(swingBottomInAnimationAdapter);
-                    }
+                    //}
                 }
 
 

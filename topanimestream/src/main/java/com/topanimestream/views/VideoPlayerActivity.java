@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import android.app.Activity;
@@ -37,6 +38,8 @@ import android.widget.VideoView;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
+import com.topanimestream.models.Anime;
+import com.topanimestream.models.Episode;
 import com.topanimestream.models.subs.Caption;
 import com.topanimestream.models.subs.FormatASS;
 import com.topanimestream.models.subs.FormatSRT;
@@ -95,9 +98,16 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoHolder.addCallback(this);
 
         player = new MediaPlayer();
-        controller = new VideoControllerView(this, true);
+        Bundle bundle = getIntent().getExtras();
+        Anime anime = bundle.getParcelable("anime");
+        //TODO load sources
+        ArrayList<Episode> episodes = bundle.getParcelableArrayList("episodes");
+        Episode episodeToPlay = bundle.getParcelable("episodeToPlay");
 
-        
+        //episodes and episodeToPlay will be null if it is a movie
+        controller = new VideoControllerView(this, true, episodes, episodeToPlay);
+
+
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             player.setDataSource(this, Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
@@ -406,6 +416,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void SubtitleSelected() {
         AsyncTaskTools.execute(new SubtitleTask());
+    }
+
+    @Override
+    public void EpisodeSelected(Episode episode) {
+        //TODO play the episode
     }
 
 }

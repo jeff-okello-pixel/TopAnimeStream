@@ -135,11 +135,17 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
 
-        episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
-        if (episodeListFragment == null) {
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(layEpisodes.getId(), episodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this),anime.getPosterPath("500"),anime.getRelativeBackdropPath(null),anime.getGenresFormatted(),String.valueOf(anime.getRating())), "episodeListFragment");
-            ft.commit();
+        if(!anime.isMovie()) {
+            episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
+            if (episodeListFragment == null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(layEpisodes.getId(), episodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
+                ft.commit();
+            }
+        }
+        else
+        {
+            //TODO create fragment for the movie
         }
 
 

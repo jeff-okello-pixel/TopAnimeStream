@@ -28,7 +28,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
     private int Order;
     private String ScreenshotHD;
     private ArrayList<Link> Links;
-
+    private ArrayList<Subtitle> Subtitles;
     public Episode() {
         super();
     }
@@ -59,6 +59,13 @@ public class Episode implements Parcelable, Comparator<Episode> {
         if (parcelableEpisodeInfoArray != null) {
             resultEpisodeInfoArray = Arrays.copyOf(parcelableEpisodeInfoArray, parcelableEpisodeInfoArray.length, EpisodeInformations[].class);
             EpisodeInformations = new ArrayList<EpisodeInformations>(Arrays.asList(resultEpisodeInfoArray));
+        }
+
+        Parcelable[] parcelableSubtitleArray = in.readParcelableArray(Subtitle.class.getClassLoader());
+        Subtitle[] resultSubtitleArray = null;
+        if (parcelableSubtitleArray != null) {
+            resultSubtitleArray = Arrays.copyOf(parcelableSubtitleArray, parcelableSubtitleArray.length, Subtitle[].class);
+            Subtitles = new ArrayList<Subtitle>(Arrays.asList(resultSubtitleArray));
         }
 
         AnimeId = in.readInt();
@@ -113,6 +120,14 @@ public class Episode implements Parcelable, Comparator<Episode> {
 
     public String getScreenshotHD() {
         return ScreenshotHD;
+    }
+
+    public ArrayList<Link> getLinks() {
+        return Links;
+    }
+
+    public void setLinks(ArrayList<Link> links) {
+        Links = links;
     }
 
     public void setScreenshotHD(String screenshotHD) {
@@ -225,6 +240,9 @@ public class Episode implements Parcelable, Comparator<Episode> {
             Links = new ArrayList<Link>();
         if(EpisodeInformations == null)
             EpisodeInformations = new ArrayList<EpisodeInformations>();
+        if(Subtitles == null)
+            Subtitles = new ArrayList<Subtitle>();
+
         Parcelable[] parcelableVkArray = new Parcelable[Vks.size()];
         dest.writeParcelableArray(Vks.toArray(parcelableVkArray), flags);
         Parcelable[] parcelableMirrorArray = new Parcelable[Mirrors.size()];
@@ -233,6 +251,8 @@ public class Episode implements Parcelable, Comparator<Episode> {
         dest.writeParcelableArray(Links.toArray(parcelableLinkArray), flags);
         Parcelable[] parcelableEpisodeInfoArray = new Parcelable[EpisodeInformations.size()];
         dest.writeParcelableArray(EpisodeInformations.toArray(parcelableEpisodeInfoArray), flags);
+        Parcelable[] parcelableSubtitleArray = new Parcelable[Subtitles.size()];
+        dest.writeParcelableArray(Subtitles.toArray(parcelableSubtitleArray), flags);
         dest.writeInt(AnimeId);
         dest.writeInt(EpisodeId);
         dest.writeString(EpisodeNumber);

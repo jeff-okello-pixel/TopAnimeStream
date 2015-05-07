@@ -39,6 +39,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -52,9 +53,12 @@ import android.widget.TextView;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.adapters.PlayerEpisodesAdapter;
+import com.topanimestream.models.Episode;
 import com.topanimestream.models.Item;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -123,23 +127,15 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private boolean             mShowMenuSlide;
     private Float               layBottomAlpha = 1.0f;// used for older devices
     private VideoControllerCallback callback;
-    public VideoControllerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mRoot = null;
-        mContext = context;
-        mUseFastForward = true;
-        mFromXml = true;
-        Log.i(TAG, TAG);
-    }
-    public VideoControllerView(Context context, boolean useFastForward) {
+    private ArrayList<Episode>  episodes;
+    private Episode             currentEpisode;
+
+    public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
         mContext = context;
         mUseFastForward = useFastForward;
-        Log.i(TAG, TAG);
-    }
-
-    public VideoControllerView(Context context) {
-        this(context, true);
+        this.episodes = episodes;
+        this.currentEpisode = currentEpisode;
         Log.i(TAG, TAG);
     }
 
@@ -186,43 +182,49 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         return mRoot;
     }
-    private void toggle() {
-        if (mDrawerLayout.isDrawerVisible(GravityCompat.START)) {
-            Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
-            layBottom.setAnimation(animFadeIn);
-            layBottom.setVisibility(View.VISIBLE);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-
-
-        } else {
-            Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
-            layBottom.setAnimation(animFadeOut);
-            layBottom.setVisibility(View.GONE);
-            mDrawerLayout.openDrawer(GravityCompat.START);
-        }
-    }
     private void initControllerView(View v) {
         layBottom = (LinearLayout) v.findViewById(R.id.layBottom);
         if(layBottom != null)
             layBottom.setOnTouchListener(this);
 
-        leftDrawer = (ListView) v.findViewById(R.id.leftDrawer);
-        if(leftDrawer != null)
-            leftDrawer.setOnTouchListener(this);
+
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         if(toolbar != null) {
             toolbar.inflateMenu(R.menu.media_controller);
+
             mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
 
             if (mDrawerLayout != null) {
-                mDrawerLayout.setDrawerListener(new DrawerListener());
-                mDrawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
-                //mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+                if(episodes != null) {
+                    leftDrawer = (ListView) v.findViewById(R.id.leftDrawer);
 
-                mDrawerToggle = new ActionBarDrawerToggle(
-                        (Activity)mContext,  mDrawerLayout, toolbar, 0, 0);
+                    if(leftDrawer != null) {
+                        leftDrawer.setOnTouchListener(this);
+                        leftDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                callback.EpisodeSelected(episodes.get(position));
+                                mDrawerLayout.closeDrawers();
+                                hide();
+                            }
+                        });
+                        PlayerEpisodesAdapter adapter = new PlayerEpisodesAdapter(mContext, episodes);
+                        leftDrawer.setAdapter(adapter);
+                        leftDrawer.smoothScrollToPosition(adapter.getItemPosition(currentEpisode));
+                    }
+                    mDrawerLayout.setDrawerListener(new DrawerListener());
+                    mDrawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
+                    //mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-                mDrawerToggle.syncState();
+                    mDrawerToggle = new ActionBarDrawerToggle(
+                            (Activity) mContext, mDrawerLayout, toolbar, 0, 0);
+
+                    mDrawerToggle.syncState();
+                }
+                else
+                {
+                    mDrawerLayout.setVisibility(View.GONE);
+                }
             }
 
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -815,7 +817,8 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         boolean canSeekForward();
         boolean isFullScreen();
         void    toggleFullScreen();
-        void SubtitleSelected();
+        void    SubtitleSelected();
+        void    EpisodeSelected(Episode episode);
     }
     
     private static class MessageHandler extends Handler {

@@ -108,7 +108,7 @@
 
             </LinearLayout>
         </RelativeLayout>
-        <ListView android:id="@+id/leftDrawer"
+        <ListView android:id="@+id/leftDrawerEpisodes"
             android:paddingTop="10dp"
             android:layout_width="250dp"
             android:layout_height="match_parent"

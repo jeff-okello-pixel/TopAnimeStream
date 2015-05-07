@@ -1,6 +1,9 @@
 package com.topanimestream.models;
 
-public class Subtitle {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Subtitle implements Parcelable {
     private int SubtitleId;
     private String FileName;
     private int AnimeId;
@@ -15,7 +18,19 @@ public class Subtitle {
 
     public Subtitle() {
     }
-
+    public Subtitle(Parcel in) {
+        SubtitleId = in.readInt();
+        FileName = in.readString();
+        AnimeId = in.readInt();
+        EpisodeId = in.readInt();
+        LanguageId = in.readInt();
+        RelativeUrl = in.readString();
+        RelativePath = in.readString();
+        Size = in.readInt();
+        FormattedSize = in.readString();
+        Specification = in.readString();
+        AddedDate = in.readString();
+    }
     public int getSubtitleId() {
         return SubtitleId;
     }
@@ -102,5 +117,25 @@ public class Subtitle {
 
     public void setAddedDate(String addedDate) {
         AddedDate = addedDate;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(SubtitleId);
+        dest.writeString(FileName);
+        dest.writeInt(AnimeId);
+        dest.writeInt(EpisodeId);
+        dest.writeInt(LanguageId);
+        dest.writeString(RelativeUrl);
+        dest.writeString(RelativePath);
+        dest.writeInt(Size);
+        dest.writeString(FormattedSize);
+        dest.writeString(Specification);
+        dest.writeString(AddedDate);
     }
 }
