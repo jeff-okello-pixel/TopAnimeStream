@@ -101,7 +101,17 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                             long id) {
 
         Link link = (Link) gridView.getAdapter().getItem(position);
-        //TODO play episode
+        /*
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground( Void... voids ) {
+                JSONObject test = Utils.GetJson("http://www.topanimestream.com/AnimeServices/AnimeDataService.svc/GetSources?animeId=2128&$format=json");
+                String teststr = test.toString();
+                return null;
+            }
+        }.execute();*/
+
 
     }
 

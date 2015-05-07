@@ -71,7 +71,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private Resources r;
     private SharedPreferences prefs;
     private SQLiteHelper db;
-    private EpisodesContainerFragment episodeContainerFragment;
+    private EpisodeListFragment episodeListFragment;
     private MovieVkFragment movieVkFragment;
     private AlertDialog qualityDialog;
     private VideoCastConsumerImpl mCastConsumer;
@@ -135,10 +135,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
 
-        episodeContainerFragment = (EpisodesContainerFragment) fm.findFragmentByTag("episodeContainerFragment");
-        if (episodeContainerFragment == null) {
+        episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
+        if (episodeListFragment == null) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(layEpisodes.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+            ft.add(layEpisodes.getId(), episodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this),anime.getPosterPath("500"),anime.getRelativeBackdropPath(null),anime.getGenresFormatted(),String.valueOf(anime.getRating())), "episodeListFragment");
             ft.commit();
         }
 

@@ -1,6 +1,9 @@
 package com.topanimestream.models;
 
-public class Link {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Link implements Parcelable {
     private int LinkId;
     private int AnimeId;
     private int EpisodeId;
@@ -16,7 +19,21 @@ public class Link {
 
     public Link() {
     }
+    public Link(Parcel in) {
 
+        LinkId = in.readInt();
+        AnimeId = in.readInt();
+        EpisodeId = in.readInt();
+        LanguageId = in.readInt();
+        AddedDate = in.readString();
+        FileName = in.readString();
+        PicasaPhotoId = in.readString();
+        PicasaAlbumId = in.readString();
+        PicasaUserName = in.readString();
+        Thumbnail = in.readString();
+        Anime = in.readParcelable(Anime.class.getClassLoader());
+        Episode = in.readParcelable(Episode.class.getClassLoader());
+    }
     public Anime getAnime() {
         return Anime;
     }
@@ -112,4 +129,35 @@ public class Link {
     public void setThumbnail(String thumbnail) {
         Thumbnail = thumbnail;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(LinkId);
+        dest.writeInt(AnimeId);
+        dest.writeInt(EpisodeId);
+        dest.writeInt(LanguageId);
+        dest.writeString(AddedDate);
+        dest.writeString(FileName);
+        dest.writeString(PicasaPhotoId);
+        dest.writeString(PicasaAlbumId);
+        dest.writeString(PicasaUserName);
+        dest.writeString(Thumbnail);
+        dest.writeParcelable(Anime, flags);
+        dest.writeParcelable(Episode, flags);
+    }
+
+    public static final Creator<Link> CREATOR = new Creator<Link>() {
+        public Link createFromParcel(Parcel in) {
+            return new Link(in);
+        }
+
+        public Link[] newArray(int size) {
+            return new Link[size];
+        }
+    };
 }

@@ -198,16 +198,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("AnimeSources,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
-            String filter;
-            filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")";
+            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links").skip(currentSkip).top(currentLimit);
+            String filter = "Links/any()";
 
-            if (fragmentName.equals(getString(R.string.tab_cartoon)))
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsCartoon%20eq%20true";
-            else if (fragmentName.equals(getString(R.string.tab_movie)))
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20true";
+            if (fragmentName.equals(getString(R.string.tab_movie)))
+                filter += "%20and%20IsMovie%20eq%20true";
             else if (fragmentName.equals(getString(R.string.tab_serie)))
-                filter = "AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")%20and%20IsMovie%20eq%20false";
+                filter += "%20and%20IsMovie%20eq%20false";
             if (customFilter != null && !customFilter.equals(""))
                 filter += customFilter;
 

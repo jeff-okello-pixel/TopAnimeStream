@@ -23,10 +23,11 @@ public class Episode implements Parcelable, Comparator<Episode> {
     private String AiredDate;
     private ArrayList<Mirror> Mirrors;
     private ArrayList<Vk> Vks;
-    private EpisodeInformations EpisodeInformations;
+    private ArrayList<EpisodeInformations> EpisodeInformations;
     private String Screenshot;
     private int Order;
     private String ScreenshotHD;
+    private ArrayList<Link> Links;
 
     public Episode() {
         super();
@@ -45,7 +46,21 @@ public class Episode implements Parcelable, Comparator<Episode> {
             resultMirrorArray = Arrays.copyOf(parcelableMirrorArray, parcelableMirrorArray.length, Mirror[].class);
             Mirrors = new ArrayList<Mirror>(Arrays.asList(resultMirrorArray));
         }
-        EpisodeInformations = (EpisodeInformations) in.readParcelable(EpisodeInformations.class.getClassLoader());
+
+        Parcelable[] parcelableLinkArray = in.readParcelableArray(Link.class.getClassLoader());
+        Link[] resultLinkArray = null;
+        if (parcelableLinkArray != null) {
+            resultLinkArray = Arrays.copyOf(parcelableLinkArray, parcelableLinkArray.length, Link[].class);
+            Links = new ArrayList<Link>(Arrays.asList(resultLinkArray));
+        }
+
+        Parcelable[] parcelableEpisodeInfoArray = in.readParcelableArray(Link.class.getClassLoader());
+        EpisodeInformations[] resultEpisodeInfoArray = null;
+        if (parcelableEpisodeInfoArray != null) {
+            resultEpisodeInfoArray = Arrays.copyOf(parcelableEpisodeInfoArray, parcelableEpisodeInfoArray.length, EpisodeInformations[].class);
+            EpisodeInformations = new ArrayList<EpisodeInformations>(Arrays.asList(resultEpisodeInfoArray));
+        }
+
         AnimeId = in.readInt();
         EpisodeId = in.readInt();
         EpisodeNumber = in.readString();
@@ -78,24 +93,6 @@ public class Episode implements Parcelable, Comparator<Episode> {
             if (vkArray != null) {
                 for (int i = 0; i < vkArray.length(); i++) {
                     this.Vks.add(new Vk(vkArray.getJSONObject(i)));
-                }
-            }
-            episodeInfoArray = !jsonEpisode.isNull("EpisodeInformations") ? jsonEpisode.getJSONArray("EpisodeInformations") : null;
-            if (episodeInfoArray != null) {
-                for (int i = 0; i < episodeInfoArray.length(); i++) {
-                    EpisodeInformations episodeInformations = new EpisodeInformations(episodeInfoArray.getJSONObject(i));
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    if (App.isGooglePlayVersion) {
-                        if (String.valueOf(episodeInformations.getLanguageId()).equals(App.phoneLanguage)) {
-                            this.EpisodeInformations = episodeInformations;
-                            break;
-                        }
-                    } else {
-                        if (String.valueOf(episodeInformations.getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
-                            this.EpisodeInformations = episodeInformations;
-                            break;
-                        }
-                    }
                 }
             }
 
@@ -139,10 +136,21 @@ public class Episode implements Parcelable, Comparator<Episode> {
     }
 
     public EpisodeInformations getEpisodeInformations() {
-        return EpisodeInformations;
+        if(this.EpisodeInformations == null || this.EpisodeInformations.size() < 1)
+            return null;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
+        for(EpisodeInformations info: this.EpisodeInformations)
+        {
+            if (String.valueOf(info.getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+                return info;
+            }
+        }
+
+        return null;
     }
 
-    public void setEpisodeInformations(EpisodeInformations episodeInformations) {
+    public void setEpisodeInformations(ArrayList<EpisodeInformations> episodeInformations) {
         EpisodeInformations = episodeInformations;
     }
 
@@ -213,11 +221,18 @@ public class Episode implements Parcelable, Comparator<Episode> {
             Vks = new ArrayList<Vk>();
         if (Mirrors == null)
             Mirrors = new ArrayList<Mirror>();
+        if(Links == null)
+            Links = new ArrayList<Link>();
+        if(EpisodeInformations == null)
+            EpisodeInformations = new ArrayList<EpisodeInformations>();
         Parcelable[] parcelableVkArray = new Parcelable[Vks.size()];
         dest.writeParcelableArray(Vks.toArray(parcelableVkArray), flags);
         Parcelable[] parcelableMirrorArray = new Parcelable[Mirrors.size()];
         dest.writeParcelableArray(Mirrors.toArray(parcelableMirrorArray), flags);
-        dest.writeParcelable(EpisodeInformations, flags);
+        Parcelable[] parcelableLinkArray = new Parcelable[Links.size()];
+        dest.writeParcelableArray(Links.toArray(parcelableLinkArray), flags);
+        Parcelable[] parcelableEpisodeInfoArray = new Parcelable[EpisodeInformations.size()];
+        dest.writeParcelableArray(EpisodeInformations.toArray(parcelableEpisodeInfoArray), flags);
         dest.writeInt(AnimeId);
         dest.writeInt(EpisodeId);
         dest.writeString(EpisodeNumber);

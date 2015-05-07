@@ -20,8 +20,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
+import com.topanimestream.models.Anime;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
 import com.topanimestream.utilities.Utils;
@@ -55,7 +57,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     private String animeBackdrop;
     private String animeGenres;
     private String animeRating;
-    private boolean isSubbed;
     private ListView listViewEpisodes;
     private EpisodesTask task;
     private ProgressBar progressBarLoadMore;
@@ -63,11 +64,23 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     public EpisodeListFragment() {
 
     }
-
     public static EpisodeListFragment newInstance(String fragmentName, int animeId, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
         EpisodeListFragment ttFrag = new EpisodeListFragment();
         Bundle args = new Bundle();
-        args.putString("fragmentName", fragmentName);//Subbed, Dubbed
+        args.putString("fragmentName", fragmentName);
+        args.putInt("animeId", animeId);
+        args.putString("animeName", animeName);
+        args.putString("animeDescription", animeDescription);
+        args.putString("animePoster", animePoster);
+        args.putString("animeBackdrop", animeBackdrop);
+        args.putString("animeGenres", animeGenres);
+        args.putString("animeRating", animeRating);
+        ttFrag.setArguments(args);
+        return ttFrag;
+    }
+    public static EpisodeListFragment newInstance(int animeId, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
+        EpisodeListFragment ttFrag = new EpisodeListFragment();
+        Bundle args = new Bundle();
         args.putInt("animeId", animeId);
         args.putString("animeName", animeName);
         args.putString("animeDescription", animeDescription);
@@ -147,11 +160,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             }
         }
 
-        if(fragmentName.equals("Subbed"))
-            isSubbed = true;
-        else
-            isSubbed = false;
-
         listViewEpisodes.setFastScrollEnabled(true);
         listViewEpisodes.setOnItemClickListener(this);
         listViewEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -216,7 +224,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20m/AnimeSource/IsSubbed%20eq%20" + isSubbed + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").skip(currentSkip).top(currentLimit).formatJson().build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Links/any()").expand("EpisodeInformations,Links").skip(currentSkip).top(currentLimit).formatJson().build();
             episodes = new ArrayList<Episode>();
         }
 
@@ -251,13 +259,11 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             if(episodesArray.length() > 0)
                 hasResults = true;
 
+            Gson gson = new Gson();
             for (int i = 0; i < episodesArray.length(); i++) {
-                JSONObject episodeJson;
                 try {
-                    episodeJson = episodesArray.getJSONObject(i);
-                    Episode episode = new Episode(episodeJson, getActivity());
-
-                    newEpisodes.add(episode);
+                    String stringJson = episodesArray.getJSONObject(i).toString();
+                    newEpisodes.add(gson.fromJson(episodesArray.getJSONObject(i).toString(), Episode.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;

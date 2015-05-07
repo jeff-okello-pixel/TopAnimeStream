@@ -68,11 +68,20 @@ public class LatestEpisodesAdapter extends BaseAdapter {
         }
 
         holder.txtName.setText(link.getAnime().getName());
-        holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + link.getEpisode().getEpisodeNumber());
+        holder.imgScreenshot.setImageResource(android.R.color.transparent);
+        if(link.getEpisode() != null) {
+            holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + link.getEpisode().getEpisodeNumber());
+            App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + link.getEpisode().getScreenshotHD(), App.ImageSize.w300.getValue()), holder.imgScreenshot);
+        }
+        else {
+            holder.txtEpisodeNumber.setText(context.getString(R.string.tab_movie));
+            App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + link.getAnime().getRelativeBackdropPath(null), App.ImageSize.w300.getValue()), holder.imgScreenshot);
+        }
         Timestamp timeStamp = Timestamp.valueOf(link.getAddedDate().replace("T", " "));
         holder.txtAddedDate.setText(DateUtils.getRelativeTimeSpanString(timeStamp.getTime(),System.currentTimeMillis()/1000, 0));
-        holder.imgScreenshot.setImageResource(android.R.color.transparent);
-        App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + link.getEpisode().getScreenshotHD(), App.ImageSize.w300.getValue()), holder.imgScreenshot);
+
+
+
 
         return vi;
     }
