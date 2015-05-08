@@ -39,6 +39,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -122,13 +123,13 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private DrawerLayout        mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean             drawerIsOpened;
-    private ListView            leftDrawer;
+    private ListView            leftDrawerEpisodes;
     private boolean             mIsSliding;
     private boolean             mShowMenuSlide;
     private Float               layBottomAlpha = 1.0f;// used for older devices
-    private VideoControllerCallback callback;
     private ArrayList<Episode>  episodes;
     private Episode             currentEpisode;
+    private boolean             mLeftDrawerScroll;
 
     public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
@@ -196,21 +197,41 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
             if (mDrawerLayout != null) {
                 if(episodes != null) {
-                    leftDrawer = (ListView) v.findViewById(R.id.leftDrawer);
+                    leftDrawerEpisodes = (ListView) v.findViewById(R.id.leftDrawerEpisodes);
 
-                    if(leftDrawer != null) {
-                        leftDrawer.setOnTouchListener(this);
-                        leftDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    if(leftDrawerEpisodes != null) {
+                        leftDrawerEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
+                            @Override
+                            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+                            }
+
+                            @Override
+                            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+                                if(!mLeftDrawerScroll && mCanTouchAgain) {
+                                    mLeftDrawerScroll = true;
+                                    //notify the user action
+                                    show(sDefaultTimeout);
+                                    //We need a handler... if not, the show function is being called wayyyyy to often and it lags.
+                                    new Handler().postDelayed(new Runnable() {
+                                        public void run() {
+                                            mLeftDrawerScroll = false;
+                                        }
+                                    }, 500);
+
+                                }
+                            }
+                        });
+                        leftDrawerEpisodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                callback.EpisodeSelected(episodes.get(position));
+                                mCallback.EpisodeSelected(episodes.get(position));
                                 mDrawerLayout.closeDrawers();
-                                hide();
                             }
                         });
                         PlayerEpisodesAdapter adapter = new PlayerEpisodesAdapter(mContext, episodes);
-                        leftDrawer.setAdapter(adapter);
-                        leftDrawer.smoothScrollToPosition(adapter.getItemPosition(currentEpisode));
+                        leftDrawerEpisodes.setAdapter(adapter);
+                        leftDrawerEpisodes.smoothScrollToPosition(adapter.getItemPosition(currentEpisode));
                     }
                     mDrawerLayout.setDrawerListener(new DrawerListener());
                     mDrawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));

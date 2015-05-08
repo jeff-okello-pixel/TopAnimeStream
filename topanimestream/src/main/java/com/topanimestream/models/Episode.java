@@ -75,6 +75,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
         AiredDate = in.readString();
         Screenshot = in.readString();
         Order = in.readInt();
+        ScreenshotHD = in.readString();
     }
 
     public Episode(JSONObject jsonEpisode, Context context) {
@@ -260,6 +261,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
         dest.writeString(AiredDate);
         dest.writeString(Screenshot);
         dest.writeInt(Order);
+        dest.writeString(ScreenshotHD);
 
 
     }

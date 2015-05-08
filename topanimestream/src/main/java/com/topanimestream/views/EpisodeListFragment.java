@@ -167,6 +167,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
         listViewEpisodes.setFastScrollEnabled(true);
         listViewEpisodes.setOnItemClickListener(this);
+        AsyncTaskTools.execute(new EpisodesTask());
         /*listViewEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override

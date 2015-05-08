@@ -19,4 +19,11 @@
         android:layout_marginBottom="16dp"
         android:textDirection="anyRtl"
         android:gravity="center_horizontal" />
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="2dp" />
 </RelativeLayout>

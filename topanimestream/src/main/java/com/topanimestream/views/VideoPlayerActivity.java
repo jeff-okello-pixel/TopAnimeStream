@@ -28,9 +28,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -62,6 +64,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private StrokedRobotoTextView txtSubtitle;
     private File mSubsFile;
     private boolean checkForSubtitle;
+    private ProgressBar loadingSpinner;
     Thread threadCheckSubs = new Thread() {
         @Override
         public void run() {
@@ -84,7 +87,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
-
+        loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
         txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
         txtSubtitle.setTextColor(Color.WHITE);
         txtSubtitle.setTextSize(16);
@@ -349,6 +352,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         controller.setAnchorView((RelativeLayout) findViewById(R.id.videoSurfaceContainer));
         setVideoSize();
         player.start();
+        loadingSpinner.setVisibility(View.GONE);
     }
     // End MediaPlayer.OnPreparedListener
 

@@ -138,4 +138,14 @@ public class Subtitle implements Parcelable {
         dest.writeString(Specification);
         dest.writeString(AddedDate);
     }
+
+    public static final Creator<Subtitle> CREATOR = new Creator<Subtitle>() {
+        public Subtitle createFromParcel(Parcel in) {
+            return new Subtitle(in);
+        }
+
+        public Subtitle[] newArray(int size) {
+            return new Subtitle[size];
+        }
+    };
 }

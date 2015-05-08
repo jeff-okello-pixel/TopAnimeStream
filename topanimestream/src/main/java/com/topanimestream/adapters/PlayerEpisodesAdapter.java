@@ -54,7 +54,7 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.row_player_episode, null);
             holder = new ViewHolder();
             holder.txtEpisodeNumber = (TextView) vi.findViewById(R.id.txtEpisodeNumber);
-            holder.txtEpisodeName = (TextView) vi.findViewById(R.id.txtEpisodeName);
+            holder.txtAiredDate = (TextView) vi.findViewById(R.id.txtAiredDate);
             holder.imgScreenshot = (ImageView) vi.findViewById(R.id.imgScreenshot);
             vi.setTag(holder);
         } else {
@@ -65,12 +65,10 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
         App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + episode.getScreenshotHD(), App.ImageSize.w300.getValue()), holder.imgScreenshot);
         holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + episode.getEpisodeNumber());
 
-        EpisodeInformations episodeInfo = episode.getEpisodeInformations();
-        if(episodeInfo != null)
-        {
-            //Episode info exist for the current language
-            holder.txtEpisodeName.setText(episodeInfo.getEpisodeName());
-        }
+        Timestamp timeStamp = Timestamp.valueOf(episode.getAiredDate().replace("T", " "));
+        long now = System.currentTimeMillis();
+        long addedDate = timeStamp.getTime();
+        holder.txtAiredDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
 
 
 
@@ -84,7 +82,7 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView txtEpisodeNumber;
-        TextView txtEpisodeName;
+        TextView txtAiredDate;
         ImageView imgScreenshot;
     }
     public int getItemPosition(Episode episode)

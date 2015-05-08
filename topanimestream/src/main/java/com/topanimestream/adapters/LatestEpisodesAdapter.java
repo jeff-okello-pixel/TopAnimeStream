@@ -78,10 +78,9 @@ public class LatestEpisodesAdapter extends BaseAdapter {
             App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + link.getAnime().getRelativeBackdropPath(null), App.ImageSize.w300.getValue()), holder.imgScreenshot);
         }
         Timestamp timeStamp = Timestamp.valueOf(link.getAddedDate().replace("T", " "));
-        holder.txtAddedDate.setText(DateUtils.getRelativeTimeSpanString(timeStamp.getTime(),System.currentTimeMillis()/1000, 0));
-
-
-
+        long now = System.currentTimeMillis();
+        long addedDate = timeStamp.getTime();
+        holder.txtAddedDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
 
         return vi;
     }
