@@ -139,7 +139,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
             if (episodeListFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
+                //ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
+                ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime), "episodeListFragment");
                 ft.commit();
             }
         }

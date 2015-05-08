@@ -42,6 +42,7 @@ import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
+import com.topanimestream.models.Subtitle;
 import com.topanimestream.models.subs.Caption;
 import com.topanimestream.models.subs.FormatASS;
 import com.topanimestream.models.subs.FormatSRT;
@@ -50,6 +51,10 @@ import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.FileUtils;
 import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
+import com.topanimestream.utilities.WcfDataServiceUtility;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.VideoControllerCallback {
 
@@ -65,6 +70,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private File mSubsFile;
     private boolean checkForSubtitle;
     private ProgressBar loadingSpinner;
+    private Anime anime;
+    private Episode currentEpisode;
     Thread threadCheckSubs = new Thread() {
         @Override
         public void run() {
@@ -102,14 +109,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         player = new MediaPlayer();
         Bundle bundle = getIntent().getExtras();
-        Anime anime = bundle.getParcelable("anime");
-        //TODO load sources
-        ArrayList<Episode> episodes = bundle.getParcelableArrayList("episodes");
-        Episode episodeToPlay = bundle.getParcelable("episodeToPlay");
+        anime = bundle.getParcelable("anime");
+        currentEpisode = bundle.getParcelable("episodeToPlay");
+        //episodeToPlay will be null if it is a movie
+        controller = new VideoControllerView(this, true, anime.getEpisodes(), currentEpisode);
 
-        //episodes and episodeToPlay will be null if it is a movie
-        controller = new VideoControllerView(this, true, episodes, episodeToPlay);
-
+        this.EpisodeSelected(currentEpisode);
 
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -172,14 +177,75 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             }
         }.execute();
     }
+    private class GetSourcesAndSubsTask extends AsyncTask<Void, Void, String> {
+        private ArrayList<Subtitle> subtitles = new ArrayList<Subtitle>();
+
+        public GetSourcesAndSubsTask() {
+
+        }
+        private String getSourcesUrl;
+        private String getSubsUrl;
+        @Override
+        protected void onPreExecute() {
+            if(!anime.isMovie()) {
+                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Sources").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
+                getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
+            }
+            else {
+                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Sources").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
+                getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+
+            try
+            {
+                Gson gson = new Gson();
+                JSONObject jsonSources = Utils.GetJson(getSourcesUrl);
+
+
+                JSONObject jsonSubtitles = Utils.GetJson(getSubsUrl);
+                JSONArray subtitleArray = jsonSubtitles.getJSONArray("value");
+                for(int i = 0; i < subtitleArray.length(); i++)
+                {
+                    subtitles.add(gson.fromJson(subtitleArray.getJSONObject(i).toString(), Subtitle.class));
+
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return getString(R.string.error_loading_sources);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            if(error != null)
+            {
+                Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                //TODO check prefs and play video
+                controller.SetSubtitles(subtitles);
+            }
+        }
+    }
     private class SubtitleTask extends AsyncTask<Void, Void, String> {
 
 
             public SubtitleTask() {
 
             }
-            private static final String NAMESPACE = "http://tempuri.org/";
-            final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
             private String subUrl;
 
             @Override
@@ -254,7 +320,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     startSubtitles();
                 }
             }
-        }
+    }
     protected void showTimedCaptionText(final Caption text) {
         mDisplayHandler.post(new Runnable() {
             @Override
@@ -424,7 +490,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void EpisodeSelected(Episode episode) {
-        //TODO play the episode
+        currentEpisode = episode;
+
+        AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
 
 }

@@ -280,4 +280,5 @@
     <string name="error_downloading_subtitle">Error downloading subtitles</string>
     <string name="latest_episodes">Latest episodes</string>
     <string name="latest_episode_not_found">Latest episodes not found</string>
+    <string name="language_japanese">Japanese</string>
 </resources>

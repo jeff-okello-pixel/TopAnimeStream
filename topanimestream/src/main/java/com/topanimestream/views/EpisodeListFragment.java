@@ -44,50 +44,22 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     private boolean loadmore = false;
     private boolean hasResults = false;
     private EpisodeListAdapter adapter;
-    private String fragmentName;
-    private ArrayList<Episode> episodes;
     private TextView txtNoEpisode;
-    private int animeId;
     App app;
     public Dialog busyDialog;
     private SharedPreferences prefs;
-    private String animeName;
-    private String animePoster;
-    private String animeDescription;
-    private String animeBackdrop;
-    private String animeGenres;
-    private String animeRating;
     private ListView listViewEpisodes;
     private EpisodesTask task;
     private ProgressBar progressBarLoadMore;
-
+    private Anime anime;
     public EpisodeListFragment() {
 
     }
-    public static EpisodeListFragment newInstance(String fragmentName, int animeId, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
+
+    public static EpisodeListFragment newInstance(Anime anime) {
         EpisodeListFragment ttFrag = new EpisodeListFragment();
         Bundle args = new Bundle();
-        args.putString("fragmentName", fragmentName);
-        args.putInt("animeId", animeId);
-        args.putString("animeName", animeName);
-        args.putString("animeDescription", animeDescription);
-        args.putString("animePoster", animePoster);
-        args.putString("animeBackdrop", animeBackdrop);
-        args.putString("animeGenres", animeGenres);
-        args.putString("animeRating", animeRating);
-        ttFrag.setArguments(args);
-        return ttFrag;
-    }
-    public static EpisodeListFragment newInstance(int animeId, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
-        EpisodeListFragment ttFrag = new EpisodeListFragment();
-        Bundle args = new Bundle();
-        args.putInt("animeId", animeId);
-        args.putString("animeName", animeName);
-        args.putString("animeDescription", animeDescription);
-        args.putString("animePoster", animePoster);
-        args.putString("animeBackdrop", animeBackdrop);
-        args.putString("animeGenres", animeGenres);
-        args.putString("animeRating", animeRating);
+        args.putParcelable("anime", anime);
         ttFrag.setArguments(args);
         return ttFrag;
     }
@@ -119,12 +91,12 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
-        final Episode episode = (Episode)episodes.get(position);
+        final Episode episode = (Episode)anime.getEpisodes().get(position);
         /*
         EpisodesContainerFragment.ProviderFragmentCoordinator providerFragmentCoordinator = (EpisodesContainerFragment.ProviderFragmentCoordinator) getActivity();
         providerFragmentCoordinator.onEpisodeSelected(episode, fragmentName);*/
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-        intent.putParcelableArrayListExtra("episodes", episodes);
+        intent.putExtra("anime", anime);
         intent.putExtra("episodeToPlay", episode);
         getActivity().startActivity(intent);
 
@@ -141,24 +113,12 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         listViewEpisodes = (ListView) rootView.findViewById(R.id.listViewEpisodes);
 
         Bundle bundle = getArguments();
-        fragmentName = bundle.getString("fragmentName");
-        animeId = bundle.getInt("animeId");
-        animeDescription = bundle.getString("animeDescription");
-        animeName = bundle.getString("animeName");
-        animePoster = bundle.getString("animePoster");
-        animeBackdrop = bundle.getString("animeBackdrop");
-        animeGenres = bundle.getString("animeGenres");
-        animeRating = bundle.getString("animeRating");
+        anime = bundle.getParcelable("anime");
 
         if (savedInstanceState != null) {
-            episodes = savedInstanceState.getParcelableArrayList("episodes");
-            this.animeName = savedInstanceState.getString("animeName");
-            this.animeDescription = savedInstanceState.getString("animeDescription");
-            this.animePoster = savedInstanceState.getString("animePoster");
-            this.animeBackdrop = savedInstanceState.getString("animeBackdrop");
-            this.animeId = savedInstanceState.getInt("animeId");
-            if (episodes != null && episodes.size() > 0)
-                listViewEpisodes.setAdapter(new EpisodeListAdapter(this.getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating));
+            anime = savedInstanceState.getParcelable("anime");
+            if (anime.getEpisodes() != null && anime.getEpisodes().size() > 0)
+                listViewEpisodes.setAdapter(new EpisodeListAdapter(this.getActivity(), anime));
             else {
                 listViewEpisodes.setVisibility(View.GONE);
                 txtNoEpisode.setVisibility(View.VISIBLE);
@@ -208,18 +168,13 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         /*
         if(adapter != null)
             episodes = adapter.getAllEpisodes();*/
-        outState.putParcelableArrayList("episodes", episodes);
-        outState.putInt("animeId", animeId);
-        outState.putString("animeName", animeName);
-        outState.putString("animeDescription", animeDescription);
-        outState.putString("animePoster", animePoster);
-        outState.putString("animeBackdrop", animeBackdrop);
+        outState.putParcelable("anime", anime);
         super.onSaveInstanceState(outState);
     }
 
 
     private class EpisodesTask extends AsyncTask<Void, Void, String> {
-        //private ArrayList<Episode> newEpisodes = new ArrayList<Episode>();
+        private ArrayList<Episode> episodes = new ArrayList<Episode>();
         public EpisodesTask() {
 
         }
@@ -231,8 +186,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Links/any()").expand("EpisodeInformations,Links,Subtitles").formatJson().build();
-            episodes = new ArrayList<Episode>();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Links/any()").expand("EpisodeInformations,Links").formatJson().build();
         }
 
         @Override
@@ -297,6 +251,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                         }
                         adapter.update();
                     } else {*/
+                        anime.setEpisodes(episodes);
                         adapter = new EpisodeListAdapter(getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                         swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);

@@ -163,6 +163,7 @@ public class EpisodesContainerFragment extends Fragment {
     }
 
     private Fragment getSubbedPagerFragment() {
+        /*
         String language = prefs.getString("prefLanguage", "1");
         if (!anime.isMovie()) {
             if (subbedEpisodeFragment == null)
@@ -180,10 +181,12 @@ public class EpisodesContainerFragment extends Fragment {
                 subbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Subbed", anime);
             return subbedProviderFragment;
 
-        }
+        }*/
+        return null;
     }
 
     private Fragment getDubbedPagerFragment() {
+        /*
         String language = prefs.getString("prefLanguage", "1");
         if (!anime.isMovie()) {
             if (dubbedEpisodeFragment == null)
@@ -200,7 +203,8 @@ public class EpisodesContainerFragment extends Fragment {
             if (dubbedProviderFragment == null)
                 dubbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Dubbed", anime);
             return dubbedProviderFragment;
-        }
+        }*/
+        return null;
     }
 
     private void createViewPager() {

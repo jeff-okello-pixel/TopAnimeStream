@@ -15,6 +15,7 @@ public class Subtitle implements Parcelable {
     private String FormattedSize;
     private String Specification;
     private String AddedDate;
+    private Language Language;
 
     public Subtitle() {
     }
@@ -30,7 +31,17 @@ public class Subtitle implements Parcelable {
         FormattedSize = in.readString();
         Specification = in.readString();
         AddedDate = in.readString();
+        Language = in.readParcelable(Language.class.getClassLoader());
     }
+
+    public Language getLanguage() {
+        return Language;
+    }
+
+    public void setLanguage(Language language) {
+        Language = language;
+    }
+
     public int getSubtitleId() {
         return SubtitleId;
     }
@@ -137,6 +148,7 @@ public class Subtitle implements Parcelable {
         dest.writeString(FormattedSize);
         dest.writeString(Specification);
         dest.writeString(AddedDate);
+        dest.writeParcelable(Language, flags);
     }
 
     public static final Creator<Subtitle> CREATOR = new Creator<Subtitle>() {

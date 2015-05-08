@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
+import com.topanimestream.models.Anime;
 import com.topanimestream.utilities.SQLiteHelper;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.EpisodeInformations;
@@ -32,27 +33,18 @@ public class EpisodeListAdapter extends BaseAdapter {
     private SharedPreferences prefs;
     private TextView txtEpisodeNumber;
     private ImageView imgWatched;
-    private String animeName;
-    private String animeDescription;
-    private String animePoster;
-    private String animeBackdrop;
-    private String animeGenres;
-    private String animeRating;
+    private Anime anime;
     App app;
 
-    public EpisodeListAdapter(Context context, ArrayList<Episode> values, String animeName, String animeDescription, String animePoster, String animeBackdrop, String animeGenres, String animeRating) {
+    public EpisodeListAdapter(Context context, Anime anime) {
         this.context = context;
-        this.values = values;
+        this.anime = anime;
+        this.values = anime.getEpisodes();
         this.re = this.context.getResources();
         this.act = (Activity) context;
         prefs = PreferenceManager.getDefaultSharedPreferences(act);
         app = ((App) context.getApplicationContext());
-        this.animeName = animeName;
-        this.animeDescription = animeDescription;
-        this.animePoster = animePoster;
-        this.animeBackdrop = animeBackdrop;
-        this.animeGenres = animeGenres;
-        this.animeRating = animeRating;
+
     }
 
     public void update() {
@@ -94,7 +86,7 @@ public class EpisodeListAdapter extends BaseAdapter {
             holder.txtEpisodeName.setVisibility(View.GONE);
         }
         SQLiteHelper sqlite = new SQLiteHelper(act);
-        if (sqlite.isWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1"))) {
+        if (sqlite.isWatched(episode.getEpisodeId())) {
             holder.imgWatched.setBackgroundColor(Color.parseColor("#D9245169"));
             holder.imgWatched.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
         } else {
@@ -142,12 +134,12 @@ public class EpisodeListAdapter extends BaseAdapter {
         public void onClick(View v) {
             Episode episode = values.get(position);
             SQLiteHelper sqlite = new SQLiteHelper(act);
-            if (sqlite.isWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1"))) {
-                sqlite.removeWatched(episode.getEpisodeId(), prefs.getString("prefLanguage", "1"));
+            if (sqlite.isWatched(episode.getEpisodeId())) {
+                sqlite.removeWatched(episode.getEpisodeId());
                 v.setBackgroundColor(Color.parseColor("#00000000"));
                 imgView.setImageDrawable(re.getDrawable(R.drawable.ic_not_watched));
             } else {
-                sqlite.addWatched(episode.getAnimeId(), animeName, animePoster, animeDescription, episode.getEpisodeId(), episode.getEpisodeNumber(), animeBackdrop, animeGenres, animeRating, Integer.valueOf(prefs.getString("prefLanguage", "1")));
+                sqlite.addWatched(anime, episode.getEpisodeId(), episode.getEpisodeNumber());
                 v.setBackgroundColor(Color.parseColor("#D9245169"));
                 imgView.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
             }

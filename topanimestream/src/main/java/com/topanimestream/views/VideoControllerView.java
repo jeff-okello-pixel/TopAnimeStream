@@ -57,6 +57,7 @@ import com.topanimestream.R;
 import com.topanimestream.adapters.PlayerEpisodesAdapter;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Item;
+import com.topanimestream.models.Subtitle;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -130,7 +131,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private ArrayList<Episode>  episodes;
     private Episode             currentEpisode;
     private boolean             mLeftDrawerScroll;
-
+    private ArrayList<Subtitle> currentEpisodeSubtitles = new ArrayList<Subtitle>();
     public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
         mContext = context;
@@ -196,7 +197,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
 
             if (mDrawerLayout != null) {
-                if(episodes != null) {
+                if(episodes != null && episodes.size() > 0) {
                     leftDrawerEpisodes = (ListView) v.findViewById(R.id.leftDrawerEpisodes);
 
                     if(leftDrawerEpisodes != null) {
@@ -319,6 +320,15 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         installPrevNextListeners();
     }
+    public void SetSubtitles(ArrayList<Subtitle> subs)
+    {
+        currentEpisodeSubtitles = subs;
+    }
+    public void SetSources()
+    {
+        //TODO call this function from the activity to set the current sources for the episode
+
+    }
     private void ShowLanguageMenu()
     {
 
@@ -329,10 +339,28 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     }
     private void ShowSubtitleMenu()
     {
-        final Item[] items = {
-                new Item(mContext.getString(R.string.language_english), R.drawable.flag_us),
-                new Item("Japanese", R.drawable.flag_jp)
-        };
+        //TODO CHECK THE CLICK EVENT, HOW WILL I GET THE CURRENT SELECT SUB?
+        ArrayList<Item> subsWithFlag = new ArrayList<Item>();
+        for(Subtitle sub:currentEpisodeSubtitles)
+        {
+            if(sub.getLanguage().getISO639().equals("en"))
+            {
+                subsWithFlag.add(new Item(mContext.getString(R.string.language_english), R.drawable.flag_us));
+            }
+            else if(sub.getLanguage().getISO639().equals("fr"))
+            {
+                subsWithFlag.add(new Item(mContext.getString(R.string.language_french), R.drawable.flag_fr));
+            }
+            else if(sub.getLanguage().getISO639().equals("ja"))
+            {
+                subsWithFlag.add(new Item(mContext.getString(com.topanimestream.R.string.language_japanese), R.drawable.flag_jp));
+            }
+
+        }
+
+        Item[] items = new Item[subsWithFlag.size()];
+        items = subsWithFlag.toArray(items);
+        final Item[] finalItems = items;
 
         ListAdapter adapter = new ArrayAdapter<Item>(
                 mContext,
@@ -345,7 +373,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
 
                 //Put the image on the TextView
-                tv.setCompoundDrawablesWithIntrinsicBounds(items[position].icon, 0, 0, 0);
+                tv.setCompoundDrawablesWithIntrinsicBounds(finalItems[position].icon, 0, 0, 0);
 
                 //Add margin between image and text (support various screen densities)
                 int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
@@ -359,7 +387,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 .setTitle(mContext.getString(R.string.choose_option))
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int item) {
-                        String selectedItem = items[item].toString();
+                        String selectedItem = finalItems[item].toString();
                         mCallback.SubtitleSelected();
                     }
                 }).show();

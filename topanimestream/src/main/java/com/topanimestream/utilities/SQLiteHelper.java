@@ -225,20 +225,19 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public void addWatched(int animeId, String name, String poster, String description, int episodeId, String episodeNumber, String backdrop, String genres, String rating, int languageId) {
+    public void addWatched(Anime anime, int episodeId, String episodeNumber) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_ANIMEID, String.valueOf(animeId));
-        values.put(KEY_NAME, name);
-        values.put(KEY_POSTER, poster);
-        values.put(KEY_DESCRIPTION, description);
+        values.put(KEY_ANIMEID, String.valueOf(anime.getAnimeId()));
+        values.put(KEY_NAME, anime.getName());
+        values.put(KEY_POSTER, anime.getPosterPath("500"));
+        values.put(KEY_DESCRIPTION, anime.getDescription(App.getContext()));
         values.put(KEY_EPISODEID, String.valueOf(episodeId));
         values.put(KEY_EPISODENUMBER, episodeNumber);
-        values.put(KEY_EPISODENUMBER, episodeNumber);
-        values.put(KEY_BACKDROP, backdrop);
-        values.put(KEY_GENRES, genres);
-        values.put(KEY_RATING, rating);
-        values.put(KEY_LANGUAGEID, String.valueOf(languageId));
+        values.put(KEY_BACKDROP, anime.getRelativeBackdropPath(null));
+        values.put(KEY_GENRES, anime.getGenresFormatted());
+        values.put(KEY_RATING, String.valueOf(anime.getRating()));
+        values.put(KEY_LANGUAGEID, String.valueOf(0)); //was used in older version
         db.insert(TABLE_WATCHED,
                 null, //nullColumnHack
                 values);
@@ -246,21 +245,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
-    public void removeWatched(int episodeId, String languageId) {
+    public void removeWatched(int episodeId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_WATCHED, KEY_EPISODEID + " = ? AND " + KEY_LANGUAGEID + " = ?", new String[]{String.valueOf(episodeId), languageId});
+        db.delete(TABLE_WATCHED, KEY_EPISODEID + " = ?", new String[]{String.valueOf(episodeId)});
 
     }
 
-    public ArrayList<Anime> GetHistory(String languageId) {
+    public ArrayList<Anime> GetHistory() {
         ArrayList<Anime> animes = new ArrayList<Anime>();
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor =
                 db.query(TABLE_WATCHED,
                         WATCHED_COLUMNS,
-                        KEY_LANGUAGEID + " = ?", //selections
-                        new String[]{languageId}, //selections args
+                        null, //selections
+                        null, //selections args
                         null, //group by
                         null, //having
                         null, //order by
@@ -301,14 +300,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return animes;
     }
 
-    public boolean isWatched(int episodeId, String languageId) {
+    public boolean isWatched(int episodeId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor =
                 db.query(TABLE_WATCHED,
                         WATCHED_COLUMNS,
-                        KEY_EPISODEID + " = ? AND " + KEY_LANGUAGEID + " = ?", //selections
-                        new String[]{String.valueOf(episodeId), languageId}, //selections args
+                        KEY_EPISODEID + " = ?", //selections
+                        new String[]{String.valueOf(episodeId)}, //selections args
                         null, //group by
                         null, //having
                         null, //order by

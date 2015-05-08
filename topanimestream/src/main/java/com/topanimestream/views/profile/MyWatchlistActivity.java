@@ -91,7 +91,7 @@ public class MyWatchlistActivity extends ActionBarActivity implements OnItemClic
 
     private void populateList() {
         SQLiteHelper sqlLite = new SQLiteHelper(this);
-        animes = sqlLite.GetHistory(prefs.getString("prefLanguage", "1"));
+        animes = sqlLite.GetHistory();
         sqlLite.close();
         Collections.reverse(animes);
         listView.setAdapter(new HistoryListAdapter(this, animes));
