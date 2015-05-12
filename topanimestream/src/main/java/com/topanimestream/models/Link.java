@@ -16,6 +16,7 @@ public class Link implements Parcelable {
     private String Thumbnail;
     private Anime Anime;
     private Episode Episode;
+    private Language Language;
 
     public Link() {
     }
@@ -33,7 +34,17 @@ public class Link implements Parcelable {
         Thumbnail = in.readString();
         Anime = in.readParcelable(Anime.class.getClassLoader());
         Episode = in.readParcelable(Episode.class.getClassLoader());
+        Language = in.readParcelable(Language.class.getClassLoader());
     }
+
+    public Language getLanguage() {
+        return Language;
+    }
+
+    public void setLanguage(Language language) {
+        Language = language;
+    }
+
     public Anime getAnime() {
         return Anime;
     }
@@ -149,6 +160,7 @@ public class Link implements Parcelable {
         dest.writeString(Thumbnail);
         dest.writeParcelable(Anime, flags);
         dest.writeParcelable(Episode, flags);
+        dest.writeParcelable(Language, flags);
     }
 
     public static final Creator<Link> CREATOR = new Creator<Link>() {

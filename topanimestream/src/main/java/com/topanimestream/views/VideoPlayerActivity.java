@@ -78,6 +78,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private ProgressBar loadingSpinner;
     private Anime anime;
     private Episode currentEpisode;
+    private Subtitle currentEpisodeSubtitle;
+    private ArrayList<Subtitle> subtitles = new ArrayList<Subtitle>();
+    private ArrayList<Source> sources = new ArrayList<Source>();
     Thread threadCheckSubs = new Thread() {
         @Override
         public void run() {
@@ -102,11 +105,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         setContentView(R.layout.activity_video_player);
         videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
         loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
+        //TODO check prefs style
         txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
         txtSubtitle.setTextColor(Color.WHITE);
         txtSubtitle.setTextSize(16);
         txtSubtitle.setStrokeColor(Color.BLACK);
-        txtSubtitle.setStrokeWidth(2,2);
+        txtSubtitle.setStrokeWidth(2, 2);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mDisplayHandler = new Handler(Looper.getMainLooper());
@@ -145,31 +149,31 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         }
     }
     private void startSubtitles() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    FileInputStream fileInputStream = new FileInputStream(mSubsFile);
-                    FormatSRT formatSRT = new FormatSRT();
-                    mSubs = formatSRT.parseFile(mSubsFile.toString(), FileUtils.inputstreamToCharsetString(fileInputStream).split("\n"));
-                    checkForSubtitle = true;
-                    threadCheckSubs.start();
+       AsyncTaskTools.execute(
+               new AsyncTask<Void, Void, Void>() {
+                   @Override
+                   protected Void doInBackground(Void... voids) {
+                       try {
+                           FileInputStream fileInputStream = new FileInputStream(mSubsFile);
+                           FormatSRT formatSRT = new FormatSRT();
+                           mSubs = formatSRT.parseFile(mSubsFile.toString(), FileUtils.inputstreamToCharsetString(fileInputStream).split("\n"));
+                           checkForSubtitle = true;
+                           threadCheckSubs.start();
 
-                } catch (FileNotFoundException e) {
-                    if (e.getMessage().contains("EBUSY")) {
-                        startSubtitles();
-                    }
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
+                       } catch (FileNotFoundException e) {
+                           if (e.getMessage().contains("EBUSY")) {
+                               startSubtitles();
+                           }
+                           e.printStackTrace();
+                       } catch (IOException e) {
+                           e.printStackTrace();
+                       }
+                       return null;
+                   }
+               });
     }
     private class GetSourcesAndSubsTask extends AsyncTask<Void, Void, String> {
-        private ArrayList<Subtitle> subtitles = new ArrayList<Subtitle>();
-        private ArrayList<Source> sources = new ArrayList<Source>();
+
         public GetSourcesAndSubsTask() {
 
         }
@@ -232,13 +236,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             {
                 //TODO check prefs and play video
                 //episodeToPlay will be null if it is a movie
-
-
                 try {
-
-                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    //player.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     player.setDataSource(VideoPlayerActivity.this, Uri.parse(sources.get(0).getUrl()));
-                    player.setOnPreparedListener(VideoPlayerActivity.this);
                     player.prepareAsync();
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
@@ -250,13 +250,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     e.printStackTrace();
                 }
 
-                controller.SetSubtitles(subtitles);
-                controller.SetSources(sources);
             }
         }
     }
     private class SubtitleTask extends AsyncTask<Void, Void, String> {
-
+            String fileName;
 
             public SubtitleTask() {
 
@@ -265,7 +263,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
             @Override
             protected void onPreExecute() {
-                subUrl = getString(R.string.sub_host_path) + "10/5_Centimeters_Per_Second_en.srt";
+                subUrl = getString(R.string.sub_host_path) + currentEpisodeSubtitle.getRelativePath();
             }
 
             @Override
@@ -279,10 +277,20 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 try
                 {
                     final File subsDirectory = getStorageLocation(VideoPlayerActivity.this);
-                    //final String fileName = media.videoId + "-" + languageCode;
-                    //TODO choose a unique name per subtitle
-                    final String fileName = "subtitle";
-                    final File srtPath = new File(subsDirectory, fileName + ".srt");
+                    if(!anime.isMovie())
+                        fileName = anime.getName() + "-" + currentEpisode.getEpisodeNumber() + "-" + currentEpisodeSubtitle.getLanguage().getISO639();
+                    else
+                        fileName = anime.getName() + "-"  + currentEpisodeSubtitle.getLanguage().getISO639();
+
+                    //http://stackoverflow.com/questions/13204807/max-file-name-length-in-android
+                    //We need to make sure the fileName is not over 127 characters
+                     if(fileName.length() > 127) {
+                        int characterToRemove = fileName.length() - 127;
+                        //Remove characters from the anime name.
+                        fileName = anime.getName().substring(0, anime.getName().length() - characterToRemove) + "-" + currentEpisode.getEpisodeNumber() + "-" + currentEpisodeSubtitle.getLanguage().getISO639();
+                    }
+                    fileName = fileName + ".srt";
+                    final File srtPath = new File(subsDirectory, fileName);
 
                     if (srtPath.exists()) {
                         return null;
@@ -301,11 +309,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
                     String inputString = FileUtils.inputstreamToCharsetString(input);
                     String[] inputText = inputString.split("\n|\r\n");
-
                     if (subUrl.contains(".ass") || subUrl.contains(".ssa")) {
                         FormatASS formatASS = new FormatASS();
                         subtitleObject = formatASS.parseFile(subUrl, inputText);
-                    } else if (subUrl.contains(".srt")) {
+                    }
+                    else if (subUrl.contains(".srt")) {
                         FormatSRT formatSRT = new FormatSRT();
                         subtitleObject = formatSRT.parseFile(subUrl, inputText);
                     }
@@ -330,8 +338,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 }
                 else
                 {
-                    //TODO choose another srt name
-                    mSubsFile = new File(getStorageLocation(VideoPlayerActivity.this), "subtitle.srt");
+                    mSubsFile = new File(getStorageLocation(VideoPlayerActivity.this), fileName);
                     startSubtitles();
                 }
             }
@@ -432,6 +439,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         controller.setMediaPlayer(this);
         controller.setAnchorView((RelativeLayout) findViewById(R.id.videoSurfaceContainer));
         setVideoSize();
+        controller.SetSubtitles(subtitles);
+        controller.SetSources(sources);
+        controller.ShowMenuItems();
         player.start();
         loadingSpinner.setVisibility(View.GONE);
     }
@@ -460,18 +470,28 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public int getCurrentPosition() {
-        if(player.getCurrentPosition() == 2003345418)
+        try {
+            if (!player.isPlaying())
+                return 0;
+        }
+        catch(IllegalStateException e){
             return 0;
-        else
-            return player.getCurrentPosition();
+        }
+
+        return player.getCurrentPosition();
     }
 
     @Override
     public int getDuration() {
-        if(player.getDuration() == 2003345434)
+        try {
+            if (!player.isPlaying())
+                return 0;
+        }
+        catch(IllegalStateException e){
             return 0;
-        else
-            return player.getDuration();
+        }
+
+        return player.getDuration();
     }
 
     @Override
@@ -505,18 +525,18 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
 
     @Override
-    public void SubtitleSelected() {
+    public void SubtitleSelected(Subtitle subtitle) {
+        currentEpisodeSubtitle = subtitle;
         AsyncTaskTools.execute(new SubtitleTask());
     }
-
-    @Override
-    public void EpisodeSelected(Episode episode) {
-        loadingSpinner.setVisibility(View.VISIBLE);
-        currentEpisode = episode;
-        player.stop();
-        player.release();
+    public void ResetMediaPlayer()
+    {
+        if(player != null) {
+            player.stop();
+            player.release();
+        }
         player = new MediaPlayer();
-
+        player.setOnPreparedListener(this);
         videoSurfaceContainer.removeView(surfaceView);
         surfaceView = new SurfaceView(VideoPlayerActivity.this);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -525,8 +545,26 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoSurfaceContainer.addView(surfaceView, 0);
         surfaceView.getHolder().addCallback(this);
 
+    }
+    @Override
+    public void EpisodeSelected(Episode episode) {
+        loadingSpinner.setVisibility(View.VISIBLE);
+        currentEpisode = episode;
+
+        ResetMediaPlayer();
 
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
+    }
+
+    @Override
+    public void QualitySelected(Source source) {
+        ResetMediaPlayer();
+        try {
+            player.setDataSource(VideoPlayerActivity.this, Uri.parse(source.getUrl()));
+            player.prepareAsync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

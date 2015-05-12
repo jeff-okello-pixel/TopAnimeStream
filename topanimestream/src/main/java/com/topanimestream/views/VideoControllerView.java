@@ -57,6 +57,7 @@ import com.topanimestream.R;
 import com.topanimestream.adapters.PlayerEpisodesAdapter;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Item;
+import com.topanimestream.models.Language;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
 
@@ -133,7 +134,12 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private Episode             currentEpisode;
     private boolean             mLeftDrawerScroll;
     private ArrayList<Subtitle> currentVideoSubtitles = new ArrayList<Subtitle>();
-    private ArrayList<Source> currentVideoSources = new ArrayList<>();
+    private ArrayList<Source>   currentVideoSources = new ArrayList<Source>();
+    private ArrayList<Language> currentVideoLanguages = new ArrayList<Language>();
+    private Language            currentSelectedLanguage;
+    private MenuItem            menuSubtitles;
+    private MenuItem            menuLanguage;
+    private MenuItem            menuSettings;
     public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
         mContext = context;
@@ -195,7 +201,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         if(toolbar != null) {
             toolbar.inflateMenu(R.menu.media_controller);
-
+            menuSubtitles = toolbar.getMenu().findItem(R.id.menuSubtitles);
+            menuLanguage = toolbar.getMenu().findItem(R.id.menuLanguage);
+            menuSettings = toolbar.getMenu().findItem(R.id.menuSettings);
             mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
 
             if (mDrawerLayout != null) {
@@ -228,7 +236,18 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                         leftDrawerEpisodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                mCallback.EpisodeSelected(episodes.get(position));
+                                Episode selectedEpisode = episodes.get(position);
+                                if(currentEpisode != null && currentEpisode.getEpisodeId() != selectedEpisode.getEpisodeId()) {
+                                    currentEpisode = selectedEpisode;
+                                    currentVideoSubtitles = null;
+                                    currentVideoSources = null;
+                                    //Hide all toolbar menuitem until the new selected episode loads.
+                                    menuSubtitles.setVisible(false);
+                                    menuLanguage.setVisible(false);
+                                    menuSettings.setVisible(false);
+                                    mCallback.EpisodeSelected(selectedEpisode);
+                                }
+
                                 mDrawerLayout.closeDrawers();
                             }
                         });
@@ -322,6 +341,13 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         installPrevNextListeners();
     }
+    //called from the activity
+    public void ShowMenuItems()
+    {
+        menuSubtitles.setVisible(true);
+        menuLanguage.setVisible(true);
+        menuSettings.setVisible(true);
+    }
     public void SetSubtitles(ArrayList<Subtitle> subs)
     {
         currentVideoSubtitles = subs;
@@ -329,57 +355,40 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     public void SetSources(ArrayList<Source> sources)
     {
         currentVideoSources = sources;
+
+        for(Source source:currentVideoSources)
+        {
+            boolean containsLanguage = false;
+            for(Language lang:currentVideoLanguages)
+            {
+                if(source.getLink().getLanguageId() == lang.getLanguageId())
+                {
+                    containsLanguage = true;
+                }
+            }
+
+            if(!containsLanguage)
+                currentVideoLanguages.add(source.getLink().getLanguage());
+        }
     }
     private void ShowLanguageMenu()
     {
 
-    }
-    private void ShowQualityMenu()
-    {
 
-    }
-    private void ShowSubtitleMenu()
-    {
-        //TODO CHECK THE CLICK EVENT, HOW WILL I GET THE CURRENT SELECT SUB?
-        ArrayList<Item> subsWithFlag = new ArrayList<Item>();
-        for(Subtitle sub:currentVideoSubtitles)
-        {
-            if(sub.getLanguage().getISO639().equals("en"))
-            {
-                subsWithFlag.add(new Item(mContext.getString(R.string.language_english), R.drawable.flag_us));
-            }
-            else if(sub.getLanguage().getISO639().equals("fr"))
-            {
-                subsWithFlag.add(new Item(mContext.getString(R.string.language_french), R.drawable.flag_fr));
-            }
-            else if(sub.getLanguage().getISO639().equals("ja"))
-            {
-                subsWithFlag.add(new Item(mContext.getString(com.topanimestream.R.string.language_japanese), R.drawable.flag_jp));
-            }
+        final Language[] languageArray = new Language[currentVideoLanguages.size()];
 
-        }
-
-        Item[] items = new Item[subsWithFlag.size()];
-        items = subsWithFlag.toArray(items);
-        final Item[] finalItems = items;
-
-        ListAdapter adapter = new ArrayAdapter<Item>(
+        ListAdapter adapter = new ArrayAdapter<Language>(
                 mContext,
                 android.R.layout.select_dialog_item,
                 android.R.id.text1,
-                items){
+                languageArray){
             public View getView(int position, View convertView, ViewGroup parent) {
                 //User super class to create the View
                 View v = super.getView(position, convertView, parent);
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
 
-                //Put the image on the TextView
-                tv.setCompoundDrawablesWithIntrinsicBounds(finalItems[position].icon, 0, 0, 0);
-
-                //Add margin between image and text (support various screen densities)
-                int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
-                tv.setCompoundDrawablePadding(dp5);
-
+                Language language = languageArray[position];
+                tv.setText(language.getName());
                 return v;
             }
         };
@@ -387,9 +396,83 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         new AlertDialog.Builder(mContext)
                 .setTitle(mContext.getString(R.string.choose_option))
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int item) {
-                        String selectedItem = finalItems[item].toString();
-                        mCallback.SubtitleSelected();
+                    public void onClick(final DialogInterface dialog, int position) {
+                        Language selectedLanguage = languageArray[position];
+                        currentSelectedLanguage = selectedLanguage;
+                        //TODO change source and try to set the same quality
+                    }
+                }).show();
+    }
+    private void ShowQualityMenu()
+    {
+        ArrayList<Source> sourcesOfCurrentLanguage = new ArrayList<Source>();
+        for(Source source:currentVideoSources)
+        {
+            if(source.getLink().getLanguageId() == currentSelectedLanguage.getLanguageId())
+            {
+                sourcesOfCurrentLanguage.add(source);
+            }
+        }
+        final Source[] sourceArray = new Source[sourcesOfCurrentLanguage.size()];
+
+        ListAdapter adapter = new ArrayAdapter<Source>(
+                mContext,
+                android.R.layout.select_dialog_item,
+                android.R.id.text1,
+                sourceArray){
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //User super class to create the View
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView)v.findViewById(android.R.id.text1);
+
+                Source source = sourceArray[position];
+                tv.setText(source.getQuality());
+                return v;
+            }
+        };
+
+        new AlertDialog.Builder(mContext)
+                .setTitle(mContext.getString(R.string.choose_option))
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int position) {
+                        Source selectedSource = sourceArray[position];
+                        mCallback.QualitySelected(selectedSource);
+                    }
+                }).show();
+    }
+    private void ShowSubtitleMenu()
+    {
+        final Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
+
+        ListAdapter adapter = new ArrayAdapter<Subtitle>(
+                mContext,
+                android.R.layout.select_dialog_item,
+                android.R.id.text1,
+                subtitleArray){
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //User super class to create the View
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView)v.findViewById(android.R.id.text1);
+
+                Subtitle sub = subtitleArray[position];
+                //Put the image on the TextView
+                tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);
+
+                //Add margin between image and text (support various screen densities)
+                int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                tv.setCompoundDrawablePadding(dp5);
+
+                tv.setText(sub.getLanguage().getName() + (!sub.getSpecification().equals("") ? "(" + sub.getSpecification() + ")" : ""));
+                return v;
+            }
+        };
+
+        new AlertDialog.Builder(mContext)
+                .setTitle(mContext.getString(R.string.choose_option))
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int position) {
+                        Subtitle selectedSub = subs[position];
+                        mCallback.SubtitleSelected(selectedSub);
                     }
                 }).show();
     }
@@ -867,8 +950,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         boolean canSeekForward();
         boolean isFullScreen();
         void    toggleFullScreen();
-        void    SubtitleSelected();
+        void    SubtitleSelected(Subtitle subtitle);
         void    EpisodeSelected(Episode episode);
+        void    QualitySelected(Source source);
     }
     
     private static class MessageHandler extends Handler {

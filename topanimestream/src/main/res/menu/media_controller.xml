@@ -6,18 +6,21 @@
       	android:id="@+id/menuSubtitles"
         android:title="@string/subtitles"
         android:icon="@drawable/ic_subtitles"
+        android:visible="false"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/menuLanguage"
         android:title="@string/title_language"
         android:icon="@drawable/ic_language"
+        android:visible="false"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/menuSettings"
         android:title="@string/menu_settings"
         android:icon="@drawable/ic_settings"
+        android:visible="false"
         app:showAsAction="always"/>
 
 </menu>
