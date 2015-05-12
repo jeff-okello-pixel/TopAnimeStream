@@ -13,7 +13,9 @@ import java.util.Collection;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -21,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -29,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -37,11 +41,13 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
+import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
 import com.topanimestream.models.subs.Caption;
 import com.topanimestream.models.subs.FormatASS;
@@ -57,7 +63,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.VideoControllerCallback {
-
+    private RelativeLayout videoSurfaceContainer;
     SurfaceView surfaceView;
     MediaPlayer player;
     VideoControllerView controller;
@@ -94,6 +100,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
+        videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
         loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
         txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
         txtSubtitle.setTextColor(Color.WHITE);
@@ -104,31 +111,14 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         mDisplayHandler = new Handler(Looper.getMainLooper());
         surfaceView = (SurfaceView) findViewById(R.id.videoSurface);
-        SurfaceHolder videoHolder = surfaceView.getHolder();
-        videoHolder.addCallback(this);
+        surfaceView.getHolder().addCallback(this);
 
         player = new MediaPlayer();
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("anime");
         currentEpisode = bundle.getParcelable("episodeToPlay");
-        //episodeToPlay will be null if it is a movie
-        controller = new VideoControllerView(this, true, anime.getEpisodes(), currentEpisode);
-
-        this.EpisodeSelected(currentEpisode);
-
-        try {
-            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            player.setDataSource(this, Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
-            player.setOnPreparedListener(this);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        controller = new VideoControllerView(VideoPlayerActivity.this, true, anime.getEpisodes(), currentEpisode);
+        AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
     private long getCurrentTime()
     {
@@ -179,7 +169,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
     private class GetSourcesAndSubsTask extends AsyncTask<Void, Void, String> {
         private ArrayList<Subtitle> subtitles = new ArrayList<Subtitle>();
-
+        private ArrayList<Source> sources = new ArrayList<Source>();
         public GetSourcesAndSubsTask() {
 
         }
@@ -188,11 +178,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         @Override
         protected void onPreExecute() {
             if(!anime.isMovie()) {
-                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Sources").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
+                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
                 getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
             }
             else {
-                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Sources").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
+                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).expand("Link/Language").formatJson().build();
                 getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
             }
         }
@@ -208,7 +198,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             {
                 Gson gson = new Gson();
                 JSONObject jsonSources = Utils.GetJson(getSourcesUrl);
+                JSONArray sourceArray = jsonSources.getJSONArray("value");
+                for(int i = 0; i < sourceArray.length(); i++)
+                {
+                    sources.add(gson.fromJson(sourceArray.getJSONObject(i).toString(), Source.class));
 
+                }
 
                 JSONObject jsonSubtitles = Utils.GetJson(getSubsUrl);
                 JSONArray subtitleArray = jsonSubtitles.getJSONArray("value");
@@ -236,7 +231,27 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             else
             {
                 //TODO check prefs and play video
+                //episodeToPlay will be null if it is a movie
+
+
+                try {
+
+                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    player.setDataSource(VideoPlayerActivity.this, Uri.parse(sources.get(0).getUrl()));
+                    player.setOnPreparedListener(VideoPlayerActivity.this);
+                    player.prepareAsync();
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 controller.SetSubtitles(subtitles);
+                controller.SetSources(sources);
             }
         }
     }
@@ -395,7 +410,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
     	player.setDisplay(holder);
-        player.prepareAsync();
+
     }
 
     @Override
@@ -445,12 +460,18 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public int getCurrentPosition() {
-        return player.getCurrentPosition();
+        if(player.getCurrentPosition() == 2003345418)
+            return 0;
+        else
+            return player.getCurrentPosition();
     }
 
     @Override
     public int getDuration() {
-        return player.getDuration();
+        if(player.getDuration() == 2003345434)
+            return 0;
+        else
+            return player.getDuration();
     }
 
     @Override
@@ -490,7 +511,20 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void EpisodeSelected(Episode episode) {
+        loadingSpinner.setVisibility(View.VISIBLE);
         currentEpisode = episode;
+        player.stop();
+        player.release();
+        player = new MediaPlayer();
+
+        videoSurfaceContainer.removeView(surfaceView);
+        surfaceView = new SurfaceView(VideoPlayerActivity.this);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        surfaceView.setLayoutParams(params);
+        videoSurfaceContainer.addView(surfaceView, 0);
+        surfaceView.getHolder().addCallback(this);
+
 
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }

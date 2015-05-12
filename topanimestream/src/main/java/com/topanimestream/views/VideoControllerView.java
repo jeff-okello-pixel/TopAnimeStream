@@ -57,6 +57,7 @@ import com.topanimestream.R;
 import com.topanimestream.adapters.PlayerEpisodesAdapter;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Item;
+import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
 
 import java.lang.ref.WeakReference;
@@ -131,7 +132,8 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private ArrayList<Episode>  episodes;
     private Episode             currentEpisode;
     private boolean             mLeftDrawerScroll;
-    private ArrayList<Subtitle> currentEpisodeSubtitles = new ArrayList<Subtitle>();
+    private ArrayList<Subtitle> currentVideoSubtitles = new ArrayList<Subtitle>();
+    private ArrayList<Source> currentVideoSources = new ArrayList<>();
     public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
         mContext = context;
@@ -322,12 +324,11 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     }
     public void SetSubtitles(ArrayList<Subtitle> subs)
     {
-        currentEpisodeSubtitles = subs;
+        currentVideoSubtitles = subs;
     }
-    public void SetSources()
+    public void SetSources(ArrayList<Source> sources)
     {
-        //TODO call this function from the activity to set the current sources for the episode
-
+        currentVideoSources = sources;
     }
     private void ShowLanguageMenu()
     {
@@ -341,7 +342,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     {
         //TODO CHECK THE CLICK EVENT, HOW WILL I GET THE CURRENT SELECT SUB?
         ArrayList<Item> subsWithFlag = new ArrayList<Item>();
-        for(Subtitle sub:currentEpisodeSubtitles)
+        for(Subtitle sub:currentVideoSubtitles)
         {
             if(sub.getLanguage().getISO639().equals("en"))
             {

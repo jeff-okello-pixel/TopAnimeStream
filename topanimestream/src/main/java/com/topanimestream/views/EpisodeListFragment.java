@@ -186,7 +186,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + animeId + "%20and%20Links/any()").expand("EpisodeInformations,Links").formatJson().build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Links/any()").expand("EpisodeInformations,Links").formatJson().build();
         }
 
         @Override
@@ -252,7 +252,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                         adapter.update();
                     } else {*/
                         anime.setEpisodes(episodes);
-                        adapter = new EpisodeListAdapter(getActivity(), episodes, animeName, animeDescription, animePoster, animeBackdrop, animeGenres, animeRating);
+                        adapter = new EpisodeListAdapter(getActivity(), anime);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                         swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;

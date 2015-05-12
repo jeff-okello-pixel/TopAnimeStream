@@ -87,6 +87,11 @@ public class WcfDataServiceUtility {
         return this;
     }
 
+    public WcfDataServiceUtility queryString(String queryName, String value) {
+        queries.add(queryName + "=" + value);
+        return this;
+    }
+
     public String build() {
         String fullQuery;
         fullQuery = this.dataServiceUrl + "?" + TextUtils.join("&", this.queries);

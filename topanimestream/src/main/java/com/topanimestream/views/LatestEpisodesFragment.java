@@ -101,7 +101,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                             long id) {
 
         Link link = (Link) gridView.getAdapter().getItem(position);
-        /*
+
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -110,7 +110,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                 String teststr = test.toString();
                 return null;
             }
-        }.execute();*/
+        }.execute();
 
 
     }

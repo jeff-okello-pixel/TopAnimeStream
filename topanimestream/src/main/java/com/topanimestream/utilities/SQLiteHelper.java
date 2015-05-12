@@ -273,7 +273,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 anime.setName(cursor.getString(1));
                 anime.setPosterPath(cursor.getString(2));
                 ArrayList<AnimeInformation> animeInfos = new ArrayList<AnimeInformation>();
-                animeInfos.add(new AnimeInformation(Integer.valueOf(languageId), cursor.getString(3)));
+                animeInfos.add(new AnimeInformation(cursor.getString(3)));
                 anime.setAnimeInformations(animeInfos);
                 Episode episode = new Episode();
                 episode.setEpisodeId(Integer.valueOf(cursor.getString(4)));
