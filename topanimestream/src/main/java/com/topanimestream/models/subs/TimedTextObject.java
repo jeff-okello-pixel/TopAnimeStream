@@ -54,6 +54,14 @@ public class TimedTextObject {
     //to delay or advance the subtitles, parsed into +/- milliseconds
     public int offset = 0;
 
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     //to know if a parsing method has been applied
     public boolean built = false;
 

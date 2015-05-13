@@ -140,6 +140,8 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private MenuItem            menuSubtitles;
     private MenuItem            menuLanguage;
     private MenuItem            menuSettings;
+    private boolean             userScrolled;
+
     public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
         mContext = context;
@@ -213,13 +215,16 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                     if(leftDrawerEpisodes != null) {
                         leftDrawerEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
                             @Override
-                            public void onScrollStateChanged(AbsListView absListView, int i) {
-
+                            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                                if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                                    userScrolled = true;
+                                }
                             }
 
                             @Override
                             public void onScroll(AbsListView absListView, int i, int i2, int i3) {
-                                if(!mLeftDrawerScroll && mCanTouchAgain) {
+                                if(!mLeftDrawerScroll && mCanTouchAgain && userScrolled) {
+                                    userScrolled = false;
                                     mLeftDrawerScroll = true;
                                     //notify the user action
                                     show(sDefaultTimeout);
@@ -227,6 +232,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                                     new Handler().postDelayed(new Runnable() {
                                         public void run() {
                                             mLeftDrawerScroll = false;
+
                                         }
                                     }, 500);
 
@@ -251,9 +257,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                                 mDrawerLayout.closeDrawers();
                             }
                         });
+
                         PlayerEpisodesAdapter adapter = new PlayerEpisodesAdapter(mContext, episodes);
                         leftDrawerEpisodes.setAdapter(adapter);
-                        leftDrawerEpisodes.smoothScrollToPosition(adapter.getItemPosition(currentEpisode));
                     }
                     mDrawerLayout.setDrawerListener(new DrawerListener());
                     mDrawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
@@ -400,7 +406,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                     public void onClick(final DialogInterface dialog, int position) {
                         Language selectedLanguage = finalLanguageArray[position];
                         currentSelectedLanguage = selectedLanguage;
-                        //TODO change source and try to set the same quality
+                        mCallback.LanguageSelected(selectedLanguage);
                     }
                 }).show();
     }
@@ -580,7 +586,12 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 mPauseButton.requestFocus();
             }
             disableUnsupportedButtons();
-            mAnchor.addView(this);
+            try {
+                mAnchor.addView(this);
+            }catch(Exception e)
+            {
+                return;
+            }
 
             Animation animation = AnimationUtils.loadAnimation(App.getContext(), R.anim.abc_fade_in);
             animation.setStartOffset(0);
@@ -954,6 +965,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         void    SubtitleSelected(Subtitle subtitle);
         void    EpisodeSelected(Episode episode);
         void    QualitySelected(Source source);
+        void    LanguageSelected(Language language);
     }
     
     private static class MessageHandler extends Handler {
