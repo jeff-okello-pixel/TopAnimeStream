@@ -118,6 +118,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         surfaceView.getHolder().addCallback(this);
 
         player = new MediaPlayer();
+        player.setOnPreparedListener(this);
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("anime");
         currentEpisode = bundle.getParcelable("episodeToPlay");

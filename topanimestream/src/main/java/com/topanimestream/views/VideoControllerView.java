@@ -375,8 +375,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     {
 
 
-        final Language[] languageArray = new Language[currentVideoLanguages.size()];
-
+        Language[] languageArray = new Language[currentVideoLanguages.size()];
+        languageArray = currentVideoLanguages.toArray(languageArray);
+        final Language[] finalLanguageArray = languageArray;
         ListAdapter adapter = new ArrayAdapter<Language>(
                 mContext,
                 android.R.layout.select_dialog_item,
@@ -387,7 +388,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 View v = super.getView(position, convertView, parent);
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
 
-                Language language = languageArray[position];
+                Language language = finalLanguageArray[position];
                 tv.setText(language.getName());
                 return v;
             }
@@ -397,7 +398,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 .setTitle(mContext.getString(R.string.choose_option))
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
-                        Language selectedLanguage = languageArray[position];
+                        Language selectedLanguage = finalLanguageArray[position];
                         currentSelectedLanguage = selectedLanguage;
                         //TODO change source and try to set the same quality
                     }
@@ -413,19 +414,19 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 sourcesOfCurrentLanguage.add(source);
             }
         }
-        final Source[] sourceArray = new Source[sourcesOfCurrentLanguage.size()];
-
+        Source[] sourceArray = new Source[sourcesOfCurrentLanguage.size()];
+        final Source[] finalSourceArray = sourcesOfCurrentLanguage.toArray(sourceArray);
         ListAdapter adapter = new ArrayAdapter<Source>(
                 mContext,
                 android.R.layout.select_dialog_item,
                 android.R.id.text1,
-                sourceArray){
+                finalSourceArray){
             public View getView(int position, View convertView, ViewGroup parent) {
                 //User super class to create the View
                 View v = super.getView(position, convertView, parent);
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
 
-                Source source = sourceArray[position];
+                Source source = finalSourceArray[position];
                 tv.setText(source.getQuality());
                 return v;
             }
@@ -435,26 +436,26 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 .setTitle(mContext.getString(R.string.choose_option))
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
-                        Source selectedSource = sourceArray[position];
+                        Source selectedSource = finalSourceArray[position];
                         mCallback.QualitySelected(selectedSource);
                     }
                 }).show();
     }
     private void ShowSubtitleMenu()
     {
-        final Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
-
+        Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
+        final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
         ListAdapter adapter = new ArrayAdapter<Subtitle>(
                 mContext,
                 android.R.layout.select_dialog_item,
                 android.R.id.text1,
-                subtitleArray){
+                finalSubtitleArray){
             public View getView(int position, View convertView, ViewGroup parent) {
                 //User super class to create the View
                 View v = super.getView(position, convertView, parent);
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
 
-                Subtitle sub = subtitleArray[position];
+                Subtitle sub = finalSubtitleArray[position];
                 //Put the image on the TextView
                 tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);
 
@@ -471,7 +472,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 .setTitle(mContext.getString(R.string.choose_option))
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
-                        Subtitle selectedSub = subs[position];
+                        Subtitle selectedSub = finalSubtitleArray[position];
                         mCallback.SubtitleSelected(selectedSub);
                     }
                 }).show();

@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.topanimestream.App;
+import com.topanimestream.R;
 
 public class Language implements Parcelable {
     private int LanguageId;
