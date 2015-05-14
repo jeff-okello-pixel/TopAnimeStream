@@ -47,6 +47,7 @@ import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
+import com.topanimestream.models.Language;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
 import com.topanimestream.models.subs.Caption;
@@ -81,19 +82,6 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private Subtitle currentEpisodeSubtitle;
     private ArrayList<Subtitle> subtitles = new ArrayList<Subtitle>();
     private ArrayList<Source> sources = new ArrayList<Source>();
-    Thread threadCheckSubs = new Thread() {
-        @Override
-        public void run() {
-            try {
-                while(checkForSubtitle) {
-                    checkSubs();
-                    sleep(50);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    };
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -103,6 +91,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
         loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
         //TODO check prefs style
@@ -127,7 +116,13 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
     private long getCurrentTime()
     {
-        return player.getCurrentPosition();
+        try {
+            return player.getCurrentPosition();
+        }catch(IllegalStateException e){
+            e.printStackTrace();
+        }
+
+        return 0;
     }
     protected void checkSubs() {
         if(mSubs != null) {
@@ -159,7 +154,21 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                            FormatSRT formatSRT = new FormatSRT();
                            mSubs = formatSRT.parseFile(mSubsFile.toString(), FileUtils.inputstreamToCharsetString(fileInputStream).split("\n"));
                            checkForSubtitle = true;
-                           threadCheckSubs.start();
+                           (new Thread() {
+                               @Override
+                               public void run() {
+                                   try {
+                                       while(checkForSubtitle) {
+                                           checkSubs();
+                                           sleep(50);
+                                       }
+                                   } catch (InterruptedException e) {
+                                       e.printStackTrace();
+                                   }
+
+                                   return;
+                               }
+                           }).start();
 
                        } catch (FileNotFoundException e) {
                            if (e.getMessage().contains("EBUSY")) {
@@ -182,6 +191,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         private String getSubsUrl;
         @Override
         protected void onPreExecute() {
+            sources = new ArrayList<Source>();
+            subtitles = new ArrayList<Subtitle>();
             if(!anime.isMovie()) {
                 getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
                 getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
@@ -320,6 +331,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     }
 
                     if (subtitleObject != null) {
+                        subtitleObject.setOffset(3700);
                         FileUtils.saveStringFile(subtitleObject.toSRT(), srtPath);
                     }
                     return null;
@@ -443,6 +455,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         controller.SetSubtitles(subtitles);
         controller.SetSources(sources);
         controller.ShowMenuItems();
+        txtSubtitle.setText("");
         player.start();
         loadingSpinner.setVisibility(View.GONE);
     }
@@ -474,12 +487,14 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         try {
             if (!player.isPlaying())
                 return 0;
+
+            return player.getCurrentPosition();
         }
         catch(IllegalStateException e){
             return 0;
         }
 
-        return player.getCurrentPosition();
+
     }
 
     @Override
@@ -487,12 +502,14 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         try {
             if (!player.isPlaying())
                 return 0;
+
+            return player.getDuration();
         }
         catch(IllegalStateException e){
             return 0;
         }
 
-        return player.getDuration();
+
     }
 
     @Override
@@ -527,8 +544,15 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void SubtitleSelected(Subtitle subtitle) {
-        currentEpisodeSubtitle = subtitle;
-        AsyncTaskTools.execute(new SubtitleTask());
+
+        if(currentEpisodeSubtitle == null || (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
+            checkForSubtitle = false;
+            txtSubtitle.setText("");
+            currentEpisodeSubtitle = subtitle;
+            AsyncTaskTools.execute(new SubtitleTask());
+        }else{
+            Toast.makeText(VideoPlayerActivity.this,getString(R.string.already_have) + currentEpisodeSubtitle.getLanguage().getName() + " " + getString(R.string.subtitles).toLowerCase(), Toast.LENGTH_SHORT).show();
+        }
     }
     public void ResetMediaPlayer()
     {
@@ -536,6 +560,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             player.stop();
             player.release();
         }
+        currentEpisodeSubtitle = null;
+        checkForSubtitle = false;
+        txtSubtitle.setText("");
         player = new MediaPlayer();
         player.setOnPreparedListener(this);
         videoSurfaceContainer.removeView(surfaceView);
@@ -556,9 +583,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
-
-    @Override
-    public void QualitySelected(Source source) {
+    public void ChangeVideoSource(Source source)
+    {
         ResetMediaPlayer();
         try {
             player.setDataSource(VideoPlayerActivity.this, Uri.parse(source.getUrl()));
@@ -566,6 +592,24 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public void QualitySelected(Source source) {
+        ChangeVideoSource(source);
+    }
+
+    @Override
+    public void LanguageSelected(Language language) {
+        for(Source source:sources)
+        {
+            if(source.getLink().getLanguage().getLanguageId() == language.getLanguageId())
+            {
+                ChangeVideoSource(source);
+                break;
+            }
+        }
+
+
     }
 
 }

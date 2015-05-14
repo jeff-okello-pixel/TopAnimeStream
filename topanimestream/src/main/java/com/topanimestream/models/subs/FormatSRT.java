@@ -27,7 +27,14 @@ import java.util.Iterator;
 */
 public class FormatSRT extends TimedTextFileFormat {
 
+    public static final String UTF8_BOM = "\uFEFF";
 
+    private static String removeUTF8BOM(String s) {
+        if (s.startsWith(UTF8_BOM)) {
+            s = s.substring(1);
+        }
+        return s;
+    }
     public TimedTextObject parseFile(String fileName, String[] inputString) throws IOException {
 
         TimedTextObject tto = new TimedTextObject();
@@ -51,7 +58,7 @@ public class FormatSRT extends TimedTextFileFormat {
                     allGood = false;
                     //the first thing should be an increasing number
                     try {
-                        int num = Integer.parseInt(line);
+                        int num = Integer.parseInt(removeUTF8BOM(line));
                         if (num != captionNumber)
                             throw new Exception();
                         else {
