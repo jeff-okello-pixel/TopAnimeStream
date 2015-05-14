@@ -91,6 +91,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_video_player);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
         loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
         //TODO check prefs style
