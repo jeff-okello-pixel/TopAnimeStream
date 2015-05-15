@@ -70,6 +70,7 @@ import com.topanimestream.App;
 import com.topanimestream.managers.AppRaterManager;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.NetworkUtil;
+import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.MenuArrayAdapter;
@@ -133,6 +134,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            ToolbarUtils.updateToolbarHeight(this, toolbar);
         }
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         App.accessToken = prefs.getString("AccessToken", "");

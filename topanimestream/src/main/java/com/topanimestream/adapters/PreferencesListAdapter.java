@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.topanimestream.App;
+import com.topanimestream.R;
 import com.topanimestream.preferences.PrefItem;
 
 import java.util.List;

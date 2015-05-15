@@ -282,4 +282,6 @@
     <string name="latest_episode_not_found">Latest episodes not found</string>
     <string name="language_japanese">Japanese</string>
     <string name="already_have">"Already have "</string>
+    <string name="preferences">Preferences</string>
+    <string name="general">General</string>
 </resources>
