@@ -60,6 +60,11 @@
             android:label="Settings" >
         </activity>
         <activity
+            android:name=".views.PreferencesActivity"
+            android:configChanges="locale|layoutDirection"
+            android:label="Settings" >
+        </activity>
+        <activity
             android:name=".views.profile.MyFavoritesActivity"
             android:configChanges="locale|layoutDirection"
             android:label="Favorites" >

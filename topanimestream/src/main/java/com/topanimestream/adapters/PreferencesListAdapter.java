@@ -48,7 +48,6 @@ public class PreferencesListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             PrefItem item = (PrefItem) mItems.get(position);
             itemViewHolder.itemView.setClickable(item.isClickable());
             itemViewHolder.icon.setImageResource(item.getIconResource());
-            itemViewHolder.icon.setColorFilter(App.getContext().getResources().getColor(R.color.text_white), PorterDuff.Mode.SRC_IN);
             itemViewHolder.text1.setText(item.getTitle());
             itemViewHolder.text2.setText(item.getSubTitle());
 

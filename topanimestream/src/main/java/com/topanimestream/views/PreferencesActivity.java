@@ -27,6 +27,7 @@ import com.topanimestream.adapters.PreferencesListAdapter;
 import com.topanimestream.dialogfragments.ColorPickerDialogFragment;
 import com.topanimestream.dialogfragments.NumberPickerDialogFragment;
 import com.topanimestream.dialogfragments.StringArraySelectorDialogFragment;
+import com.topanimestream.managers.VersionManager;
 import com.topanimestream.preferences.PrefItem;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.PrefUtils;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class PreferencesActivity extends AppCompatActivity
@@ -66,9 +68,10 @@ public class PreferencesActivity extends AppCompatActivity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
-
+        ButterKnife.inject(this);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,8 +97,8 @@ public class PreferencesActivity extends AppCompatActivity
     private void refreshItems() {
         mPrefItems = new ArrayList<>();
         mPrefItems.add(getString(R.string.general));
-        /*
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_app_language, R.string.i18n_language, Prefs.LOCALE, "",
+
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_language, R.string.app_language, Prefs.LOCALE, "",
                 new PrefItem.OnClickListener() {
                     @Override
                     public void onClick(final PrefItem item) {
@@ -103,26 +106,13 @@ public class PreferencesActivity extends AppCompatActivity
                         String currentValue = item.getValue().toString();
 
                         final String[] languages = getResources().getStringArray(R.array.languages);
-                        Arrays.sort(languages);
 
-                        String[] items = new String[languages.length];
-                        for (int i = 0; i < languages.length; i++) {
-                            Locale locale = LocaleUtils.toLocale(languages[i]);
-                            items[i + 1] = locale.getDisplayName(locale);
-                            if (languages[i].equals(currentValue)) {
-                                currentPosition = i + 1;
-                            }
-                        }
-
-                        openListSelectionDialog(item.getTitle(), items, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                        openListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
-                                        if (position == 0) {
-                                            item.clearValue();
-                                        } else {
-                                            item.saveValue(languages[position - 1]);
-                                        }
+
+                                        item.saveValue(Utils.ToLanguageId(languages[position]));
 
                                         dialog.dismiss();
 
@@ -135,184 +125,15 @@ public class PreferencesActivity extends AppCompatActivity
                     @Override
                     public String get(PrefItem item) {
                         String langCode = item.getValue().toString();
-                        if (langCode.isEmpty())
-                            return getString(R.string.device_language);
-
-                        Locale locale = LocaleUtils.toLocale(langCode);
-                        return locale.getDisplayName(locale);
+                        return Utils.ToLanguageStringDisplay(langCode);
 
                     }
                 }));
 
-        mPrefItems.add(getResources().getString(R.string.subtitles));
-
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_subtitle_color, R.string.subtitle_color, Prefs.SUBTITLE_COLOR, Color.WHITE,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(final PrefItem item) {
-                        Bundle args = new Bundle();
-                        args.putString(NumberPickerDialogFragment.TITLE, item.getTitle());
-                        args.putInt(NumberPickerDialogFragment.DEFAULT_VALUE, (int) item.getValue());
-
-                        ColorPickerDialogFragment dialogFragment = new ColorPickerDialogFragment();
-                        dialogFragment.setArguments(args);
-                        dialogFragment.setOnResultListener(new ColorPickerDialogFragment.ResultListener() {
-                            @Override
-                            public void onNewValue(int value) {
-                                item.saveValue(value);
-                            }
-                        });
-                        dialogFragment.show(getFragmentManager(), "pref_fragment");
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        return String.format("#%06X", 0xFFFFFF & (int) item.getValue());
-                    }
-                }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_subtitle_size, R.string.subtitle_size, Prefs.SUBTITLE_SIZE, 16,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(final PrefItem item) {
-                        Bundle args = new Bundle();
-                        args.putString(NumberPickerDialogFragment.TITLE, item.getTitle());
-                        args.putInt(NumberPickerDialogFragment.MAX_VALUE, 60);
-                        args.putInt(NumberPickerDialogFragment.MIN_VALUE, 10);
-                        args.putInt(NumberPickerDialogFragment.DEFAULT_VALUE, (int) item.getValue());
-
-                        NumberPickerDialogFragment dialogFragment = new NumberPickerDialogFragment();
-                        dialogFragment.setArguments(args);
-                        dialogFragment.setOnResultListener(new NumberPickerDialogFragment.ResultListener() {
-                            @Override
-                            public void onNewValue(int value) {
-                                item.saveValue(value);
-                            }
-                        });
-                        dialogFragment.show(getFragmentManager(), "pref_fragment");
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        return Integer.toString((int) item.getValue());
-                    }
-                }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_subtitle_stroke_color, R.string.subtitle_stroke_color, Prefs.SUBTITLE_STROKE_COLOR, Color.BLACK,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(final PrefItem item) {
-                        Bundle args = new Bundle();
-                        args.putString(NumberPickerDialogFragment.TITLE, item.getTitle());
-                        args.putInt(NumberPickerDialogFragment.DEFAULT_VALUE, (int) item.getValue());
-
-                        ColorPickerDialogFragment dialogFragment = new ColorPickerDialogFragment();
-                        dialogFragment.setArguments(args);
-                        dialogFragment.setOnResultListener(new ColorPickerDialogFragment.ResultListener() {
-                            @Override
-                            public void onNewValue(int value) {
-                                item.saveValue(value);
-                            }
-                        });
-                        dialogFragment.show(getFragmentManager(), "pref_fragment");
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        return String.format("#%06X", 0xFFFFFF & (int) item.getValue());
-                    }
-                }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_subtitle_stroke_width, R.string.subtitle_stroke_width, Prefs.SUBTITLE_STROKE_WIDTH, 2,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(final PrefItem item) {
-                        Bundle args = new Bundle();
-                        args.putString(NumberPickerDialogFragment.TITLE, item.getTitle());
-                        args.putInt(NumberPickerDialogFragment.MAX_VALUE, 5);
-                        args.putInt(NumberPickerDialogFragment.MIN_VALUE, 0);
-                        args.putInt(NumberPickerDialogFragment.DEFAULT_VALUE, (int) item.getValue());
-
-                        NumberPickerDialogFragment dialogFragment = new NumberPickerDialogFragment();
-                        dialogFragment.setArguments(args);
-                        dialogFragment.setOnResultListener(new NumberPickerDialogFragment.ResultListener() {
-                            @Override
-                            public void onNewValue(int value) {
-                                item.saveValue(value);
-                            }
-                        });
-                        dialogFragment.show(getFragmentManager(), "pref_fragment");
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        return Integer.toString((int) item.getValue());
-                    }
-                }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_subtitle_lang, R.string.subtitle_language, Prefs.SUBTITLE_DEFAULT, "",
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(final PrefItem item) {
-                        int currentPosition = 0;
-                        String currentValue = item.getValue().toString();
-
-                        final String[] languages = getResources().getStringArray(R.array.subtitle_languages);
-                        String[] items = new String[languages.length + 1];
-                        items[0] = getString(R.string.no_default_set);
-                        for (int i = 0; i < languages.length; i++) {
-                            Locale locale = LocaleUtils.toLocale(languages[i]);
-                            items[i + 1] = locale.getDisplayName(locale);
-                            if (languages[i].equals(currentValue)) {
-                                currentPosition = i + 1;
-                            }
-                        }
-
-                        openListSelectionDialog(item.getTitle(), items, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int position) {
-                                        if (position == 0) {
-                                            item.clearValue();
-                                        } else {
-                                            item.saveValue(languages[position - 1]);
-                                        }
-                                        dialog.dismiss();
-                                    }
-                                });
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        String langCode = item.getValue().toString();
-                        if (langCode.isEmpty())
-                            return getString(R.string.no_default_set);
-
-                        Locale locale = LocaleUtils.toLocale(langCode);
-                        return locale.getDisplayName(locale);
-                    }
-                }));
-        mPrefItems.add(getResources().getString(R.string.advanced));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_remove_cache, R.string.remove_cache, Prefs.REMOVE_CACHE, true,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(PrefItem item) {
-                        PrefUtils.save(PreferencesActivity.this, Prefs.REMOVE_CACHE, !(boolean) item.getValue());
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        boolean enabled = (boolean) item.getValue();
-                        return enabled ? getString(R.string.enabled) : getString(R.string.disabled);
-                    }
-                }));
 
 
-
-        mPrefItems.add(getResources().getString(R.string.updates));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_auto_update, R.string.auto_updates, Prefs.AUTOMATIC_UPDATES, true,
+        mPrefItems.add(getString(R.string.updates));
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_auto_updates, R.string.auto_check_for_updates, Prefs.AUTO_CHECK_UPDATE, true,
                 new PrefItem.OnClickListener() {
                     @Override
                     public void onClick(PrefItem item) {
@@ -326,24 +147,24 @@ public class PreferencesActivity extends AppCompatActivity
                         return enabled ? getString(R.string.enabled) : getString(R.string.disabled);
                     }
                 }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_check_update, R.string.check_for_updates, PopcornUpdater.LAST_UPDATE_CHECK, 1,
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_check_updates, R.string.check_for_updates,Prefs.LAST_CHECK_FOR_UPDATE, 1,
                 new PrefItem.OnClickListener() {
                     @Override
                     public void onClick(PrefItem item) {
-                        PopcornUpdater.getInstance(PreferencesActivity.this).checkUpdatesManually();
+                        VersionManager.checkUpdate(PreferencesActivity.this, true);
                     }
                 },
                 new PrefItem.SubTitleGenerator() {
                     @Override
                     public String get(PrefItem item) {
-                        long timeStamp = Long.parseLong(PrefUtils.get(PreferencesActivity.this, PopcornUpdater.LAST_UPDATE_CHECK, "0"));
+                        long timeStamp = Long.parseLong(PrefUtils.get(PreferencesActivity.this, Prefs.LAST_CHECK_FOR_UPDATE, "0"));
                         Calendar cal = Calendar.getInstance(Locale.getDefault());
                         cal.setTimeInMillis(timeStamp);
                         String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM, Locale.getDefault()).format(timeStamp);
                         String date = DateFormat.format("dd-MM-yyy", cal).toString();
                         return getString(R.string.last_check) + ": " + date + " " + time;
                     }
-                }));*/
+                }));
 
         if (recyclerView.getAdapter() != null && mLayoutManager != null) {
             int position = mLayoutManager.findFirstVisibleItemPosition();

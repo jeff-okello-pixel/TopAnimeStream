@@ -283,4 +283,11 @@
     <string name="already_have">"Already have "</string>
     <string name="preferences">Preferences</string>
     <string name="general">General</string>
+    <string name="app_language">App language</string>
+    <string name="updates">Updates</string>
+    <string name="auto_check_for_updates">Auto check for updates</string>
+    <string name="enabled">enabled</string>
+    <string name="disabled">disabled</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="last_check">Last check</string>
 </resources>

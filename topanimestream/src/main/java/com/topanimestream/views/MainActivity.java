@@ -711,7 +711,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
         } else if (menuItem.equals(getString(R.string.menu_settings))) {
-            startActivity(new Intent(MainActivity.this, Settings.class));
+            startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
             AnimationManager.ActivityStart(this);
         } else if (menuItem.equals(getString(R.string.menu_logout))) {
             AsyncTaskTools.execute(new LogoutTask());

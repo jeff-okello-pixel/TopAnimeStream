@@ -419,12 +419,23 @@ public class Utils {
 
     public static String ToLanguageId(String language) {
         language = language.toLowerCase();
-        if (language.equals("en"))
+        if (language.equals("en") || language.equals("english"))
             return "1";
-        else if (language.equals("fr"))
+        else if (language.equals("fr") || language.equals("français"))
             return "2";
-        else if (language.equals("es"))
+        else if (language.equals("es") || language.equals("español"))
             return "4";
+
+
+        return null;
+    }
+    public static String ToLanguageStringDisplay(String id) {
+        if (id.equals("1"))
+            return "English";
+        else if (id.equals("2"))
+            return "Français";
+        else if (id.equals("4"))
+            return "Español";
 
 
         return null;
