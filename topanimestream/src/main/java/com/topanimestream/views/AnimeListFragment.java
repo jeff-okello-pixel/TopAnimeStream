@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
@@ -100,13 +101,23 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                             long id) {
 
         Anime anime = (Anime) gridView.getAdapter().getItem(position);
-        animeId = anime.getAnimeId();
+        //HD
+        if(anime.getLinks() != null && anime.getLinks().size() > 0) {
+            Intent intent = new Intent(this.getActivity(), AnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", anime);
+            intent.putExtras(bundle);
+            startActivity(intent);
 
-        Intent intent = new Intent(this.getActivity(), AnimeDetailsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("Anime", anime);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(this.getActivity(), OldAnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", anime);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
         AnimationManager.ActivityStart(getActivity());
 
     }
@@ -198,13 +209,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links").skip(currentSkip).top(currentLimit);
-            String filter = "Links/any()";
+            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
+            String filter = "";
 
             if (fragmentName.equals(getString(R.string.tab_movie)))
-                filter += "%20and%20IsMovie%20eq%20true";
+                filter += "IsMovie%20eq%20true";
             else if (fragmentName.equals(getString(R.string.tab_serie)))
-                filter += "%20and%20IsMovie%20eq%20false";
+                filter += "IsMovie%20eq%20false";
             if (customFilter != null && !customFilter.equals(""))
                 filter += customFilter;
 
@@ -243,12 +254,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 return null;
             }
             hasResults = false;
+            Gson gson = new Gson();
             for (int i = 0; i < animeArray.length(); i++) {
                 hasResults = true;
                 JSONObject animeJson;
                 try {
                     animeJson = animeArray.getJSONObject(i);
-                    newAnimes.add(new Anime(animeJson, getActivity()));
+                    newAnimes.add(gson.fromJson(animeJson.toString(), Anime.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

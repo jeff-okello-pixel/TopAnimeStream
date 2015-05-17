@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,9 @@ import com.topanimestream.R;
 import com.topanimestream.adapters.AnimeListAdapter;
 import com.topanimestream.adapters.LatestEpisodesAdapter;
 import com.topanimestream.managers.AnimationManager;
+import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
+import com.topanimestream.models.Episode;
 import com.topanimestream.models.Link;
 import com.topanimestream.models.Mirror;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -50,7 +53,6 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
     private ProgressBar progressBarLoadMore;
     private String fragmentName;
     private Resources r;
-    App app;
     public Dialog busyDialog;
     public ArrayList<Mirror> mirrors;
     public int animeId;
@@ -81,7 +83,6 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         fragmentName = this.getArguments().getString("fragmentName");
-        app = (App) getActivity().getApplication();
 
     }
 
@@ -102,15 +103,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
 
         Link link = (Link) gridView.getAdapter().getItem(position);
 
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground( Void... voids ) {
-                JSONObject test = Utils.GetJson("http://www.topanimestream.com/AnimeServices/AnimeDataService.svc/GetSources?animeId=2128&$format=json");
-                String teststr = test.toString();
-                return null;
-            }
-        }.execute();
+        AsyncTaskTools.execute(new LoadAnimeAndEpisodesTask(link));
 
 
     }
@@ -151,7 +144,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-                if (app.IsNetworkConnected()) {
+                if (App.IsNetworkConnected()) {
                     int lastInScreen = firstVisibleItem + visibleItemCount;
 
                     if ((lastInScreen >= totalItemCount - 6) && !(isLoading)) {
@@ -271,5 +264,75 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
             }
         }
 
+    }
+
+    public class LoadAnimeAndEpisodesTask extends AsyncTask<Void, Void, String> {
+        private Dialog busyDialog;
+        private String animeUrl;
+        private String episodesUrl;
+        private Link link;
+        private Anime anime;
+        public LoadAnimeAndEpisodesTask(Link link) {
+            this.link = link;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), getActivity());
+            animeUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").filter("AnimeId%20eq%20" + link.getAnimeId()).expand("Genres,AnimeInformations,Status,Episodes/Links,Episodes/EpisodeInformations").formatJson().build();
+        }
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                JSONObject jsonAnime = Utils.GetJson(animeUrl);
+                String errors = Utils.checkDataServiceErrors(jsonAnime, getString(R.string.error_loading_reviews));
+                if (errors != null)
+                    return errors;
+                Gson gson = new Gson();
+                anime = gson.fromJson(jsonAnime.getJSONArray("value").getJSONObject(0).toString(), Anime.class);
+                for(int i = 0; i < anime.getEpisodes().size(); i++)
+                {
+                    //Remove all episodes without a link.
+                    Episode episode = anime.getEpisodes().get(i);
+                    if(episode.getLinks() == null || episode.getLinks().size() < 1)
+                    {
+                        anime.getEpisodes().remove(i);
+                    }
+                }
+
+                return null;
+            } catch (Exception e) {
+                return getString(R.string.error_loading_reviews);
+
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            try {
+                if (error != null) {
+                    if (error.equals("401")) {
+                        Toast.makeText(getActivity(), getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
+                        getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
+                        getActivity().finish();
+                    } else {
+                        Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+                    intent.putExtra("anime", anime);
+                    intent.putExtra("episodeToPlay", link.getEpisode());
+                    startActivity(intent);
+                }
+
+            } catch (Exception e)//catch all exception, handle orientation change
+            {
+                e.printStackTrace();
+            }
+
+            DialogManager.dismissBusyDialog(busyDialog);
+        }
     }
 }

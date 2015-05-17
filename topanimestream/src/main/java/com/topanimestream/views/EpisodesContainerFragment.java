@@ -36,8 +36,8 @@ public class EpisodesContainerFragment extends Fragment {
     private ViewPager viewPager;
     private PagerAdapter mAdapter;
     private PagerSlidingTabStrip tabs;
-    private EpisodeListFragment subbedEpisodeFragment;
-    private EpisodeListFragment dubbedEpisodeFragment;
+    private OldEpisodeListFragment subbedEpisodeFragment;
+    private OldEpisodeListFragment dubbedEpisodeFragment;
     private ProviderListFragment subbedProviderFragment;
     private ProviderListFragment dubbedProviderFragment;
     private ArrayList<Mirror> mirrors;
@@ -163,11 +163,11 @@ public class EpisodesContainerFragment extends Fragment {
     }
 
     private Fragment getSubbedPagerFragment() {
-        /*
+
         String language = prefs.getString("prefLanguage", "1");
         if (!anime.isMovie()) {
             if (subbedEpisodeFragment == null)
-                subbedEpisodeFragment = EpisodeListFragment.newInstance("Subbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
+                subbedEpisodeFragment = OldEpisodeListFragment.newInstance("Subbed", anime);
             return subbedEpisodeFragment;
         } else {
             for (AnimeSource animeSource : anime.getAnimeSources()) {
@@ -181,16 +181,15 @@ public class EpisodesContainerFragment extends Fragment {
                 subbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Subbed", anime);
             return subbedProviderFragment;
 
-        }*/
-        return null;
+        }
     }
 
     private Fragment getDubbedPagerFragment() {
-        /*
+
         String language = prefs.getString("prefLanguage", "1");
         if (!anime.isMovie()) {
             if (dubbedEpisodeFragment == null)
-                dubbedEpisodeFragment = EpisodeListFragment.newInstance("Dubbed", anime.getAnimeId(), anime.getName(), anime.getDescription(getActivity()), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating()));
+                dubbedEpisodeFragment = OldEpisodeListFragment.newInstance("Dubbed", anime);
             return dubbedEpisodeFragment;
         } else {
             for (AnimeSource animeSource : anime.getAnimeSources()) {
@@ -203,8 +202,7 @@ public class EpisodesContainerFragment extends Fragment {
             if (dubbedProviderFragment == null)
                 dubbedProviderFragment = ProviderListFragment.newInstance(-1, null, "Dubbed", anime);
             return dubbedProviderFragment;
-        }*/
-        return null;
+        }
     }
 
     private void createViewPager() {

@@ -229,7 +229,7 @@ public class Mp4Manager {
                 InputStream instream = entity.getContent();
                 try {
                     JSONObject jsonObj = new JSONObject(Utils.convertStreamToString(instream));
-                    return jsonObj.getString("value");
+                    return jsonObj.getString("vdalue");
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                     return null;

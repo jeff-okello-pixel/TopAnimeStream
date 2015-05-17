@@ -148,6 +148,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         mUseFastForward = useFastForward;
         this.episodes = episodes;
         this.currentEpisode = currentEpisode;
+        this.currentSelectedLanguage = new Language(3, "Japanese", "ja");
         Log.i(TAG, TAG);
     }
 

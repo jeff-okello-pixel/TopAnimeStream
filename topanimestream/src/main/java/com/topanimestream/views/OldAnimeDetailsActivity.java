@@ -60,7 +60,7 @@ import com.topanimestream.models.Review;
 import com.topanimestream.models.Vote;
 import com.topanimestream.views.profile.LoginActivity;
 
-public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
+public class OldAnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
     private ListView listViewEpisodes;
     private ArrayList<Episode> episodes;
     public ArrayList<String> mItems;
@@ -71,7 +71,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     private Resources r;
     private SharedPreferences prefs;
     private SQLiteHelper db;
-    private EpisodeListFragment episodeListFragment;
+    private EpisodesContainerFragment episodeContainerFragment;
     private MovieVkFragment movieVkFragment;
     private AlertDialog qualityDialog;
     private VideoCastConsumerImpl mCastConsumer;
@@ -135,18 +135,11 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
 
-        if(!anime.isMovie()) {
-            episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
-            if (episodeListFragment == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                //ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
-                ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime), "episodeListFragment");
-                ft.commit();
-            }
-        }
-        else
-        {
-            //TODO create fragment for the movie
+        episodeContainerFragment = (EpisodesContainerFragment) fm.findFragmentByTag("episodeContainerFragment");
+        if (episodeContainerFragment == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(layEpisodes.getId(), EpisodesContainerFragment.newInstance(anime), "episodeContainerFragment");
+            ft.commit();
         }
 
 
@@ -253,7 +246,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                 };
 
 
-                new AlertDialog.Builder(AnimeDetailsActivity.this)
+                new AlertDialog.Builder(OldAnimeDetailsActivity.this)
                         .setTitle(getString(R.string.choose_option))
                         .setAdapter(adapter, new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int item) {
@@ -263,7 +256,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                 } else if (selectedItem.equals(getString(R.string.remove_favorite))) {
                                     AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
                                 } else if (selectedItem.equals(getString(R.string.add_vote))) {
-                                    final Dialog dialogVote = new Dialog(AnimeDetailsActivity.this);
+                                    final Dialog dialogVote = new Dialog(OldAnimeDetailsActivity.this);
                                     dialogVote.setContentView(R.layout.vote_dialog);
                                     dialogVote.setTitle(getString(R.string.vote));
                                     RatingBar rtbCurrentRating = (RatingBar) dialogVote.findViewById(R.id.rtbCurrentRating);
@@ -300,20 +293,16 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                                                     switch (which){
                                                         case DialogInterface.BUTTON_POSITIVE:
                                                             AsyncTaskTools.execute(new RemoveVoteTask());
-                                                            dialog.dismiss();
-                                                            dialogVote.dismiss();
-
                                                             break;
 
                                                         case DialogInterface.BUTTON_NEGATIVE:
                                                             dialog.dismiss();
-                                                            dialogVote.dismiss();
                                                             break;
                                                     }
                                                 }
                                             };
 
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(AnimeDetailsActivity.this);
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(OldAnimeDetailsActivity.this);
                                             builder.setMessage(getString(R.string.really_sure_delete_vote)).setPositiveButton(getString(R.string.yes), dialogClickListener)
                                                     .setNegativeButton(getString(R.string.no), dialogClickListener).show();
 
@@ -331,7 +320,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
                                     dialogVote.show();
                                 } else if (selectedItem.equals(getString(R.string.reviews))) {
-                                    Intent intent = new Intent(AnimeDetailsActivity.this, ReviewsActivity.class);
+                                    Intent intent = new Intent(OldAnimeDetailsActivity.this, ReviewsActivity.class);
                                     intent.putExtra("currentUserReview", currentUserReview);
                                     intent.putExtra("animeId", anime.getAnimeId());
                                     startActivity(intent);
@@ -353,10 +342,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
         private String method = "RemoveVote";
         private String URL;
-
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.removing_vote), OldAnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -389,10 +377,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         protected void onPostExecute(String result) {
             try {
                 if (result == null) {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_removing_vote), Toast.LENGTH_LONG).show();
+                    Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.error_removing_vote), Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_removed), Toast.LENGTH_LONG).show();
-                    currentUserVote = null;
+                    Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.vote_removed), Toast.LENGTH_LONG).show();
                     AsyncTaskTools.execute(new AnimeDetailsTask(true));
                 }
 
@@ -419,7 +406,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         private String method = "Vote";
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_vote), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_vote), OldAnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -453,9 +440,9 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         protected void onPostExecute(String result) {
             try {
                 if (result == null) {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_adding_vote), Toast.LENGTH_LONG).show();
+                    Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.error_adding_vote), Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_added), Toast.LENGTH_LONG).show();
+                    Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.vote_added), Toast.LENGTH_LONG).show();
                     AsyncTaskTools.execute(new AnimeDetailsTask(true));
                 }
 
@@ -483,7 +470,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_from_favorites), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_from_favorites), OldAnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -518,10 +505,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         protected void onPostExecute(String error) {
             DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
-                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(OldAnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 isFavorite = false;
-                Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OldAnimeDetailsActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -540,7 +527,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_to_favorites), AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_to_favorites), OldAnimeDetailsActivity.this);
             URL = getString(R.string.anime_service_path);
         }
 
@@ -575,10 +562,10 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         protected void onPostExecute(String error) {
             DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
-                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(OldAnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 isFavorite = true;
-                Toast.makeText(AnimeDetailsActivity.this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OldAnimeDetailsActivity.this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -599,8 +586,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AnimeDetailsActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime_details), OldAnimeDetailsActivity.this);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(OldAnimeDetailsActivity.this);
             isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
@@ -659,6 +646,8 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
                     if (errors != null)
                         return errors;
                     anime = gson.fromJson(jsonAnime.toString(), Anime.class);
+                    if (animeDetailsFragment != null)
+                        animeDetailsFragment.setAnime(anime);
                 }
                 return null;
 
@@ -672,19 +661,11 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         protected void onPostExecute(String error) {
             if (error != null) {
                 if (error.equals("401")) {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                    AnimeDetailsActivity.this.startActivity(new Intent(AnimeDetailsActivity.this, LoginActivity.class));
-                    AnimeDetailsActivity.this.finish();
+                    Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
+                    OldAnimeDetailsActivity.this.startActivity(new Intent(OldAnimeDetailsActivity.this, LoginActivity.class));
+                    OldAnimeDetailsActivity.this.finish();
                 } else {
-                    Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-                }
-            }
-            else
-            {
-                if(isReload)
-                {
-                    if (animeDetailsFragment != null)
-                        animeDetailsFragment.setAnime(anime);
+                    Toast.makeText(OldAnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
             DialogManager.dismissBusyDialog(busyDialog);

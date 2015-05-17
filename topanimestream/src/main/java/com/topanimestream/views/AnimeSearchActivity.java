@@ -155,12 +155,26 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
         Anime anime = animes.get(position);
-        animeId = anime.getAnimeId();
-        Intent intent = new Intent(this, AnimeDetailsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("Anime", anime);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        //HD
+        if(anime.getLinks() != null && anime.getLinks().size() > 0) {
+            animeId = anime.getAnimeId();
+
+            Intent intent = new Intent(this, AnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", anime);
+            intent.putExtras(bundle);
+            startActivity(intent);
+
+        }
+        else
+        {
+            Intent intent = new Intent(this, OldAnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", anime);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+        AnimationManager.ActivityStart(this);
 
     }
 
@@ -192,7 +206,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 
         protected void onPreExecute() {
             try {
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations").build();
+                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations,Links").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").build();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

@@ -6,8 +6,8 @@ import android.os.Parcelable;
 import org.json.JSONObject;
 
 public class Provider implements Parcelable {
-    private int providerId;
-    private String name;
+    private int ProviderId;
+    private String Name;
 
     public Provider() {
         super();
@@ -15,37 +15,37 @@ public class Provider implements Parcelable {
 
     public Provider(JSONObject jsonProvider) {
         try {
-            this.providerId = !jsonProvider.isNull("ProviderId") ? jsonProvider.getInt("ProviderId") : 0;
-            this.name = !jsonProvider.isNull("Name") ? jsonProvider.getString("Name") : null;
+            this.ProviderId = !jsonProvider.isNull("ProviderId") ? jsonProvider.getInt("ProviderId") : 0;
+            this.Name = !jsonProvider.isNull("Name") ? jsonProvider.getString("Name") : null;
         } catch (Exception e) {
         }
     }
 
     public Provider(int providerId, String name) {
         super();
-        this.providerId = providerId;
-        this.name = name;
+        this.ProviderId = providerId;
+        this.Name = name;
     }
 
     public Provider(Parcel in) {
-        providerId = in.readInt();
-        name = in.readString();
+        ProviderId = in.readInt();
+        Name = in.readString();
     }
 
     public int getProviderId() {
-        return providerId;
+        return ProviderId;
     }
 
     public void setProviderId(int providerId) {
-        this.providerId = providerId;
+        this.ProviderId = providerId;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class Provider implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(providerId);
-        dest.writeString(name);
+        dest.writeInt(ProviderId);
+        dest.writeString(Name);
     }
 
     public static final Creator<Provider> CREATOR = new Creator<Provider>() {

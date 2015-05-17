@@ -11,11 +11,11 @@ public class Mirror implements Parcelable {
     private int AnimeSourceId;
     private int PartNumber;
     private String AddedDate;
-    private String source;
+    private String Source;
     private int ReportCount;
     private boolean IsVisible;
     private com.topanimestream.models.AnimeSource AnimeSource;
-    private Provider provider;
+    private Provider Provider;
 
     public Mirror() {
         super();
@@ -27,20 +27,20 @@ public class Mirror implements Parcelable {
         AnimeSourceId = animeSourceId;
         PartNumber = partNumber;
         AddedDate = addedDate;
-        this.source = source;
+        this.Source = source;
         ReportCount = reportCount;
         IsVisible = isVisible;
         AnimeSource = animeSource;
-        this.provider = provider;
+        this.Provider = provider;
     }
 
     public Mirror(Vk vk) {
         this.EpisodeId = vk.getEpisodeId();
         this.AnimeSourceId = vk.getAnimeSourceId();
         this.AddedDate = vk.getAddedDate();
-        this.source = vk.getSource();
+        this.Source = vk.getSource();
         this.AnimeSource = vk.getAnimeSource();
-        this.provider = new Provider(70, "vk");
+        this.Provider = new Provider(70, "vk");
     }
 
     public Mirror(JSONObject jsonMirror) {
@@ -48,12 +48,12 @@ public class Mirror implements Parcelable {
             if (!jsonMirror.isNull("AnimeSource"))
                 this.AnimeSource = new com.topanimestream.models.AnimeSource(jsonMirror.getJSONObject("AnimeSource"));
             if (!jsonMirror.isNull("Provider"))
-                this.provider = new Provider(jsonMirror.getJSONObject("Provider"));
+                this.Provider = new Provider(jsonMirror.getJSONObject("Provider"));
             this.MirrorId = !jsonMirror.isNull("MirrorId") ? jsonMirror.getInt("MirrorId") : 0;
             this.EpisodeId = !jsonMirror.isNull("EpisodeId") ? jsonMirror.getInt("EpisodeId") : 0;
             this.AnimeSourceId = !jsonMirror.isNull("AnimeSourceId") ? jsonMirror.getInt("AnimeSourceId") : 0;
             this.AddedDate = !jsonMirror.isNull("AddedDate") ? jsonMirror.getString("AddedDate") : null;
-            this.source = !jsonMirror.isNull("Source") ? jsonMirror.getString("Source") : null;
+            this.Source = !jsonMirror.isNull("Source") ? jsonMirror.getString("Source") : null;
             this.ReportCount = !jsonMirror.isNull("ReportCount") ? jsonMirror.getInt("ReportCount") : null;
             this.IsVisible = !jsonMirror.isNull("IsVisible") ? jsonMirror.getBoolean("IsVisible") : null;
         } catch (Exception e) {
@@ -63,13 +63,13 @@ public class Mirror implements Parcelable {
 
     public Mirror(Parcel in) {
         AnimeSource = (com.topanimestream.models.AnimeSource) in.readParcelable(com.topanimestream.models.AnimeSource.class.getClassLoader());
-        provider = (Provider) in.readParcelable(Provider.class.getClassLoader());
+        Provider = (Provider) in.readParcelable(Provider.class.getClassLoader());
         MirrorId = in.readInt();
         EpisodeId = in.readInt();
         AnimeSourceId = in.readInt();
         PartNumber = in.readInt();
         AddedDate = in.readString();
-        source = in.readString();
+        Source = in.readString();
         ReportCount = in.readInt();
         IsVisible = in.readByte() != 0;
     }
@@ -91,11 +91,11 @@ public class Mirror implements Parcelable {
     }
 
     public Provider getProvider() {
-        return provider;
+        return Provider;
     }
 
     public void setProvider(Provider provider) {
-        this.provider = provider;
+        this.Provider = provider;
     }
 
     public com.topanimestream.models.AnimeSource getAnimeSource() {
@@ -139,11 +139,11 @@ public class Mirror implements Parcelable {
     }
 
     public String getSource() {
-        return source;
+        return Source;
     }
 
     public void setSource(String source) {
-        this.source = source;
+        this.Source = source;
     }
 
     @Override
@@ -153,13 +153,13 @@ public class Mirror implements Parcelable {
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(AnimeSource, flags);
-        dest.writeParcelable(provider, flags);
+        dest.writeParcelable(Provider, flags);
         dest.writeInt(MirrorId);
         dest.writeInt(EpisodeId);
         dest.writeInt(AnimeSourceId);
         dest.writeInt(PartNumber);
         dest.writeString(AddedDate);
-        dest.writeString(source);
+        dest.writeString(Source);
         dest.writeInt(ReportCount);
         dest.writeByte((byte) (IsVisible ? 1 : 0));
     }

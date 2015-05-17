@@ -25,6 +25,7 @@ public class VideoActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_video);

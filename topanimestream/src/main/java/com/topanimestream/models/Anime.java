@@ -37,6 +37,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private ArrayList<Genre> Genres;
     private ArrayList<AnimeInformation> AnimeInformations;
     private ArrayList<AnimeSource> AnimeSources;
+    private ArrayList<Link> Links;
     private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
     private ArrayList<Theme> Themes;
     private int Order;
@@ -81,6 +82,13 @@ public class Anime implements Parcelable, Comparator<Anime> {
         if (parcelableAnimeSourceArray != null) {
             resultAnimeSourceArray = Arrays.copyOf(parcelableAnimeSourceArray, parcelableAnimeSourceArray.length, AnimeSource[].class);
             AnimeSources = new ArrayList<AnimeSource>(Arrays.asList(resultAnimeSourceArray));
+        }
+
+        Parcelable[] parcelableLinkArray = in.readParcelableArray(Link.class.getClassLoader());
+        Link[] resultLinkArray = null;
+        if (parcelableLinkArray != null) {
+            resultLinkArray = Arrays.copyOf(parcelableLinkArray, parcelableLinkArray.length, Link[].class);
+            Links = new ArrayList<Link>(Arrays.asList(resultLinkArray));
         }
 
         AnimeId = in.readInt();
@@ -159,6 +167,14 @@ public class Anime implements Parcelable, Comparator<Anime> {
         } catch (JSONException e) {
 
         }
+    }
+
+    public ArrayList<Link> getLinks() {
+        return Links;
+    }
+
+    public void setLinks(ArrayList<Link> links) {
+        Links = links;
     }
 
     public int getOrder() {
@@ -463,6 +479,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
             Themes = new ArrayList<Theme>();
         if (AnimeSources == null)
             AnimeSources = new ArrayList<AnimeSource>();
+        if(Links == null)
+            Links = new ArrayList<Link>();
 
         Parcelable[] parcelableEpisodeArray = new Parcelable[Episodes.size()];
         dest.writeParcelableArray(Episodes.toArray(parcelableEpisodeArray), flags);
@@ -478,6 +496,10 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
         Parcelable[] parcelableAnimeSourceArray = new Parcelable[AnimeSources.size()];
         dest.writeParcelableArray(AnimeSources.toArray(parcelableAnimeSourceArray), flags);
+
+        Parcelable[] parcelableLinkArray = new Parcelable[Links.size()];
+        dest.writeParcelableArray(Links.toArray(parcelableLinkArray), flags);
+
 
         dest.writeInt(AnimeId);
         dest.writeString(Description);

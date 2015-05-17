@@ -13,8 +13,9 @@ android {
 
     buildTypes {
         release {
+            /*TODO make a proguar file
             minifyEnabled true
-            shrinkResources true
+            shrinkResources true*/
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

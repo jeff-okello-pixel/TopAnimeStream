@@ -4,6 +4,7 @@
     xmlns:ap="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
     <LinearLayout
         android:id="@+id/layChromeCast"
         android:orientation="vertical"
@@ -26,6 +27,7 @@
             ap:canShowMR="false"/>
     </LinearLayout>
     <LinearLayout
+        android:layout_below="@id/toolbar"
         android:layout_above="@id/layChromeCast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

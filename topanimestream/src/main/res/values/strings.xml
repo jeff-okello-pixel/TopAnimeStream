@@ -88,7 +88,7 @@
         <item>Upgrade to pro</item>
     </string-array>
     <string-array name="menu_drawer_full">
-        <item>My profile</item>
+        <!--<item>My profile</item>-->
         <item>Favorites</item>
         <item>Watchlist</item>
         <item>Share</item>
@@ -300,4 +300,5 @@
     <string name="disabled">disabled</string>
     <string name="check_for_updates">Check for updates</string>
     <string name="last_check">Last check</string>
+    <string name="loading_anime">Loading the anime</string>
 </resources>

@@ -118,12 +118,29 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     {
         try {
             return player.getCurrentPosition();
-        }catch(IllegalStateException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
 
         return 0;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        checkForSubtitle = false;
+        if(player != null)
+        {
+            try {
+                player.stop();
+                player.release();
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
     protected void checkSubs() {
         if(mSubs != null) {
             Collection<Caption> subtitles = mSubs.captions.values();
@@ -490,7 +507,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
             return player.getCurrentPosition();
         }
-        catch(IllegalStateException e){
+        catch(Exception e){
             return 0;
         }
 
@@ -505,7 +522,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
             return player.getDuration();
         }
-        catch(IllegalStateException e){
+        catch(Exception e){
             return 0;
         }
 
@@ -514,22 +531,31 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public boolean isPlaying() {
-        return player.isPlaying();
+        try {
+            return player.isPlaying();
+        }catch(Exception e){}
+        return false;
     }
 
     @Override
     public void pause() {
+        try {
         player.pause();
+        }catch(Exception e){}
     }
 
     @Override
     public void seekTo(int i) {
+        try {
         player.seekTo(i);
+        }catch(Exception e){}
     }
 
     @Override
     public void start() {
+        try {
         player.start();
+        }catch(Exception e){}
     }
 
     @Override

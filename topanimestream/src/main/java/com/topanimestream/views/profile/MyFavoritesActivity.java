@@ -45,6 +45,7 @@ import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.AnimeDetailsActivity;
+import com.topanimestream.views.OldAnimeDetailsActivity;
 
 public class MyFavoritesActivity extends ActionBarActivity implements OnItemClickListener {
     private DragSortListView listView;
@@ -153,7 +154,7 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
                             long id) {
         Anime anime = animes.get(position);
         animeId = anime.getAnimeId();
-        Intent intent = new Intent(this, AnimeDetailsActivity.class);
+        Intent intent = new Intent(this, OldAnimeDetailsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Anime", anime);
         intent.putExtras(bundle);
