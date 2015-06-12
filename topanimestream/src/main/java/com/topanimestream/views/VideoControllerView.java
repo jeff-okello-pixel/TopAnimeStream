@@ -235,7 +235,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                                             mLeftDrawerScroll = false;
 
                                         }
-                                    }, 500);
+                                    }, 200);
 
                                 }
                             }
@@ -524,7 +524,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                     public void run() {
                         mShowMenuSlide = false;
                     }
-                }, 500);
+                }, 200);
 
             }
             mDrawerToggle.onDrawerSlide(drawerView, slideOffset);

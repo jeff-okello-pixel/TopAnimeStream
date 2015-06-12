@@ -216,12 +216,12 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
             listView.setAdapter(null);
         }
 
-        ;
-
         @Override
         protected String doInBackground(Void... params) {
 
             JSONObject json = Utils.GetJson(URL);
+            if(json == null)
+                return null;
             if (!json.isNull("error")) {
                 try {
                     int error = json.getInt("error");

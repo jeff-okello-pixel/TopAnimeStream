@@ -64,11 +64,12 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
         holder.imgScreenshot.setImageResource(android.R.color.transparent);
         App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + episode.getScreenshotHD(), App.ImageSize.w300.getValue()), holder.imgScreenshot);
         holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + episode.getEpisodeNumber());
-
-        Timestamp timeStamp = Timestamp.valueOf(episode.getAiredDate().replace("T", " "));
-        long now = System.currentTimeMillis();
-        long addedDate = timeStamp.getTime();
-        holder.txtAiredDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+        if(episode.getAiredDate() != null) {
+            Timestamp timeStamp = Timestamp.valueOf(episode.getAiredDate().replace("T", " "));
+            long now = System.currentTimeMillis();
+            long addedDate = timeStamp.getTime();
+            holder.txtAiredDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+        }
 
 
 
