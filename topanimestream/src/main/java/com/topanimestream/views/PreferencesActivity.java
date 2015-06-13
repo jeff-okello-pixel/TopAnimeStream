@@ -18,10 +18,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.PreferencesListAdapter;
 import com.topanimestream.dialogfragments.ColorPickerDialogFragment;
@@ -77,7 +79,7 @@ public class PreferencesActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.menu_settings));
 
-        //ToolbarUtils.updateToolbarHeight(this, toolbar);
+        ToolbarUtils.updateToolbarHeight(this, toolbar);
 
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -87,6 +89,15 @@ public class PreferencesActivity extends AppCompatActivity
         refreshItems();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onDestroy() {
@@ -103,10 +114,10 @@ public class PreferencesActivity extends AppCompatActivity
                     @Override
                     public void onClick(final PrefItem item) {
                         int currentPosition = 0;
-                        String currentValue = item.getValue().toString();
+                        String currentValue = Utils.ToLanguageStringDisplay(String.valueOf(item.getValue()));
 
                         final String[] languages = getResources().getStringArray(R.array.languages);
-
+                        currentPosition = Arrays.asList(languages).indexOf(currentValue);
                         openListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -115,7 +126,8 @@ public class PreferencesActivity extends AppCompatActivity
                                         item.saveValue(Utils.ToLanguageId(languages[position]));
 
                                         dialog.dismiss();
-
+                                        App.setLocale();
+                                        App.languageChanged = true;
                                         Utils.restartActivity(PreferencesActivity.this);
                                     }
                                 });

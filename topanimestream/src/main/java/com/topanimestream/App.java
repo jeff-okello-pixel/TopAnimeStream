@@ -14,8 +14,10 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.Locale;
 
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.NetworkChangeReceiver;
 import com.topanimestream.utilities.NetworkUtil;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 
 public class App extends Application implements NetworkChangeReceiver.NetworkEvent {
@@ -92,18 +94,16 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
 
     }
 
-    public void setLocale() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Configuration config = getBaseContext().getResources().getConfiguration();
+    public static void setLocale() {
+        Configuration config = getContext().getResources().getConfiguration();
         Configuration configMirror = new Configuration(config);
 
-        String lang = settings.getString("prefLanguage", "1");
-        boolean shouldSetLanguage = settings.getBoolean("shouldSetLanguage", true);
+        String lang = PrefUtils.get(getContext(), Prefs.LOCALE, "1");
+        boolean shouldSetLanguage = PrefUtils.get(getContext(), Prefs.SHOULD_SET_LANGUAGE, true);
         if (!App.isGooglePlayVersion && shouldSetLanguage) {
-            settings.edit().remove("prefLanguage").apply();
+            PrefUtils.remove(getContext(), Prefs.LOCALE);
             lang = Utils.ToLanguageString(phoneLanguage);
-            settings.edit().putBoolean("shouldSetLanguage", false).apply();
+            PrefUtils.save(getContext(), Prefs.SHOULD_SET_LANGUAGE, false);
         } else if (!App.isGooglePlayVersion)
             lang = Utils.ToLanguageString(lang);
         else {
@@ -115,7 +115,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
             locale = new Locale(lang);
             Locale.setDefault(locale);
             configMirror.locale = locale;
-            getBaseContext().getResources().updateConfiguration(configMirror, getBaseContext().getResources().getDisplayMetrics());
+            getContext().getResources().updateConfiguration(configMirror, getContext().getResources().getDisplayMetrics());
         }
     }
 

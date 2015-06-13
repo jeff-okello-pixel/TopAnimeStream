@@ -13,4 +13,5 @@ public class Prefs {
     public static final String DRAWER_LEARNED = "drawer_learned";
     public static final String AUTO_CHECK_UPDATE = "auto_check_update";
     public static final String LAST_CHECK_FOR_UPDATE = "last_check_for_update";
+    public static final String SHOULD_SET_LANGUAGE = "shouldSetLanguage";
 }

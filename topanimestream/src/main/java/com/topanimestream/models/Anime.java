@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.R;
 
@@ -198,15 +200,14 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public AnimeInformation getAnimeInformation(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        for (AnimeInformation info : this.AnimeInformations) {
-            if (App.isGooglePlayVersion) {
-                if (String.valueOf(info.getLanguageId()).equals(App.phoneLanguage))
-                    return info;
-            } else {
-                if (String.valueOf(info.getLanguageId()).equals(prefs.getString("prefLanguage", "1")))
-                    return info;
-            }
+            for (AnimeInformation info : this.AnimeInformations) {
+                if (App.isGooglePlayVersion) {
+                    if (String.valueOf(info.getLanguageId()).equals(App.phoneLanguage))
+                        return info;
+                } else {
+                    if (String.valueOf(info.getLanguageId()).equals(PrefUtils.get(App.getContext(), Prefs.LOCALE, "1")))
+                        return info;
+                }
         }
 
         return null;
@@ -280,8 +281,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public String getDescription(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String language = prefs.getString("prefLanguage", "1");
+        String language = PrefUtils.get(App.getContext(),Prefs.LOCALE,"1");
         for (AnimeInformation animeInfo : this.getAnimeInformations()) {
             if (App.isGooglePlayVersion) {
                 if (String.valueOf(animeInfo.getLanguageId()).equals(App.phoneLanguage)) {
@@ -319,10 +319,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public String getGenresFormatted() {
-        Context context = App.getContext();
         ArrayList<String> translatedGenres = new ArrayList<String>();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String language = prefs.getString("prefLanguage", "1");
+        String language = PrefUtils.get(App.getContext(),Prefs.LOCALE, "1");
 
         for (Genre genre : this.Genres) {
             if (!language.equals("1")) {

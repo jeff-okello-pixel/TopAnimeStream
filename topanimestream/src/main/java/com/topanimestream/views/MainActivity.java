@@ -68,8 +68,10 @@ import java.util.Locale;
 
 import com.topanimestream.App;
 import com.topanimestream.managers.AppRaterManager;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.NetworkUtil;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -243,12 +245,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             //actionBar.setHomeButtonEnabled(false);
         }
 
-
-        /*
-        Editor editor = prefs.edit();
-        editor.clear();
-        editor.commit();*/
-        String languageId = prefs.getString("prefLanguage", "0");
+        String languageId = PrefUtils.get(this, Prefs.LOCALE, "0");
         if (languageId.equals("0") && !App.isGooglePlayVersion) {
             CharSequence[] items = null;
             if (App.phoneLanguage.equals("1"))
@@ -262,20 +259,18 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             alertBuilder.setTitle(r.getString(R.string.title_alert_languages));
             alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
-                    Editor editor = prefs.edit();
                     switch (item) {
                         case 0:
-                            editor.putString("prefLanguage", "1");
+                            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "1");
                             break;
                         case 1:
-                            editor.putString("prefLanguage", "2");
+                            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "2");
                             break;
                         case 2:
-                            editor.putString("prefLanguage", "4");
+                            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "4");
                             break;
                     }
-                    editor.commit();
-                    app.setLocale();
+                    App.setLocale();
                     Utils.restartActivity(MainActivity.this);
                 }
             });
@@ -288,12 +283,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 public boolean onKey(DialogInterface arg0, int keyCode,
                                      KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        Editor editor = prefs.edit();
-                        editor.putString("prefLanguage", App.phoneLanguage);
-                        editor.commit();
+                        PrefUtils.save(MainActivity.this, Prefs.LOCALE, App.phoneLanguage);
                         alertLanguages.dismiss();
                         SetViewPager();
-                        app.setLocale();
+                        App.setLocale();
                         Utils.restartActivity(MainActivity.this);
                     }
                     return true;
@@ -305,9 +298,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             } catch (Exception e) {
             }
         } else if (App.isGooglePlayVersion) {
-            Editor editor = prefs.edit();
-            editor.putString("prefLanguage", "4");
-            editor.commit();
+            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "4");
             SetViewPager();
         } else {
             SetViewPager();
@@ -711,7 +702,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
         } else if (menuItem.equals(getString(R.string.menu_settings))) {
-            startActivity(new Intent(MainActivity.this, Settings.class));
+            startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
             AnimationManager.ActivityStart(this);
         } else if (menuItem.equals(getString(R.string.menu_logout))) {
             AsyncTaskTools.execute(new LogoutTask());
