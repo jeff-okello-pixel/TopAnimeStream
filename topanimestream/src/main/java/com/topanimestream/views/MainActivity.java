@@ -245,8 +245,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             //actionBar.setHomeButtonEnabled(false);
         }
 
-        String languageId = PrefUtils.get(this, Prefs.LOCALE, "0");
-        if (languageId.equals("0") && !App.isGooglePlayVersion) {
+        if (App.currentLanguageId.equals("0") && !App.isGooglePlayVersion) {
             CharSequence[] items = null;
             if (App.phoneLanguage.equals("1"))
                 items = new CharSequence[]{getString(R.string.language_english) + " " + getString(R.string.parenthese_default), getString(R.string.language_french), getString(R.string.language_spanish)};

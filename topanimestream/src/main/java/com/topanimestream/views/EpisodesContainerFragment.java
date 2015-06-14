@@ -25,6 +25,8 @@ import com.topanimestream.models.AnimeSource;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
+import com.topanimestream.preferences.Prefs;
+import com.topanimestream.utilities.PrefUtils;
 
 public class EpisodesContainerFragment extends Fragment {
 
@@ -164,14 +166,13 @@ public class EpisodesContainerFragment extends Fragment {
 
     private Fragment getSubbedPagerFragment() {
 
-        String language = prefs.getString("prefLanguage", "1");
         if (!anime.isMovie()) {
             if (subbedEpisodeFragment == null)
                 subbedEpisodeFragment = OldEpisodeListFragment.newInstance("Subbed", anime);
             return subbedEpisodeFragment;
         } else {
             for (AnimeSource animeSource : anime.getAnimeSources()) {
-                if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed()) {
+                if (String.valueOf(animeSource.getLanguageId()).equals(App.currentLanguageId) && animeSource.isSubbed()) {
                     if (subbedProviderFragment == null)
                         subbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Subbed", anime);
                     return subbedProviderFragment;
@@ -185,15 +186,13 @@ public class EpisodesContainerFragment extends Fragment {
     }
 
     private Fragment getDubbedPagerFragment() {
-
-        String language = prefs.getString("prefLanguage", "1");
         if (!anime.isMovie()) {
             if (dubbedEpisodeFragment == null)
                 dubbedEpisodeFragment = OldEpisodeListFragment.newInstance("Dubbed", anime);
             return dubbedEpisodeFragment;
         } else {
             for (AnimeSource animeSource : anime.getAnimeSources()) {
-                if (String.valueOf(animeSource.getLanguageId()).equals(language) && !animeSource.isSubbed()) {
+                if (String.valueOf(animeSource.getLanguageId()).equals(App.currentLanguageId) && !animeSource.isSubbed()) {
                     if (dubbedProviderFragment == null)
                         dubbedProviderFragment = ProviderListFragment.newInstance(animeSource.getAnimeSourceId(), null, "Dubbed", anime);
                     return dubbedProviderFragment;

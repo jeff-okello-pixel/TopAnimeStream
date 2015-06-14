@@ -42,6 +42,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
             ViewGroup parent = (ViewGroup) lv.getParent();
             if (parent != null) {
                 parent.setPadding(0, 0, 0, 0);
+                parent.setPadding(0, 0, 0, 0);
             }
         }
         SetSummary();

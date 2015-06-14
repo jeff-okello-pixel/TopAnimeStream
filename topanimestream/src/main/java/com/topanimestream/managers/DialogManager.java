@@ -16,6 +16,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.R;
 
@@ -243,8 +245,7 @@ public class DialogManager {
     }
 
     public static void ShowChromecastNotPremiumErrorDialog(final Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
-        final String language = Utils.ToLanguageString(prefs.getString("prefLanguage", "1"));
+        final String language = Utils.ToLanguageString(PrefUtils.get(App.getContext(), Prefs.LOCALE, "1"));
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.premium_account_needed));
         //builder.setIcon(R.drawable.icon);

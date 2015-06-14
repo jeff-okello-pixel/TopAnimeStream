@@ -35,7 +35,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import com.topanimestream.App;
 import com.topanimestream.managers.DialogManager;
+import com.topanimestream.preferences.Prefs;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.AnimeListAdapter;
@@ -206,7 +209,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 
         protected void onPreExecute() {
             try {
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + ")").expand("AnimeSources,Genres,AnimeInformations,Links").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").build();
+                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + PrefUtils.get(App.getContext(), Prefs.LOCALE, "1") + ")").expand("AnimeSources,Genres,AnimeInformations,Links").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").build();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

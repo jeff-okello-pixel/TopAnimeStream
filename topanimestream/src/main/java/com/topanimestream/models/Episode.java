@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
+import com.topanimestream.utilities.PrefUtils;
 
 public class Episode implements Parcelable, Comparator<Episode> {
     private int AnimeId;
@@ -155,10 +157,9 @@ public class Episode implements Parcelable, Comparator<Episode> {
         if(this.EpisodeInformations == null || this.EpisodeInformations.size() < 1)
             return null;
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         for(EpisodeInformations info: this.EpisodeInformations)
         {
-            if (String.valueOf(info.getLanguageId()).equals(prefs.getString("prefLanguage", "1"))) {
+            if (String.valueOf(info.getLanguageId()).equals(PrefUtils.get(App.getContext(), Prefs.LOCALE, "1"))) {
                 return info;
             }
         }

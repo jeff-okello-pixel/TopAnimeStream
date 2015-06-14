@@ -35,6 +35,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static VideoCastManager mCastMgr = null;
     public static String phoneLanguage;
     public static int sdkVersion;
+    public static String currentLanguageId;
     public static Context getContext() {
         return context;
     }
@@ -99,6 +100,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         Configuration configMirror = new Configuration(config);
 
         String lang = PrefUtils.get(getContext(), Prefs.LOCALE, "1");
+        currentLanguageId = lang;
         boolean shouldSetLanguage = PrefUtils.get(getContext(), Prefs.SHOULD_SET_LANGUAGE, true);
         if (!App.isGooglePlayVersion && shouldSetLanguage) {
             PrefUtils.remove(getContext(), Prefs.LOCALE);

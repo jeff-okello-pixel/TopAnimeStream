@@ -205,7 +205,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
                     if (String.valueOf(info.getLanguageId()).equals(App.phoneLanguage))
                         return info;
                 } else {
-                    if (String.valueOf(info.getLanguageId()).equals(PrefUtils.get(App.getContext(), Prefs.LOCALE, "1")))
+                    if (String.valueOf(info.getLanguageId()).equals(App.currentLanguageId))
                         return info;
                 }
         }
@@ -281,7 +281,6 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public String getDescription(Context context) {
-        String language = PrefUtils.get(App.getContext(),Prefs.LOCALE,"1");
         for (AnimeInformation animeInfo : this.getAnimeInformations()) {
             if (App.isGooglePlayVersion) {
                 if (String.valueOf(animeInfo.getLanguageId()).equals(App.phoneLanguage)) {
@@ -293,7 +292,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
                         return "";
                 }
             } else {
-                if (String.valueOf(animeInfo.getLanguageId()).equals(language)) {
+                if (String.valueOf(animeInfo.getLanguageId()).equals(App.currentLanguageId)) {
                     if (animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
                         return animeInfo.getOverview().trim();
                     else if (animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
@@ -320,10 +319,9 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
     public String getGenresFormatted() {
         ArrayList<String> translatedGenres = new ArrayList<String>();
-        String language = PrefUtils.get(App.getContext(),Prefs.LOCALE, "1");
 
         for (Genre genre : this.Genres) {
-            if (!language.equals("1")) {
+            if (!App.currentLanguageId.equals("1")) {
                 if (App.isGooglePlayVersion && App.phoneLanguage.equals("1")) {
                     translatedGenres.add(genre.getName());
                 } else {

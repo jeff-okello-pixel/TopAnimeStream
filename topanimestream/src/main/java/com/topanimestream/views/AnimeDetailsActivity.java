@@ -132,7 +132,6 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
 
-        String language = prefs.getString("prefLanguage", "1");
         FragmentManager fm = getSupportFragmentManager();
 
         if(!anime.isMovie()) {
