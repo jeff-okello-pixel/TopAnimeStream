@@ -64,4 +64,17 @@
         <item>@string/thriller</item>
         <item>@string/tournament</item>
     </string-array>
+    <string-array name="qualitiesArray" tools:ignore="MissingTranslation">
+        <item>360p</item>
+        <item>720p</item>
+        <item>1080p</item>
+    </string-array>
+    <string-array name="videoLanguagesArray">
+        <item name="English">English</item>
+        <item name="Japanese">Japanese</item>
+    </string-array>
+    <string-array name="videoLanguagesArrayValues" tools:ignore="MissingTranslation">
+        <item name="English">1</item>
+        <item name="Japanese">3</item>
+    </string-array>
 </resources>

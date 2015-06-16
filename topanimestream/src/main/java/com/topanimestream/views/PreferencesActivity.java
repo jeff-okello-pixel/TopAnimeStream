@@ -143,7 +143,74 @@ public class PreferencesActivity extends AppCompatActivity
                 }));
 
 
+        mPrefItems.add(getString(R.string.videos));
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_hdtv, R.string.preferred_quality, Prefs.PREFERRED_VIDEO_QUALITY, "1080p",
+                new PrefItem.OnClickListener() {
+                    @Override
+                    public void onClick(final PrefItem item) {
+                        int currentPosition = 0;
+                        String currentValue = item.getValue().toString();
 
+                        final String[] qualities = getResources().getStringArray(R.array.qualitiesArray);
+                        currentPosition = Arrays.asList(qualities).indexOf(currentValue);
+                        openListSelectionDialog(item.getTitle(), qualities, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int position) {
+
+                                        item.saveValue(qualities[position]);
+                                        dialog.dismiss();
+                                    }
+                                });
+                    }
+                },
+                new PrefItem.SubTitleGenerator() {
+                    @Override
+                    public String get(PrefItem item) {
+                        return item.getValue().toString();
+
+                    }
+                }));
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_language_black, R.string.preferred_language, Prefs.PREFERRED_VIDEO_LANGUAGE, "3",
+                new PrefItem.OnClickListener() {
+                    @Override
+                    public void onClick(final PrefItem item) {
+                        int currentPosition = 0;
+                        String currentLanguageId = item.getValue().toString();
+
+                        if(currentLanguageId.equals("1"))
+                            currentPosition = 0;
+                        else if(currentLanguageId.equals("3"))
+                            currentPosition = 1;
+
+                        final String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
+
+                        openListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int position) {
+
+                                        item.saveValue(getResources().getStringArray(R.array.videoLanguagesArrayValues)[position]);
+                                        Toast.makeText(PreferencesActivity.this,getString(R.string.if_preferred_language_not_available), Toast.LENGTH_LONG).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                    }
+                },
+                new PrefItem.SubTitleGenerator() {
+                    @Override
+                    public String get(PrefItem item) {
+                        String langCode = item.getValue().toString();
+                        if(langCode.equals("1"))
+                            return getString(R.string.language_english);
+                        else if(langCode.equals("3"))
+                            return getString(R.string.language_japanese);
+
+                        return "";
+
+
+                    }
+                }));
         mPrefItems.add(getString(R.string.updates));
         mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_auto_updates, R.string.auto_check_for_updates, Prefs.AUTO_CHECK_UPDATE, true,
                 new PrefItem.OnClickListener() {
