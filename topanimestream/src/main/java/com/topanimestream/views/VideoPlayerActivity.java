@@ -269,35 +269,49 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 //TODO check prefs and play video
                 //episodeToPlay will be null if it is a movie
                 try {
-                    Source sourceToPlay = null;
-
+                    ArrayList<Source> goodSources = new ArrayList<Source>();
+                    String defaultLanguageId = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3");
                     //player.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     for(Source source:sources)
                     {
-                        if(String.valueOf(source.getLink().getLanguageId()).equals(PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3")))
+                        if(String.valueOf(source.getLink().getLanguageId()).equals(defaultLanguageId))
                         {
-                            sourceToPlay = source;
+                            goodSources.add(source);
                         }
                     }
                     //The default language is not found.
-                    if(sourceToPlay == null)
+                    if(!defaultLanguageId.equals("3") && goodSources.size() < 1)
                     {
                         for(Source source:sources)
                         {
+                        	//check if there's any japanese source
                             if(String.valueOf(source.getLink().getLanguageId()).equals("3"))
                             {
-                                sourceToPlay = source;
+                                goodSources.add(source);
                             }
                         }
+                        
+                        if(goodSources.size() > 0)
+                        {
+                        	//notify the user that his default language has not been found...
+                        	Toast.makeText(VideoPlayerActivity.this, "The default language is not available. Japanese has been selected.").show();
+                        }
                     }
-                    //The default language and the japanese is not available... grab anything at this point
-                    if(sourceToPlay == null)
+                    
+                    //The default language and the japanese is not available... 
+                    //grab anything at this point
+                    //Something wrong probably happenened since the only language offered is english and japanese
+                    if(goodSources.size() < 1)
                     {
-                        sourceToPlay = sources.get(0);
+                        goodSources = sources;
                     }
 
                     //Check the quality
-
+                    for(Source source:goodSources)
+					{
+						
+					
+					}
 
                     player.setDataSource(VideoPlayerActivity.this, Uri.parse(sources.get(0).getUrl()));
                     player.prepareAsync();
