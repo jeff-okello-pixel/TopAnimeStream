@@ -27,6 +27,7 @@ import android.provider.MediaStore;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -54,8 +55,10 @@ import com.topanimestream.models.subs.Caption;
 import com.topanimestream.models.subs.FormatASS;
 import com.topanimestream.models.subs.FormatSRT;
 import com.topanimestream.models.subs.TimedTextObject;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.FileUtils;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -94,12 +97,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
         loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
-        //TODO check prefs style
+
         txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
-        txtSubtitle.setTextColor(Color.WHITE);
-        txtSubtitle.setTextSize(16);
-        txtSubtitle.setStrokeColor(Color.BLACK);
-        txtSubtitle.setStrokeWidth(2, 2);
+        txtSubtitle.setTextColor(PrefUtils.get(this, Prefs.SUBTITLE_COLOR, Color.WHITE));
+        txtSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, PrefUtils.get(this, Prefs.SUBTITLE_SIZE, 16));
+        txtSubtitle.setStrokeColor(PrefUtils.get(this, Prefs.SUBTITLE_STROKE_COLOR, Color.BLACK));
+        txtSubtitle.setStrokeWidth(TypedValue.COMPLEX_UNIT_DIP,PrefUtils.get(this, Prefs.SUBTITLE_STROKE_WIDTH, 2));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mDisplayHandler = new Handler(Looper.getMainLooper());
@@ -266,7 +269,36 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 //TODO check prefs and play video
                 //episodeToPlay will be null if it is a movie
                 try {
+                    Source sourceToPlay = null;
+
                     //player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    for(Source source:sources)
+                    {
+                        if(String.valueOf(source.getLink().getLanguageId()).equals(PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3")))
+                        {
+                            sourceToPlay = source;
+                        }
+                    }
+                    //The default language is not found.
+                    if(sourceToPlay == null)
+                    {
+                        for(Source source:sources)
+                        {
+                            if(String.valueOf(source.getLink().getLanguageId()).equals("3"))
+                            {
+                                sourceToPlay = source;
+                            }
+                        }
+                    }
+                    //The default language and the japanese is not available... grab anything at this point
+                    if(sourceToPlay == null)
+                    {
+                        sourceToPlay = sources.get(0);
+                    }
+
+                    //Check the quality
+
+
                     player.setDataSource(VideoPlayerActivity.this, Uri.parse(sources.get(0).getUrl()));
                     player.prepareAsync();
                 } catch (IllegalArgumentException e) {

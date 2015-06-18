@@ -302,7 +302,16 @@
     <string name="last_check">Last check</string>
     <string name="loading_anime">Loading the anime</string>
     <string name="videos">Videos</string>
-    <string name="preferred_quality">Preferred quality</string>
-    <string name="preferred_language">Preferred language</string>
-    <string name="if_preferred_language_not_available">If your preferred language is not available, Japanese will be selected.</string>
+    <string name="default_quality">Default quality</string>
+    <string name="default_language">Default language</string>
+    <string name="if_default_language_not_available">If the default language is not available, Japanese will be selected.</string>
+    <string name="default_spoken_language">Default spoken language</string>
+    <string name="default_subtitle_language">Default subtitles language</string>
+    <string name="none">None</string>
+    <string name="if_default_subtitle_not_available">If the default subtitle language is not available, none will be selected.</string>
+    <string name="color">Color</string>
+    <string name="subtitles_style">Subtitles style</string>
+    <string name="size">Size</string>
+    <string name="outline_color">Outline color</string>
+    <string name="outline_width">Outline width</string>
 </resources>
