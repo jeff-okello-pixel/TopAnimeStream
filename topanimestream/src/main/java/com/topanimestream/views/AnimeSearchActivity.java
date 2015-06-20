@@ -35,6 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.preferences.Prefs;
@@ -209,7 +210,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 
         protected void onPreExecute() {
             try {
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + PrefUtils.get(App.getContext(), Prefs.LOCALE, "1") + ")").expand("AnimeSources,Genres,AnimeInformations,Links").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").build();
+                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + PrefUtils.get(App.getContext(), Prefs.LOCALE, "1") + ")").expand("AnimeSources,Genres,AnimeInformations,Links").build();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -242,11 +243,12 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
             } catch (Exception e) {
                 return null;
             }
+            Gson gson = new Gson();
             for (int i = 0; i < animeArray.length(); i++) {
                 JSONObject animeJson;
                 try {
                     animeJson = animeArray.getJSONObject(i);
-                    animes.add(new Anime(animeJson, AnimeSearchActivity.this));
+                    animes.add(gson.fromJson(animeJson.toString(), Anime.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

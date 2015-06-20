@@ -42,7 +42,7 @@ public class Source{
     }
 
     public String getQuality() {
-        return Quality;
+        return Quality + "p";
     }
 
     public void setQuality(String quality) {

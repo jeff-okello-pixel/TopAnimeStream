@@ -298,7 +298,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                         if(goodLanguageSources.size() > 0)
                         {
                         	//notify the user that his default language has not been found...
-                        	Toast.makeText(VideoPlayerActivity.this, "The default language is not available. Japanese has been selected.", Toast.LENGTH_LONG).show();
+                        	Toast.makeText(VideoPlayerActivity.this, getString(R.string.default_language_not_available), Toast.LENGTH_LONG).show();
                         }
                     }
                     
@@ -360,7 +360,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 						if(sourceToPlay != null)
 						{
 							//notify the user that his default quality has not been found...
-                        	Toast.makeText(VideoPlayerActivity.this, "The default quality is not available." + sourceToPlay.getQuality() + " has been selected.", Toast.LENGTH_LONG).show();
+                        	Toast.makeText(VideoPlayerActivity.this, getString(R.string.quality_not_available) + sourceToPlay.getQuality() + getString(R.string.has_been_selected), Toast.LENGTH_LONG).show();
 						}
 						else
 						{
@@ -385,7 +385,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 						if(subtitleToShow == null)
 						{
 							//notify the user that his default subtitle language is not available.
-							Toast.makeText(VideoPlayerActivity.this, "The default subtitles language is not available. The video will start without subtitles.", Toast.LENGTH_LONG).show();
+							Toast.makeText(VideoPlayerActivity.this, getString(R.string.default_subtitle_not_available), Toast.LENGTH_LONG).show();
 						}
 						else
 						{
