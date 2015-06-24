@@ -387,7 +387,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         final Language[] finalLanguageArray = languageArray;
         ListAdapter adapter = new ArrayAdapter<Language>(
                 mContext,
-                android.R.layout.select_dialog_item,
+                android.R.layout.select_dialog_singlechoice,
                 android.R.id.text1,
                 languageArray){
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -400,10 +400,18 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 return v;
             }
         };
-
+        String currentLanguage = mCallback.GetCurrentLanguageId();
+        int currentPosition = 0;
+        for(int i = 0; i < currentVideoLanguages.size(); i++)
+        {
+            if(currentVideoLanguages.get(i).getLanguageId() == Integer.valueOf(currentLanguage))
+            {
+                currentPosition = i;
+            }
+        }
         new AlertDialog.Builder(mContext)
                 .setTitle(mContext.getString(R.string.choose_option))
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, currentPosition, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
                         Language selectedLanguage = finalLanguageArray[position];
                         currentSelectedLanguage = selectedLanguage;
@@ -425,7 +433,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         final Source[] finalSourceArray = sourcesOfCurrentLanguage.toArray(sourceArray);
         ListAdapter adapter = new ArrayAdapter<Source>(
                 mContext,
-                android.R.layout.select_dialog_item,
+                android.R.layout.select_dialog_singlechoice,
                 android.R.id.text1,
                 finalSourceArray){
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -438,13 +446,21 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 return v;
             }
         };
+        int currentPosition = 0;
+        for(int i = 0; i < sourcesOfCurrentLanguage.size(); i++)
+        {
+            if(mCallback.GetCurrentQuality().equals(sourcesOfCurrentLanguage.get(i).getQuality()))
+            {
+                currentPosition = i;
+            }
+        }
 
         new AlertDialog.Builder(mContext)
                 .setTitle(mContext.getString(R.string.choose_option))
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, currentPosition, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
                         Source selectedSource = finalSourceArray[position];
-                        mCallback.QualitySelected(selectedSource);
+                        mCallback.QualitySelected(selectedSource.getQuality());
                     }
                 }).show();
     }
@@ -454,7 +470,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
         ListAdapter adapter = new ArrayAdapter<Subtitle>(
                 mContext,
-                android.R.layout.select_dialog_item,
+                android.R.layout.select_dialog_singlechoice,
                 android.R.id.text1,
                 finalSubtitleArray){
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -477,7 +493,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         new AlertDialog.Builder(mContext)
                 .setTitle(mContext.getString(R.string.choose_option))
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, mCallback.GetCurrentSubtitlePosition(), new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
                         Subtitle selectedSub = finalSubtitleArray[position];
                         mCallback.SubtitleSelected(selectedSub);
@@ -963,9 +979,12 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         boolean canSeekForward();
         boolean isFullScreen();
         void    toggleFullScreen();
+        int     GetCurrentSubtitlePosition();
+        String  GetCurrentLanguageId();
+        String  GetCurrentQuality();
         void    SubtitleSelected(Subtitle subtitle);
         void    EpisodeSelected(Episode episode);
-        void    QualitySelected(Source source);
+        void    QualitySelected(String quality);
         void    LanguageSelected(Language language);
     }
     

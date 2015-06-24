@@ -85,6 +85,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private Subtitle currentEpisodeSubtitle;
     private ArrayList<Subtitle> subtitles = new ArrayList<Subtitle>();
     private ArrayList<Source> sources = new ArrayList<Source>();
+    private String currentVideoLanguageId;
+    private String currentVideoQuality;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -267,141 +269,17 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             else
             {
                 try {
-                	if(sources.size() < 1)
-                	{
-                		//What?!
-                		Toast.makeText(VideoPlayerActivity.this, getString(R.string.error_loading_video), Toast.LENGTH_LONG).show();
-                		return;
-                	}
-                    ArrayList<Source> goodLanguageSources = new ArrayList<Source>();
                     String defaultLanguageId = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3");
-                    //player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    for(Source source:sources)
-                    {
-                        if(String.valueOf(source.getLink().getLanguageId()).equals(defaultLanguageId))
-                        {
-                            goodLanguageSources.add(source);
-                        }
-                    }
-                    //The default language is not found.
-                    if(!defaultLanguageId.equals("3") && goodLanguageSources.size() < 1)
-                    {
-                        for(Source source:sources)
-                        {
-                        	//check if there's any japanese source
-                            if(String.valueOf(source.getLink().getLanguageId()).equals("3"))
-                            {
-                                goodLanguageSources.add(source);
-                            }
-                        }
-                        
-                        if(goodLanguageSources.size() > 0)
-                        {
-                        	//notify the user that his default language has not been found...
-                        	Toast.makeText(VideoPlayerActivity.this, getString(R.string.default_language_not_available), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                    
-                    //The default language and the japanese is not available... 
-                    //grab anything at this point
-                    //Something wrong probably happened since the only language offered is english and japanese
-                    if(goodLanguageSources.size() < 1)
-                    {
-                        goodLanguageSources = sources;
-                    }
-
-                    Source sourceToPlay = null;
-                    //Check the quality
                     String defaultQuality = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_QUALITY, "1080p");
-                    for(Source source:goodLanguageSources)
-					{
-						if(source.getQuality().equals(defaultQuality))
-						{
-							sourceToPlay = source;
-							break;
-						}
-					}
-					//The default quality was not found
-					if(sourceToPlay == null)
-					{
-						for(Source source:goodLanguageSources)
-						{
-							if(source.getQuality().equals("1080p"))
-							{
-								sourceToPlay = source;
-								break;
-							}
-						}
-						
-						if(sourceToPlay == null)
-						{
-							for(Source source:goodLanguageSources)
-							{
-								if(source.getQuality().equals("720p"))
-								{
-									sourceToPlay = source;
-									break;
-								}
-							}
-						}
-						
-						if(sourceToPlay == null)
-						{
-							for(Source source:goodLanguageSources)
-							{
-								if(source.getQuality().equals("360p"))
-								{
-									sourceToPlay = source;
-									break;
-								}
-							}
-						}
-						
-						if(sourceToPlay != null)
-						{
-							//notify the user that his default quality has not been found...
-                        	Toast.makeText(VideoPlayerActivity.this, getString(R.string.quality_not_available) + sourceToPlay.getQuality() + getString(R.string.has_been_selected), Toast.LENGTH_LONG).show();
-						}
-						else
-						{
-							//What?! play anything
-							sourceToPlay = sources.get(0);
-						}
-					}
-					
-					//Check the subtitle prefs
-					String defaultSubtitle = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
-					Subtitle subtitleToShow = null;
-					if(!defaultSubtitle.equals("0"))
-					{
-						for(Subtitle sub:subtitles)
-						{
-							if(String.valueOf(sub.getLanguageId()).equals(defaultSubtitle))
-							{
-								subtitleToShow = sub;
-							}
-						}
-						//Default subtitle language not found.
-						if(subtitleToShow == null)
-						{
-							//notify the user that his default subtitle language is not available.
-							Toast.makeText(VideoPlayerActivity.this, getString(R.string.default_subtitle_not_available), Toast.LENGTH_LONG).show();
-						}
-						else
-						{
-							SubtitleSelected(subtitleToShow);
-						}
-						
-					}
-                    player.setDataSource(VideoPlayerActivity.this, Uri.parse(sourceToPlay.getUrl()));
-                    player.prepareAsync();
+                    String defaultSubtitle = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
+
+                    SelectSourceAndPlay(defaultLanguageId, defaultQuality, defaultSubtitle);
+
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 } catch (SecurityException e) {
                     e.printStackTrace();
                 } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -695,6 +573,32 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
 
     @Override
+    public int GetCurrentSubtitlePosition() {
+        if(currentEpisodeSubtitle == null)
+            return -1;
+
+        for(int i = 0; i < subtitles.size(); i++)
+        {
+            if(subtitles.get(i).getSubtitleId() == currentEpisodeSubtitle.getSubtitleId())
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public String GetCurrentLanguageId() {
+        return currentVideoLanguageId;
+    }
+
+    @Override
+    public String GetCurrentQuality() {
+        return currentVideoQuality;
+    }
+
+    @Override
     public void SubtitleSelected(Subtitle subtitle) {
 
         if(currentEpisodeSubtitle == null || (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
@@ -735,33 +639,158 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
-    public void ChangeVideoSource(Source source)
-    {
-        ResetMediaPlayer();
-        try {
-            player.setDataSource(VideoPlayerActivity.this, Uri.parse(source.getUrl()));
-            player.prepareAsync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
     @Override
-    public void QualitySelected(Source source) {
-        ChangeVideoSource(source);
+    public void QualitySelected(String quality) {
+        ResetMediaPlayer();
+        SelectSourceAndPlay(currentVideoLanguageId, quality, String.valueOf(currentEpisodeSubtitle.getLanguageId()));
     }
 
     @Override
     public void LanguageSelected(Language language) {
+        ResetMediaPlayer();
+        SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, String.valueOf(currentEpisodeSubtitle.getLanguageId()));
+    }
+
+    private void SelectSourceAndPlay(String language, String quality, String subtitleLanguageId)
+    {
+        if(sources.size() < 1)
+        {
+            //What?!
+            Toast.makeText(VideoPlayerActivity.this, getString(R.string.error_loading_video), Toast.LENGTH_LONG).show();
+            return;
+        }
+        ArrayList<Source> goodLanguageSources = new ArrayList<Source>();
+
+
+        //player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         for(Source source:sources)
         {
-            if(source.getLink().getLanguage().getLanguageId() == language.getLanguageId())
+            if(String.valueOf(source.getLink().getLanguageId()).equals(language))
             {
-                ChangeVideoSource(source);
-                break;
+                goodLanguageSources.add(source);
             }
         }
 
+        //The default language is not found.
+        if(!language.equals("3") && goodLanguageSources.size() < 1)
+        {
+            for(Source source:sources)
+            {
+                //check if there's any japanese source
+                if(String.valueOf(source.getLink().getLanguageId()).equals("3"))
+                {
+                    goodLanguageSources.add(source);
+                }
+            }
 
+            if(goodLanguageSources.size() > 0)
+            {
+                //notify the user that his default language has not been found...
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.default_language_not_available), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        //The default language and the japanese is not available...
+        //grab anything at this point
+        //Something wrong probably happened since the only language offered is english and japanese
+        if(goodLanguageSources.size() < 1)
+        {
+            goodLanguageSources = sources;
+        }
+
+        Source sourceToPlay = null;
+        //Check the quality
+
+        for(Source source:goodLanguageSources)
+        {
+            if(source.getQuality().equals(quality))
+            {
+                sourceToPlay = source;
+                break;
+            }
+        }
+        //The default quality was not found
+        if(sourceToPlay == null)
+        {
+            for(Source source:goodLanguageSources)
+            {
+                if(source.getQuality().equals("1080p"))
+                {
+                    sourceToPlay = source;
+                    break;
+                }
+            }
+
+            if(sourceToPlay == null)
+            {
+                for(Source source:goodLanguageSources)
+                {
+                    if(source.getQuality().equals("720p"))
+                    {
+                        sourceToPlay = source;
+                        break;
+                    }
+                }
+            }
+
+            if(sourceToPlay == null)
+            {
+                for(Source source:goodLanguageSources)
+                {
+                    if(source.getQuality().equals("360p"))
+                    {
+                        sourceToPlay = source;
+                        break;
+                    }
+                }
+            }
+
+            if(sourceToPlay != null)
+            {
+                //notify the user that his default quality has not been found...
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.quality_not_available) + " " + sourceToPlay.getQuality() + getString(R.string.has_been_selected), Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                //What?! play anything
+                sourceToPlay = sources.get(0);
+            }
+        }
+
+        //Check the subtitle prefs
+
+        Subtitle subtitleToShow = null;
+        if(!subtitleLanguageId.equals("0"))
+        {
+            for(Subtitle sub:subtitles)
+            {
+                if(String.valueOf(sub.getLanguageId()).equals(subtitleLanguageId))
+                {
+                    subtitleToShow = sub;
+                }
+            }
+            //Default subtitle language not found.
+            if(subtitleToShow == null)
+            {
+                //notify the user that his default subtitle language is not available.
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.default_subtitle_not_available), Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                SubtitleSelected(subtitleToShow);
+            }
+
+        }
+        currentVideoQuality = sourceToPlay.getQuality();
+        currentVideoLanguageId = String.valueOf(sourceToPlay.getLink().getLanguageId());
+
+        try {
+            player.setDataSource(VideoPlayerActivity.this, Uri.parse(sourceToPlay.getUrl()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        player.prepareAsync();
     }
 
 }

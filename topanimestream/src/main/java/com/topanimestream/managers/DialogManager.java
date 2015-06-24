@@ -1,5 +1,6 @@
 package com.topanimestream.managers;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DownloadManager;
@@ -11,11 +12,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.topanimestream.App;
+import com.topanimestream.dialogfragments.StringArraySelectorDialogFragment;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
@@ -213,7 +217,14 @@ public class DialogManager {
         ShowDialog(builder);
 
     }
-
+    public static void OpenListSelectionDialog(String title, String[] items, int mode, int defaultPosition, AppCompatActivity act,
+                                         DialogInterface.OnClickListener onClickListener) {
+        if (mode == StringArraySelectorDialogFragment.NORMAL) {
+            StringArraySelectorDialogFragment.show(act.getSupportFragmentManager(), title, items, defaultPosition, onClickListener);
+        } else if (mode == StringArraySelectorDialogFragment.SINGLE_CHOICE) {
+            StringArraySelectorDialogFragment.showSingleChoice(act.getSupportFragmentManager(), title, items, defaultPosition, onClickListener);
+        }
+    }
     /*not really usable since you can't have 2 of them in the same activity...*/
     public static void ShowGenericTwoButtonDialog(final Context context, String title, String message, String firstButtonTitle, String secondButtonTitle) {
         if (!(context instanceof NetworkErrorDialogEvent))

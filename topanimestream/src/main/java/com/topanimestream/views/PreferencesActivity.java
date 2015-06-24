@@ -29,6 +29,7 @@ import com.topanimestream.adapters.PreferencesListAdapter;
 import com.topanimestream.dialogfragments.ColorPickerDialogFragment;
 import com.topanimestream.dialogfragments.NumberPickerDialogFragment;
 import com.topanimestream.dialogfragments.StringArraySelectorDialogFragment;
+import com.topanimestream.managers.DialogManager;
 import com.topanimestream.managers.VersionManager;
 import com.topanimestream.preferences.PrefItem;
 import com.topanimestream.preferences.Prefs;
@@ -118,7 +119,7 @@ public class PreferencesActivity extends AppCompatActivity
 
                         final String[] languages = getResources().getStringArray(R.array.languages);
                         currentPosition = Arrays.asList(languages).indexOf(currentValue);
-                        openListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition, PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
@@ -153,7 +154,7 @@ public class PreferencesActivity extends AppCompatActivity
 
                         final String[] qualities = getResources().getStringArray(R.array.qualitiesArray);
                         currentPosition = Arrays.asList(qualities).indexOf(currentValue);
-                        openListSelectionDialog(item.getTitle(), qualities, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), qualities, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
@@ -185,7 +186,7 @@ public class PreferencesActivity extends AppCompatActivity
 
                         final String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
 
-                        openListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
@@ -229,7 +230,7 @@ public class PreferencesActivity extends AppCompatActivity
                         String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
                         menuLanguages[1] = languages[0]; //English
                         menuLanguages[2] = languages[1]; //Japanese
-                        openListSelectionDialog(item.getTitle(), menuLanguages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), menuLanguages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
@@ -443,12 +444,5 @@ public class PreferencesActivity extends AppCompatActivity
         return b;
     }
 
-    private void openListSelectionDialog(String title, String[] items, int mode, int defaultPosition,
-                                         DialogInterface.OnClickListener onClickListener) {
-        if (mode == StringArraySelectorDialogFragment.NORMAL) {
-            StringArraySelectorDialogFragment.show(getSupportFragmentManager(), title, items, defaultPosition, onClickListener);
-        } else if (mode == StringArraySelectorDialogFragment.SINGLE_CHOICE) {
-            StringArraySelectorDialogFragment.showSingleChoice(getSupportFragmentManager(), title, items, defaultPosition, onClickListener);
-        }
-    }
+
 }
