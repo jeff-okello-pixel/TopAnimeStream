@@ -87,6 +87,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private ArrayList<Source> sources = new ArrayList<Source>();
     private String currentVideoLanguageId;
     private String currentVideoQuality;
+    private double lastTime;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -150,6 +151,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         if(mSubs != null) {
             Collection<Caption> subtitles = mSubs.captions.values();
             double currentTime = getCurrentTime();
+            if(lastTime > currentTime)
+            {
+                showTimedCaptionText(null);
+            }
+            lastTime = currentTime;
             if (mLastSub != null && currentTime >= mLastSub.start.getMilliseconds() && currentTime <= mLastSub.end.getMilliseconds()) {
                 showTimedCaptionText(mLastSub);
             } else {
@@ -311,7 +317,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 {
                     final File subsDirectory = getStorageLocation(VideoPlayerActivity.this);
                     if(!anime.isMovie())
-                        fileName = anime.getName() + "-" + currentEpisode.getEpisodeNumber() + "-" + currentEpisodeSubtitle.getLanguage().getISO639();
+                        fileName = anime.getName() + "-" + currentEpisode.getEpisodeNumber() + "-" + currentEpisodeSubtitle.getLanguage().getISO639() + currentEpisodeSubtitle.getSpecification().replace(" ", "-");
                     else
                         fileName = anime.getName() + "-"  + currentEpisodeSubtitle.getLanguage().getISO639();
 
@@ -606,19 +612,19 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             txtSubtitle.setText("");
             currentEpisodeSubtitle = subtitle;
             AsyncTaskTools.execute(new SubtitleTask());
-        }else{
-            Toast.makeText(VideoPlayerActivity.this,getString(R.string.already_have) + currentEpisodeSubtitle.getLanguage().getName() + " " + getString(R.string.subtitles).toLowerCase(), Toast.LENGTH_SHORT).show();
         }
     }
-    public void ResetMediaPlayer()
+    public void ResetMediaPlayer(boolean stopSubtitles)
     {
         if(player != null) {
             player.stop();
             player.release();
         }
-        currentEpisodeSubtitle = null;
-        checkForSubtitle = false;
-        txtSubtitle.setText("");
+        if(stopSubtitles) {
+            currentEpisodeSubtitle = null;
+            checkForSubtitle = false;
+            txtSubtitle.setText("");
+        }
         player = new MediaPlayer();
         player.setOnPreparedListener(this);
         videoSurfaceContainer.removeView(surfaceView);
@@ -635,21 +641,41 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         loadingSpinner.setVisibility(View.VISIBLE);
         currentEpisode = episode;
 
-        ResetMediaPlayer();
+        ResetMediaPlayer(true);
 
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
 
     @Override
     public void QualitySelected(String quality) {
-        ResetMediaPlayer();
+        ResetMediaPlayer(false);
         SelectSourceAndPlay(currentVideoLanguageId, quality, String.valueOf(currentEpisodeSubtitle.getLanguageId()));
     }
 
     @Override
     public void LanguageSelected(Language language) {
-        ResetMediaPlayer();
-        SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, String.valueOf(currentEpisodeSubtitle.getLanguageId()));
+        String subtitleLanguage = null;
+        if(currentEpisodeSubtitle != null)
+        {
+            subtitleLanguage = String.valueOf(currentEpisodeSubtitle.getLanguageId());
+        }
+        ResetMediaPlayer(true);
+
+        if(subtitleLanguage != null)
+        {
+            String defaultSubtitleLanguage = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
+            if(!subtitleLanguage.equals(defaultSubtitleLanguage))
+            {
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.subtitles_reset_default), Toast.LENGTH_LONG).show();
+            }
+
+            SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, defaultSubtitleLanguage);
+
+        }
+        else {
+            SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, "0");
+        }
+
     }
 
     private void SelectSourceAndPlay(String language, String quality, String subtitleLanguageId)
@@ -768,6 +794,10 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 if(String.valueOf(sub.getLanguageId()).equals(subtitleLanguageId))
                 {
                     subtitleToShow = sub;
+                    if(subtitleToShow.getSpecification() == null || subtitleToShow.getSpecification().equals(""))
+                    {
+                        break;//by default we want to one with no specification.
+                    }
                 }
             }
             //Default subtitle language not found.

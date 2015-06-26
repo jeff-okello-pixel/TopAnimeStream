@@ -51,6 +51,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
@@ -416,6 +417,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                         Language selectedLanguage = finalLanguageArray[position];
                         currentSelectedLanguage = selectedLanguage;
                         mCallback.LanguageSelected(selectedLanguage);
+                        dialog.dismiss();
                     }
                 }).show();
     }
@@ -461,6 +463,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                     public void onClick(final DialogInterface dialog, int position) {
                         Source selectedSource = finalSourceArray[position];
                         mCallback.QualitySelected(selectedSource.getQuality());
+                        dialog.dismiss();
                     }
                 }).show();
     }
@@ -496,7 +499,12 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 .setSingleChoiceItems(adapter, mCallback.GetCurrentSubtitlePosition(), new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int position) {
                         Subtitle selectedSub = finalSubtitleArray[position];
-                        mCallback.SubtitleSelected(selectedSub);
+                        if (position != mCallback.GetCurrentSubtitlePosition()) {
+                            mCallback.SubtitleSelected(selectedSub);
+                        } else {
+                            Toast.makeText(mContext, mContext.getString(R.string.already_have) + selectedSub.getLanguage().getName() + selectedSub.getSpecification(), Toast.LENGTH_LONG).show();
+                        }
+                        dialog.dismiss();
                     }
                 }).show();
     }
