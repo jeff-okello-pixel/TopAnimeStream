@@ -27,6 +27,7 @@ import android.provider.MediaStore;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -37,6 +38,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -77,6 +79,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private Handler mDisplayHandler;
     private Caption mLastSub = null;
     private StrokedRobotoTextView txtSubtitle;
+    private ImageView imgLoading;
     private File mSubsFile;
     private boolean checkForSubtitle;
     private ProgressBar loadingSpinner;
@@ -87,7 +90,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private ArrayList<Source> sources = new ArrayList<Source>();
     private String currentVideoLanguageId;
     private String currentVideoQuality;
-    private double lastTime;
+    private double lastSubtitleTime;
+    private int videoTime = -1;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -100,7 +104,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
         loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
-
+        imgLoading = (ImageView) findViewById(R.id.imgLoading);
         txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
         txtSubtitle.setTextColor(PrefUtils.get(this, Prefs.SUBTITLE_COLOR, Color.WHITE));
         txtSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, PrefUtils.get(this, Prefs.SUBTITLE_SIZE, 16));
@@ -118,6 +122,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         anime = bundle.getParcelable("anime");
         currentEpisode = bundle.getParcelable("episodeToPlay");
         controller = new VideoControllerView(VideoPlayerActivity.this, true, anime.getEpisodes(), currentEpisode);
+
+        if(currentEpisode != null)
+        {
+            App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), App.ImageSize.w780.getValue()), imgLoading);
+        }
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
     private long getCurrentTime()
@@ -151,11 +160,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         if(mSubs != null) {
             Collection<Caption> subtitles = mSubs.captions.values();
             double currentTime = getCurrentTime();
-            if(lastTime > currentTime)
+            if(lastSubtitleTime > currentTime)
             {
                 showTimedCaptionText(null);
             }
-            lastTime = currentTime;
+            lastSubtitleTime = currentTime;
             if (mLastSub != null && currentTime >= mLastSub.start.getMilliseconds() && currentTime <= mLastSub.end.getMilliseconds()) {
                 showTimedCaptionText(mLastSub);
             } else {
@@ -471,9 +480,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
 
     }
-    // End SurfaceHolder.Callback
 
-    // Implement MediaPlayer.OnPreparedListener
     @Override
     public void onPrepared(MediaPlayer mp) {
         controller.setMediaPlayer(this);
@@ -484,11 +491,16 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         controller.ShowMenuItems();
         txtSubtitle.setText("");
         player.start();
+        if(videoTime != -1)
+        {
+            player.seekTo(videoTime);
+            videoTime = -1;
+        }
         loadingSpinner.setVisibility(View.GONE);
+        imgLoading.setVisibility(View.GONE);
+        imgLoading.setImageResource(android.R.color.transparent);
     }
-    // End MediaPlayer.OnPreparedListener
 
-    // Implement VideoMediaController.MediaPlayerControl
     @Override
     public boolean canPause() {
         return true;
@@ -639,6 +651,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void EpisodeSelected(Episode episode) {
         loadingSpinner.setVisibility(View.VISIBLE);
+        App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), App.ImageSize.w300.getValue()), imgLoading);
+        imgLoading.setVisibility(View.VISIBLE);
         currentEpisode = episode;
 
         ResetMediaPlayer(true);
@@ -648,12 +662,14 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void QualitySelected(String quality) {
+        videoTime = player.getCurrentPosition();
         ResetMediaPlayer(false);
         SelectSourceAndPlay(currentVideoLanguageId, quality, String.valueOf(currentEpisodeSubtitle.getLanguageId()));
     }
 
     @Override
     public void LanguageSelected(Language language) {
+        videoTime = player.getCurrentPosition();
         String subtitleLanguage = null;
         if(currentEpisodeSubtitle != null)
         {
@@ -785,7 +801,6 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         }
 
         //Check the subtitle prefs
-
         Subtitle subtitleToShow = null;
         if(!subtitleLanguageId.equals("0"))
         {

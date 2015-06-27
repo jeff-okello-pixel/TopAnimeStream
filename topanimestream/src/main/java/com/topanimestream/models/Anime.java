@@ -40,7 +40,6 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private ArrayList<AnimeInformation> AnimeInformations;
     private ArrayList<AnimeSource> AnimeSources;
     private ArrayList<Link> Links;
-    private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
     private ArrayList<Theme> Themes;
     private int Order;
     private int VoteCount;
@@ -394,17 +393,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
         return fullPosterPath;
     }
 
-    public String getPosterPath(String size) {
-        if (PosterPath == null)
-            return null;
-
-        if (size == null || size.equals(""))
-            return imageHostPath + PosterPath;
-
-        String imageName = PosterPath.substring(PosterPath.lastIndexOf("/") + 1);
-        imageName = "w" + size + "_" + imageName;
-        String fullPosterPath = imageHostPath + PosterPath.substring(0, PosterPath.lastIndexOf("/") + 1) + imageName;
-        return fullPosterPath;
+    public String getPosterPath() {
+        return PosterPath;
     }
 
     public void setPosterPath(String posterPath) {
@@ -440,17 +430,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
         return fullPosterPath;
     }
 
-    public String getBackdropPath(String size) {
-        if (BackdropPath == null)
-            return null;
-
-        if (size == null || size.equals(""))
-            return imageHostPath + BackdropPath;
-
-        String imageName = BackdropPath.substring(BackdropPath.lastIndexOf("/") + 1);
-        imageName = "w" + size + "_" + imageName;
-        String fullPosterPath = imageHostPath + BackdropPath.substring(0, BackdropPath.lastIndexOf("/") + 1) + imageName;
-        return fullPosterPath;
+    public String getBackdropPath() {
+        return BackdropPath;
     }
 
     public void setBackdropPath(String backdropPath) {

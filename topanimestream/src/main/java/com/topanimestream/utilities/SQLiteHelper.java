@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
+import com.topanimestream.R;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.AnimeInformation;
 import com.topanimestream.models.Episode;
@@ -230,7 +231,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ANIMEID, String.valueOf(anime.getAnimeId()));
         values.put(KEY_NAME, anime.getName());
-        values.put(KEY_POSTER, anime.getPosterPath("500"));
+        values.put(KEY_POSTER, Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getPosterPath(), App.ImageSize.w185.getValue()));
         values.put(KEY_DESCRIPTION, anime.getDescription(App.getContext()));
         values.put(KEY_EPISODEID, String.valueOf(episodeId));
         values.put(KEY_EPISODENUMBER, episodeNumber);

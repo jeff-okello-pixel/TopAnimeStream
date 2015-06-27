@@ -11,6 +11,12 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"/>
 
+    <ImageView
+        android:id="@+id/imgLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"/>
+
     <com.topanimestream.custom.StrokedRobotoTextView
         android:id="@+id/txtSubtitle"
         android:layout_width="match_parent"

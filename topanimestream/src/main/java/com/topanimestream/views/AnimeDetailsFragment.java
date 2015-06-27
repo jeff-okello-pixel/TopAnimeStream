@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.topanimestream.App;
@@ -22,7 +23,7 @@ public class AnimeDetailsFragment extends Fragment {
     private TextView txtDescription;
     private TextView txtGenres;
     private RatingBar rtbRating;
-
+    private ScrollView scrollView;
     public AnimeDetailsFragment() {
         // Required empty public constructor
     }
@@ -43,12 +44,17 @@ public class AnimeDetailsFragment extends Fragment {
         txtDescription = (TextView) view.findViewById(R.id.txtDescription);
         txtGenres = (TextView) view.findViewById(R.id.txtGenres);
         rtbRating = (RatingBar) view.findViewById(R.id.rtbRating);
+        scrollView = (ScrollView) view.findViewById(R.id.scrollView2);
+        if(scrollView != null)
+        {
+            scrollView.setSaveEnabled(false);
+        }
         return view;
     }
 
     public void setAnime(Anime anime) {
-        if (anime.getBackdropPath(null) != null)
-            App.imageLoader.displayImage(anime.getBackdropPath("500"), imgBackdrop);
+        if (anime.getBackdropPath() != null)
+            App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), App.ImageSize.w500.getValue()), imgBackdrop);
         else
             imgBackdrop.setVisibility(View.GONE);
 

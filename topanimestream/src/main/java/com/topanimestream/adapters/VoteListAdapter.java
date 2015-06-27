@@ -62,7 +62,7 @@ public class VoteListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) vi.getTag();
         }
-        App.imageLoader.displayImage(vote.getAnime().getPosterPath("185"), holder.imgPoster);
+        App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + vote.getAnime().getPosterPath(), App.ImageSize.w185.getValue()), holder.imgPoster);
         holder.txtName.setText(vote.getAnime().getName());
         holder.rtbRating.setRating((float) Utils.roundToHalf(vote.getValue() != 0 ? vote.getValue() / 2 : vote.getValue()));
         holder.txtVote.setText(String.valueOf(Utils.roundToHalf(vote.getValue() != 0 ? vote.getValue() / 2 : vote.getValue())));

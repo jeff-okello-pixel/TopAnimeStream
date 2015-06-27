@@ -288,7 +288,7 @@ public class Mp4Manager {
                                 subtitle = act.getString(R.string.tab_movie);
                             }
 
-                            MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), anime.getPosterPath("185"), anime.getBackdropPath("500"));
+                            MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getPosterPath(), App.ImageSize.w185.getValue()), Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), App.ImageSize.w500.getValue()));
                             loadRemoteMedia(act, 0, true, info);
                         } else {
                             DialogManager.ShowChromecastNotPremiumErrorDialog(act);

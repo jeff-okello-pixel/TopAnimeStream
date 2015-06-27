@@ -209,7 +209,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
                 if(jsonAnimes.length() > 0) {
                     String jsonAnime = jsonAnimes.getJSONObject(0).getJSONObject("Anime").toString();
                     Anime anime = gson.fromJson(jsonAnime, Anime.class);
-                    firstFavoriteBackDropUrl = anime.getBackdropPath("500");
+                    firstFavoriteBackDropUrl = Utils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), App.ImageSize.w500.getValue());
                 }
 
                 return null;

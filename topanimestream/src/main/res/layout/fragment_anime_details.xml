@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layDetails"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:context="com.topanimestream.views.AnimeDetailsFragment">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
                 android:layout_height="180dp"
                 android:id="@+id/imgBackdrop"/>
         <ScrollView
+            android:id="@+id/scrollViewDetails"
             android:layout_width="match_parent"
             android:layout_height="180dp">
             <LinearLayout

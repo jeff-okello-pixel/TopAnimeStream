@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
@@ -251,6 +253,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                         }
                         adapter.update();
                     } else {*/
+                        Collections.sort(episodes, new Episode());
                         anime.setEpisodes(episodes);
                         adapter = new EpisodeListAdapter(getActivity(), anime);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);

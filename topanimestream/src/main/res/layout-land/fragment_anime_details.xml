@@ -1,9 +1,9 @@
 <ScrollView
+    android:id="@+id/scrollView2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.topanimestream.views.AnimeDetailsFragment">
+    xmlns:tools="http://schemas.android.com/tools">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

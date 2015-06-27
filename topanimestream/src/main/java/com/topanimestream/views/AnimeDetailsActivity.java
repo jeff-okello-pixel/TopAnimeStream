@@ -150,6 +150,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
 
         animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
+
         if (animeDetailsFragment != null)
             animeDetailsFragment.setAnime(anime);
 
