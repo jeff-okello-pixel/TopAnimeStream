@@ -471,6 +471,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     {
         //TODO add None option
         ArrayList<Subtitle> tempSubList = currentVideoSubtitles;
+        tempSubList.add(0, new Subtitle());
         Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
         final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
         ListAdapter adapter = new ArrayAdapter<Subtitle>(
@@ -482,16 +483,29 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 //User super class to create the View
                 View v = super.getView(position, convertView, parent);
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
+                if(position == 0)
+                {
+                    /*
+                    //Put the image on the TextView
+                    tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);*/
 
-                Subtitle sub = finalSubtitleArray[position];
-                //Put the image on the TextView
-                tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);
+                    //Add margin between image and text (support various screen densities)
+                    int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                    tv.setCompoundDrawablePadding(dp5);
 
-                //Add margin between image and text (support various screen densities)
-                int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
-                tv.setCompoundDrawablePadding(dp5);
+                    tv.setText(mContext.getString(R.string.none));
+                }
+                else {
+                    Subtitle sub = finalSubtitleArray[position];
+                    //Put the image on the TextView
+                    tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);
 
-                tv.setText(sub.getLanguage().getName() + (!sub.getSpecification().equals("") ? "(" + sub.getSpecification() + ")" : ""));
+                    //Add margin between image and text (support various screen densities)
+                    int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                    tv.setCompoundDrawablePadding(dp5);
+
+                    tv.setText(sub.getLanguage().getName() + (!sub.getSpecification().equals("") ? "(" + sub.getSpecification() + ")" : ""));
+                }
                 return v;
             }
         };
