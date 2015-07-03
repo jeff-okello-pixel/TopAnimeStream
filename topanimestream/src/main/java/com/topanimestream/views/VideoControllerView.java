@@ -471,7 +471,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     {
         //TODO add None option
         ArrayList<Subtitle> tempSubList = currentVideoSubtitles;
-        tempSubList.add(0, new Subtitle());
+        tempSubList.add(0, null);
         Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
         final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
         ListAdapter adapter = new ArrayAdapter<Subtitle>(

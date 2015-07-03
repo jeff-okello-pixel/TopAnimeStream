@@ -109,6 +109,7 @@
             </LinearLayout>
         </RelativeLayout>
         <ListView android:id="@+id/leftDrawerEpisodes"
+            android:choiceMode="singleChoice"
             android:paddingTop="10dp"
             android:layout_width="250dp"
             android:layout_height="match_parent"

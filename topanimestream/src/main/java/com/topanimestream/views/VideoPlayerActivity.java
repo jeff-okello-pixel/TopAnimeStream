@@ -619,11 +619,13 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void SubtitleSelected(Subtitle subtitle) {
 
-        if(currentEpisodeSubtitle == null || (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
+        if(currentEpisodeSubtitle == null || subtitle == null || (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
             checkForSubtitle = false;
             txtSubtitle.setText("");
             currentEpisodeSubtitle = subtitle;
-            AsyncTaskTools.execute(new SubtitleTask());
+
+            if(subtitle != null)
+                AsyncTaskTools.execute(new SubtitleTask());
         }
     }
     public void ResetMediaPlayer(boolean stopSubtitles)
