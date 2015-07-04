@@ -619,12 +619,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void SubtitleSelected(Subtitle subtitle) {
 
-        if(currentEpisodeSubtitle == null || subtitle == null || (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
+        if(currentEpisodeSubtitle == null || subtitle.getSubtitleId() == 0|| (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
             checkForSubtitle = false;
             txtSubtitle.setText("");
             currentEpisodeSubtitle = subtitle;
 
-            if(subtitle != null)
+            if(subtitle.getSubtitleId() != 0)
                 AsyncTaskTools.execute(new SubtitleTask());
         }
     }
@@ -653,7 +653,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public void EpisodeSelected(Episode episode) {
         loadingSpinner.setVisibility(View.VISIBLE);
-        App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), App.ImageSize.w300.getValue()), imgLoading);
+        App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + episode.getScreenshotHD(), App.ImageSize.w300.getValue()), imgLoading);
         imgLoading.setVisibility(View.VISIBLE);
         currentEpisode = episode;
 

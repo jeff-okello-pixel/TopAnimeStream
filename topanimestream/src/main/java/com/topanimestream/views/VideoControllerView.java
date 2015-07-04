@@ -189,10 +189,12 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
      * @hide This doesn't work as advertised
      */
     protected View makeControllerView() {
-        LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mRoot = inflate.inflate(R.layout.media_controller, null);
+        if(mRoot == null) {
+            LayoutInflater inflate = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mRoot = inflate.inflate(R.layout.media_controller, null);
 
-        initControllerView(mRoot);
+            initControllerView(mRoot);
+        }
 
         return mRoot;
     }
@@ -262,6 +264,15 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
                         PlayerEpisodesAdapter adapter = new PlayerEpisodesAdapter(mContext, episodes);
                         leftDrawerEpisodes.setAdapter(adapter);
+                        for(int i = 0; i < adapter.getCount(); i++)
+                        {
+                            if(adapter.getItem(i).getEpisodeId() == currentEpisode.getEpisodeId())
+                            {
+                                leftDrawerEpisodes.setItemChecked(i , true);
+                                break;
+                            }
+                        }
+
                     }
                     mDrawerLayout.setDrawerListener(new DrawerListener());
                     mDrawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
@@ -469,9 +480,11 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     }
     private void ShowSubtitleMenu()
     {
-        //TODO add None option
+        //add None option
+
         ArrayList<Subtitle> tempSubList = currentVideoSubtitles;
-        tempSubList.add(0, null);
+        if(tempSubList.get(0).getSubtitleId() != 0)
+            tempSubList.add(0, new Subtitle());
         Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
         final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
         ListAdapter adapter = new ArrayAdapter<Subtitle>(

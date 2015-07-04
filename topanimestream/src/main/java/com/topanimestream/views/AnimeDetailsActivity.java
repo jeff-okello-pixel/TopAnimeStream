@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,6 +84,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
     public static Review currentUserReview;
     private Recommendation currentUserRecommendation;
     private AnimeDetailsFragment animeDetailsFragment;
+    private AnimeDetailsMovieFragment animeDetailsMovieFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
@@ -131,10 +133,17 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             mCastConsumer = new VideoCastConsumerImpl();
             App.mCastMgr.reconnectSessionIfPossible(this, false);
         }
-
         FragmentManager fm = getSupportFragmentManager();
+        if(!anime.isMovie())
+        {
 
-        if(!anime.isMovie()) {
+            animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentByTag("animeDetailsFragment");
+            if (animeDetailsFragment == null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(layAnimeDetails.getId(), AnimeDetailsFragment.newInstance(anime), "animeDetailsFragment");
+                ft.commit();
+            }
+
             episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
             if (episodeListFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
@@ -145,14 +154,16 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
         }
         else
         {
-            //TODO create fragment for the movie
+            animeDetailsMovieFragment = (AnimeDetailsMovieFragment) fm.findFragmentByTag("animeDetailsMovieFragment");
+            if (animeDetailsMovieFragment == null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                //ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
+                ft.add(R.id.layDetails, AnimeDetailsMovieFragment.newInstance(anime), "animeDetailsMovieFragment");
+                ft.commit();
+            }
         }
 
 
-        animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
-
-        if (animeDetailsFragment != null)
-            animeDetailsFragment.setAnime(anime);
 
 
         AsyncTaskTools.execute(new AnimeDetailsTask(false));
@@ -683,8 +694,15 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             {
                 if(isReload)
                 {
-                    if (animeDetailsFragment != null)
-                        animeDetailsFragment.setAnime(anime);
+                    if(!anime.isMovie()) {
+                        if (animeDetailsFragment != null)
+                            animeDetailsFragment.setAnime(anime);
+                    }
+                    else
+                    {
+                        if (animeDetailsMovieFragment != null)
+                            animeDetailsMovieFragment.setAnime(anime);
+                    }
                 }
             }
             DialogManager.dismissBusyDialog(busyDialog);
