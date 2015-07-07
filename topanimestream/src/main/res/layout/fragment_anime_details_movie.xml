@@ -17,8 +17,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="350dp"/>
                 <RelativeLayout
+                    android:id="@+id/layPlay"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="350dp"
                     android:background="#A0000000">
                     <ImageView
                         android:id="@+id/imgPlay"
@@ -35,7 +36,6 @@
                 android:layout_below="@id/layPoster"
                 android:orientation="vertical"
                 android:padding="10dp"
-                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                     <TextView
@@ -57,7 +57,6 @@
                         android:layout_height="wrap_content"/>
                     <RatingBar
                         android:id="@+id/rtbRating"
-                        android:paddingLeft="2dp"
                         android:layout_marginRight="5dp"
                         android:paddingTop="3dp"
                         android:focusable="false"
@@ -65,7 +64,7 @@
                         android:layout_width="wrap_content"
                         android:numStars="5"
                         android:isIndicator="true"
-                        style="@style/RatingBarWhite"  />
+                        style="@style/RatingBar"  />
 
                     <TextView
                         android:id="@+id/txtDescription"

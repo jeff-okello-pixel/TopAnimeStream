@@ -61,7 +61,7 @@ import com.topanimestream.models.Review;
 import com.topanimestream.models.Vote;
 import com.topanimestream.views.profile.LoginActivity;
 
-public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
+public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator, AnimeDetailsMovieFragment.AnimeDetailsMovieCallback {
     private ListView listViewEpisodes;
     private ArrayList<Episode> episodes;
     public ArrayList<String> mItems;
@@ -140,7 +140,7 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
             animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentByTag("animeDetailsFragment");
             if (animeDetailsFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(layAnimeDetails.getId(), AnimeDetailsFragment.newInstance(anime), "animeDetailsFragment");
+                ft.add(R.id.layDetails, AnimeDetailsFragment.newInstance(anime), "animeDetailsFragment");
                 ft.commit();
             }
 
@@ -358,6 +358,14 @@ public class AnimeDetailsActivity extends ActionBarActivity implements EpisodesC
 
         return true;
     }
+
+    @Override
+    public void OnMoviePlayClick() {
+        Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
+        intent.putExtra("anime", anime);
+        startActivity(intent);
+    }
+
     private class RemoveVoteTask extends AsyncTask<Void, Void, String> {
         private Dialog busyDialog;
         private static final String NAMESPACE = "http://tempuri.org/";

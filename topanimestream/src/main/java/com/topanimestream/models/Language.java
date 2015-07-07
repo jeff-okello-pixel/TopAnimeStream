@@ -33,6 +33,8 @@ public class Language implements Parcelable {
             return R.drawable.flag_gb;
         else if(getISO639().equals("fr"))
             return R.drawable.flag_fr;
+        else if(getISO639().equals("es"))
+            return R.drawable.flag_es;
         else if(getISO639().equals("ja"))
             return R.drawable.flag_jp;
         else if(getISO639().equals("ru"))

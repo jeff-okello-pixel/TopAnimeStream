@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -17,13 +18,14 @@ import com.topanimestream.models.Anime;
 import com.topanimestream.utilities.Utils;
 
 
-public class AnimeDetailsMovieFragment extends Fragment {
+public class AnimeDetailsMovieFragment extends Fragment implements View.OnClickListener {
     private ImageView imgPoster;
     private TextView txtTitle;
     private TextView txtDescription;
     private TextView txtGenres;
     private RatingBar rtbRating;
     private ScrollView scrollView;
+    private RelativeLayout layPlay;
     public AnimeDetailsMovieFragment() {
         // Required empty public constructor
     }
@@ -52,6 +54,8 @@ public class AnimeDetailsMovieFragment extends Fragment {
         txtGenres = (TextView) view.findViewById(R.id.txtGenres);
         rtbRating = (RatingBar) view.findViewById(R.id.rtbRating);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        layPlay = (RelativeLayout) view.findViewById(R.id.layPlay);
+        layPlay.setOnClickListener(this);
         if(scrollView != null)
         {
             scrollView.setSaveEnabled(false);
@@ -60,6 +64,20 @@ public class AnimeDetailsMovieFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.layPlay:
+                ((AnimeDetailsMovieCallback)getActivity()).OnMoviePlayClick();
+                break;
+
+        }
+    }
+
+    public interface AnimeDetailsMovieCallback {
+        void OnMoviePlayClick();
+    }
     public void setAnime(Anime anime) {
         App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + anime.getPosterPath(), App.ImageSize.w500.getValue()), imgPoster);
         txtTitle.setText(anime.getName());

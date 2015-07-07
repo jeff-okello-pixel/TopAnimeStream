@@ -211,11 +211,10 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             menuLanguage = toolbar.getMenu().findItem(R.id.menuLanguage);
             menuSettings = toolbar.getMenu().findItem(R.id.menuSettings);
             mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
+            leftDrawerEpisodes = (ListView) v.findViewById(R.id.leftDrawerEpisodes);
 
             if (mDrawerLayout != null) {
                 if(episodes != null && episodes.size() > 0) {
-                    leftDrawerEpisodes = (ListView) v.findViewById(R.id.leftDrawerEpisodes);
-
                     if(leftDrawerEpisodes != null) {
                         leftDrawerEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
                             @Override
@@ -285,7 +284,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 }
                 else
                 {
-                    mDrawerLayout.setVisibility(View.GONE);
+                    leftDrawerEpisodes.setVisibility(View.GONE);
                 }
             }
 
@@ -498,9 +497,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                 TextView tv = (TextView)v.findViewById(android.R.id.text1);
                 if(position == 0)
                 {
-                    /*
+
                     //Put the image on the TextView
-                    tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);*/
+                    tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.flag_none, 0, 0, 0);
 
                     //Add margin between image and text (support various screen densities)
                     int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
