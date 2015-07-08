@@ -78,6 +78,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         // Create global configuration and initialize ImageLoader with this configuration
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
+                .displayer(new FadeInBitmapDisplayer(300))
                 .build();
 
         ImageLoaderConfiguration imgConfig = new ImageLoaderConfiguration.Builder(getApplicationContext())
