@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.jakewharton.hugo'
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -24,6 +24,7 @@ repositories {
     maven { url "http://minakov.github.io/mopub-sdk-android-aar" }
 }
 dependencies {
+    classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     compile project(':librarytabstrip')
     compile project(':imageloaderlibrary')
     compile project(':CastCompanionLibrary-android-master')
@@ -33,6 +34,7 @@ dependencies {
     compile files('libs/com-fwwjt-pacjz173199.jar')
     compile files('libs/gson-2.2.4.jar')
     compile files('libs/juniversalchardet-1.0.3.jar')
+    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.larswerkman:HoloColorPicker:1.5'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.+'
