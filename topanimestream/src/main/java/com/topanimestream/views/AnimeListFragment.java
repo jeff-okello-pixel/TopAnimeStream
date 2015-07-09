@@ -25,6 +25,8 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;
@@ -74,6 +76,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private ArrayList<Anime> mItems = new ArrayList<>();
     private Mode mMode;
     private boolean mEndOfListReached = false;
+    private String searchQuery;
     public enum Mode {
         NORMAL, SEARCH
     }
@@ -106,8 +109,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         fragmentName = getArguments().getString("fragmentName");
         mMode = (Mode) getArguments().getSerializable(EXTRA_MODE);
 
-        if (mMode == Mode.SEARCH)
-            mEmptyView.setText(getString(R.string.no_search_results));
+        //if (mMode == Mode.SEARCH)
+            //mEmptyView.setText(getString(R.string.no_search_results));
 
         //don't load initial data in search mode
         if (mMode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
@@ -153,7 +156,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         AnimationManager.ActivityStart(getActivity());
 
     }
-    public void triggerSearch(String searchQuery) {
+    public void triggerSearch(String query) {
+        this.searchQuery = query;
         if (!isAdded())
             return;
 
@@ -330,8 +334,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
             if(mMode == Mode.NORMAL)
                 wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
-            else if(mMode == Mode.SEARCH)
-                wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").expand("AnimeSources,Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit).build();
+            else if(mMode == Mode.SEARCH) {
+                try {
+                    wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(searchQuery, "UTF-8").replace("%27", "%27%27") + "%27").expand("AnimeSources,Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
 
             String filter = "";
 

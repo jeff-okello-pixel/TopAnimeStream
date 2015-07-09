@@ -386,11 +386,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             switch (index) {
                 //Serie
                 case 0:
-                    serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie));
+                    serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), AnimeListFragment.Mode.NORMAL);
                     return serieFragment;
                 //Movie
                 case 1:
-                    movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie));
+                    movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL);
                     return movieFragment;
                 //Latest episode
                 case 2:
