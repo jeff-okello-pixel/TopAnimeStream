@@ -30,7 +30,9 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.adapters.AnimeGridAdapter;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.AnimeListAdapter;
@@ -44,6 +46,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class AnimeListFragment extends Fragment implements OnItemClickListener {
+
+    public static final String EXTRA_MODE = "extra_mode";
 
     public int currentSkip = 0;
     public int currentLimit = 40;
@@ -68,8 +72,11 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private GridLayoutManager mLayoutManager;
     private Integer mColumns = 2;
     private ArrayList<Anime> mItems = new ArrayList<>();
+    private Mode mMode;
     private boolean mEndOfListReached = false;
-
+    public enum Mode {
+        NORMAL, SEARCH
+    }
     private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3, mPreviousTotal = 0;
 
     @InjectView(R.id.recyclerView)
@@ -78,10 +85,11 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
     }
 
-    public static AnimeListFragment newInstance(String fragmentName) {
+    public static AnimeListFragment newInstance(String fragmentName, Mode mode) {
         AnimeListFragment ttFrag = new AnimeListFragment();
         Bundle args = new Bundle();
         args.putString("fragmentName", fragmentName);
+        args.putSerializable(EXTRA_MODE, mode);
         ttFrag.setArguments(args);
         return ttFrag;
     }
@@ -95,13 +103,18 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fragmentName = this.getArguments().getString("fragmentName");
+        fragmentName = getArguments().getString("fragmentName");
+        mMode = (Mode) getArguments().getSerializable(EXTRA_MODE);
 
-        loadmore = false;
-        task = new AnimeTask(customOrder, customFilter);
-        currentSkip = 0;
-        AsyncTaskTools.execute(task);
+        if (mMode == Mode.SEARCH)
+            mEmptyView.setText(getString(R.string.no_search_results));
 
+        //don't load initial data in search mode
+        if (mMode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
+            loadmore = false;
+            currentSkip = 0;
+            AsyncTaskTools.execute(new AnimeTask(customOrder, customFilter));
+        }
     }
 
     @Override
@@ -140,7 +153,22 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         AnimationManager.ActivityStart(getActivity());
 
     }
+    public void triggerSearch(String searchQuery) {
+        if (!isAdded())
+            return;
 
+        if (mAdapter == null)
+            return;
+
+        mItems.clear();
+        mAdapter.clearItems();//clear out adapter
+
+        if (searchQuery.equals("")) {
+            return; //don't do a search for empty queries
+        }
+
+        //TODO call search
+    }
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -296,9 +324,15 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         @Override
         protected void onPreExecute() {
             //progressBarLoadMore.setVisibility(View.VISIBLE);
-            if (!mAdapter.isLoading()) mAdapter.addLoading();
             isLoading = true;
-            WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
+            mAdapter.addLoading();
+            WcfDataServiceUtility wcfCall = null;
+
+            if(mMode == Mode.NORMAL)
+                wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
+            else if(mMode == Mode.SEARCH)
+                wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").expand("AnimeSources,Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit).build();
+
             String filter = "";
 
             if (fragmentName.equals(getString(R.string.tab_movie)))
@@ -365,7 +399,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 if (result == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
                 } else if (result.equals("Success")) {
-                    if (mAdapter.isLoading()) mAdapter.removeLoading();
+
                     mAdapter.setItems(newAnimes);
                     /*
                     if (loadmore) {
@@ -388,6 +422,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     }
                 }
                 isLoading = false;
+                mAdapter.removeLoading();
                 /*
                 progressBarLoadMore.setVisibility(View.GONE);
 

@@ -49,46 +49,29 @@ import com.topanimestream.models.AnimeSource;
 import com.topanimestream.R;
 import com.topanimestream.views.profile.LoginActivity;
 
-public class AnimeSearchActivity extends ActionBarActivity implements OnItemClickListener {
-    private ArrayList<Anime> animes;
+public class AnimeSearchActivity extends ActionBarActivity  {
     private String query;
-    private ListView listView;
-    public ArrayList<String> mItems;
-    private Dialog busyDialog;
-    private TextView txtNoResult;
     private MenuItem menuItem;
-    public AlertDialog alertType;
-    private Resources r;
-    public ArrayList<AnimeSource> animeSources;
-    private AlertDialog alertProviders;
     private Toolbar toolbar;
     public int animeId;
-    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anime_search);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        r = getResources();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        txtNoResult = (TextView) findViewById(R.id.txtNoResult);
-        animes = new ArrayList<Anime>();
-        mItems = new ArrayList<String>();
         query = getIntent().getStringExtra(SearchManager.QUERY);
         Utils.SaveRecentSearch(this, query);
         query = query.replace(" ", "%20");
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
 
         if (toolbar != null) {
             toolbar.setTitle(query);
             toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             setSupportActionBar(toolbar);
         }
-        (new SearchAnimeTask()).execute();
     }
 
     @Override
@@ -154,7 +137,7 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
 
         return true;
     }
-
+/*
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
@@ -191,92 +174,12 @@ public class AnimeSearchActivity extends ActionBarActivity implements OnItemClic
         query = query.replace(" ", "%20");
         (new SearchAnimeTask()).execute();
 
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
         AnimationManager.ActivityFinish(this);
-    }
-
-    private class SearchAnimeTask extends AsyncTask<Void, Void, String> {
-
-        public SearchAnimeTask() {
-
-        }
-
-        private String URL;
-
-        protected void onPreExecute() {
-            try {
-                URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(query, "UTF-8").replace("%27", "%27%27") + "%27").filter("AnimeSources/any(as:as/LanguageId%20eq%20" + PrefUtils.get(App.getContext(), Prefs.LOCALE, "1") + ")").expand("AnimeSources,Genres,AnimeInformations,Links").build();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_search), AnimeSearchActivity.this);
-            animes = new ArrayList<Anime>();
-            mItems = new ArrayList<String>();
-            listView.setAdapter(null);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            JSONObject json = Utils.GetJson(URL);
-            if(json == null)
-                return null;
-            if (!json.isNull("error")) {
-                try {
-                    int error = json.getInt("error");
-                    if (error == 401) {
-                        return "401";
-                    }
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-            JSONArray animeArray = new JSONArray();
-
-            try {
-                animeArray = json.getJSONArray("value");
-            } catch (Exception e) {
-                return null;
-            }
-            Gson gson = new Gson();
-            for (int i = 0; i < animeArray.length(); i++) {
-                JSONObject animeJson;
-                try {
-                    animeJson = animeArray.getJSONObject(i);
-                    animes.add(gson.fromJson(animeJson.toString(), Anime.class));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-            return "Success";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result == null) {
-                Toast.makeText(AnimeSearchActivity.this, r.getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
-                finish();
-                return;
-            } else if (result.equals("401")) {
-                Toast.makeText(AnimeSearchActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                startActivity(new Intent(AnimeSearchActivity.this, LoginActivity.class));
-                finish();
-                return;
-            }
-            if (animes.size() > 0) {
-                txtNoResult.setVisibility(View.GONE);
-                listView.setAdapter(new AnimeListAdapter(AnimeSearchActivity.this, animes));
-            } else {
-                txtNoResult.setVisibility(View.VISIBLE);
-            }
-            DialogManager.dismissBusyDialog(busyDialog);
-        }
-
     }
 }
