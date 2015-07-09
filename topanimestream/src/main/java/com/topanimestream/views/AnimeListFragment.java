@@ -7,7 +7,10 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 import com.topanimestream.App;
+import com.topanimestream.adapters.AnimeGridAdapter;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -35,6 +39,9 @@ import com.topanimestream.models.Anime;
 import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
 import com.topanimestream.views.profile.LoginActivity;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
@@ -48,7 +55,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private ProgressBar progressBarLoadMore;
     private String fragmentName;
     private Resources r;
-    App app;
     public Dialog busyDialog;
     public ArrayList<Mirror> mirrors;
     public int animeId;
@@ -58,7 +64,16 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private TextView txtNoAnime;
     private String customOrder;
     private String customFilter;
+    private AnimeGridAdapter mAdapter;
+    private GridLayoutManager mLayoutManager;
+    private Integer mColumns = 2;
+    private ArrayList<Anime> mItems = new ArrayList<>();
+    private boolean mEndOfListReached = false;
 
+    private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3, mPreviousTotal = 0;
+
+    @InjectView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
     public AnimeListFragment() {
 
     }
@@ -81,7 +96,11 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         fragmentName = this.getArguments().getString("fragmentName");
-        app = (App) getActivity().getApplication();
+
+        loadmore = false;
+        task = new AnimeTask(customOrder, customFilter);
+        currentSkip = 0;
+        AsyncTaskTools.execute(task);
 
     }
 
@@ -142,15 +161,25 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
+        ButterKnife.inject(this, rootView);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
         customOrder = ((MainActivity) getActivity()).order;
         customFilter = ((MainActivity) getActivity()).filter;
+
+        mColumns = getResources().getInteger(R.integer.overview_cols);
+        mLoadingTreshold = mColumns * 3;
+
+        mLayoutManager = new GridLayoutManager(getActivity(), mColumns);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+
         /*
         if(savedInstanceState != null)
             isDesc = savedInstanceState.getBoolean("isDesc");
         else
             isDesc = getArguments().getBoolean("isDesc");*/
+        /*
         animes = new ArrayList<Anime>();
         fragmentName = getArguments().getString("fragmentName");
         txtNoAnime = (TextView) rootView.findViewById(R.id.txtNoAnime);
@@ -189,10 +218,69 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     }
                 }
             }
-        });
+        });*/
         return rootView;
     }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOnScrollListener(mScrollListener);
+        //adapter should only ever be created once on fragment initialise.
+        mAdapter = new AnimeGridAdapter(getActivity(), mItems, mColumns);
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+    }
+    private AnimeGridAdapter.OnItemClickListener mOnItemClickListener = new AnimeGridAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(final View view, final Anime item, final int position) {
+            /**
+             * We shouldn't really be doing the palette loading here without any ui feedback,
+             * but it should be really quick
+             */
+            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
+            if (holder instanceof AnimeGridAdapter.ViewHolder) {
+
+            } else {
+                //showLoadingDialog(item);
+            }
+
+        }
+    };
+    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            mVisibleItemCount = mLayoutManager.getChildCount();
+            mTotalItemCount = mLayoutManager.getItemCount() - (mAdapter.isLoading() ? 1 : 0);
+            mFirstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (App.IsNetworkConnected()) {
+                int lastInScreen = mFirstVisibleItem + mVisibleItemCount;
+
+                if ((lastInScreen >= mTotalItemCount - 6) && !(isLoading)) {
+                    if (hasResults) {
+                        currentSkip += currentLimit;
+                        loadmore = true;
+
+                        task = new AnimeTask(customOrder, customFilter);
+                        AsyncTaskTools.execute(task);
+                    } else if (task == null) {
+                        loadmore = false;
+                        task = new AnimeTask(customOrder, customFilter);
+                        currentSkip = 0;
+                        AsyncTaskTools.execute(task);
+                    }
+                }
+            }
+        }
+    };
     private class AnimeTask extends AsyncTask<Void, Void, String> {
         private ArrayList<Anime> newAnimes = new ArrayList<Anime>();
         private String customOrderBy;
@@ -207,7 +295,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
         @Override
         protected void onPreExecute() {
-            progressBarLoadMore.setVisibility(View.VISIBLE);
+            //progressBarLoadMore.setVisibility(View.VISIBLE);
+            if (!mAdapter.isLoading()) mAdapter.addLoading();
             isLoading = true;
             WcfDataServiceUtility wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
             String filter = "";
@@ -276,6 +365,9 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 if (result == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
                 } else if (result.equals("Success")) {
+                    if (mAdapter.isLoading()) mAdapter.removeLoading();
+                    mAdapter.setItems(newAnimes);
+                    /*
                     if (loadmore) {
 
                         for (Anime anime : newAnimes) {
@@ -285,7 +377,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     } else {
                         adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), newAnimes);
                         gridView.setAdapter(adapter);
-                    }
+                    }*/
 
 
                 } else {
@@ -296,6 +388,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     }
                 }
                 isLoading = false;
+                /*
                 progressBarLoadMore.setVisibility(View.GONE);
 
                 if (gridView.getAdapter().getCount() == 0) {
@@ -304,11 +397,12 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 } else {
                     txtNoAnime.setVisibility(View.GONE);
                     gridView.setVisibility(View.VISIBLE);
-                }
+                }*/
             } catch (Exception e)//catch all exception... handle orientation change
             {
                 e.printStackTrace();
             }
+
         }
 
     }

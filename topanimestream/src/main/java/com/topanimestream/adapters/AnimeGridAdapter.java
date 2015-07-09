@@ -3,18 +3,42 @@ package com.topanimestream.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Shader;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import hugo.weaving.DebugLog;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.topanimestream.App;
+import com.topanimestream.utilities.AnimUtils;
+import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
@@ -37,17 +61,19 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         setItems(items);
     }
-
+    public interface OnItemClickListener {
+        public void onItemClick(View v, Anime item, int position);
+    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         switch (viewType) {
             case LOADING:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.media_griditem_loading, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_griditem_loading, parent, false);
                 return new AnimeGridAdapter.LoadingHolder(v);
             case NORMAL:
             default:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.media_griditem, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_griditem, parent, false);
                 return new AnimeGridAdapter.ViewHolder(v);
         }
     }
@@ -60,10 +86,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
         layoutParams.height = mItemHeight;
         layoutParams.width = mItemWidth;
-        int mod = LocaleUtils.currentLocaleIsRTL() ? 1 : 0;
-        if (position % mColumns == mod) {
-            layoutParams.setMargins(double_margin, top_margin, mMargin, mMargin);
-        } else if (position % mColumns == mColumns - 1) {
+        if (position % mColumns == mColumns - 1) {
             layoutParams.setMargins(mMargin, top_margin, double_margin, mMargin);
         } else {
             layoutParams.setMargins(mMargin, top_margin, mMargin, mMargin);
@@ -73,18 +96,29 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (getItemViewType(position) == NORMAL) {
             final ViewHolder videoViewHolder = (ViewHolder) viewHolder;
             final OverviewItem overviewItem = getItem(position);
-            Anime item = overviewItem.anime;
+            Anime item = overviewItem.Anime;
 
 
-            videoViewHolder.title.setText(item.title);
-            videoViewHolder.year.setText(item.year);
+            videoViewHolder.title.setText(item.getName());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            Date convertedDate = null;
+            try {
+                convertedDate = format.parse(item.getReleaseDate().replace("T", " "));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(convertedDate);
+            int year = cal.get(Calendar.YEAR);
+            if(convertedDate != null)
+                videoViewHolder.year.setText(String.valueOf(year));
 
             videoViewHolder.coverImage.setVisibility(View.GONE);
             videoViewHolder.title.setVisibility(View.GONE);
             videoViewHolder.year.setVisibility(View.GONE);
 
-            if (item.image != null && !item.image.equals("")) {
-                Picasso.with(videoViewHolder.coverImage.getContext()).load(item.image)
+            if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
+                Picasso.with(videoViewHolder.coverImage.getContext()).load(Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), App.ImageSize.w500.getValue()))
                         .resize(mItemWidth, mItemHeight)
                         .transform(DrawGradient.INSTANCE)
                         .into(videoViewHolder.coverImage, new Callback() {
@@ -213,7 +247,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public void onClick(View view) {
             if (mItemClickListener != null) {
                 int position = getPosition();
-                Anime item = getItem(position).anime;
+                Anime item = getItem(position).Anime;
                 mItemClickListener.onItemClick(view, item, position);
             }
         }
@@ -238,7 +272,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         boolean isLoadingItem = false;
 
         OverviewItem(Anime anime) {
-            this.anime = anime;
+            this.Anime = anime;
         }
 
         OverviewItem(boolean loading) {

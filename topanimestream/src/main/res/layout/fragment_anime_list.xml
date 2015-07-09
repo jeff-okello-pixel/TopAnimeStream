@@ -19,15 +19,13 @@
         android:layout_alignParentBottom="true"
         android:visibility="gone"
         android:padding="2dp" />
-	    <GridView
-		    android:id="@+id/gridView"
-		    android:numColumns="1"
-		    android:fadingEdge="none"
-		    android:overScrollMode="never"
-            android:layout_above="@id/progressBarLoadMore"
-		    android:gravity="center"
-		    android:stretchMode="columnWidth"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

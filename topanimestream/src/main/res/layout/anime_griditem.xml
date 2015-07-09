@@ -17,8 +17,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:scaleType="centerInside"
-        android:alpha="0.4"
-        android:src="" />
+        android:alpha="0.4" />
 
     <ImageView
         android:id="@+id/cover_image"

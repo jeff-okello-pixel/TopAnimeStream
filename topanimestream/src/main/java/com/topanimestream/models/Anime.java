@@ -30,7 +30,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private boolean IsMovie;
     private String PosterPath;
     private int RunningTime;
-    private String ReleaseDate;
+    private String ReleasedDate;
     private String BackdropPath;
     private boolean isCartoon;
     private Double Rating;
@@ -101,7 +101,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
         IsMovie = in.readByte() != 0;
         PosterPath = in.readString();
         RunningTime = in.readInt();
-        ReleaseDate = in.readString();
+        ReleasedDate = in.readString();
         BackdropPath = in.readString();
         isCartoon = in.readByte() != 0;
         Rating = in.readDouble();
@@ -410,11 +410,11 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public String getReleaseDate() {
-        return ReleaseDate;
+        return ReleasedDate;
     }
 
     public void setReleaseDate(String releaseDate) {
-        ReleaseDate = releaseDate;
+        ReleasedDate = releaseDate;
     }
 
     public String getRelativeBackdropPath(String size) {
@@ -487,7 +487,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
         dest.writeByte((byte) (IsMovie ? 1 : 0));
         dest.writeString(PosterPath);
         dest.writeInt(RunningTime);
-        dest.writeString(ReleaseDate);
+        dest.writeString(ReleasedDate);
         dest.writeString(BackdropPath);
         dest.writeByte((byte) (isCartoon ? 1 : 0));
         dest.writeDouble(Rating != null ? Rating : 0);

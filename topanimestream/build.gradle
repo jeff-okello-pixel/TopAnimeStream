@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.topanimestream"
-        minSdkVersion 11
+        minSdkVersion 13
         targetSdkVersion 21
         multiDexEnabled = true
     }
@@ -24,7 +24,6 @@ repositories {
     maven { url "http://minakov.github.io/mopub-sdk-android-aar" }
 }
 dependencies {
-    classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     compile project(':librarytabstrip')
     compile project(':imageloaderlibrary')
     compile project(':CastCompanionLibrary-android-master')

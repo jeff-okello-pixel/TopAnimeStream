@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.Locale;
 
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.NetworkChangeReceiver;
 import com.topanimestream.utilities.NetworkUtil;
