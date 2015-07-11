@@ -311,4 +311,5 @@
     <string name="default_subtitle_not_available">The default subtitles language is not available. The video will start without subtitles.</string>
     <string name="you_have_changed_video_language">You have changed the video language. Subtitles have been reset.</string>
     <string name="subtitles_reset_default">The subtitles have been reset to default.</string>
+    <string name="title_search">Title...</string>
 </resources>
