@@ -100,19 +100,21 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
             videoViewHolder.title.setText(item.getName());
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-            Date convertedDate = null;
-            try {
-                convertedDate = format.parse(item.getReleaseDate().replace("T", " "));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(convertedDate);
-            int year = cal.get(Calendar.YEAR);
-            if(convertedDate != null)
-                videoViewHolder.year.setText(String.valueOf(year));
+            if(item.getReleaseDate() != null && !item.getReleaseDate().equals("")) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+                Date convertedDate = null;
+                try {
+                    convertedDate = format.parse(item.getReleaseDate().replace("T", " "));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(convertedDate);
+                int year = cal.get(Calendar.YEAR);
+                if (convertedDate != null)
+                    videoViewHolder.year.setText(String.valueOf(year));
 
+            }
             videoViewHolder.coverImage.setVisibility(View.GONE);
             videoViewHolder.title.setVisibility(View.GONE);
             videoViewHolder.year.setVisibility(View.GONE);
@@ -164,16 +166,6 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @DebugLog
-    public void removeLoading() {
-        if (getItemCount() <= 0) return;
-        OverviewItem item = mItems.get(getItemCount() - 1);
-        if (item.isLoadingItem) {
-            mItems.remove(getItemCount() - 1);
-            notifyDataSetChanged();
-        }
-    }
-
-    @DebugLog
     public void addLoading() {
         OverviewItem item = null;
         if (getItemCount() != 0) {
@@ -194,8 +186,6 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @DebugLog
     public void setItems(ArrayList<Anime> items) {
-        // Clear items
-        mItems.clear();
         // Add new items, if available
         if (null != items) {
             for (Anime item : items) {
@@ -203,6 +193,14 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
         notifyDataSetChanged();
+        //Remove the isloading
+        if (getItemCount() <= 0) return;
+        OverviewItem overviewItem = mItems.get(getItemCount() - items.size() - 1);
+        if (overviewItem.isLoadingItem) {
+            mItems.remove(getItemCount() - items.size() - 1);
+            notifyDataSetChanged();
+        }
+
     }
 
     public void clearItems() {

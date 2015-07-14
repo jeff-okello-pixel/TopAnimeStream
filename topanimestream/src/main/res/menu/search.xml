@@ -8,12 +8,4 @@
         app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
         app:showAsAction="always"/>
 
-	  <item 
-      	android:id="@+id/search_widget"
-        android:title="@string/title_search_widget"
-        android:icon="@android:drawable/ic_menu_search"
-        app:queryHint="@string/title_search"
-        app:showAsAction="always|collapseActionView"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
-
 </menu>

@@ -2,7 +2,6 @@ package com.topanimestream.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,9 +24,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
@@ -386,11 +382,11 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             switch (index) {
                 //Serie
                 case 0:
-                    serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), AnimeListFragment.Mode.NORMAL);
+                    serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), AnimeListFragment.Mode.NORMAL, order, filter);
                     return serieFragment;
                 //Movie
                 case 1:
-                    movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL);
+                    movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL, order, filter);
                     return movieFragment;
                 //Latest episode
                 case 2:
@@ -489,49 +485,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         if (App.isPro) {
             mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
-        menuItem = menu.findItem(R.id.search_widget);
-        menuItem = menu.findItem(R.id.search_widget);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_widget));
-        TextView textView = (TextView) searchView.findViewById(R.id.search_src_text);
-        if (textView != null) {
-            textView.setTextColor(Color.WHITE);
-            textView.setHintTextColor(Color.WHITE);
-        }
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        searchView.setOnQueryTextListener(new OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String arg0) {
-
-                MenuItemCompat.collapseActionView(menuItem);
-                searchView.setQuery("", false);
-                AnimationManager.ActivityStart(MainActivity.this);
-                return false;
-            }
-
-        });
-        searchView.setOnSuggestionListener(new OnSuggestionListener() {
-
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return false;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                MenuItemCompat.collapseActionView(menuItem);
-                searchView.setQuery("", false);
-                return false;
-            }
-
-        });
         return true;
     }
 
@@ -596,6 +550,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 break;*/
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, Settings.class));
+                break;
+            case R.id.action_search:
+                startActivity(new Intent(MainActivity.this, AnimeSearchActivity.class));
                 break;
         }
         return true;

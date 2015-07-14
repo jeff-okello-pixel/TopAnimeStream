@@ -18,22 +18,17 @@ public class AnimeSearchActivity extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    @InjectView(R.id.search_widget)
+    @InjectView(R.id.searchview)
     SearchView mSearchview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anime_search);
         ButterKnife.inject(this);
-
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ToolbarUtils.updateToolbarHeight(this, toolbar);
-        /*
-        if (toolbar != null) {
-            toolbar.setTitle(query);
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }*/
+
 
         mSearchview.onActionViewExpanded();
         mSearchview.setOnQueryTextListener(mSearchListener);
@@ -47,7 +42,7 @@ public class AnimeSearchActivity extends AppCompatActivity {
 
         //create and add the media fragment
         mFragment =
-                AnimeListFragment.newInstance("Search", AnimeListFragment.Mode.SEARCH);
+                AnimeListFragment.newInstance("Search", AnimeListFragment.Mode.SEARCH, "", "");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mFragment).commit();
     }
@@ -82,7 +77,7 @@ public class AnimeSearchActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                AnimationManager.ActivityFinish(this);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
             case R.id.action_settings:
                 break;
@@ -133,5 +128,6 @@ public class AnimeSearchActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

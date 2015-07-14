@@ -88,10 +88,12 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
     }
 
-    public static AnimeListFragment newInstance(String fragmentName, Mode mode) {
+    public static AnimeListFragment newInstance(String fragmentName, Mode mode, String orderby, String filter) {
         AnimeListFragment ttFrag = new AnimeListFragment();
         Bundle args = new Bundle();
         args.putString("fragmentName", fragmentName);
+        args.putString("orderby", orderby);
+        args.putString("filter", filter);
         args.putSerializable(EXTRA_MODE, mode);
         ttFrag.setArguments(args);
         return ttFrag;
@@ -196,8 +198,9 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         ButterKnife.inject(this, rootView);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
-        customOrder = ((MainActivity) getActivity()).order;
-        customFilter = ((MainActivity) getActivity()).filter;
+
+        customOrder = getArguments().getString("orderby", "");
+        customFilter = getArguments().getString("filter", "");
 
         mColumns = getResources().getInteger(R.integer.overview_cols);
         mLoadingTreshold = mColumns * 3;
@@ -431,7 +434,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     }
                 }
                 isLoading = false;
-                mAdapter.removeLoading();
                 /*
                 progressBarLoadMore.setVisibility(View.GONE);
 
