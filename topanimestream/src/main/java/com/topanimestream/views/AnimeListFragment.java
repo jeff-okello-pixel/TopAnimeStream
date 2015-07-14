@@ -275,17 +275,25 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     }
     private AnimeGridAdapter.OnItemClickListener mOnItemClickListener = new AnimeGridAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(final View view, final Anime item, final int position) {
-            /**
-             * We shouldn't really be doing the palette loading here without any ui feedback,
-             * but it should be really quick
-             */
-            RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
-            if (holder instanceof AnimeGridAdapter.ViewHolder) {
+        public void onItemClick(final View view, final Anime anime, final int position) {
+            //HD
+            if(anime.getLinks() != null && anime.getLinks().size() > 0) {
+                Intent intent = new Intent(this.getActivity(), AnimeDetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("Anime", anime);
+                intent.putExtras(bundle);
+                startActivity(intent);
 
-            } else {
-                //showLoadingDialog(item);
             }
+            else
+            {
+                Intent intent = new Intent(this.getActivity(), OldAnimeDetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("Anime", anime);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+            AnimationManager.ActivityStart(getActivity());
 
         }
     };
