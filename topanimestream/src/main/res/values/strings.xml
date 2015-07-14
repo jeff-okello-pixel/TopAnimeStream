@@ -80,13 +80,6 @@
     <string name="loading_anime_details">Loading anime details</string>
     <string name="error_loading_anime_details">Error loading anime details</string>
 
-    <string-array name="menu_drawer_google_play">
-        <item>Favorites</item>
-        <item>Watchlist</item>
-        <item>Share</item>
-        <item>Settings</item>
-        <item>Upgrade to pro</item>
-    </string-array>
     <string-array name="menu_drawer_full">
         <!--<item>My profile</item>-->
         <item>Favorites</item>

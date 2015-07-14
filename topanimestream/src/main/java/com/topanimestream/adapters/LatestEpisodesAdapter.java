@@ -1,25 +1,17 @@
 package com.topanimestream.adapters;
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.models.Anime;
 import com.topanimestream.models.Link;
 import com.topanimestream.utilities.Utils;
-
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 

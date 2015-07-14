@@ -44,8 +44,8 @@ import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
 import com.topanimestream.views.profile.LoginActivity;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
@@ -82,7 +82,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     }
     private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3, mPreviousTotal = 0;
 
-    @InjectView(R.id.recyclerView)
+    @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
     public AnimeListFragment() {
 
@@ -195,7 +195,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         r = getResources();
 
@@ -278,7 +278,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         public void onItemClick(final View view, final Anime anime, final int position) {
             //HD
             if(anime.getLinks() != null && anime.getLinks().size() > 0) {
-                Intent intent = new Intent(this.getActivity(), AnimeDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("Anime", anime);
                 intent.putExtras(bundle);
@@ -287,7 +287,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
             }
             else
             {
-                Intent intent = new Intent(this.getActivity(), OldAnimeDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), OldAnimeDetailsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("Anime", anime);
                 intent.putExtras(bundle);

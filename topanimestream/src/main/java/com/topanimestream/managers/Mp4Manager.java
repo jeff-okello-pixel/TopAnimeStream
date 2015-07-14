@@ -38,7 +38,9 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.views.VideoActivity;
 import com.topanimestream.models.Anime;
@@ -47,7 +49,6 @@ import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
 
 public class Mp4Manager {
-    public static Dialog chromecastDialog;
     public static Dialog qualityDialog;
     public static String ignitionKey = null;
 
@@ -75,14 +76,6 @@ public class Mp4Manager {
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(act.getString(R.string.loading_video), act);
-            if (!App.isPro) {
-                Prm prm = new Prm(act, null, false);
-                try {
-                    prm.runAppWall();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
 
@@ -176,10 +169,6 @@ public class Mp4Manager {
         Mirror mirror;
         private Dialog busyDialog;
         private Activity act;
-        private Resources r;
-        private Anime anime;
-        private AlertDialog alertPlay;
-        private Episode episode;
         private String providerName;
         private String quality;
         private Document doc;
@@ -187,13 +176,10 @@ public class Mp4Manager {
         public GetMp4(Mirror mirror, Activity act, Anime anime, Episode episode, String providerName, String quality, Document doc, Dialog busyDialog) {
             this.mirror = mirror;
             this.act = act;
-            this.anime = anime;
-            this.episode = episode;
             this.providerName = providerName;
             this.quality = quality;
             this.doc = doc;
             this.busyDialog = busyDialog;
-            r = act.getResources();
         }
 
 
@@ -247,9 +233,7 @@ public class Mp4Manager {
         @Override
         protected void onPostExecute(final String result) {
             DialogManager.dismissBusyDialog(busyDialog);
-            if (App.isGooglePlayVersion) {
-                Toast.makeText(act, act.getString(R.string.video_spanish_only), Toast.LENGTH_LONG).show();
-            }
+
             if (result == null) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 try {
@@ -258,49 +242,17 @@ public class Mp4Manager {
                     return;
                 }
                 act.startActivity(i);
-                //Toast.makeText(act, r.getString(R.string.error_loading_video) , Toast.LENGTH_LONG).show();
                 AsyncTaskTools.execute(new Utils.ReportMirror(mirror.getMirrorId(), act));
                 return;
             }
 
-            final CharSequence[] items = {act.getString(R.string.play_phone), act.getString(R.string.stream_chromecast), act.getString(R.string.cancel)};
-            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(act);
-            alertBuilder.setTitle(act.getString(R.string.choose_option));
-            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    if (items[item].equals(act.getString(R.string.play_phone))) {
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
-                        String playInternal = prefs.getString("prefPlayInternal", "undefined");
-                        if (playInternal.equals("true"))
-                            PlayInternalVideo(act, result, mirror.getMirrorId());
-                        else if (playInternal.equals("false"))
-                            PlayExternalVideo(act, result);
-                        else
-                            DialogManager.ShowChoosePlayerDialog(act, result, mirror.getMirrorId());
-                    } else if (items[item].equals(act.getString(R.string.stream_chromecast))) {
-                        if (App.isPro) {
-                            String subtitle = "";
-                            if (episode != null && episode.getEpisodeInformations() != null && episode.getEpisodeInformations().getEpisodeName() != null && !episode.getEpisodeInformations().getEpisodeName().equals("")) {
-                                subtitle = episode.getEpisodeInformations().getEpisodeName();
-                            } else if (episode != null) {
-                                subtitle = act.getString(R.string.episode) + episode.getEpisodeNumber();
-                            } else {
-                                subtitle = act.getString(R.string.tab_movie);
-                            }
-
-                            MediaInfo info = buildMediaInfo(anime.getName(), subtitle, anime.getGenresFormatted(), Uri.parse(result).toString(), Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getPosterPath(), App.ImageSize.w185.getValue()), Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), App.ImageSize.w500.getValue()));
-                            loadRemoteMedia(act, 0, true, info);
-                        } else {
-                            DialogManager.ShowChromecastNotPremiumErrorDialog(act);
-                        }
-                        alertPlay.dismiss();
-                    } else {
-                        alertPlay.dismiss();
-                    }
-                }
-            });
-            alertPlay = alertBuilder.create();
-            alertPlay.show();
+            String playInternal = PrefUtils.get(act, Prefs.PLAY_INTERNAL, "undefined");
+            if (playInternal.equals("true"))
+                PlayInternalVideo(act, result, mirror.getMirrorId());
+            else if (playInternal.equals("false"))
+                PlayExternalVideo(act, result);
+            else
+                DialogManager.ShowChoosePlayerDialog(act, result, mirror.getMirrorId());
 
         }
 

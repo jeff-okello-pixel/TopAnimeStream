@@ -2,14 +2,10 @@ package com.topanimestream.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,19 +15,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -43,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-import com.fwwjt.pacjz173199.AdView;
 import com.google.gson.Gson;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
@@ -63,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.topanimestream.App;
-import com.topanimestream.managers.AppRaterManager;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.NetworkUtil;
@@ -76,7 +65,6 @@ import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.managers.VersionManager;
 import com.topanimestream.models.Account;
-import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.profile.LoginActivity;
@@ -84,36 +72,22 @@ import com.topanimestream.views.profile.MyFavoritesActivity;
 import com.topanimestream.views.profile.MyProfileActivity;
 import com.topanimestream.views.profile.MyWatchlistActivity;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener, App.Connection {
+import butterknife.Bind;
 
-    private DrawerLayout mDrawerLayout;
+public class MainActivity extends TASBaseActivity implements OnItemClickListener, App.Connection {
+
     private boolean firstTime;
     private boolean drawerIsOpened;
-    private ListView listView;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean doubleBackToExitPressedOnce;
-    private TextView txtNoConnection;
-    private MenuItem menuItem;
-    private ArrayList<String> mItems;
-    private MenuItem menuFilter;
-    public boolean isDesc = false;
-    private ArrayList<Anime> animes;
     private PagerAdapter mAdapter;
-    private Resources r;
-    private ViewPager viewPager;
-    private PagerSlidingTabStrip tabs;
     private String[] tabTitles;
     private AnimeListFragment serieFragment;
     private AnimeListFragment movieFragment;
     private LatestEpisodesFragment latestEpisodesFragment;
     private Dialog busyDialog;
-    private SharedPreferences prefs;
-    private App app;
     private AlertDialog alertLanguages;
-    private MiniController mMini;
     private VideoCastConsumerImpl mCastConsumer;
-    private MenuItem mediaRouteMenuItem;
-    private MenuItem menuBuyPro;
     private MenuArrayAdapter menuAdapter;
     private String spinnerOrderByValue;
     private String spinnerStatusValue;
@@ -123,45 +97,39 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     public String order = "";
     private TextView txtTitle;
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.txtNoConnection)
+    TextView txtNoConnection;
+
+    @Bind(R.id.pager)
+    ViewPager viewPager;
+
+    @Bind(R.id.tabs)
+    PagerSlidingTabStrip tabs;
+
+    @Bind(R.id.left_drawer)
+    ListView listView;
+
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.miniController)
+    MiniController mMini;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState, R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            ToolbarUtils.updateToolbarHeight(this, toolbar);
-        }
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        App.accessToken = prefs.getString("AccessToken", "");
-        App.isPro = prefs.getBoolean("IsPro", false);
-        /*
-        if(Utils.isProInstalled(this))
-        {
-            SQLiteHelper sqlLite = new SQLiteHelper(this);
-            if(!sqlLite.isPro()) {
-                sqlLite.setPro(true);
-                DialogManager.ShowUpgradedToProDialog(this);
-            }
-            else
-                App.isPro = true;
+        setSupportActionBar(toolbar);
+        ToolbarUtils.updateToolbarHeight(this, toolbar);
 
-            sqlLite.close();
-        }*/
-        r = getResources();
-        animes = new ArrayList<Anime>();
-        mItems = new ArrayList<String>();
+        App.accessToken = PrefUtils.get(this, Prefs.ACCESS_TOKEN , "");
 
         tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_episodes)};
-        app = (App) getApplication();
-        txtNoConnection = (TextView) findViewById(R.id.txtNoConnection);
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
 
         //fill default filter dialog spinner values
-        //spinnerOrderByValue =
         if (savedInstanceState != null) {
             drawerIsOpened = savedInstanceState.getBoolean("drawerIsOpened");
             order = savedInstanceState.getString("order");
@@ -180,49 +148,29 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             spinnerCategoryValue = getString(R.string.tab_all);
             spinnerOrderByValue = getString(R.string.most_popular);
             filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
-            if (App.isGooglePlayVersion) {
-                AppRaterManager.app_launched(this);
-                if (prefs.getBoolean("ShowWelcomeDialog", true)) {
-                    if (!App.isPro) {
-                        DialogManager.ShowWelcomeDialog(this);
-                    }
+            if (App.accessToken != null && !App.accessToken.equals("")) {
+                //TODO make sure validtokentask is not necessary
+                //AsyncTaskTools.execute(new ValidTokenTask());
+                if (PrefUtils.get(this, Prefs.SHOW_UPDATE, true)) {
+                    VersionManager.checkUpdate(this, false);
                 }
             } else {
-                if (App.accessToken != null && !App.accessToken.equals("") && !App.isGooglePlayVersion) {
-                    AsyncTaskTools.execute(new ValidTokenTask());
-                    if (prefs.getBoolean("ShowUpdate", true)) {
-                        VersionManager.checkUpdate(this, false);
-                    }
-                } else {
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    finish();
-                }
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
             }
         }
-        /*
-        actionBar = getSupportActionBar();
 
-        actionBar.setIcon(android.R.color.transparent);*/
-
-        listView = (ListView) findViewById(R.id.left_drawer);
         listView.setOnItemClickListener(this);
         listView.setCacheColorHint(0);
         listView.setScrollingCacheEnabled(false);
         listView.setScrollContainer(false);
         listView.setSmoothScrollbarEnabled(true);
 
-        if (App.isGooglePlayVersion)
-            menuAdapter = new MenuArrayAdapter(this, r.getStringArray(R.array.menu_drawer_google_play));
-        else
-            menuAdapter = new MenuArrayAdapter(this, r.getStringArray(R.array.menu_drawer_full));
+        menuAdapter = new MenuArrayAdapter(this, getResources().getStringArray(R.array.menu_drawer_full));
 
         listView.setAdapter(menuAdapter);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         if (mDrawerLayout != null) {
-            //actionBar.setDisplayHomeAsUpEnabled(true);
-            //actionBar.setHomeButtonEnabled(true);
             mDrawerLayout.setDrawerListener(new DrawerListener());
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -236,12 +184,9 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 mDrawerLayout.openDrawer(listView);
                 firstTime = false;
             }
-        } else {
-            //actionBar.setDisplayHomeAsUpEnabled(false);
-            //actionBar.setHomeButtonEnabled(false);
         }
 
-        if (PrefUtils.get(this,Prefs.LOCALE, "0").equals("0") && !App.isGooglePlayVersion) {
+        if (PrefUtils.get(this,Prefs.LOCALE, "0").equals("0")) {
             CharSequence[] items = null;
             if (App.phoneLanguage.equals("1"))
                 items = new CharSequence[]{getString(R.string.language_english) + " " + getString(R.string.parenthese_default), getString(R.string.language_french), getString(R.string.language_spanish)};
@@ -251,7 +196,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 items = new CharSequence[]{getString(R.string.language_english), getString(R.string.language_french), getString(R.string.language_spanish) + " " + getString(R.string.parenthese_default)};
 
             final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertBuilder.setTitle(r.getString(R.string.title_alert_languages));
+            alertBuilder.setTitle(getString(R.string.title_alert_languages));
             alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
                     switch (item) {
@@ -292,9 +237,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 alertLanguages.show();
             } catch (Exception e) {
             }
-        } else if (App.isGooglePlayVersion) {
-            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "4");
-            SetViewPager();
         } else {
             SetViewPager();
         }
@@ -302,21 +244,15 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
 
+        VideoCastManager.checkGooglePlaySevices(this);
 
-        if (App.isPro) {
-            AdView adView = (AdView) findViewById(R.id.adView);
-            ((ViewGroup) adView.getParent()).removeView(adView);
-            VideoCastManager.checkGooglePlaySevices(this);
+        App.getCastManager(this);
 
-            App.getCastManager(this);
+        // -- Adding MiniController
+        App.mCastMgr.addMiniController(mMini);
 
-            // -- Adding MiniController
-            mMini = (MiniController) findViewById(R.id.miniController);
-            App.mCastMgr.addMiniController(mMini);
-
-            mCastConsumer = new VideoCastConsumerImpl();
-            App.mCastMgr.reconnectSessionIfPossible(this, false);
-        }
+        mCastConsumer = new VideoCastConsumerImpl();
+        App.mCastMgr.reconnectSessionIfPossible(this, false);
 
         final int identifier = getResources().getIdentifier("action_bar_title", "id", "android");
         txtTitle = (TextView) findViewById(identifier);
@@ -345,10 +281,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         viewPager.setAdapter(mAdapter);
 
         tabs.setViewPager(viewPager);
-        tabs.setDividerColor(r.getColor(R.color.blueTab));
-        tabs.setUnderlineColor(r.getColor(R.color.blueTab));
+        tabs.setDividerColor(getResources().getColor(R.color.blueTab));
+        tabs.setUnderlineColor(getResources().getColor(R.color.blueTab));
         //tabs.setTextColor(Color.parseColor("#55a73d"));
-        tabs.setIndicatorColor(r.getColor(R.color.blueTab));
+        tabs.setIndicatorColor(getResources().getColor(R.color.blueTab));
         tabs.setTabBackground("background_tab_darkblue");
 
     }
@@ -482,9 +418,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (App.isPro) {
-            mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
-        }
+        App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
 
         return true;
     }
@@ -539,17 +473,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
                 dialog.show();
 
                 break;
-            /*
-            case R.id.action_buypro:
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.topanimestream.pro")));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.topanimestream.pro")));
-                }
-
-                break;*/
             case R.id.action_settings:
-                startActivity(new Intent(MainActivity.this, Settings.class));
+                startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                 break;
             case R.id.action_search:
                 startActivity(new Intent(MainActivity.this, AnimeSearchActivity.class));
@@ -619,7 +544,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             return;
         }
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, r.getString(R.string.back_again), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_again), Toast.LENGTH_SHORT).show();
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -646,14 +571,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         } else if (menuItem.equals(getString(R.string.menu_share))) {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            /*
-            if (App.isPro) {
-                sendIntent.putExtra(Intent.EXTRA_TEXT,
-                        "https://play.google.com/store/apps/details?id=com.topanimestream.pro");
-            } else {
-                sendIntent.putExtra(Intent.EXTRA_TEXT,
-                        "https://play.google.com/store/apps/details?id=com.topanimestream");
-            }*/
             sendIntent.putExtra(Intent.EXTRA_TEXT, "http://www.topanimestream.com/en/android/");
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
@@ -734,21 +651,17 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
     @Override
     protected void onPause() {
-        if (App.isPro) {
-            App.mCastMgr.decrementUiCounter();
-            App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
-        }
+        App.mCastMgr.decrementUiCounter();
+        App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        if (App.isPro) {
-            App.getCastManager(this);
-            if (null != App.mCastMgr) {
-                App.mCastMgr.addVideoCastConsumer(mCastConsumer);
-                App.mCastMgr.incrementUiCounter();
-            }
+        App.getCastManager(this);
+        if (null != App.mCastMgr) {
+            App.mCastMgr.addVideoCastConsumer(mCastConsumer);
+            App.mCastMgr.incrementUiCounter();
         }
         super.onResume();
         if (App.languageChanged) {
@@ -773,7 +686,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
             busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), MainActivity.this);
             URL = getString(R.string.anime_service_path);
 
-            username = prefs.getString("Username", null);
+            username = PrefUtils.get(MainActivity.this, Prefs.USERNAME, null);
         }
 
         @Override

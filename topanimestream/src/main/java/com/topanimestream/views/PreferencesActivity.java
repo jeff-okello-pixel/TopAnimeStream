@@ -4,15 +4,9 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,45 +30,32 @@ import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
-
-
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 
-public class PreferencesActivity extends AppCompatActivity
+public class PreferencesActivity extends TASBaseActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private List<Object> mPrefItems = new ArrayList<>();
     private LinearLayoutManager mLayoutManager;
 
-    @InjectView(R.id.toolbar)
+    @Bind(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.recyclerView)
+    @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
-    @InjectView(R.id.rootLayout)
+    @Bind(R.id.rootLayout)
     ViewGroup rootLayout;
-
-    public static Intent startActivity(Activity activity) {
-        Intent intent = new Intent(activity, PreferencesActivity.class);
-        activity.startActivity(intent);
-        return intent;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preferences);
-        ButterKnife.inject(this);
+        super.onCreate(savedInstanceState, R.layout.activity_preferences);
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -88,16 +69,6 @@ public class PreferencesActivity extends AppCompatActivity
         PrefUtils.getPrefs(this).registerOnSharedPreferenceChangeListener(this);
 
         refreshItems();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return true;
     }
 
     @Override

@@ -52,13 +52,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_video" >
         </activity>
-
-        <activity
-            android:name=".views.Settings"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:configChanges="locale|layoutDirection"
-            android:label="Settings" >
-        </activity>
         <activity
             android:name=".views.PreferencesActivity"
             android:configChanges="locale|layoutDirection"

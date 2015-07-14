@@ -17,4 +17,8 @@ public class Prefs {
     public static final String DEFAULT_VIDEO_QUALITY = "default_video_quality";
     public static final String DEFAULT_VIDEO_LANGUAGE = "default_video_language";
     public static final String DEFAULT_VIDEO_SUBTITLE_LANGUAGE = "default_video_subtitle_language";
+    public static final String ACCESS_TOKEN = "access_token";
+    public static final String SHOW_UPDATE = "show_update";
+    public static final String USERNAME = "username";
+    public static final String PLAY_INTERNAL = "username";
 }

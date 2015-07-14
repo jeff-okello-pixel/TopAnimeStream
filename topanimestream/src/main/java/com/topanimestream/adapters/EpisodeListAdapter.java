@@ -2,7 +2,6 @@ package com.topanimestream.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
@@ -15,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import com.topanimestream.App;
 import com.topanimestream.models.Anime;
 import com.topanimestream.utilities.SQLiteHelper;
 import com.topanimestream.models.Episode;
@@ -28,22 +25,16 @@ public class EpisodeListAdapter extends BaseAdapter {
     private final Context context;
     private ArrayList<Episode> values;
     private Resources re;
-    private Activity act;
+    private Context mContext;
     private ViewHolder holder;
-    private SharedPreferences prefs;
-    private TextView txtEpisodeNumber;
-    private ImageView imgWatched;
     private Anime anime;
-    App app;
 
     public EpisodeListAdapter(Context context, Anime anime) {
         this.context = context;
         this.anime = anime;
         this.values = anime.getEpisodes();
-        this.re = this.context.getResources();
-        this.act = (Activity) context;
-        prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        app = ((App) context.getApplicationContext());
+        this.re = context.getResources();
+        this.mContext = context;
 
     }
 
@@ -85,7 +76,7 @@ public class EpisodeListAdapter extends BaseAdapter {
         } else {
             holder.txtEpisodeName.setVisibility(View.GONE);
         }
-        SQLiteHelper sqlite = new SQLiteHelper(act);
+        SQLiteHelper sqlite = new SQLiteHelper(mContext);
         if (sqlite.isWatched(episode.getEpisodeId())) {
             holder.imgWatched.setBackgroundColor(Color.parseColor("#D9245169"));
             holder.imgWatched.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
@@ -133,7 +124,7 @@ public class EpisodeListAdapter extends BaseAdapter {
 
         public void onClick(View v) {
             Episode episode = values.get(position);
-            SQLiteHelper sqlite = new SQLiteHelper(act);
+            SQLiteHelper sqlite = new SQLiteHelper(mContext);
             if (sqlite.isWatched(episode.getEpisodeId())) {
                 sqlite.removeWatched(episode.getEpisodeId());
                 v.setBackgroundColor(Color.parseColor("#00000000"));

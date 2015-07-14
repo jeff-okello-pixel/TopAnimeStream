@@ -1,8 +1,6 @@
 package com.topanimestream.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
@@ -10,22 +8,17 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import hugo.weaving.DebugLog;
 import android.widget.TextView;
-
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -211,13 +204,13 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         View itemView;
-        @InjectView(R.id.focus_overlay)
+        @Bind(R.id.focus_overlay)
         View focusOverlay;
-        @InjectView(R.id.cover_image)
+        @Bind(R.id.cover_image)
         ImageView coverImage;
-        @InjectView(R.id.title)
+        @Bind(R.id.title)
         TextView title;
-        @InjectView(R.id.year)
+        @Bind(R.id.year)
         TextView year;
 
         private View.OnFocusChangeListener mOnFocusChangeListener = new View.OnFocusChangeListener() {
@@ -229,7 +222,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.inject(this, itemView);
+            ButterKnife.bind(this, itemView);
             this.itemView = itemView;
             itemView.setOnClickListener(this);
             coverImage.setMinimumHeight(mItemHeight);

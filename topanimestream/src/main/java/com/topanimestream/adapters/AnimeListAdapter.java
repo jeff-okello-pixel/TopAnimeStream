@@ -1,9 +1,6 @@
 package com.topanimestream.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +20,11 @@ import com.topanimestream.R;
 public class AnimeListAdapter extends BaseAdapter {
     private final Context context;
     private ArrayList<Anime> values;
-    private Activity act;
     private ViewHolder holder;
-    private ArrayList<Anime> origData;
-    private SharedPreferences prefs;
-    App app;
 
     public AnimeListAdapter(Context context, ArrayList<Anime> values) {
         this.context = context;
         this.values = values;
-        this.act = (Activity) context;
-        this.origData = values;
-        app = ((App) context.getApplicationContext());
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void update() {

@@ -3,9 +3,7 @@ package com.topanimestream;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.preference.PreferenceManager;
 
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -18,6 +16,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.NetworkChangeReceiver;
 import com.topanimestream.utilities.NetworkUtil;
+import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 
@@ -26,8 +25,6 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static Locale locale;
     public static ImageLoader imageLoader;
     private static Connection connection;
-    public static boolean isPro = false;
-    public static boolean isGooglePlayVersion = false;
     public static boolean isVkOnly = false;
     public static boolean languageChanged = false;
     public static String accessToken;
@@ -64,7 +61,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public void onCreate() {
         super.onCreate();
         sdkVersion = android.os.Build.VERSION.SDK_INT;
-        isTablet = Utils.isTablet(getApplicationContext());
+        isTablet = PixelUtils.isTablet(getApplicationContext());
         phoneLanguage = Locale.getDefault().getLanguage();
         if (phoneLanguage.equals(Locale.FRENCH.getLanguage()))
             phoneLanguage = "2";
@@ -90,8 +87,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(imgConfig);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        App.accessToken = prefs.getString("AccessToken", "");
+        App.accessToken = PrefUtils.get(getApplicationContext(), Prefs.ACCESS_TOKEN, "");
         setLocale();
 
 
@@ -104,17 +100,14 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         String lang = PrefUtils.get(getContext(), Prefs.LOCALE, "1");
         currentLanguageId = lang;
         boolean shouldSetLanguage = PrefUtils.get(getContext(), Prefs.SHOULD_SET_LANGUAGE, true);
-        if (!App.isGooglePlayVersion && shouldSetLanguage) {
+        if (shouldSetLanguage) {
             PrefUtils.remove(getContext(), Prefs.LOCALE);
             lang = Utils.ToLanguageString(phoneLanguage);
             PrefUtils.save(getContext(), Prefs.SHOULD_SET_LANGUAGE, false);
-        } else if (!App.isGooglePlayVersion)
+        } else {
             lang = Utils.ToLanguageString(lang);
-        else {
-            //lang = Utils.ToLanguageString(phoneLanguage);
-            phoneLanguage = "4";
-            lang = "es";
         }
+
         if (!"".equals(lang) && !configMirror.locale.getLanguage().equals(lang)) {
             locale = new Locale(lang);
             Locale.setDefault(locale);

@@ -131,7 +131,6 @@ public class DialogManager {
     }
 
     public static void ShowChoosePlayerDialog(final Context context, final String mp4Url, final int mirrorId) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         View checkBoxView = View.inflate(context, R.layout.dialog_choose_player, null);
         final CheckBox chkAlwaysThis = (CheckBox) checkBoxView.findViewById(R.id.chkAlwaysThis);
         chkAlwaysThis.setText(context.getString(R.string.checkbox_player));
@@ -146,7 +145,7 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (chkAlwaysThis.isChecked()) {
-                            prefs.edit().putString("prefPlayInternal", "true").apply();
+                            PrefUtils.save(context, Prefs.PLAY_INTERNAL, "true");
                         }
                         Mp4Manager.PlayInternalVideo(context, mp4Url, mirrorId);
                     }
@@ -157,7 +156,7 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (chkAlwaysThis.isChecked()) {
-                            prefs.edit().putString("prefPlayInternal", "false").apply();
+                            PrefUtils.save(context, Prefs.PLAY_INTERNAL, "false");
                         }
                         Mp4Manager.PlayExternalVideo(context, mp4Url);
                     }
@@ -297,102 +296,6 @@ public class DialogManager {
 
     }
 
-    public static void ShowBuyProDialog(final Context context) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.title_buy_topanimestream));
-        //builder.setIcon(R.drawable.icon);
-        if (App.isGooglePlayVersion && !App.isPro) {
-            builder.setMessage(context.getString(R.string.topanimestream_has_2_pro));
-            builder.setPositiveButton(context.getString(R.string.all_languages),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                            String language = Utils.ToLanguageString(App.phoneLanguage);
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse(context.getString(R.string.topanimestream_website) + language + "/" + "android/"));
-                            context.startActivity(intent);
-                            prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
-
-                        }
-                    }
-            );
-            builder.setNeutralButton(context.getString(R.string.spanish_only),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            try {
-                                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.topanimestream.pro")));
-                            } catch (android.content.ActivityNotFoundException anfe) {
-                                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.topanimestream.pro")));
-                            }
-                        }
-                    }
-            );
-            builder.setNegativeButton(context.getString(R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    }
-            );
-        } else {
-            builder.setMessage(context.getString(R.string.bored_animes_spanish));
-            builder.setPositiveButton(context.getString(R.string.buy_full_version),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                            String language = Utils.ToLanguageString(App.phoneLanguage);
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse(context.getString(R.string.topanimestream_website) + language + "/" + "android/"));
-                            context.startActivity(intent);
-                            prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
-                        }
-                    }
-            );
-            builder.setNegativeButton(context.getString(R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    }
-            );
-        }
-
-        ShowDialog(builder);
-
-    }
-
-    public static void ShowWelcomeDialog(final Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.welcome_topanimestream));
-        //builder.setIcon(R.drawable.icon);
-        builder.setMessage(context.getString(R.string.welcome_dialog_message));
-        builder.setPositiveButton(context.getString(R.string.get_full_version),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                        String language = Utils.ToLanguageString(App.phoneLanguage);
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(context.getString(R.string.topanimestream_website) + language + "/" + "android/"));
-                        context.startActivity(intent);
-                        prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
-                    }
-                }
-        );
-
-        builder.setNegativeButton(context.getString(R.string.no_thanks),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        prefs.edit().putBoolean("ShowWelcomeDialog", false).apply();
-                    }
-                }
-        );
-
-        ShowDialog(builder);
-
-    }
 
 
     public static void ShowGenericErrorDialog(final Context context, String errorMessage) {
