@@ -84,7 +84,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     private String[] tabTitles;
     private AnimeListFragment serieFragment;
     private AnimeListFragment movieFragment;
-    private LatestEpisodesFragment latestEpisodesFragment;
+    private LatestUpdatesFragment latestUpdatesFragment;
     private Dialog busyDialog;
     private AlertDialog alertLanguages;
     private VideoCastConsumerImpl mCastConsumer;
@@ -127,7 +127,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
         App.accessToken = PrefUtils.get(this, Prefs.ACCESS_TOKEN , "");
 
-        tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_episodes)};
+        tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_updates)};
 
         //fill default filter dialog spinner values
         if (savedInstanceState != null) {
@@ -141,7 +141,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
             serieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "serieFragment");
             movieFragment = (AnimeListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "movieFragment");
-            latestEpisodesFragment = (LatestEpisodesFragment) getSupportFragmentManager().getFragment(savedInstanceState, "latestEpisodesFragment");
+            latestUpdatesFragment = (LatestUpdatesFragment) getSupportFragmentManager().getFragment(savedInstanceState, "latestUpdatesFragment");
         } else {
             spinnerDubbedSubbedValue = getString(R.string.tab_all);
             spinnerStatusValue = getString(R.string.tab_all);
@@ -324,10 +324,10 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                 case 1:
                     movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL, order, filter);
                     return movieFragment;
-                //Latest episode
+                //Latest updates
                 case 2:
-                    latestEpisodesFragment = LatestEpisodesFragment.newInstance("Latest Episodes");
-                    return latestEpisodesFragment;
+                    latestUpdatesFragment = LatestUpdatesFragment.newInstance("Latest Updates");
+                    return latestUpdatesFragment;
             }
             return null;
         }
@@ -408,8 +408,8 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             getSupportFragmentManager().putFragment(outState, "serieFragment", serieFragment);
         if (movieFragment != null && movieFragment.isAdded())
             getSupportFragmentManager().putFragment(outState, "movieFragment", movieFragment);
-        if (latestEpisodesFragment != null && latestEpisodesFragment.isAdded())
-            getSupportFragmentManager().putFragment(outState, "latestEpisodesFragment", latestEpisodesFragment);
+        if (latestUpdatesFragment != null && latestUpdatesFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, "latestUpdatesFragment", latestUpdatesFragment);
         super.onSaveInstanceState(outState);
 
 
@@ -579,8 +579,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             AnimationManager.ActivityStart(this);
         } else if (menuItem.equals(getString(R.string.menu_logout))) {
             AsyncTaskTools.execute(new LogoutTask());
-        } else if (menuItem.equals(getString(R.string.menu_pro))) {
-            DialogManager.ShowBuyProDialog(this);
         }
 
 

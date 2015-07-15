@@ -314,4 +314,5 @@
     <string name="you_have_changed_video_language">You have changed the video language. Subtitles have been reset.</string>
     <string name="subtitles_reset_default">The subtitles have been reset to default.</string>
     <string name="title_search">Title...</string>
+    <string name="latest_updates">Latest Updates</string>
 </resources>

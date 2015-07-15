@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +22,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.adapters.AnimeListAdapter;
 import com.topanimestream.adapters.LatestEpisodesAdapter;
-import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
@@ -41,7 +38,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class LatestEpisodesFragment extends Fragment implements OnItemClickListener {
+public class LatestUpdatesFragment extends Fragment implements OnItemClickListener {
 
     public int currentSkip = 0;
     public int currentLimit = 40;
@@ -61,12 +58,12 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
     private LatestEpisodesAdapter adapter;
     private TextView txtNoEpisodes;
 
-    public LatestEpisodesFragment() {
+    public LatestUpdatesFragment() {
 
     }
 
-    public static LatestEpisodesFragment newInstance(String fragmentName) {
-        LatestEpisodesFragment ttFrag = new LatestEpisodesFragment();
+    public static LatestUpdatesFragment newInstance(String fragmentName) {
+        LatestUpdatesFragment ttFrag = new LatestUpdatesFragment();
         Bundle args = new Bundle();
         args.putString("fragmentName", fragmentName);
         ttFrag.setArguments(args);
@@ -179,7 +176,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Links").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).orderby("AddedDate%20desc").build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("LatestDistinctLinks").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).orderby("AddedDate%20desc").build();
 
         }
 
@@ -236,7 +233,7 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                         }
                         adapter.update();
                     } else {
-                        adapter = new LatestEpisodesAdapter(LatestEpisodesFragment.this.getActivity(), newLinks);
+                        adapter = new LatestEpisodesAdapter(LatestUpdatesFragment.this.getActivity(), newLinks);
                         gridView.setAdapter(adapter);
                     }
 
@@ -244,8 +241,8 @@ public class LatestEpisodesFragment extends Fragment implements OnItemClickListe
                 } else {
                     if (result.equals("401")) {
                         Toast.makeText(getActivity(), getActivity().getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                        LatestEpisodesFragment.this.startActivity(new Intent(LatestEpisodesFragment.this.getActivity(), LoginActivity.class));
-                        LatestEpisodesFragment.this.getActivity().finish();
+                        LatestUpdatesFragment.this.startActivity(new Intent(LatestUpdatesFragment.this.getActivity(), LoginActivity.class));
+                        LatestUpdatesFragment.this.getActivity().finish();
                     }
                 }
                 isLoading = false;
