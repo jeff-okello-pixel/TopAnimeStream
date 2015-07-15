@@ -326,7 +326,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                     return movieFragment;
                 //Latest updates
                 case 2:
-                    latestUpdatesFragment = LatestUpdatesFragment.newInstance("Latest Updates");
+                    latestUpdatesFragment = LatestUpdatesFragment.newInstance();
                     return latestUpdatesFragment;
             }
             return null;

@@ -1,26 +1,17 @@
 package com.topanimestream.views.profile;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
+import com.topanimestream.views.TASBaseActivity;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
@@ -33,47 +24,21 @@ import org.kxml2.kdom.Node;
 
 import java.util.Locale;
 
-public class RegisterActivity extends ActionBarActivity implements View.OnClickListener {
-    private Button btnRegister;
-    private Button btnCancel;
+public class RegisterActivity extends TASBaseActivity implements View.OnClickListener {
 
-    private EditText txtUserName;
-    private EditText txtPassword;
     private Dialog busyDialog;
-    private SharedPreferences prefs;
 
     public RegisterActivity() {
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        super.onCreate(savedInstanceState, R.layout.activity_register);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.register) + "</font>"));
 
 
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.login, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onClick(View view) {

@@ -61,7 +61,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
     private Anime anime;
     private SQLiteHelper db;
     private EpisodeListFragment episodeListFragment;
-    private LinearLayout layEpisodes;
     private boolean isFavorite = false;
     private Vote currentUserVote;
     public static Review currentUserReview;
@@ -69,25 +68,26 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
     private AnimeDetailsFragment animeDetailsFragment;
     private AnimeDetailsMovieFragment animeDetailsMovieFragment;
 
+    @Bind(R.id.layEpisodes)
+    LinearLayout layEpisodes;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
 
         currentUserReview = null;
-        layEpisodes = (LinearLayout) findViewById(R.id.layEpisodes);
         db = new SQLiteHelper(this);
         mItems = new ArrayList<String>();
 
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("Anime");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.episodes_of) + " " + anime.getName());
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }
+        toolbar.setTitle(getString(R.string.episodes_of) + " " + anime.getName());
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        setSupportActionBar(toolbar);
 
         if (anime == null || anime.getAnimeId() == 0) {
             Toast.makeText(this, getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
@@ -102,7 +102,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         FragmentManager fm = getSupportFragmentManager();
         if(!anime.isMovie())
         {
-
             animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentByTag("animeDetailsFragment");
             if (animeDetailsFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
@@ -128,9 +127,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
                 ft.commit();
             }
         }
-
-
-
 
         AsyncTaskTools.execute(new AnimeDetailsTask(false));
 

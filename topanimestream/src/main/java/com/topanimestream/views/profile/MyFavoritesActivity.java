@@ -1,17 +1,10 @@
 package com.topanimestream.views.profile;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,7 +28,6 @@ import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.topanimestream.App;
 import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.SQLiteHelper;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.AnimeListAdapter;
@@ -44,40 +36,37 @@ import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 import com.topanimestream.models.CurrentUser;
-import com.topanimestream.views.AnimeDetailsActivity;
 import com.topanimestream.views.OldAnimeDetailsActivity;
+import com.topanimestream.views.TASBaseActivity;
 
-public class MyFavoritesActivity extends ActionBarActivity implements OnItemClickListener {
-    private DragSortListView listView;
+import butterknife.Bind;
+
+public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickListener {
     private ArrayList<Anime> animes;
-    private int animeId;
-    private TextView txtNoFavorite;
-    private Resources r;
-    private AlertDialog alertProviders;
-    private SharedPreferences prefs;
     private AnimeListAdapter adapter;
+
+    @Bind(R.id.txtNoFavorite)
+    TextView txtNoFavorite;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.listViewFavorites)
+    DragSortListView listViewFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorite);
-        r = getResources();
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        txtNoFavorite = (TextView) findViewById(R.id.txtNoFavorite);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        super.onCreate(savedInstanceState, R.layout.activity_favorite);
 
-        if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.title_favorites));
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }
+        toolbar.setTitle(getString(R.string.title_favorites));
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        setSupportActionBar(toolbar);
 
-        listView = (DragSortListView) findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
-        listView.setDropListener(onDrop);
-        listView.setRemoveListener(onRemove);
-        DragSortController controller = new DragSortController(listView);
+        listViewFavorites.setOnItemClickListener(this);
+        listViewFavorites.setDropListener(onDrop);
+        listViewFavorites.setRemoveListener(onRemove);
+
+        DragSortController controller = new DragSortController(listViewFavorites);
         //controller.setClickRemoveId(R.id.);
         controller.setRemoveEnabled(true);
         controller.setSortEnabled(true);
@@ -85,10 +74,10 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
         controller.setBackgroundColor(getResources().getColor(R.color.blueTab));
         controller.setDragInitMode(DragSortController.ON_LONG_PRESS);
 
-        listView.setFloatViewManager(controller);
-        listView.setOnTouchListener(controller);
-        listView.setDragScrollProfile(ssProfile);
-        listView.setDragEnabled(true);
+        listViewFavorites.setFloatViewManager(controller);
+        listViewFavorites.setOnTouchListener(controller);
+        listViewFavorites.setDragScrollProfile(ssProfile);
+        listViewFavorites.setDragEnabled(true);
 
     }
     private DragSortListView.DragScrollProfile ssProfile =
@@ -109,14 +98,8 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
             Anime anime = animes.get(which);
             animes.remove(anime);
             adapter.notifyDataSetChanged();
-            if (App.isGooglePlayVersion) {
-                SQLiteHelper sqlLite = new SQLiteHelper(MyFavoritesActivity.this);
-                sqlLite.removeFavorite(anime.getAnimeId());
-                populateList();
-                Toast.makeText(MyFavoritesActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
-            } else {
-                AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
-            }
+
+            AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
 
             if (animes.size() > 0)
                 txtNoFavorite.setVisibility(View.GONE);
@@ -138,22 +121,11 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
                 }
             };
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
-        }
-        return true;
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
         Anime anime = animes.get(position);
-        animeId = anime.getAnimeId();
         Intent intent = new Intent(this, OldAnimeDetailsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Anime", anime);
@@ -165,20 +137,7 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
     @Override
     protected void onResume() {
         super.onResume();
-        populateList();
-
-
-    }
-
-    private void populateList() {
-        if (App.isGooglePlayVersion) {
-            SQLiteHelper sqlLite = new SQLiteHelper(this);
-            animes = sqlLite.getFavorites(prefs.getString("prefLanguage", "1"));
-            sqlLite.close();
-            listView.setAdapter(new AnimeListAdapter(this, animes));
-        } else {
-            AsyncTaskTools.execute(new GetFavoriteTask());
-        }
+        AsyncTaskTools.execute(new GetFavoriteTask());
     }
 
     @Override
@@ -240,7 +199,7 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
             if (error != null) {
                 Toast.makeText(MyFavoritesActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(MyFavoritesActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyFavoritesActivity.this, getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -309,7 +268,7 @@ public class MyFavoritesActivity extends ActionBarActivity implements OnItemClic
             } else {
                 Collections.sort(animes, new Anime());
                 adapter = new AnimeListAdapter(MyFavoritesActivity.this, animes);
-                listView.setAdapter(adapter);
+                listViewFavorites.setAdapter(adapter);
                 if (animes.size() > 0)
                     txtNoFavorite.setVisibility(View.GONE);
                 else

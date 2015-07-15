@@ -3,9 +3,6 @@ package com.topanimestream.views;
 import android.content.Context;
 import android.view.SurfaceView;
 
-/**
- * Created by marcandre.therrien on 2015-04-15.
- */
 public class CustomSurfaceView extends SurfaceView {
     private int         mVideoWidth;
     private int         mVideoHeight;

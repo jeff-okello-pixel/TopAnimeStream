@@ -38,6 +38,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class EpisodeListFragment extends Fragment implements OnItemClickListener {
 
     private int currentSkip = 0;
@@ -46,14 +49,20 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     private boolean loadmore = false;
     private boolean hasResults = false;
     private EpisodeListAdapter adapter;
-    private TextView txtNoEpisode;
     App app;
     public Dialog busyDialog;
-    private SharedPreferences prefs;
-    private ListView listViewEpisodes;
     private EpisodesTask task;
-    private ProgressBar progressBarLoadMore;
     private Anime anime;
+
+    @Bind(R.id.txtNoEpisode)
+    TextView txtNoEpisode;
+
+    @Bind(R.id.progressBarLoadMore)
+    ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.listViewEpisodes)
+    ListView listViewEpisodes;
+
     public EpisodeListFragment() {
 
     }
@@ -107,12 +116,8 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
-        progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
-        txtNoEpisode = (TextView) rootView.findViewById(R.id.txtNoEpisode);
-        listViewEpisodes = (ListView) rootView.findViewById(R.id.listViewEpisodes);
+        ButterKnife.bind(this, rootView);
 
         Bundle bundle = getArguments();
         anime = bundle.getParcelable("anime");
@@ -167,9 +172,6 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        /*
-        if(adapter != null)
-            episodes = adapter.getAllEpisodes();*/
         outState.putParcelable("anime", anime);
         super.onSaveInstanceState(outState);
     }

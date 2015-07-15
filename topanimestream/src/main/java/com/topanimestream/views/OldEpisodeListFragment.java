@@ -24,8 +24,10 @@ import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
 import com.topanimestream.models.Anime;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.EpisodeListAdapter;
@@ -35,6 +37,9 @@ import com.topanimestream.views.profile.LoginActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class OldEpisodeListFragment extends Fragment implements OnItemClickListener {
 
@@ -46,16 +51,19 @@ public class OldEpisodeListFragment extends Fragment implements OnItemClickListe
     private EpisodeListAdapter adapter;
     private String fragmentName;
     private ArrayList<Episode> episodes;
-    private TextView txtNoEpisode;
-    private int animeId;
-    App app;
     public Dialog busyDialog;
-    private SharedPreferences prefs;
     private Anime anime;
     private boolean isSubbed;
-    private ListView listViewEpisodes;
     private EpisodesTask task;
-    private ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.progressBarLoadMore)
+    ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.listViewEpisodes)
+    ListView listViewEpisodes;
+
+    @Bind(R.id.txtNoEpisode)
+    TextView txtNoEpisode;
 
     public OldEpisodeListFragment() {
 
@@ -73,7 +81,6 @@ public class OldEpisodeListFragment extends Fragment implements OnItemClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = (App) getActivity().getApplication();
 
     }
 
@@ -107,15 +114,11 @@ public class OldEpisodeListFragment extends Fragment implements OnItemClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
-        progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
-        txtNoEpisode = (TextView) rootView.findViewById(R.id.txtNoEpisode);
-        listViewEpisodes = (ListView) rootView.findViewById(R.id.listViewEpisodes);
+        ButterKnife.bind(this, rootView);
 
         Bundle bundle = getArguments();
         fragmentName = bundle.getString("fragmentName");
-        animeId = bundle.getInt("animeId");
         anime = bundle.getParcelable("anime");
 
         if (savedInstanceState != null) {
@@ -146,7 +149,7 @@ public class OldEpisodeListFragment extends Fragment implements OnItemClickListe
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-                if (app.IsNetworkConnected()) {
+                if (App.IsNetworkConnected()) {
                     int lastInScreen = firstVisibleItem + visibleItemCount;
 
                     if ((lastInScreen >= totalItemCount - 6) && !(isLoading)) {
@@ -194,7 +197,7 @@ public class OldEpisodeListFragment extends Fragment implements OnItemClickListe
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + prefs.getString("prefLanguage", "1") + "%20and%20m/AnimeSource/IsSubbed%20eq%20" + isSubbed + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").skip(currentSkip).top(currentLimit).formatJson().build();
+            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + PrefUtils.get(getActivity(), Prefs.LOCALE, "1") + "%20and%20m/AnimeSource/IsSubbed%20eq%20" + isSubbed + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").skip(currentSkip).top(currentLimit).formatJson().build();
             episodes = new ArrayList<Episode>();
         }
 

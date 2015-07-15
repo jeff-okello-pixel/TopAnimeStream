@@ -1,14 +1,9 @@
 package com.topanimestream.views.profile;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -22,22 +17,20 @@ import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.VoteListAdapter;
 import com.topanimestream.managers.AnimationManager;
-import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Vote;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.views.AnimeDetailsActivity;
+import com.topanimestream.views.TASBaseActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
+import butterknife.Bind;
 
-public class MyVotesActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
-    private ListView listViewMyVotes;
-    private TextView txtNoVotes;
+public class MyVotesActivity extends TASBaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private VoteListAdapter adapter;
     private int currentSkip = 0;
     private int currentLimit = 40;
@@ -45,26 +38,26 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
     private boolean loadmore = false;
     private boolean hasResults = false;
     private MyVoteTask task;
-    private ProgressBar progressBarLoadMore;
 
-    public MyVotesActivity() {
-    }
+    @Bind(R.id.listViewMyVotes)
+    ListView listViewMyVotes;
+
+    @Bind(R.id.progressBarLoadMore)
+    ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.txtNoVotes)
+    TextView txtNoVotes;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_votes);
-        listViewMyVotes = (ListView) findViewById(R.id.listViewMyVotes);
-        progressBarLoadMore = (ProgressBar) findViewById(R.id.progressBarLoadMore);
-        txtNoVotes = (TextView) findViewById(R.id.txtNoVotes);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        super.onCreate(savedInstanceState, R.layout.activity_my_votes);
 
-        if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.my_votes));
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }
+        toolbar.setTitle(getString(R.string.my_votes));
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        setSupportActionBar(toolbar);
 
         listViewMyVotes.setOnItemClickListener(this);
         listViewMyVotes.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -98,16 +91,7 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
         });
 
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
-        }
-        return true;
-    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -125,8 +109,6 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Vote vote = (Vote) listViewMyVotes.getAdapter().getItem(position);
-        int animeId = vote.getAnimeId();
-
         Intent intent = new Intent(MyVotesActivity.this, AnimeDetailsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Anime", vote.getAnime());
@@ -137,7 +119,6 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
 
 
     public class MyVoteTask extends AsyncTask<Void, Void, String> {
-        private Dialog busyDialog;
         private String url;
         private ArrayList<Vote> newVotes = new ArrayList<Vote>();
         @Override
@@ -184,7 +165,6 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String error) {
-            DialogManager.dismissBusyDialog(busyDialog);
             if (error != null) {
                 if (error.equals("401")) {
                     Toast.makeText(MyVotesActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
@@ -216,11 +196,8 @@ public class MyVotesActivity extends ActionBarActivity implements View.OnClickLi
                 else
                     txtNoVotes.setVisibility(View.VISIBLE);
 
-
             }
         }
-
     }
-
 
 }

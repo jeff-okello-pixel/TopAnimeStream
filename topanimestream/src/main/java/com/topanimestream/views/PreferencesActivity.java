@@ -1,18 +1,14 @@
 package com.topanimestream.views;
 
-import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -49,8 +45,6 @@ public class PreferencesActivity extends TASBaseActivity
     Toolbar toolbar;
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
-    @Bind(R.id.rootLayout)
-    ViewGroup rootLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

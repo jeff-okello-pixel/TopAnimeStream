@@ -2,11 +2,8 @@ package com.topanimestream.views;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +24,6 @@ import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Link;
-import com.topanimestream.models.Mirror;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -38,6 +34,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class LatestUpdatesFragment extends Fragment implements OnItemClickListener {
 
     public int currentSkip = 0;
@@ -45,28 +44,25 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
     public boolean isLoading = false;
     public boolean loadmore = false;
     public boolean hasResults = false;
-    private GridView gridView;
-    private ArrayList<Link> links;
-    private ProgressBar progressBarLoadMore;
-    private String fragmentName;
-    private Resources r;
     public Dialog busyDialog;
-    public ArrayList<Mirror> mirrors;
-    public int animeId;
-    private SharedPreferences prefs;
     private LatestEpisodesTask task;
     private LatestEpisodesAdapter adapter;
-    private TextView txtNoEpisodes;
+
+    @Bind(R.id.gridView)
+    GridView gridView;
+
+    @Bind(R.id.progressBarLoadMore)
+    ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.txtNoUpdates)
+    TextView txtNoUpdates;
 
     public LatestUpdatesFragment() {
 
     }
 
-    public static LatestUpdatesFragment newInstance(String fragmentName) {
+    public static LatestUpdatesFragment newInstance() {
         LatestUpdatesFragment ttFrag = new LatestUpdatesFragment();
-        Bundle args = new Bundle();
-        args.putString("fragmentName", fragmentName);
-        ttFrag.setArguments(args);
         return ttFrag;
     }
 
@@ -79,7 +75,6 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fragmentName = this.getArguments().getString("fragmentName");
 
     }
 
@@ -114,19 +109,9 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_latest_episodes_list, container, false);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        r = getResources();
-        /*
-        if(savedInstanceState != null)
-            isDesc = savedInstanceState.getBoolean("isDesc");
-        else
-            isDesc = getArguments().getBoolean("isDesc");*/
-        links = new ArrayList<Link>();
-        fragmentName = getArguments().getString("fragmentName");
-        txtNoEpisodes = (TextView) rootView.findViewById(R.id.txtNoEpisodes);
-        progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
-        gridView = (GridView) rootView.findViewById(R.id.gridView);
+        final View rootView = inflater.inflate(R.layout.fragment_latest_updates_list, container, false);
+        ButterKnife.bind(this, rootView);
+
         gridView.setFastScrollEnabled(true);
         gridView.setOnItemClickListener(this);
         gridView.setScrollingCacheEnabled(false);
@@ -249,10 +234,10 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
                 progressBarLoadMore.setVisibility(View.GONE);
 
                 if (gridView.getAdapter().getCount() == 0) {
-                    txtNoEpisodes.setVisibility(View.VISIBLE);
+                    txtNoUpdates.setVisibility(View.VISIBLE);
                     gridView.setVisibility(View.GONE);
                 } else {
-                    txtNoEpisodes.setVisibility(View.GONE);
+                    txtNoUpdates.setVisibility(View.GONE);
                     gridView.setVisibility(View.VISIBLE);
                 }
             } catch (Exception e)//catch all exception... handle orientation change

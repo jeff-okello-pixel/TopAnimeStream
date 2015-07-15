@@ -5,15 +5,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,12 +23,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.fwwjt.pacjz173199.AdView;
 import com.google.gson.Gson;
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
-import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
@@ -44,7 +36,9 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.SQLiteHelper;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -60,55 +54,41 @@ import com.topanimestream.models.Review;
 import com.topanimestream.models.Vote;
 import com.topanimestream.views.profile.LoginActivity;
 
-public class OldAnimeDetailsActivity extends ActionBarActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
-    private ListView listViewEpisodes;
-    private ArrayList<Episode> episodes;
+import butterknife.Bind;
+
+public class OldAnimeDetailsActivity extends TASBaseActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator {
     public ArrayList<String> mItems;
-    private Dialog busyDialog;
     private Anime anime;
-    private LinearLayout layAnimeDetails;
-    private MenuItem menuMoreOptions;
-    private Resources r;
-    private SharedPreferences prefs;
     private SQLiteHelper db;
     private EpisodesContainerFragment episodeContainerFragment;
-    private MovieVkFragment movieVkFragment;
-    private AlertDialog qualityDialog;
-    private VideoCastConsumerImpl mCastConsumer;
-    private MenuItem mediaRouteMenuItem;
-    private LinearLayout layEpisodes;
-    private MiniController mMini;
     private boolean isFavorite = false;
     private Vote currentUserVote;
     public static Review currentUserReview;
     private Recommendation currentUserRecommendation;
     private AnimeDetailsFragment animeDetailsFragment;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.layEpisodes)
+    LinearLayout layEpisodes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_anime_details);
+        super.onCreate(savedInstanceState, R.layout.activity_anime_details);
         currentUserReview = null;
-        layAnimeDetails = (LinearLayout) findViewById(R.id.layAnimeDetails);
-        layEpisodes = (LinearLayout) findViewById(R.id.layEpisodes);
-        r = getResources();
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         db = new SQLiteHelper(this);
         mItems = new ArrayList<String>();
-        episodes = new ArrayList<Episode>();
 
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("Anime");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.episodes_of) + " " + anime.getName());
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }
+        toolbar.setTitle(getString(R.string.episodes_of) + " " + anime.getName());
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        setSupportActionBar(toolbar);
 
         if (anime == null || anime.getAnimeId() == 0) {
-            Toast.makeText(this, r.getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -116,23 +96,8 @@ public class OldAnimeDetailsActivity extends ActionBarActivity implements Episod
             anime = savedInstanceState.getParcelable("anime");
 
         }
-        if (App.isPro) {
 
-            AdView adView = (AdView) findViewById(R.id.adView);
-            ((ViewGroup) adView.getParent()).removeView(adView);
-            VideoCastManager.checkGooglePlaySevices(this);
-
-            App.getCastManager(this);
-
-            // -- Adding MiniController
-            mMini = (MiniController) findViewById(R.id.miniController);
-            App.mCastMgr.addMiniController(mMini);
-
-            mCastConsumer = new VideoCastConsumerImpl();
-            App.mCastMgr.reconnectSessionIfPossible(this, false);
-        }
-
-        String language = prefs.getString("prefLanguage", "1");
+        String language = PrefUtils.get(this, Prefs.LOCALE, "1");
         FragmentManager fm = getSupportFragmentManager();
 
         episodeContainerFragment = (EpisodesContainerFragment) fm.findFragmentByTag("episodeContainerFragment");
@@ -156,22 +121,11 @@ public class OldAnimeDetailsActivity extends ActionBarActivity implements Episod
 
     @Override
     protected void onResume() {
-        if (App.isPro) {
-            App.getCastManager(this);
-            if (null != App.mCastMgr) {
-                App.mCastMgr.addVideoCastConsumer(mCastConsumer);
-                App.mCastMgr.incrementUiCounter();
-            }
-        }
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        if (App.isPro) {
-            App.mCastMgr.decrementUiCounter();
-            App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
-        }
         super.onPause();
 
     }
@@ -199,10 +153,6 @@ public class OldAnimeDetailsActivity extends ActionBarActivity implements Episod
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.episodes, menu);
-        if (App.isPro) {
-            mediaRouteMenuItem = App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
-        }
-        menuMoreOptions = menu.findItem(R.id.action_moreoptions);
 
         return true;
     }
@@ -210,12 +160,6 @@ public class OldAnimeDetailsActivity extends ActionBarActivity implements Episod
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                break;
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
             case R.id.action_moreoptions:
                 final Item[] items = {
                         new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), isFavorite ? R.drawable.ic_action_star : R.drawable.ic_action_star_empty),
@@ -508,7 +452,7 @@ public class OldAnimeDetailsActivity extends ActionBarActivity implements Episod
                 Toast.makeText(OldAnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 isFavorite = false;
-                Toast.makeText(OldAnimeDetailsActivity.this, r.getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -565,7 +509,7 @@ public class OldAnimeDetailsActivity extends ActionBarActivity implements Episod
                 Toast.makeText(OldAnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 isFavorite = true;
-                Toast.makeText(OldAnimeDetailsActivity.this, r.getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OldAnimeDetailsActivity.this, getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }

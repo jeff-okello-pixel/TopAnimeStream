@@ -1,11 +1,7 @@
 package com.topanimestream.views;
 
-import android.app.AlertDialog;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -16,24 +12,16 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-
-import java.util.ArrayList;
-
 import com.topanimestream.App;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.AnimeSource;
 import com.topanimestream.models.Episode;
-import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.PrefUtils;
 
 public class EpisodesContainerFragment extends Fragment {
 
-    public boolean hasResults = false;
-    private ArrayList<Episode> subbedEpisodes;
-    private ArrayList<Episode> dubbedEpisodes;
-    private AlertDialog alertProviders;
     private String[] tabTitles;
     private ViewPager viewPager;
     private PagerAdapter mAdapter;
@@ -42,14 +30,9 @@ public class EpisodesContainerFragment extends Fragment {
     private OldEpisodeListFragment dubbedEpisodeFragment;
     private ProviderListFragment subbedProviderFragment;
     private ProviderListFragment dubbedProviderFragment;
-    private ArrayList<Mirror> mirrors;
-    private Resources r;
     private Anime anime;
-    private ArrayList<Episode> episodes;
     private boolean subbed = false;
     private boolean dubbed = false;
-    App app;
-    private SharedPreferences prefs;
 
     public static EpisodesContainerFragment newInstance(Anime anime) {
         EpisodesContainerFragment frag = new EpisodesContainerFragment();
@@ -62,7 +45,7 @@ public class EpisodesContainerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = (App) getActivity().getApplication();
+        super.onCreate(savedInstanceState);
         anime = getArguments().getParcelable("anime");
 
     }
@@ -86,14 +69,12 @@ public class EpisodesContainerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final View rootView = inflater.inflate(R.layout.fragment_episodes, container, false);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
             rootView.setLayoutParams(params);
         }
-        r = getResources();
+
         viewPager = (ViewPager) rootView.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.tabs);
 
@@ -104,7 +85,7 @@ public class EpisodesContainerFragment extends Fragment {
         }
         else
         {
-            String language = prefs.getString("prefLanguage", "1");
+            String language = PrefUtils.get(getActivity(), Prefs.LOCALE, "1");
             for (AnimeSource animeSource : anime.getAnimeSources()) {
                 if (String.valueOf(animeSource.getLanguageId()).equals(language) && animeSource.isSubbed()) {
                     subbed = true;
@@ -205,7 +186,7 @@ public class EpisodesContainerFragment extends Fragment {
     }
 
     private void createViewPager() {
-        tabTitles = new String[]{r.getString(R.string.tab_subbed), r.getString(R.string.tab_dubbed)};
+        tabTitles = new String[]{getString(R.string.tab_subbed), getString(R.string.tab_dubbed)};
         if (!dubbed) {
             tabTitles = new String[]{getString(R.string.tab_subbed)};
         } else if (!subbed) {
@@ -214,12 +195,11 @@ public class EpisodesContainerFragment extends Fragment {
 
         mAdapter = new PagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(mAdapter);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         tabs.setViewPager(viewPager);
-        tabs.setDividerColor(r.getColor(R.color.blueTab));
-        tabs.setUnderlineColor(r.getColor(R.color.blueTab));
+        tabs.setDividerColor(getResources().getColor(R.color.blueTab));
+        tabs.setUnderlineColor(getResources().getColor(R.color.blueTab));
         //tabs.setTextColor(Color.parseColor("#55a73d"));
-        tabs.setIndicatorColor(r.getColor(R.color.blueTab));
+        tabs.setIndicatorColor(getResources().getColor(R.color.blueTab));
         tabs.setTabBackground("background_tab_darkblue");
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 

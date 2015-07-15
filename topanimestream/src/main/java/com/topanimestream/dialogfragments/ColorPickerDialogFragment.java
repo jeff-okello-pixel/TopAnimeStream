@@ -13,8 +13,8 @@ import com.larswerkman.holocolorpicker.OpacityBar;
 import com.larswerkman.holocolorpicker.SVBar;
 import com.topanimestream.R;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class ColorPickerDialogFragment extends DialogFragment {
 
@@ -23,18 +23,18 @@ public class ColorPickerDialogFragment extends DialogFragment {
 
     private ResultListener mOnResultListener;
 
-    @InjectView(R.id.picker)
+    @Bind(R.id.picker)
     ColorPicker colorPicker;
-    @InjectView(R.id.svbar)
+    @Bind(R.id.svbar)
     SVBar svBar;
-    @InjectView(R.id.opacitybar)
+    @Bind(R.id.opacitybar)
     OpacityBar opacityBar;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_dialog_colorpicker, null, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 
         colorPicker.addSVBar(svBar);
         colorPicker.addOpacityBar(opacityBar);

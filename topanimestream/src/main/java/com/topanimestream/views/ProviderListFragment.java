@@ -1,11 +1,7 @@
 package com.topanimestream.views;
 
-import android.app.Dialog;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +19,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.ProviderListAdapter;
@@ -35,26 +32,29 @@ import com.topanimestream.models.Episode;
 import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
 
-public class ProviderListFragment extends Fragment implements OnItemClickListener {
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    private Resources r;
-    App app;
-    private ListView listView;
+public class ProviderListFragment extends Fragment implements OnItemClickListener {
     private int animeSourceId;
-    private SharedPreferences prefs;
     private Episode episode;
     private ArrayList<Mirror> mirrors;
-    private TextView txtNoProvider;
     private String type; //subbed dubbed
     private Anime anime;
     private ArrayList<Mirror> filteredMirrors;
-    private Dialog qualityDialog;
-    private ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.progressBarLoadMore)
+    ProgressBar progressBarLoadMore;
+
+    @Bind(R.id.listViewProviders)
+    ListView listViewProviders;
+
+    @Bind(R.id.txtNoProvider)
+    TextView txtNoProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = (App) getActivity().getApplication();
         animeSourceId = getArguments().getInt("animeSourceId");
         type = getArguments().getString("type");
         episode = getArguments().getParcelable("episode");
@@ -95,12 +95,10 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
+        ButterKnife.bind(this, rootView);
         filteredMirrors = new ArrayList<Mirror>();
-        progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
-        txtNoProvider = (TextView) rootView.findViewById(R.id.txtNoProvider);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        listView = (ListView) rootView.findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
+
+        listViewProviders.setOnItemClickListener(this);
         if (savedInstanceState != null) {
             mirrors = savedInstanceState.getParcelableArrayList("mirrors");
             episode = savedInstanceState.getParcelable("episode");
@@ -108,36 +106,19 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             animeSourceId = savedInstanceState.getInt("animeSourceId");
             anime = savedInstanceState.getParcelable("anime");
             if (filteredMirrors != null)
-                listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
+                listViewProviders.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
             else {
                 txtNoProvider.setVisibility(View.VISIBLE);
-                listView.setVisibility(View.GONE);
+                listViewProviders.setVisibility(View.GONE);
             }
         } else {
             if (animeSourceId != -1) //is a movie
             {
                 txtNoProvider.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
+                listViewProviders.setVisibility(View.VISIBLE);
                 for (AnimeSource animeSource : anime.getAnimeSources()) {
-                    //we already know that this animesource correspond to the subbed/dubbed and language that we want (checked in EpisodesContainerFragment)
                     if (animeSource.getAnimeSourceId() == animeSourceId) {
-                        /*
-                        if(animeSource.getVks().size() > 0)
-                        {
-                            //We have a vk source (yay!), we know it is the best provider so we only show the option to play the video
-                            Mirror mirror = new Mirror(animeSource.getVks().get(0));
-                            //Since we want to play the video, let's change the provider name to Play so the user doesn't see VK
-                            mirror.getProvider().setName(getString(R.string.play));
-                            mirrors = new ArrayList<Mirror>();
-                            mirrors.add(mirror);
-                            filteredMirrors = mirrors;
-                            listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
-                        }
-                        else
-                        {*/
-                        //We do not have anything in vk so we let the user choose the provider he wants
                         AsyncTaskTools.execute(new LoadProvidersTask());
-                        //}
                     }
                 }
 
@@ -145,8 +126,8 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
             } else if (mirrors != null && !mirrors.isEmpty())//is not a movie
             {
                 txtNoProvider.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
-                String language = prefs.getString("prefLanguage", "1");
+                listViewProviders.setVisibility(View.VISIBLE);
+                String language = PrefUtils.get(getActivity(), Prefs.LOCALE, "1");
                 for (Mirror mirror : mirrors) {
                     if (!String.valueOf(mirror.getAnimeSource().getLanguageId()).equals(language))
                         continue;
@@ -159,11 +140,11 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                             filteredMirrors.add(mirror);
                     }
                 }
-                listView.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
+                listViewProviders.setAdapter(new ProviderListAdapter(getActivity(), filteredMirrors));
             } else//is a movie, but there's no provider in this tab
             {
                 txtNoProvider.setVisibility(View.VISIBLE);
-                listView.setVisibility(View.GONE);
+                listViewProviders.setVisibility(View.GONE);
             }
         }
         return rootView;
@@ -230,7 +211,7 @@ public class ProviderListFragment extends Fragment implements OnItemClickListene
                     Toast.makeText(getActivity(), getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
                 } else {
                     filteredMirrors = mirrors;
-                    listView.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
+                    listViewProviders.setAdapter(new ProviderListAdapter(getActivity(), mirrors));
                 }
 
             } catch (Exception e)//catch all exception, handle orientation change

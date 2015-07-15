@@ -7,10 +7,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,6 @@ import com.nirhart.parallaxscroll.views.ParallaxListView;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.managers.DialogManager;
-import com.topanimestream.models.Role;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -34,48 +31,37 @@ import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Item;
+import com.topanimestream.views.TASBaseActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-import org.kxml2.kdom.Element;
-import org.kxml2.kdom.Node;
 
-public class MyProfileActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+import butterknife.Bind;
 
-    private Dialog busyDialog;
-    private SharedPreferences prefs;
-    private ParallaxListView listView;
+public class MyProfileActivity extends TASBaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+
     private ListAdapter adapter;
-    private ImageView imgBackdrop;
-    private ImageView imgProfilePic;
-    private TextView txtUsername;
-    private TextView txtJoinedDate;
-    private TextView txtRank;
     private String firstFavoriteBackDropUrl;
-    public MyProfileActivity() {
-    }
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.listView)
+    ParallaxListView listView;
+
+    ImageView imgBackdrop;
+    ImageView imgProfilePic;
+    TextView txtUsername;
+    TextView txtJoinedDate;
+    TextView txtRank;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_myprofile);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        listView = (ParallaxListView) findViewById(R.id.listView);
+        super.onCreate(savedInstanceState, R.layout.activity_myprofile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.my_profile));
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }
+        toolbar.setTitle(getString(R.string.my_profile));
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        setSupportActionBar(toolbar);
 
         final Item[] items = {
                 new Item(getString(R.string.edit_profile), R.drawable.ic_edit),
@@ -124,16 +110,7 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
 
         AsyncTaskTools.execute(new ProfileTask());
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
-        }
-        return true;
-    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -235,8 +212,6 @@ public class MyProfileActivity extends ActionBarActivity implements View.OnClick
                     App.imageLoader.displayImage(firstFavoriteBackDropUrl, imgBackdrop);
 
                 }
-
-
             } catch (Exception e)//catch all exception, handle orientation change
             {
                 e.printStackTrace();

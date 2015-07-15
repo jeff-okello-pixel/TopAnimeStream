@@ -10,9 +10,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,13 +34,13 @@ import org.kxml2.kdom.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Locale;
 
 import com.google.gson.Gson;
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.custom.TextureViewVideo;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
@@ -52,52 +49,54 @@ import com.topanimestream.R;
 import com.topanimestream.models.Account;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.MainActivity;
+import com.topanimestream.views.TASBaseActivity;
 
-public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
+import butterknife.Bind;
+
+public class LoginActivity extends TASBaseActivity implements View.OnClickListener {
+    @Bind(R.id.btnLogin)
     private Button btnLogin;
+
+    @Bind(R.id.btnRegister)
     private Button btnRegister;
+
+    @Bind(R.id.btnPasswordRecovery)
     private Button btnPasswordRecovery;
+
+    @Bind(R.id.txtTitle)
     private TextView txtTitle;
+
+    @Bind(R.id.txtUsername)
     private EditText txtUserName;
+
+    @Bind(R.id.txtPassword)
     private EditText txtPassword;
-    private Dialog busyDialog;
-    private Boolean shouldCloseOnly;//Used to start the mainactivity or not
-    private SharedPreferences prefs;
+
+    @Bind(R.id.videoView)
     private VideoView videoView;
+
+    @Bind(R.id.btnBottomLogin)
     private Button btnBottomLogin;
+
+    @Bind(R.id.btnCancel)
     private Button btnCancel;
-    private TextureViewVideo mTextureVideoView;
-    private MediaPlayer mMediaPlayer;
+
+    @Bind(R.id.layLogin)
     private LinearLayout layLogin;
 
-    public LoginActivity() {
-    }
+    private Dialog busyDialog;
+    private Boolean shouldCloseOnly;//Used to start the mainactivity or not
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_awesome_login);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Intent intent = getIntent();
-        shouldCloseOnly = intent.getBooleanExtra("ShouldCloseOnly", false);
-        /*
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setTitle(Html.fromHtml("<font color=#f0f0f0>" + getString(R.string.login) + "</font>"));
-        actionBar.hide();*/
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnPasswordRecovery = (Button) findViewById(R.id.btnPasswordRecovery);
-        layLogin = (LinearLayout) findViewById(R.id.layLogin);
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
-        txtUserName = (EditText) findViewById(R.id.txtUsername);
-        txtPassword = (EditText) findViewById(R.id.txtPassword);
-        txtTitle = (TextView) findViewById(R.id.txtTitle);
-        btnBottomLogin = (Button) findViewById(R.id.btnBottomLogin);
+        super.onCreate(savedInstanceState, R.layout.activity_awesome_login);
+
+
+        shouldCloseOnly = getIntent().getBooleanExtra("ShouldCloseOnly", false);
+
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
         txtTitle.setTypeface(typeFace);
-        videoView = (VideoView) findViewById(R.id.videoView);
+
         videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.loginbackground));
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -121,31 +120,10 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.login, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onClick(View view) {
-        String lang = prefs.getString("prefLanguage", "");
-        if (lang.equals("1"))
-            lang = "en";
-        else if (lang.equals("2"))
-            lang = "fr";
-        else if (lang.equals("4"))
-            lang = "es";
-        else
-            lang = "en";
+        String lang = PrefUtils.get(this, Prefs.LOCALE, "1");
+        lang = Utils.ToLanguageString(lang);
+
         switch (view.getId()) {
             case R.id.btnLogin:
                 if (txtUserName.getText().toString().equals("")) {
@@ -280,7 +258,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     public class AccountTask extends AsyncTask<Void, Void, String> {
         private Context context;
         private String username;
-        private ArrayList<Integer> premiumRoles = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 6));
 
         public AccountTask(Context context, String username) {
             this.context = context;
@@ -321,15 +298,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                     //Failed to get the role
                     Toast.makeText(LoginActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG).show();
                 } else {
-                    if (!Collections.disjoint(CurrentUser.Roles, premiumRoles)) {
-                        //is premium
-                        prefs.edit().putBoolean("IsPro", true).apply();
-                        App.isPro = true;
-                    } else {
-                        prefs.edit().putBoolean("IsPro", false).apply();
-                        App.isPro = false;
-                    }
-
                     Toast.makeText(LoginActivity.this, getString(R.string.login_successful), Toast.LENGTH_LONG).show();
                     if (!shouldCloseOnly) {
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));

@@ -36,7 +36,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 
-public class ManageReviewActivity extends ActionBarActivity implements View.OnTouchListener, RatingBar.OnRatingBarChangeListener, View.OnClickListener {
+public class ManageReviewActivity extends TASBaseActivity implements View.OnTouchListener, RatingBar.OnRatingBarChangeListener, View.OnClickListener {
 
 
     private SharedPreferences prefs;
@@ -65,9 +65,7 @@ public class ManageReviewActivity extends ActionBarActivity implements View.OnTo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_review);
+        super.onCreate(savedInstanceState, R.layout.activity_manage_review);
 
         btnSave = (Button)findViewById(R.id.btnSave);
         btnCancel = (Button)findViewById(R.id.btnCancel);
