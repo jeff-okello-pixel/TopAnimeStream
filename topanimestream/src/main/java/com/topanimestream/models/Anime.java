@@ -200,13 +200,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
     public AnimeInformation getAnimeInformation(Context context) {
             for (AnimeInformation info : this.AnimeInformations) {
-                if (App.isGooglePlayVersion) {
-                    if (String.valueOf(info.getLanguageId()).equals(App.phoneLanguage))
-                        return info;
-                } else {
-                    if (String.valueOf(info.getLanguageId()).equals(App.currentLanguageId))
-                        return info;
-                }
+                if (String.valueOf(info.getLanguageId()).equals(App.currentLanguageId))
+                    return info;
         }
 
         return null;
@@ -281,24 +276,13 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
     public String getDescription(Context context) {
         for (AnimeInformation animeInfo : this.getAnimeInformations()) {
-            if (App.isGooglePlayVersion) {
-                if (String.valueOf(animeInfo.getLanguageId()).equals(App.phoneLanguage)) {
-                    if (animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
-                        return animeInfo.getOverview().trim();
-                    else if (animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
-                        return animeInfo.getDescription().trim();
-                    else
-                        return "";
-                }
-            } else {
-                if (String.valueOf(animeInfo.getLanguageId()).equals(App.currentLanguageId)) {
-                    if (animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
-                        return animeInfo.getOverview().trim();
-                    else if (animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
-                        return animeInfo.getDescription().trim();
-                    else
-                        return "";
-                }
+            if (String.valueOf(animeInfo.getLanguageId()).equals(App.currentLanguageId)) {
+                if (animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
+                    return animeInfo.getOverview().trim();
+                else if (animeInfo.getDescription() != null && !animeInfo.getDescription().equals(""))
+                    return animeInfo.getDescription().trim();
+                else
+                    return "";
             }
         }
         return "";
@@ -321,12 +305,8 @@ public class Anime implements Parcelable, Comparator<Anime> {
 
         for (Genre genre : this.Genres) {
             if (!App.currentLanguageId.equals("1")) {
-                if (App.isGooglePlayVersion && App.phoneLanguage.equals("1")) {
-                    translatedGenres.add(genre.getName());
-                } else {
-                    String genreName = genre.getName().toLowerCase().replace(" ", "");
-                    translatedGenres.add(Utils.getStringResourceByName(genreName));
-                }
+                String genreName = genre.getName().toLowerCase().replace(" ", "");
+                translatedGenres.add(Utils.getStringResourceByName(genreName));
             } else
                 translatedGenres.add(genre.getName());
         }

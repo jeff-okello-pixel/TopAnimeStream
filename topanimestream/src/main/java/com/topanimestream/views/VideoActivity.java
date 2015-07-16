@@ -1,7 +1,6 @@
 package com.topanimestream.views;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,25 +14,26 @@ import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
 import com.topanimestream.utilities.Utils;
 
-public class VideoActivity extends Activity {
+import butterknife.Bind;
 
-    //UI controls
-    private VideoView videoView;
+public class VideoActivity extends TASBaseActivity {
+
     private String mp4Url;
-    private ProgressBar progLoading;
     private int mirrorId;
+
+    @Bind(R.id.videoView)
+    VideoView videoView;
+
+    @Bind(R.id.progLoading)
+    ProgressBar progLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState, R.layout.activity_video);
 
-        setContentView(R.layout.activity_video);
         Intent intent = getIntent();
         mirrorId = intent.getIntExtra("MirrorId", 0);
         mp4Url = intent.getStringExtra("Mp4Url");
-        videoView = (VideoView) findViewById(R.id.videoView);
-        progLoading = (ProgressBar) findViewById(R.id.progLoading);
 
         Uri mp4Uri = Uri.parse(mp4Url);
 
@@ -43,10 +43,6 @@ public class VideoActivity extends Activity {
         videoView.setMediaController(mediaController);
         videoView.start();
         progLoading.setVisibility(View.VISIBLE);
-        /*
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            progLoading.setVisibility(View.GONE);
-        }*/
 
         videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override

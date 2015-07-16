@@ -1,6 +1,5 @@
 package com.topanimestream.adapters;
 
-import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,15 +7,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.preferences.PrefItem;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class PreferencesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -79,18 +76,18 @@ public class PreferencesListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         View itemView;
-        @InjectView(android.R.id.icon)
+        @Bind(android.R.id.icon)
         ImageView icon;
-        @InjectView(android.R.id.text1)
+        @Bind(android.R.id.text1)
         TextView text1;
-        @InjectView(android.R.id.text2)
+        @Bind(android.R.id.text2)
         TextView text2;
-        @InjectView(android.R.id.checkbox)
+        @Bind(android.R.id.checkbox)
         CheckBox checkBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.inject(this, itemView);
+            ButterKnife.bind(this, itemView);
             this.itemView = itemView;
             itemView.setOnClickListener(this);
         }

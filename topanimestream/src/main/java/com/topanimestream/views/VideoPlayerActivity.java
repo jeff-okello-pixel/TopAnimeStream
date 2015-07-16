@@ -13,36 +13,27 @@ import java.util.Collection;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.gson.Gson;
 import com.topanimestream.App;
@@ -68,21 +59,16 @@ import com.topanimestream.utilities.WcfDataServiceUtility;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.VideoControllerCallback {
-    private RelativeLayout videoSurfaceContainer;
-    SurfaceView surfaceView;
+import butterknife.Bind;
+
+public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener, VideoControllerView.VideoControllerCallback {
     MediaPlayer player;
     VideoControllerView controller;
-    private int mVideoWidth;
-    private int mVideoHeight;
     private TimedTextObject mSubs;
     private Handler mDisplayHandler;
     private Caption mLastSub = null;
-    private StrokedRobotoTextView txtSubtitle;
-    private ImageView imgLoading;
     private File mSubsFile;
     private boolean checkForSubtitle;
-    private ProgressBar loadingSpinner;
     private Anime anime;
     private Episode currentEpisode;
     private Subtitle currentEpisodeSubtitle;
@@ -95,17 +81,28 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
+
+    @Bind(R.id.loadingSpinner)
+    ProgressBar loadingSpinner;
+
+    @Bind(R.id.imgLoading)
+    ImageView imgLoading;
+
+    @Bind(R.id.videoSurfaceContainer)
+    RelativeLayout videoSurfaceContainer;
+
+    @Bind(R.id.txtSubtitle)
+    StrokedRobotoTextView txtSubtitle;
+
+    @Bind(R.id.videoSurface)
+    SurfaceView surfaceView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState, R.layout.activity_video_player);
+        //TODO test no title feature
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_video_player);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        videoSurfaceContainer = (RelativeLayout)findViewById(R.id.videoSurfaceContainer);
-        loadingSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
-        imgLoading = (ImageView) findViewById(R.id.imgLoading);
-        txtSubtitle = (StrokedRobotoTextView)findViewById(R.id.txtSubtitle);
         txtSubtitle.setTextColor(PrefUtils.get(this, Prefs.SUBTITLE_COLOR, Color.WHITE));
         txtSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, PrefUtils.get(this, Prefs.SUBTITLE_SIZE, 16));
         txtSubtitle.setStrokeColor(PrefUtils.get(this, Prefs.SUBTITLE_STROKE_COLOR, Color.BLACK));
@@ -113,7 +110,6 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mDisplayHandler = new Handler(Looper.getMainLooper());
-        surfaceView = (SurfaceView) findViewById(R.id.videoSurface);
         surfaceView.getHolder().addCallback(this);
 
         player = new MediaPlayer();

@@ -55,34 +55,34 @@ import butterknife.Bind;
 
 public class LoginActivity extends TASBaseActivity implements View.OnClickListener {
     @Bind(R.id.btnLogin)
-    private Button btnLogin;
+    Button btnLogin;
 
     @Bind(R.id.btnRegister)
-    private Button btnRegister;
+    Button btnRegister;
 
     @Bind(R.id.btnPasswordRecovery)
-    private Button btnPasswordRecovery;
+    Button btnPasswordRecovery;
 
     @Bind(R.id.txtTitle)
-    private TextView txtTitle;
+    TextView txtTitle;
 
     @Bind(R.id.txtUsername)
-    private EditText txtUserName;
+    EditText txtUserName;
 
     @Bind(R.id.txtPassword)
-    private EditText txtPassword;
+    EditText txtPassword;
 
     @Bind(R.id.videoView)
-    private VideoView videoView;
+    VideoView videoView;
 
     @Bind(R.id.btnBottomLogin)
-    private Button btnBottomLogin;
+    Button btnBottomLogin;
 
     @Bind(R.id.btnCancel)
-    private Button btnCancel;
+    Button btnCancel;
 
     @Bind(R.id.layLogin)
-    private LinearLayout layLogin;
+    LinearLayout layLogin;
 
     private Dialog busyDialog;
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not

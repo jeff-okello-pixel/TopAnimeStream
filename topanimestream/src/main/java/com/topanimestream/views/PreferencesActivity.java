@@ -43,6 +43,7 @@ public class PreferencesActivity extends TASBaseActivity
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
 

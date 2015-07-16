@@ -1,15 +1,9 @@
 package com.topanimestream.views;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -36,41 +30,41 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
 
-public class ReviewsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
+public class ReviewsActivity extends TASBaseActivity implements AdapterView.OnItemClickListener {
 
-    private SharedPreferences prefs;
     private int currentSkip = 0;
     private int currentLimit = 40;
     private boolean isLoading = false;
     private boolean loadmore = false;
     private boolean hasResults = false;
-    private ListView listViewReviews;
     private ReviewsTask task;
-    private ProgressBar progressBarLoadMore;
     private int animeId;
     private ReviewListAdapter adapter;
     private Review currentUserReview;
     private final int ADD_REVIEW = 0;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.listViewReviews)
+    ListView listViewReviews;
+
+    @Bind(R.id.progressBarLoadMore)
+    ProgressBar progressBarLoadMore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Blue);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reviews);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        super.onCreate(savedInstanceState, R.layout.activity_reviews);
         Intent intent = getIntent();
         animeId = intent.getExtras().getInt("animeId");
         currentUserReview = intent.getExtras().getParcelable("currentUserReview");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.reviews));
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            setSupportActionBar(toolbar);
-        }
-        listViewReviews = (ListView) findViewById(R.id.listViewReviews);
-        progressBarLoadMore = (ProgressBar) findViewById(R.id.progressBarLoadMore);
+        toolbar.setTitle(getString(R.string.reviews));
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        setSupportActionBar(toolbar);
 
         listViewReviews.setFastScrollEnabled(true);
         listViewReviews.setOnItemClickListener(this);
@@ -106,16 +100,6 @@ public class ReviewsActivity extends ActionBarActivity implements AdapterView.On
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
-        }
-        return true;
-    }
 
     @Override
     public void onBackPressed() {
