@@ -2,11 +2,8 @@ package com.topanimestream.views;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,12 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,22 +24,18 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.adapters.AnimeGridAdapter;
-import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
-import com.topanimestream.adapters.AnimeListAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.Anime;
-import com.topanimestream.models.Mirror;
 import com.topanimestream.R;
 import com.topanimestream.views.profile.LoginActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class AnimeListFragment extends Fragment implements OnItemClickListener {
+public class AnimeListFragment extends Fragment {
 
     public static final String EXTRA_MODE = "extra_mode";
 
@@ -56,18 +44,10 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     public boolean isLoading = false;
     public boolean loadmore = false;
     public boolean hasResults = false;
-    private GridView gridView;
-    private ArrayList<Anime> animes;
-    private ProgressBar progressBarLoadMore;
     private String fragmentName;
-    private Resources r;
     public Dialog busyDialog;
-    public ArrayList<Mirror> mirrors;
     public int animeId;
-    private SharedPreferences prefs;
     private AnimeTask task;
-    private AnimeListAdapter adapter;
-    private TextView txtNoAnime;
     private String customOrder;
     private String customFilter;
     private AnimeGridAdapter mAdapter;
@@ -75,8 +55,8 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     private Integer mColumns = 2;
     private ArrayList<Anime> mItems = new ArrayList<>();
     private Mode mMode;
-    private boolean mEndOfListReached = false;
     private String searchQuery;
+
     public enum Mode {
         NORMAL, SEARCH
     }
@@ -84,9 +64,9 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    public AnimeListFragment() {
 
-    }
+    @Bind(R.id.progressBarLoading)
+    ProgressBar progressBarLoading;
 
     public static AnimeListFragment newInstance(String fragmentName, Mode mode, String orderby, String filter) {
         AnimeListFragment ttFrag = new AnimeListFragment();
@@ -133,31 +113,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         super.onPause();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
-
-        Anime anime = (Anime) gridView.getAdapter().getItem(position);
-        //HD
-        if(anime.getLinks() != null && anime.getLinks().size() > 0) {
-            Intent intent = new Intent(this.getActivity(), AnimeDetailsActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("Anime", anime);
-            intent.putExtras(bundle);
-            startActivity(intent);
-
-        }
-        else
-        {
-            Intent intent = new Intent(this.getActivity(), OldAnimeDetailsActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("Anime", anime);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        }
-        AnimationManager.ActivityStart(getActivity());
-
-    }
     public void triggerSearch(String query) {
         this.searchQuery = query;
         if (!isAdded())
@@ -182,9 +137,9 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
     }
 
     public void refresh(String orderBy, String filter) {
+        //TODO refresh the fragment
         currentSkip = 0;
-        if (adapter != null)
-            adapter.clear();
+
         loadmore = false;
         customOrder = orderBy;
         customFilter = filter;
@@ -196,8 +151,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
         ButterKnife.bind(this, rootView);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        r = getResources();
 
         customOrder = getArguments().getString("orderby", "");
         customFilter = getArguments().getString("filter", "");
@@ -208,52 +161,6 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
         mLayoutManager = new GridLayoutManager(getActivity(), mColumns);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-        /*
-        if(savedInstanceState != null)
-            isDesc = savedInstanceState.getBoolean("isDesc");
-        else
-            isDesc = getArguments().getBoolean("isDesc");*/
-        /*
-        animes = new ArrayList<Anime>();
-        fragmentName = getArguments().getString("fragmentName");
-        txtNoAnime = (TextView) rootView.findViewById(R.id.txtNoAnime);
-        progressBarLoadMore = (ProgressBar) rootView.findViewById(R.id.progressBarLoadMore);
-        gridView = (GridView) rootView.findViewById(R.id.gridView);
-        gridView.setFastScrollEnabled(true);
-        gridView.setOnItemClickListener(this);
-        gridView.setScrollingCacheEnabled(false);
-
-        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (app.IsNetworkConnected()) {
-                    int lastInScreen = firstVisibleItem + visibleItemCount;
-
-                    if ((lastInScreen >= totalItemCount - 6) && !(isLoading)) {
-                        if (hasResults) {
-                            currentSkip += currentLimit;
-                            loadmore = true;
-
-                            task = new AnimeTask(customOrder, customFilter);
-                            AsyncTaskTools.execute(task);
-                        } else if (task == null) {
-                            loadmore = false;
-                            task = new AnimeTask(customOrder, customFilter);
-                            currentSkip = 0;
-                            AsyncTaskTools.execute(task);
-                        }
-                    }
-                }
-            }
-        });*/
         return rootView;
     }
     @Override
@@ -338,9 +245,13 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
 
         @Override
         protected void onPreExecute() {
-            //progressBarLoadMore.setVisibility(View.VISIBLE);
+            if(mAdapter.getItemCount() != 0)
+                mAdapter.addLoading();
+            else
+                progressBarLoading.setVisibility(View.VISIBLE);
+
             isLoading = true;
-            mAdapter.addLoading();
+
             WcfDataServiceUtility wcfCall = null;
 
             if(mMode == Mode.NORMAL)
@@ -419,21 +330,10 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                 if (result == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
                 } else if (result.equals("Success")) {
+                    if(progressBarLoading.isShown())
+                        progressBarLoading.setVisibility(View.GONE);
 
                     mAdapter.setItems(newAnimes);
-                    /*
-                    if (loadmore) {
-
-                        for (Anime anime : newAnimes) {
-                            adapter.add(anime);
-                        }
-                        adapter.update();
-                    } else {
-                        adapter = new AnimeListAdapter(AnimeListFragment.this.getActivity(), newAnimes);
-                        gridView.setAdapter(adapter);
-                    }*/
-
-
                 } else {
                     if (result.equals("401")) {
                         Toast.makeText(getActivity(), getActivity().getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
@@ -442,16 +342,7 @@ public class AnimeListFragment extends Fragment implements OnItemClickListener {
                     }
                 }
                 isLoading = false;
-                /*
-                progressBarLoadMore.setVisibility(View.GONE);
 
-                if (gridView.getAdapter().getCount() == 0) {
-                    txtNoAnime.setVisibility(View.VISIBLE);
-                    gridView.setVisibility(View.GONE);
-                } else {
-                    txtNoAnime.setVisibility(View.GONE);
-                    gridView.setVisibility(View.VISIBLE);
-                }*/
             } catch (Exception e)//catch all exception... handle orientation change
             {
                 e.printStackTrace();
