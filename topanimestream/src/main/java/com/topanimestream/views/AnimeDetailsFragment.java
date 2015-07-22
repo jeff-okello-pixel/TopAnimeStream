@@ -37,7 +37,7 @@ public class AnimeDetailsFragment extends Fragment {
     @Bind(R.id.rtbRating)
     RatingBar rtbRating;
 
-    @Bind(R.id.scrollView2)
+    @Bind(R.id.scrollViewDetails)
     ScrollView scrollView;
 
 

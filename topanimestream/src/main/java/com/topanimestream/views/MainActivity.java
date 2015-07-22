@@ -150,7 +150,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
             if (App.accessToken != null && !App.accessToken.equals("")) {
                 //TODO make sure validtokentask is not necessary
-                //AsyncTaskTools.execute(new ValidTokenTask());
+                AsyncTaskTools.execute(new ValidTokenTask());
                 if (PrefUtils.get(this, Prefs.SHOW_UPDATE, true)) {
                     VersionManager.checkUpdate(this, false);
                 }

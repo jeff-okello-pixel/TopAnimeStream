@@ -188,10 +188,16 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged();
         //Remove the isloading
         if (getItemCount() <= 0) return;
-        OverviewItem overviewItem = mItems.get(getItemCount() - items.size() - 1);
-        if (overviewItem.isLoadingItem) {
-            mItems.remove(getItemCount() - items.size() - 1);
-            notifyDataSetChanged();
+        try {
+            OverviewItem overviewItem = mItems.get(getItemCount() - items.size() - 1);
+            if (overviewItem.isLoadingItem) {
+                mItems.remove(getItemCount() - items.size() - 1);
+                notifyDataSetChanged();
+            }
+        }catch(ArrayIndexOutOfBoundsException e)
+        {
+            //theres no loading overview
+            return;
         }
 
     }

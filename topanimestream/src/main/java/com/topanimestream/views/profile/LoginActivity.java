@@ -246,9 +246,8 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             } else {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                prefs.edit().putString("AccessToken", token).apply();
-                prefs.edit().putString("Username", username).apply();
+                PrefUtils.save(LoginActivity.this, Prefs.ACCESS_TOKEN, token);
+                PrefUtils.save(LoginActivity.this, Prefs.USERNAME, username);
                 App.accessToken = token;
                 AsyncTaskTools.execute(new AccountTask(LoginActivity.this, username));
             }

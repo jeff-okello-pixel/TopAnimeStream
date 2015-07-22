@@ -99,10 +99,10 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_video_player);
-        //TODO test no title feature
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        super.onCreate(savedInstanceState, R.layout.activity_video_player);
+
         txtSubtitle.setTextColor(PrefUtils.get(this, Prefs.SUBTITLE_COLOR, Color.WHITE));
         txtSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, PrefUtils.get(this, Prefs.SUBTITLE_SIZE, 16));
         txtSubtitle.setStrokeColor(PrefUtils.get(this, Prefs.SUBTITLE_STROKE_COLOR, Color.BLACK));

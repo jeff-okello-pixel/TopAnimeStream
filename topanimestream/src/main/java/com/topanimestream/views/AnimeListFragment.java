@@ -245,10 +245,12 @@ public class AnimeListFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            if(mAdapter.getItemCount() != 0)
+            if(mAdapter.getItemCount() != 0) {
                 mAdapter.addLoading();
-            else
+            }
+            else {
                 progressBarLoading.setVisibility(View.VISIBLE);
+            }
 
             isLoading = true;
 
@@ -330,8 +332,9 @@ public class AnimeListFragment extends Fragment {
                 if (result == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
                 } else if (result.equals("Success")) {
-                    if(progressBarLoading.isShown())
+                    if(progressBarLoading.isShown()) {
                         progressBarLoading.setVisibility(View.GONE);
+                    }
 
                     mAdapter.setItems(newAnimes);
                 } else {
