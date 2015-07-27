@@ -60,7 +60,7 @@ public class AnimeListFragment extends Fragment {
     public enum Mode {
         NORMAL, SEARCH
     }
-    private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3, mPreviousTotal = 0;
+    private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3;
 
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
