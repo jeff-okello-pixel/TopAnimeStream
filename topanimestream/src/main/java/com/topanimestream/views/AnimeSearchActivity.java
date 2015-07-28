@@ -52,6 +52,7 @@ public class AnimeSearchActivity extends TASBaseActivity {
         public boolean onQueryTextSubmit(String s) {
             if (null == mFragment) return false;//fragment not added yet.
             mFragment.triggerSearch(s);
+            mSearchview.clearFocus();
             return true;
         }
 
@@ -63,25 +64,4 @@ public class AnimeSearchActivity extends TASBaseActivity {
             return false;
         }
     };
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
-            case R.id.action_settings:
-                break;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    }
 }

@@ -43,7 +43,6 @@ public class MyWatchlistActivity extends TASBaseActivity implements OnItemClickL
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         setSupportActionBar(toolbar);
 
-        listViewHistory = (ListView) findViewById(R.id.listView);
         listViewHistory.setOnItemClickListener(this);
 
     }

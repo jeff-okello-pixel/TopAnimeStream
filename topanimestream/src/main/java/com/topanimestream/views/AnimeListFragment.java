@@ -114,6 +114,7 @@ public class AnimeListFragment extends Fragment {
     }
 
     public void triggerSearch(String query) {
+        currentSkip = 0;
         this.searchQuery = query;
         if (!isAdded())
             return;
@@ -128,7 +129,7 @@ public class AnimeListFragment extends Fragment {
             return; //don't do a search for empty queries
         }
 
-        //TODO call search
+        AsyncTaskTools.execute(new AnimeTask(null, null));
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -256,8 +257,23 @@ public class AnimeListFragment extends Fragment {
 
             WcfDataServiceUtility wcfCall = null;
 
-            if(mMode == Mode.NORMAL)
+            if(mMode == Mode.NORMAL) {
                 wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
+                String filter = "";
+
+                if (fragmentName.equals(getString(R.string.tab_movie)))
+                    filter += "IsMovie%20eq%20true";
+                else if (fragmentName.equals(getString(R.string.tab_serie)))
+                    filter += "IsMovie%20eq%20false";
+                if (customFilter != null && !customFilter.equals(""))
+                    filter += customFilter;
+
+                wcfCall.filter(filter);
+
+                if (customOrderBy != null && !customOrderBy.equals(""))
+                    wcfCall.orderby(customOrderBy);
+
+            }
             else if(mMode == Mode.SEARCH) {
                 try {
                     wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(searchQuery, "UTF-8").replace("%27", "%27%27") + "%27").expand("AnimeSources,Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit);
@@ -266,19 +282,7 @@ public class AnimeListFragment extends Fragment {
                 }
             }
 
-            String filter = "";
 
-            if (fragmentName.equals(getString(R.string.tab_movie)))
-                filter += "IsMovie%20eq%20true";
-            else if (fragmentName.equals(getString(R.string.tab_serie)))
-                filter += "IsMovie%20eq%20false";
-            if (customFilter != null && !customFilter.equals(""))
-                filter += customFilter;
-
-            wcfCall.filter(filter);
-
-            if (customOrderBy != null && !customOrderBy.equals(""))
-                wcfCall.orderby(customOrderBy);
 
 
             URL = wcfCall.build();

@@ -115,9 +115,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.miniController)
-    MiniController mMini;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main);
@@ -243,16 +240,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);
-
-        VideoCastManager.checkGooglePlaySevices(this);
-
-        App.getCastManager(this);
-
-        // -- Adding MiniController
-        App.mCastMgr.addMiniController(mMini);
-
-        mCastConsumer = new VideoCastConsumerImpl();
-        App.mCastMgr.reconnectSessionIfPossible(this, false);
 
         final int identifier = getResources().getIdentifier("action_bar_title", "id", "android");
         txtTitle = (TextView) findViewById(identifier);

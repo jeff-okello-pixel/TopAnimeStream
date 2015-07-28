@@ -97,7 +97,6 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
 
         }
 
-        String language = PrefUtils.get(this, Prefs.LOCALE, "1");
         FragmentManager fm = getSupportFragmentManager();
 
         episodeContainerFragment = (EpisodesContainerFragment) fm.findFragmentByTag("episodeContainerFragment");
@@ -107,10 +106,16 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
             ft.commit();
         }
 
-
-        animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentById(R.id.animeDetailsFragment);
-        if (animeDetailsFragment != null)
+        animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentByTag("animeDetailsFragment");
+        if (animeDetailsFragment == null)
+        {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.layDetails, AnimeDetailsFragment.newInstance(anime), "animeDetailsFragment");
+            ft.commit();
+        }
+        else {
             animeDetailsFragment.setAnime(anime);
+        }
 
 
         AsyncTaskTools.execute(new AnimeDetailsTask(false));
@@ -159,6 +164,7 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.action_moreoptions:
                 final Item[] items = {
