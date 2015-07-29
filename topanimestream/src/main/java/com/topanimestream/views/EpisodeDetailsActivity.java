@@ -49,7 +49,7 @@ public class EpisodeDetailsActivity extends TASBaseActivity {
             ButterKnife.bind(this);
         }
         else {
-            super.onCreate(savedInstanceState);
+            super.onCreate(savedInstanceState, R.layout.activity_episode_details);
         }
         //To show activity as dialog and dim the background, you need to declare android:theme="@style/PopupTheme" on for the chosen activity on the manifest
 
@@ -72,7 +72,7 @@ public class EpisodeDetailsActivity extends TASBaseActivity {
             params.dimAmount = 0.5f;
             getWindow().setAttributes((WindowManager.LayoutParams) params);
         }
-        setContentView(R.layout.activity_episode_details);
+
         Bundle bundle = getIntent().getExtras();
         episode = bundle.getParcelable("Episode");
         Bundle hackBundle = bundle.getBundle("hackBundle");

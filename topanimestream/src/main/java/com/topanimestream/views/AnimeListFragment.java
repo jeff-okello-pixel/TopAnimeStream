@@ -140,7 +140,7 @@ public class AnimeListFragment extends Fragment {
     public void refresh(String orderBy, String filter) {
         //TODO refresh the fragment
         currentSkip = 0;
-
+        mAdapter.clearItems();
         loadmore = false;
         customOrder = orderBy;
         customFilter = filter;
