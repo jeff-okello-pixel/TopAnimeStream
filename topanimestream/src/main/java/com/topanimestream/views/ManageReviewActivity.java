@@ -3,15 +3,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -21,10 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.topanimestream.App;
+import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
+import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
-import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Review;
 
@@ -35,56 +30,55 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import butterknife.Bind;
+
 
 public class ManageReviewActivity extends TASBaseActivity implements View.OnTouchListener, RatingBar.OnRatingBarChangeListener, View.OnClickListener {
 
-
-    private SharedPreferences prefs;
     private int animeId;
-    private Toolbar toolbar;
-    private TextView lblArtRating;
-    private TextView lblCharacterRating;
-    private TextView lblStoryRating;
-    private TextView lblSoundRating;
-    private TextView lblEnjoymentRating;
-    private TextView lblOverallRating;
 
-    private RatingBar rtbArtRating;
-    private RatingBar rtbCharacterRating;
-    private RatingBar rtbStoryRating;
-    private RatingBar rtbSoundRating;
-    private RatingBar rtbEnjoymentRating;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
-    private Button btnSave;
-    private Button btnCancel;
-    private Button btnDelete;
+    @Bind(R.id.lblArtRating)
+    TextView lblArtRating;
+    @Bind(R.id.lblCharacterRating)
+    TextView lblCharacterRating;
+    @Bind(R.id.lblStoryRating)
+    TextView lblStoryRating;
+    @Bind(R.id.lblSoundRating)
+    TextView lblSoundRating;
+    @Bind(R.id.lblEnjoymentRating)
+    TextView lblEnjoymentRating;
+    @Bind(R.id.lblOverallRating)
+    TextView lblOverallRating;
 
-    private EditText txtYourReview;
+    @Bind(R.id.rtbArtRating)
+    RatingBar rtbArtRating;
+    @Bind(R.id.rtbCharacterRating)
+    RatingBar rtbCharacterRating;
+    @Bind(R.id.rtbStoryRating)
+    RatingBar rtbStoryRating;
+    @Bind(R.id.rtbSoundRating)
+    RatingBar rtbSoundRating;
+    @Bind(R.id.rtbEnjoymentRating)
+    RatingBar rtbEnjoymentRating;
+
+    @Bind(R.id.btnSave)
+    Button btnSave;
+    @Bind(R.id.btnCancel)
+    Button btnCancel;
+    @Bind(R.id.btnDelete)
+    Button btnDelete;
+
+    @Bind(R.id.txtYourReview)
+    EditText txtYourReview;
 
     private Review currentUserReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_manage_review);
-
-        btnSave = (Button)findViewById(R.id.btnSave);
-        btnCancel = (Button)findViewById(R.id.btnCancel);
-        btnDelete = (Button)findViewById(R.id.btnDelete);
-
-        lblArtRating = (TextView) findViewById(R.id.lblArtRating);
-        lblCharacterRating = (TextView) findViewById(R.id.lblCharacterRating);
-        lblStoryRating = (TextView) findViewById(R.id.lblStoryRating);
-        lblSoundRating = (TextView) findViewById(R.id.lblSoundRating);
-        lblEnjoymentRating = (TextView) findViewById(R.id.lblEnjoymentRating);
-        lblOverallRating = (TextView) findViewById(R.id.lblOverallRating);
-
-        rtbArtRating = (RatingBar) findViewById(R.id.rtbArtRating);
-        rtbCharacterRating = (RatingBar) findViewById(R.id.rtbCharacterRating);
-        rtbStoryRating = (RatingBar) findViewById(R.id.rtbStoryRating);
-        rtbSoundRating = (RatingBar) findViewById(R.id.rtbSoundRating);
-        rtbEnjoymentRating = (RatingBar) findViewById(R.id.rtbEnjoymentRating);
-
-        txtYourReview = (EditText) findViewById(R.id.txtYourReview);
 
         btnCancel.setOnClickListener(this);
         btnSave.setOnClickListener(this);
@@ -101,9 +95,6 @@ public class ManageReviewActivity extends TASBaseActivity implements View.OnTouc
         rtbStoryRating.setOnRatingBarChangeListener(this);
         rtbSoundRating.setOnRatingBarChangeListener(this);
         rtbEnjoymentRating.setOnRatingBarChangeListener(this);
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (toolbar != null) {
             toolbar.setTitle(getString(R.string.add_review));
@@ -126,24 +117,6 @@ public class ManageReviewActivity extends TASBaseActivity implements View.OnTouc
 
         }
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        AnimationManager.ActivityFinish(this);
     }
 
     @Override
@@ -320,7 +293,7 @@ public class ManageReviewActivity extends TASBaseActivity implements View.OnTouc
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             request.addProperty("animeId", animeId);
-            request.addProperty("languageId", Integer.valueOf(prefs.getString("prefLanguage", "1")));
+            request.addProperty("languageId", Integer.valueOf(PrefUtils.get(ManageReviewActivity.this, Prefs.LOCALE, "1")));
             request.addProperty("review", txtYourReview.getText().toString());
             request.addProperty("storyRating", Math.round(rtbStoryRating.getRating() * 2));
             request.addProperty("artRating", Math.round(rtbArtRating.getRating() * 2));

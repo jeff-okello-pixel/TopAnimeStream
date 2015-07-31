@@ -24,11 +24,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,7 +37,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -57,7 +54,6 @@ import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.PlayerEpisodesAdapter;
 import com.topanimestream.models.Episode;
-import com.topanimestream.models.Item;
 import com.topanimestream.models.Language;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
@@ -128,12 +124,10 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean             drawerIsOpened;
     private ListView            leftDrawerEpisodes;
-    private boolean             mIsSliding;
     private boolean             mShowMenuSlide;
     private Float               layBottomAlpha = 1.0f;// used for older devices
     private ArrayList<Episode>  episodes;
     private Episode             currentEpisode;
-    private boolean             mLeftDrawerScroll;
     private ArrayList<Subtitle> currentVideoSubtitles = new ArrayList<Subtitle>();
     private ArrayList<Source>   currentVideoSources = new ArrayList<Source>();
     private ArrayList<Language> currentVideoLanguages = new ArrayList<Language>();
@@ -141,7 +135,6 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private MenuItem            menuSubtitles;
     private MenuItem            menuLanguage;
     private MenuItem            menuSettings;
-    private boolean             userScrolled;
 
     public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
         super(context);
@@ -216,32 +209,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             if (mDrawerLayout != null) {
                 if(episodes != null && episodes.size() > 0) {
                     if(leftDrawerEpisodes != null) {
-                        leftDrawerEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
-                            @Override
-                            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                                if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                                    userScrolled = true;
-                                }
-                            }
 
-                            @Override
-                            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
-                                if(!mLeftDrawerScroll && mCanTouchAgain && userScrolled) {
-                                    userScrolled = false;
-                                    mLeftDrawerScroll = true;
-                                    //notify the user action
-                                    show(sDefaultTimeout);
-                                    //We need a handler... if not, the show function is being called wayyyyy to often and it lags.
-                                    new Handler().postDelayed(new Runnable() {
-                                        public void run() {
-                                            mLeftDrawerScroll = false;
-
-                                        }
-                                    }, 200);
-
-                                }
-                            }
-                        });
                         leftDrawerEpisodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -539,6 +507,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private class DrawerListener implements DrawerLayout.DrawerListener {
         @Override
         public void onDrawerOpened(View drawerView) {
+            show(0);
             drawerIsOpened = true;
             mDrawerToggle.onDrawerOpened(drawerView);
 
@@ -546,6 +515,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         @Override
         public void onDrawerClosed(View drawerView) {
+            hide();
             drawerIsOpened = false;
             mDrawerToggle.onDrawerClosed(drawerView);
 

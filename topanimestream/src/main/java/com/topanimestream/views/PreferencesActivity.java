@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.topanimestream.App;
