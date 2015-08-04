@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.models.Link;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.Utils;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -63,11 +64,11 @@ public class LatestEpisodesAdapter extends BaseAdapter {
         holder.imgScreenshot.setImageResource(android.R.color.transparent);
         if(link.getEpisode() != null) {
             holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + link.getEpisode().getEpisodeNumber());
-            App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + link.getEpisode().getScreenshotHD(), App.ImageSize.w300.getValue()), holder.imgScreenshot);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + link.getEpisode().getScreenshotHD(), ImageUtils.ImageSize.w300.getValue()), holder.imgScreenshot);
         }
         else {
             holder.txtEpisodeNumber.setText(context.getString(R.string.tab_movie));
-            App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + link.getAnime().getRelativeBackdropPath(null), App.ImageSize.w300.getValue()), holder.imgScreenshot);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + link.getAnime().getRelativeBackdropPath(null), ImageUtils.ImageSize.w300.getValue()), holder.imgScreenshot);
         }
         Timestamp timeStamp = Timestamp.valueOf(link.getAddedDate().replace("T", " "));
         long now = System.currentTimeMillis();

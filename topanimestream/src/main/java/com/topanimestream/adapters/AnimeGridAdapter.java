@@ -31,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.topanimestream.App;
 import com.topanimestream.utilities.AnimUtils;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.models.Anime;
@@ -113,7 +114,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             videoViewHolder.year.setVisibility(View.GONE);
 
             if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
-                Picasso.with(videoViewHolder.coverImage.getContext()).load(Utils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), App.ImageSize.w500.getValue()))
+                Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), ImageUtils.ImageSize.w500.getValue()))
                         .resize(mItemWidth, mItemHeight)
                         .transform(DrawGradient.INSTANCE)
                         .into(videoViewHolder.coverImage, new Callback() {

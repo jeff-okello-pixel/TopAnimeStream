@@ -25,6 +25,7 @@ import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
@@ -186,7 +187,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
                 if(jsonAnimes.length() > 0) {
                     String jsonAnime = jsonAnimes.getJSONObject(0).getJSONObject("Anime").toString();
                     Anime anime = gson.fromJson(jsonAnime, Anime.class);
-                    firstFavoriteBackDropUrl = Utils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), App.ImageSize.w500.getValue());
+                    firstFavoriteBackDropUrl = ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500.getValue());
                 }
 
                 return null;

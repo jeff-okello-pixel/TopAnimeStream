@@ -12,6 +12,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.topanimestream.App;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
@@ -75,7 +76,7 @@ public class AnimeDetailsFragment extends Fragment {
 
     public void setAnime(Anime anime) {
         if (anime.getBackdropPath() != null)
-            App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), App.ImageSize.w500.getValue()), imgBackdrop);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500.getValue()), imgBackdrop);
         else
             imgBackdrop.setVisibility(View.GONE);
 

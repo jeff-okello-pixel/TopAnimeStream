@@ -51,6 +51,7 @@ import com.topanimestream.models.subs.TimedTextObject;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.FileUtils;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
@@ -121,7 +122,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
         if(currentEpisode != null)
         {
-            App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), App.ImageSize.w780.getValue()), imgLoading);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), ImageUtils.ImageSize.w780.getValue()), imgLoading);
         }
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
@@ -649,7 +650,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     public void EpisodeSelected(Episode episode) {
         loadingSpinner.setVisibility(View.VISIBLE);
-        App.imageLoader.displayImage(Utils.resizeImage(getString(R.string.image_host_path) + episode.getScreenshotHD(), App.ImageSize.w300.getValue()), imgLoading);
+        App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + episode.getScreenshotHD(), ImageUtils.ImageSize.w300.getValue()), imgLoading);
         imgLoading.setVisibility(View.VISIBLE);
         currentEpisode = episode;
 

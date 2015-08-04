@@ -25,7 +25,6 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static Locale locale;
     public static ImageLoader imageLoader;
     private static Connection connection;
-    public static boolean isVkOnly = false;
     public static boolean languageChanged = false;
     public static String accessToken;
     public static boolean isTablet;
@@ -37,26 +36,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static Context getContext() {
         return context;
     }
-    public static enum ImageSize{
-        w45("45"),
-        w92("92"),
-        w154("154"),
-        w185("185"),
-        w300("300"),
-        w500("500"),
-        w780("780"),
-        w1280("1280");
-        private final String value;
 
-        private ImageSize(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return this.value;
-        }
-
-    }
     @Override
     public void onCreate() {
         super.onCreate();

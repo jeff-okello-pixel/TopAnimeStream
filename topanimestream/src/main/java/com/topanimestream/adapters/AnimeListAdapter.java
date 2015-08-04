@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
@@ -66,7 +67,7 @@ public class AnimeListAdapter extends BaseAdapter {
             holder.txtGenres.setVisibility(View.GONE);
         holder.imgPoster.setImageResource(android.R.color.transparent);
         holder.txtDescription.setText(anime.getDescription(context));
-        App.imageLoader.displayImage(Utils.resizeImage(context.getString(R.string.image_host_path) + anime.getPosterPath(), App.ImageSize.w185.getValue()), holder.imgPoster);
+        App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w185.getValue()), holder.imgPoster);
 
         return vi;
     }
