@@ -6,20 +6,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.widget.Toast;
-
-import com.fwwjt.pacjz173199.Prm;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
-import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -275,24 +268,6 @@ public class Mp4Manager {
                 .build();
     }
 
-    private static void loadRemoteMedia(Context context, int position, boolean autoPlay, MediaInfo mediaInfo) {
-        if (App.mCastMgr != null) {
-            try {
-                App.mCastMgr.checkConnectivity();
-                App.mCastMgr.startCastControllerActivity(context, mediaInfo, position, autoPlay);
-                return;
-            } catch (TransientNetworkDisconnectionException e) {
-                e.printStackTrace();
-            } catch (NoConnectionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //Chromecast not connected/not available
-        DialogManager.ShowChromecastConnectionErrorDialog(context);
-
-
-    }
 
     public static void PlayInternalVideo(Context context, String mp4Url, int mirrorId) {
         Intent intent = null;

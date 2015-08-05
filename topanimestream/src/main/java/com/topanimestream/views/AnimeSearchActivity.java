@@ -43,7 +43,6 @@ public class AnimeSearchActivity extends TASBaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search, menu);
         return true;
     }
 

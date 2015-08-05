@@ -35,9 +35,6 @@ import android.widget.Toast;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.google.gson.Gson;
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
-import com.google.sample.castcompanionlibrary.widgets.MiniController;
 
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
@@ -87,7 +84,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     private LatestUpdatesFragment latestUpdatesFragment;
     private Dialog busyDialog;
     private AlertDialog alertLanguages;
-    private VideoCastConsumerImpl mCastConsumer;
     private MenuArrayAdapter menuAdapter;
     private String spinnerOrderByValue;
     private String spinnerStatusValue;
@@ -405,7 +401,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        App.mCastMgr.addMediaRouterButton(menu, R.id.media_route_menu_item);
 
         return true;
     }
@@ -636,18 +631,11 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     @Override
     protected void onPause() {
-        App.mCastMgr.decrementUiCounter();
-        App.mCastMgr.removeVideoCastConsumer(mCastConsumer);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        App.getCastManager(this);
-        if (null != App.mCastMgr) {
-            App.mCastMgr.addVideoCastConsumer(mCastConsumer);
-            App.mCastMgr.incrementUiCounter();
-        }
         super.onResume();
         if (App.languageChanged) {
             App.languageChanged = false;

@@ -68,4 +68,4 @@
         android:maxLines="1"
         android:textSize="@dimen/mini_controller_font_size_line2"/>
 
-</RelativeLayout><!-- From: file:/C:/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/layout/mini_controller.xml -->
+</RelativeLayout><!-- From: file:/C:/Users/marcandre.therrien/AndroidStudioProject/topanimestream/CastCompanionLibrary-android-master/res/layout/mini_controller.xml -->

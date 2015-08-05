@@ -65,4 +65,4 @@
             android:title="@string/prefs_caption_background_opacity_title" />
     </PreferenceCategory>
 
-</PreferenceScreen><!-- From: file:/C:/AndroidStudioProjects/topanimestream/CastCompanionLibrary-android-master/res/xml/caption_preference.xml -->
+</PreferenceScreen><!-- From: file:/C:/Users/marcandre.therrien/AndroidStudioProject/topanimestream/CastCompanionLibrary-android-master/res/xml/caption_preference.xml -->

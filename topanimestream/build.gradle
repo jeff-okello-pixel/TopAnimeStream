@@ -27,7 +27,6 @@ dependencies {
     compile project(':Connect-SDK-Android')
     compile project(':librarytabstrip')
     compile project(':imageloaderlibrary')
-    compile project(':CastCompanionLibrary-android-master')
     compile project(':drag-sort')
     compile files('libs/jsoup-1.7.3.jar')
     compile files('libs/ksoap2.jar')
@@ -43,7 +42,6 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:mediarouter-v7:20.0.0'
-    compile 'com.google.android.gms:play-services:6.1.11'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'

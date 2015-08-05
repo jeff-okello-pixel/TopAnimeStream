@@ -314,4 +314,5 @@
     <string name="title_search">Title...</string>
     <string name="latest_updates">Latest Updates</string>
     <string name="no_updates_found">No updates found</string>
+    <string name="ok">OK</string>
 </resources>

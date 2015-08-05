@@ -5,7 +5,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -29,7 +28,6 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static String accessToken;
     public static boolean isTablet;
     private static Context context;
-    public static VideoCastManager mCastMgr = null;
     public static String phoneLanguage;
     public static int sdkVersion;
     public static String currentLanguageId;
@@ -94,22 +92,6 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
             configMirror.locale = locale;
             getContext().getResources().updateConfiguration(configMirror, getContext().getResources().getDisplayMetrics());
         }
-    }
-
-    public static VideoCastManager getCastManager(Context context) {
-        if (null == mCastMgr) {
-            mCastMgr = VideoCastManager.initialize(context, context.getString(R.string.app_id),
-                    null, null);
-            mCastMgr.enableFeatures(
-                    VideoCastManager.FEATURE_NOTIFICATION |
-                            VideoCastManager.FEATURE_LOCKSCREEN |
-                            VideoCastManager.FEATURE_DEBUGGING
-            );
-
-        }
-        mCastMgr.setContext(context);
-        mCastMgr.setStopOnDisconnect(true);
-        return mCastMgr;
     }
 
     @Override
