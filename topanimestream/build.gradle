@@ -24,6 +24,7 @@ repositories {
     maven { url "http://minakov.github.io/mopub-sdk-android-aar" }
 }
 dependencies {
+    compile project(':Connect-SDK-Android')
     compile project(':librarytabstrip')
     compile project(':imageloaderlibrary')
     compile project(':CastCompanionLibrary-android-master')

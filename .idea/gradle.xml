@@ -5,11 +5,13 @@
       <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="C:\Program Files (x86)\Android\android-studio\gradle\gradle-2.2.1" />
+        <option name="gradleHome" value="C:\Program Files\Android\Android Studio\gradle\gradle-2.2.1" />
+        <option name="gradleJvm" value="1.7" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CastCompanionLibrary-android-master" />
+            <option value="$PROJECT_DIR$/Connect-SDK-Android" />
             <option value="$PROJECT_DIR$/drag-sort" />
             <option value="$PROJECT_DIR$/imageloaderlibrary" />
             <option value="$PROJECT_DIR$/librarytabstrip" />
@@ -20,4 +22,3 @@
     </option>
   </component>
 </project>
-
