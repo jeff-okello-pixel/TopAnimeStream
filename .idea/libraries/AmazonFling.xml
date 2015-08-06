@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="AmazonFling">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/Connect-SDK-Android/modules/firetv/libs/AmazonFling.jar!/" />
+      <root url="jar://$PROJECT_DIR$/connectsdk/modules/firetv/libs/AmazonFling.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CastCompanionLibrary-android-master/CastCompanionLibrary-android-master.iml" filepath="$PROJECT_DIR$/CastCompanionLibrary-android-master/CastCompanionLibrary-android-master.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Connect-SDK-Android/Connect-SDK-Android.iml" filepath="$PROJECT_DIR$/Connect-SDK-Android/Connect-SDK-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/TopAnimeStream.iml" filepath="$PROJECT_DIR$/TopAnimeStream.iml" />
+      <module fileurl="file://$PROJECT_DIR$/connectsdk/connectsdk.iml" filepath="$PROJECT_DIR$/connectsdk/connectsdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/drag-sort/drag-sort.iml" filepath="$PROJECT_DIR$/drag-sort/drag-sort.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageloaderlibrary/imageloaderlibrary.iml" filepath="$PROJECT_DIR$/imageloaderlibrary/imageloaderlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/librarytabstrip/librarytabstrip.iml" filepath="$PROJECT_DIR$/librarytabstrip/librarytabstrip.iml" />
-      <module fileurl="file://$PROJECT_DIR$/topanimestream.iml" filepath="$PROJECT_DIR$/topanimestream.iml" />
       <module fileurl="file://$PROJECT_DIR$/topanimestream/topanimestream-topanimestream.iml" filepath="$PROJECT_DIR$/topanimestream/topanimestream-topanimestream.iml" />
     </modules>
   </component>

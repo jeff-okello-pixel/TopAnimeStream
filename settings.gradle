@@ -1,5 +1,4 @@
-include ':Connect-SDK-Android'
-include ':imageloaderlibrary'
+include ':imageloaderlibrary', ':connectsdk'
 include ':librarytabstrip'
 include ':drag-sort'
 include ':topanimestream'
