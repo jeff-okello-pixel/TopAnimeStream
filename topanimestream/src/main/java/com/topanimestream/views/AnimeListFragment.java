@@ -258,13 +258,13 @@ public class AnimeListFragment extends Fragment {
             WcfDataServiceUtility wcfCall = null;
 
             if(mMode == Mode.NORMAL) {
-                wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links,AnimeSources").select("*,Links/LinkId,Genres,AnimeInformations,Status,AnimeSources").skip(currentSkip).top(currentLimit);
-                String filter = "";
+                wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links").select("*,Links/LinkId,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
+                String filter = "Links/any()";
 
                 if (fragmentName.equals(getString(R.string.tab_movie)))
-                    filter += "IsMovie%20eq%20true";
+                    filter += "%20and%20IsMovie%20eq%20true";
                 else if (fragmentName.equals(getString(R.string.tab_serie)))
-                    filter += "IsMovie%20eq%20false";
+                    filter += "%20and%20IsMovie%20eq%20false";
                 if (customFilter != null && !customFilter.equals(""))
                     filter += customFilter;
 
