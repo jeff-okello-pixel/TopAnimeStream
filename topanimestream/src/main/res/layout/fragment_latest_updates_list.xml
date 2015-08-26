@@ -13,23 +13,19 @@
             android:layout_height="wrap_content" />
 
         <ProgressBar
-            android:id="@+id/progressBarLoadMore"
-            style="?android:attr/progressBarStyle"
+            android:id="@+id/progressBarLoading"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone"
-            android:padding="2dp" />
+            android:background="@color/translucent"/>
 
-        <GridView
-            android:id="@+id/gridView"
-            android:numColumns="1"
-            android:fadingEdge="none"
-            android:overScrollMode="never"
-            android:layout_above="@id/progressBarLoadMore"
-            android:gravity="center"
-            android:stretchMode="columnWidth"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

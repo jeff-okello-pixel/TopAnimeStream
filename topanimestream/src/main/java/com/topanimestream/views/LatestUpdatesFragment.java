@@ -4,7 +4,10 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +22,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.adapters.AnimeGridAdapter;
 import com.topanimestream.adapters.LatestEpisodesAdapter;
+import com.topanimestream.adapters.LatestEpisodesGridAdapter;
+import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
@@ -37,7 +43,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class LatestUpdatesFragment extends Fragment implements OnItemClickListener {
+public class LatestUpdatesFragment extends Fragment {
 
     public int currentSkip = 0;
     public int currentLimit = 40;
@@ -45,14 +51,18 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
     public boolean loadmore = false;
     public boolean hasResults = false;
     public Dialog busyDialog;
+    private GridLayoutManager mLayoutManager;
+    private Integer mColumns = 2;
     private LatestEpisodesTask task;
-    private LatestEpisodesAdapter adapter;
+    private LatestEpisodesGridAdapter mAdapter;
+    private ArrayList<Link> mItems = new ArrayList<>();
+    private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3;
 
-    @Bind(R.id.gridView)
-    GridView gridView;
+    @Bind(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
-    @Bind(R.id.progressBarLoadMore)
-    ProgressBar progressBarLoadMore;
+    @Bind(R.id.progressBarLoading)
+    ProgressBar progressBarLoading;
 
     @Bind(R.id.txtNoUpdates)
     TextView txtNoUpdates;
@@ -90,16 +100,57 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        Link link = (Link) gridView.getAdapter().getItem(position);
-
-        AsyncTaskTools.execute(new LoadAnimeAndEpisodesTask(link));
-
-
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOnScrollListener(mScrollListener);
+        //adapter should only ever be created once on fragment initialise.
+        mAdapter = new LatestEpisodesGridAdapter(getActivity(), mItems, mColumns);
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+    }
+    private LatestEpisodesGridAdapter.OnItemClickListener mOnItemClickListener = new LatestEpisodesGridAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View v, Link item, int position) {
+
+            AsyncTaskTools.execute(new LoadAnimeAndEpisodesTask(item));
+        }
+
+    };
+    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            mVisibleItemCount = mLayoutManager.getChildCount();
+            mTotalItemCount = mLayoutManager.getItemCount() - (mAdapter.isLoading() ? 1 : 0);
+            mFirstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (App.IsNetworkConnected()) {
+                int lastInScreen = mFirstVisibleItem + mVisibleItemCount;
+
+                if ((lastInScreen >= mTotalItemCount - 6) && !(isLoading)) {
+                    if (hasResults) {
+                        currentSkip += currentLimit;
+                        loadmore = true;
+
+                        task = new LatestEpisodesTask();
+                        AsyncTaskTools.execute(task);
+                    } else if (task == null) {
+                        loadmore = false;
+                        task = new LatestEpisodesTask();
+                        currentSkip = 0;
+                        AsyncTaskTools.execute(task);
+                    }
+                }
+            }
+        }
+    };
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -112,40 +163,11 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
         final View rootView = inflater.inflate(R.layout.fragment_latest_updates_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        gridView.setFastScrollEnabled(true);
-        gridView.setOnItemClickListener(this);
-        gridView.setScrollingCacheEnabled(false);
+        mColumns = getResources().getInteger(R.integer.overview_cols);
+        mLoadingTreshold = mColumns * 3;
 
-        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (App.IsNetworkConnected()) {
-                    int lastInScreen = firstVisibleItem + visibleItemCount;
-
-                    if ((lastInScreen >= totalItemCount - 6) && !(isLoading)) {
-                        if (hasResults) {
-                            currentSkip += currentLimit;
-                            loadmore = true;
-
-                            task = new LatestEpisodesTask();
-                            AsyncTaskTools.execute(task);
-                        } else if (task == null) {
-                            loadmore = false;
-                            task = new LatestEpisodesTask();
-                            currentSkip = 0;
-                            AsyncTaskTools.execute(task);
-                        }
-                    }
-                }
-            }
-        });
+        mLayoutManager = new GridLayoutManager(getActivity(), mColumns);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;
     }
 
@@ -159,7 +181,13 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
 
         @Override
         protected void onPreExecute() {
-            progressBarLoadMore.setVisibility(View.VISIBLE);
+            if(mAdapter.getItemCount() != 0) {
+                mAdapter.addLoading();
+            }
+            else {
+                progressBarLoading.setVisibility(View.VISIBLE);
+            }
+
             isLoading = true;
             URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("LatestDistinctLinks").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).orderby("AddedDate%20desc").build();
 
@@ -211,16 +239,11 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
                 if (result == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
                 } else if (result.equals("Success")) {
-                    if (loadmore) {
-
-                        for (Link link : newLinks) {
-                            adapter.add(link);
-                        }
-                        adapter.update();
-                    } else {
-                        adapter = new LatestEpisodesAdapter(LatestUpdatesFragment.this.getActivity(), newLinks);
-                        gridView.setAdapter(adapter);
+                    if(progressBarLoading.isShown()) {
+                        progressBarLoading.setVisibility(View.GONE);
                     }
+
+                    mAdapter.setItems(newLinks);
 
 
                 } else {
@@ -231,15 +254,6 @@ public class LatestUpdatesFragment extends Fragment implements OnItemClickListen
                     }
                 }
                 isLoading = false;
-                progressBarLoadMore.setVisibility(View.GONE);
-
-                if (gridView.getAdapter().getCount() == 0) {
-                    txtNoUpdates.setVisibility(View.VISIBLE);
-                    gridView.setVisibility(View.GONE);
-                } else {
-                    txtNoUpdates.setVisibility(View.GONE);
-                    gridView.setVisibility(View.VISIBLE);
-                }
             } catch (Exception e)//catch all exception... handle orientation change
             {
                 e.printStackTrace();
