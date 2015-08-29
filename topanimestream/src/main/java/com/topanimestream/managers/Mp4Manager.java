@@ -30,6 +30,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.topanimestream.App;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -192,6 +196,17 @@ public class Mp4Manager {
 
 
                 String URL = act.getString(R.string.anime_data_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
+/*
+                OkHttpClient client = new OkHttpClient();
+                RequestBody formBody = new FormEncodingBuilder()
+                        .add("search", "Jurassic Park")
+                        .build();
+                Request request = new Request.Builder()
+                        .url(URL)
+                        .post()
+                        .addHeader("Authentication",App.accessToken)
+                        .build();*/
+
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost request = new HttpPost(URL);
                     /*
