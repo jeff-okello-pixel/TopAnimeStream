@@ -14,26 +14,19 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import com.topanimestream.App;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -196,34 +189,20 @@ public class Mp4Manager {
 
 
                 String URL = act.getString(R.string.anime_data_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
-/*
+                //TODO test the okhttpclient
                 OkHttpClient client = new OkHttpClient();
-                RequestBody formBody = new FormEncodingBuilder()
-                        .add("search", "Jurassic Park")
-                        .build();
+                final MediaType plain = MediaType.parse("text/plain");
+                RequestBody body = RequestBody.create(plain, base64);
                 Request request = new Request.Builder()
                         .url(URL)
-                        .post()
+                        .post(body)
                         .addHeader("Authentication",App.accessToken)
-                        .build();*/
+                        .build();
+                Response response = client.newCall(request).execute();
 
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost request = new HttpPost(URL);
-                    /*
-					List<NameValuePair> listParam = new ArrayList<NameValuePair>();
-					listParam.add(new BasicNameValuePair("html", base64));
-		            UrlEncodedFormEntity ent = new UrlEncodedFormEntity(listParam);*/
-                request.setEntity(new StringEntity(base64));
-                if (App.accessToken != null && !App.accessToken.equals(""))
-                    request.setHeader("Authentication", App.accessToken);
-                else
-                    request.setHeader("Authentication", App.getContext().getString(R.string.urc));
-                HttpResponse response = httpClient.execute(request);
-                HttpEntity entity = response.getEntity();
-                InputStream instream = entity.getContent();
                 try {
-                    JSONObject jsonObj = new JSONObject(Utils.convertStreamToString(instream));
-                    return jsonObj.getString("vdalue");
+                    JSONObject jsonObj = new JSONObject(Utils.convertStreamToString(response.body().byteStream()));
+                    return jsonObj.getString("value");
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                     return null;
