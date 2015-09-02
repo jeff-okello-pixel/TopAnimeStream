@@ -83,12 +83,6 @@ public class LatestUpdatesFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 
@@ -98,7 +92,13 @@ public class LatestUpdatesFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
-
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        loadmore = false;
+        currentSkip = 0;
+        AsyncTaskTools.execute(new LatestEpisodesTask());
+    }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

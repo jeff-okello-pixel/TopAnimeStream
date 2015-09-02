@@ -26,8 +26,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;

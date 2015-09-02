@@ -53,7 +53,6 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
 
         int screenWidth = PixelUtils.getScreenWidth(context);
         mItemWidth = (screenWidth / columns);
-        //TODO check if this ratio makes sense for backdrops
         mItemHeight = (int) ((double) mItemWidth * 0.677);
         mMargin = PixelUtils.getPixelsFromDp(context, 2);
 
@@ -288,7 +287,7 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
             src.recycle();
 
             Paint paint = new Paint();
-            float gradientHeight = h / 2f;
+            float gradientHeight = h / 1.5f;
             LinearGradient shader = new LinearGradient(0, h - gradientHeight, 0, h, 0xFFFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP);
             paint.setShader(shader);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
