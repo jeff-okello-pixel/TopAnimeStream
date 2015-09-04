@@ -77,7 +77,11 @@
             android:name=".views.AnimeSearchActivity"
             android:configChanges="locale|layoutDirection"
             android:label="@string/title_activity_anime_search"
-            android:theme="@style/Theme.Activity.Search">
+            android:theme="@style/Theme.Activity.Search"
+            android:parentActivityName=".views.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.MainActivity" />
         </activity>
         <activity
             android:name=".views.AnimeDetailsActivity"

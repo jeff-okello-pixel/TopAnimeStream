@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import com.topanimestream.App;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.SQLiteHelper;
+import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
@@ -71,6 +73,10 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
+    @Nullable
+    @Bind(R.id.separator)
+    View separator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
@@ -83,8 +89,12 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         anime = bundle.getParcelable("Anime");
 
         toolbar.setTitle(getString(R.string.episodes_of) + " " + anime.getName());
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         setSupportActionBar(toolbar);
+
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ToolbarUtils.updateToolbarHeight(this, toolbar);
 
         if (anime == null || anime.getAnimeId() == 0) {
             Toast.makeText(this, getString(R.string.error_loading_anime_details), Toast.LENGTH_LONG).show();
@@ -116,6 +126,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         }
         else
         {
+            layEpisodes.setVisibility(View.GONE);
+            if(separator != null)
+                separator.setVisibility(View.GONE);
             animeDetailsMovieFragment = (AnimeDetailsMovieFragment) fm.findFragmentByTag("animeDetailsMovieFragment");
             if (animeDetailsMovieFragment == null) {
                 FragmentTransaction ft = fm.beginTransaction();
@@ -172,12 +185,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                break;
-            case android.R.id.home:
-                finish();
-                AnimationManager.ActivityFinish(this);
-                break;
             case R.id.action_moreoptions:
                 final Item[] items = {
                         new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), isFavorite ? R.drawable.ic_action_star : R.drawable.ic_action_star_empty),
@@ -300,7 +307,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
                 break;
         }
 
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

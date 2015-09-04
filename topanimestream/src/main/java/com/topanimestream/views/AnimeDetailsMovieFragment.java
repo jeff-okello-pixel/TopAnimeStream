@@ -16,6 +16,7 @@ import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.models.Anime;
 import com.topanimestream.utilities.ImageUtils;
+import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.Utils;
 
 
@@ -80,7 +81,11 @@ public class AnimeDetailsMovieFragment extends Fragment implements View.OnClickL
         void OnMoviePlayClick();
     }
     public void setAnime(Anime anime) {
-        App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w500.getValue()), imgPoster);
+        if(PixelUtils.screenIsPortrait(getActivity()))
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w500.getValue()), imgPoster);
+        else
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500.getValue()), imgPoster);
+
         txtTitle.setText(anime.getName());
         txtDescription.setText(anime.getDescription(getActivity()));
         txtGenres.setText(anime.getGenresFormatted());

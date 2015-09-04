@@ -12,13 +12,15 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:id="@+id/layAnimeDetails">
-        <fragment
-            class="com.topanimestream.views.AnimeDetailsFragment"
+        <LinearLayout
+            android:id="@+id/layDetails"
+            android:orientation="vertical"
             android:layout_weight="1"
-            android:id="@+id/animeDetailsFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+        </LinearLayout>
         <View
+            android:id="@+id/separator"
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:background="@color/blueTab"></View>

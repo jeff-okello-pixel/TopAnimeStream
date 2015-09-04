@@ -276,7 +276,7 @@ public class AnimeListFragment extends Fragment {
             }
             else if(mMode == Mode.SEARCH) {
                 try {
-                    wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(searchQuery, "UTF-8").replace("%27", "%27%27") + "%27").expand("AnimeSources,Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit);
+                    wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(searchQuery, "UTF-8").replace("%27", "%27%27") + "%27").filter("Links/any()").expand("Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
