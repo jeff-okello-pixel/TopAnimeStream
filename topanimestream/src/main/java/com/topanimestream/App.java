@@ -9,14 +9,17 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.io.File;
 import java.util.Locale;
 
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.okhttp.OkHttpClient;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.NetworkChangeReceiver;
 import com.topanimestream.utilities.NetworkUtil;
 import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.PrefUtils;
+import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
 
 public class App extends Application implements NetworkChangeReceiver.NetworkEvent {
@@ -31,6 +34,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static String phoneLanguage;
     public static int sdkVersion;
     public static String currentLanguageId;
+    private static OkHttpClient sHttpClient;
     public static Context getContext() {
         return context;
     }
@@ -92,6 +96,24 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
             configMirror.locale = locale;
             getContext().getResources().updateConfiguration(configMirror, getContext().getResources().getDisplayMetrics());
         }
+    }
+
+    public static OkHttpClient getHttpClient() {
+        if (sHttpClient == null) {
+            sHttpClient = new OkHttpClient();
+
+            int cacheSize = 10 * 1024 * 1024;
+            File cacheLocation = new File(PrefUtils.get(getContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(getContext()).toString()));
+            cacheLocation.mkdirs();
+            com.squareup.okhttp.Cache cache = null;
+            try {
+                cache = new com.squareup.okhttp.Cache(cacheLocation, cacheSize);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            sHttpClient.setCache(cache);
+        }
+        return sHttpClient;
     }
 
     @Override

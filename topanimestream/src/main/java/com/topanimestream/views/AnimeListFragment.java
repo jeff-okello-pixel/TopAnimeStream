@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.adapters.AnimeGridAdapter;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.OkHttpUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
@@ -219,7 +220,6 @@ public class AnimeListFragment extends Fragment {
                     if (hasResults) {
                         currentSkip += currentLimit;
                         loadmore = true;
-
                         task = new AnimeTask(customOrder, customFilter);
                         AsyncTaskTools.execute(task);
                     } else if (task == null) {
