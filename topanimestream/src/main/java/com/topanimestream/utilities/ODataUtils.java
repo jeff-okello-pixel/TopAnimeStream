@@ -75,7 +75,7 @@ public class ODataUtils {
                         JSONArray jsonArray = json.getJSONArray("value");
                         ArrayList<T> genericList = new ArrayList<T>();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            genericList.add(gson.fromJson(jsonArray.get(0).toString(), classType));
+                            genericList.add(gson.fromJson(jsonArray.get(i).toString(), classType));
                         }
                         callback.onSuccess(genericList);
                         return;
