@@ -3,15 +3,11 @@ package com.topanimestream.views.profile;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -33,13 +29,15 @@ import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 
 import com.google.gson.Gson;
 import com.topanimestream.App;
+import com.topanimestream.models.Anime;
+import com.topanimestream.models.Episode;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
@@ -50,7 +48,6 @@ import com.topanimestream.models.Account;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.MainActivity;
 import com.topanimestream.views.TASBaseActivity;
-
 import butterknife.Bind;
 
 public class LoginActivity extends TASBaseActivity implements View.OnClickListener {
@@ -90,7 +87,6 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_awesome_login);
-
 
         shouldCloseOnly = getIntent().getBooleanExtra("ShouldCloseOnly", false);
 
