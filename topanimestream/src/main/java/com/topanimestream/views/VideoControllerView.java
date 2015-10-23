@@ -163,7 +163,6 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             if (mDrawerLayout != null) {
                 if(episodes != null && episodes.size() > 0) {
                     if(leftDrawerEpisodes != null) {
-
                         leftDrawerEpisodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -190,6 +189,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                             if(adapter.getItem(i).getEpisodeId() == currentEpisode.getEpisodeId())
                             {
                                 leftDrawerEpisodes.setItemChecked(i , true);
+                                leftDrawerEpisodes.setSelection(adapter.getItemPosition(adapter.getItem(i)));
                                 break;
                             }
                         }
