@@ -153,8 +153,8 @@ public class AnimeListFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        customOrder = getArguments().getString("orderby", "");
-        customFilter = getArguments().getString("filter", "");
+        customOrder = getArguments().getString("orderby", null);
+        customFilter = getArguments().getString("filter", null);
 
         mColumns = getResources().getInteger(R.integer.overview_cols);
         mLoadingTreshold = mColumns * 3;
@@ -233,20 +233,7 @@ public class AnimeListFragment extends Fragment {
 
                     isLoading = true;
 
-                    String filter = "";
-                    if (fragmentName.equals(getString(R.string.tab_movie)))
-                        filter = "&$filter=IsMovie%20eq%20true";
-                    else if (fragmentName.equals(getString(R.string.tab_serie)))
-                        filter = "&$filter=IsMovie%20eq%20false";
-
-                    if (customFilter != null && !customFilter.equals(""))
-                        filter += customFilter;
-
-                    String order = "";
-                    if (customOrder != null && !customOrder.equals(""))
-                        order = "&$orderby=" + customOrder;
-
-                    GetAnimes(order, filter);
+                    GetAnimes(customOrder, customFilter);
 
                 }
             }
@@ -255,14 +242,27 @@ public class AnimeListFragment extends Fragment {
 
     public void GetAnimes(String customOrder, String customFilter)
     {
+        String filter = "";
+        if (fragmentName.equals(getString(R.string.tab_movie)))
+            filter = "IsMovie%20eq%20true";
+        else if (fragmentName.equals(getString(R.string.tab_serie)))
+            filter = "IsMovie%20eq%20false";
+
+        if (customFilter != null && !customFilter.equals(""))
+            filter += customFilter;
+
         if(customOrder == null)
             customOrder = "";
+        else
+            customOrder = "&$orderby=" + customOrder;
 
-        if(customFilter == null)
+        if(filter == null) //should never happen!
             customFilter = "";
+        else
+            customFilter = "&$filter=" + filter;
 
         if(mMode == Mode.NORMAL) {
-            String url = "http://135.23.195.19:8000/odata/AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + "&$orderby=" + customOrder;
+            String url = "http://135.23.195.19:8000/odata/AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + customOrder;
             ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
                 @Override
                 public void onSuccess(ArrayList<Anime> animes) {

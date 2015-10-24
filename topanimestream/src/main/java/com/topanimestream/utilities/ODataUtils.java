@@ -1,6 +1,8 @@
 package com.topanimestream.utilities;
 
 import android.accounts.NetworkErrorException;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
@@ -53,17 +55,23 @@ public class ODataUtils {
 
     public static <T> void GetEntityList(String url, final Class<T> classType, final Callback<ArrayList<T>> callback)
     {
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", App.accessToken)
                 .build();
 
         OkHttpClient client = App.getHttpClient();
-
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
+            public void onFailure(Request request, final IOException e) {
+                mainHandler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        callback.onFailure(e);
+                    }
+                });
             }
 
             @Override
@@ -73,15 +81,29 @@ public class ODataUtils {
                         Gson gson = new Gson();
                         JSONObject json = new JSONObject(response.body().string());
                         JSONArray jsonArray = json.getJSONArray("value");
-                        ArrayList<T> genericList = new ArrayList<T>();
+                        final ArrayList<T> genericList = new ArrayList<T>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             genericList.add(gson.fromJson(jsonArray.get(i).toString(), classType));
                         }
-                        callback.onSuccess(genericList);
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(genericList);
+                            }
+                        });
+
                         return;
                     }
-                } catch (Exception e) {
-                    callback.onFailure(e);
+
+                    onFailure(request, new IOException("Failed to fetch the data."));
+                } catch (final Exception e) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(e);
+                        }
+                    });
+
                 }
             }
         });
