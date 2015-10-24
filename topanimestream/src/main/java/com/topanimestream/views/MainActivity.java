@@ -118,8 +118,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         setSupportActionBar(toolbar);
         ToolbarUtils.updateToolbarHeight(this, toolbar);
 
-        App.accessToken = PrefUtils.get(this, Prefs.ACCESS_TOKEN , "");
-
         tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_updates)};
 
         //fill default filter dialog spinner values
@@ -141,15 +139,9 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             spinnerCategoryValue = getString(R.string.tab_all);
             spinnerOrderByValue = getString(R.string.most_popular);
             filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
-            if (App.accessToken != null && !App.accessToken.equals("")) {
-                //TODO make sure validtokentask is not necessary
-                AsyncTaskTools.execute(new ValidTokenTask());
-                if (PrefUtils.get(this, Prefs.SHOW_UPDATE, true)) {
-                    VersionManager.checkUpdate(this, false);
-                }
-            } else {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+
+            if (PrefUtils.get(this, Prefs.SHOW_UPDATE, true)) {
+                VersionManager.checkUpdate(this, false);
             }
         }
 
@@ -645,79 +637,5 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     }
 
-    private class ValidTokenTask extends AsyncTask<Void, Void, String> {
 
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String URL;
-        private String method = "IsValidToken";
-        private boolean isValidToken = false;
-        private String username;
-
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), MainActivity.this);
-            URL = getString(R.string.anime_service_path);
-
-            username = PrefUtils.get(MainActivity.this, Prefs.USERNAME, null);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if (!App.IsNetworkConnected()) {
-                return getString(R.string.error_internet_connection);
-            }
-            if(username == null)
-                return getString(R.string.error_login);
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            request.addProperty("token", App.accessToken);
-
-            envelope.headerOut = new Element[1];
-            Element lang = new Element().createElement("", "Lang");
-            lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
-            envelope.headerOut[0] = lang;
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            SoapPrimitive result = null;
-            try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive) envelope.getResponse();
-                isValidToken = Boolean.valueOf(result.toString());
-                JSONObject jsonAccount = Utils.GetJson(new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Accounts").filter("Username%20eq%20%27" + username + "%27").expand("Roles").formatJson().build());
-                Gson gson = new Gson();
-                Account account = gson.fromJson(jsonAccount.getJSONArray("value").getJSONObject(0).toString(), Account.class);
-                //Set global current user
-                CurrentUser.SetCurrentUser(account);
-                return null;
-            } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
-                }
-
-                e.printStackTrace();
-            }
-            return getString(R.string.error_login);
-        }
-
-        @Override
-        protected void onPostExecute(String error) {
-            try {
-                DialogManager.dismissBusyDialog(busyDialog);
-            } catch (Exception e) {
-            }
-            if (error != null) {
-                Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
-            } else {
-                if (!isValidToken) {
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    finish();
-                }
-
-            }
-        }
-    }
 }

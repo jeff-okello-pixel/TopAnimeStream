@@ -20,7 +20,7 @@ public class ODataUtils {
     {
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Token 900156f4-43e6-475d-ba36-127cea10ac16")
+                .addHeader("Authorization", App.accessToken)
                 .build();
 
         OkHttpClient client = App.getHttpClient();
@@ -55,7 +55,7 @@ public class ODataUtils {
     {
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Token 900156f4-43e6-475d-ba36-127cea10ac16")
+                .addHeader("Authorization", App.accessToken)
                 .build();
 
         OkHttpClient client = App.getHttpClient();

@@ -21,15 +21,15 @@ public class ImageUtils {
         }
 
     }
-    public static String resizeImage(String image, String size) {
+    public static String resizeImage(String image, ImageSize size) {
         if (image == null)
             return null;
 
-        if (size == null || size.equals(""))
+        if (size == null)
             return image;
 
         String imageNameToReplace = image.substring(image.lastIndexOf("/") + 1);
-        String imageName = "w" + size + "_" + imageNameToReplace;
+        String imageName = "w" + size.getValue() + "_" + imageNameToReplace;
 
         image = image.replace(imageNameToReplace, imageName);
         return image;

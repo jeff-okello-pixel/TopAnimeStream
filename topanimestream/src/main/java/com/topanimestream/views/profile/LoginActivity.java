@@ -1,7 +1,6 @@
 package com.topanimestream.views.profile;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -18,33 +17,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-import org.kxml2.kdom.Element;
-import org.kxml2.kdom.Node;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
 import com.google.gson.Gson;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import com.topanimestream.App;
-import com.topanimestream.models.Anime;
-import com.topanimestream.models.Episode;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
-import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.R;
-import com.topanimestream.models.Account;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.MainActivity;
 import com.topanimestream.views.TASBaseActivity;
@@ -88,6 +75,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_awesome_login);
 
+
         shouldCloseOnly = getIntent().getBooleanExtra("ShouldCloseOnly", false);
 
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
@@ -107,7 +95,17 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
         btnRegister.setOnClickListener(this);
         btnBottomLogin.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
+
+        String token = PrefUtils.get(this, Prefs.ACCESS_TOKEN, null);
+        if(token != null)
+            AsyncTaskTools.execute(new ValidTokenTask(token));
+        else
+        {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -176,18 +174,10 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
             this.password = password;
         }
 
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String URL;
-        private String method = "Login";
-        private String token;
-
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), LoginActivity.this);
-            URL = getString(R.string.anime_service_path);
         }
-
 
         @Override
         protected String doInBackground(Void... params) {
@@ -195,38 +185,28 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                 return getString(R.string.error_internet_connection);
             }
 
-            if (!Utils.IsServiceAvailable()) {
-                return getString(R.string.service_unavailable);
-            }
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            OkHttpClient client = App.getHttpClient();
 
-            envelope.headerOut = new Element[1];
-            Element lang = new Element().createElement("", "Lang");
-            lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
-            envelope.headerOut[0] = lang;
-            request.addProperty("username", username);
-            request.addProperty("password", password);
-            request.addProperty("application", "Android");
+            RequestBody formBody = new FormEncodingBuilder()
+                    .add("Username", username)
+                    .add("Password", password)
+                    .add("Application", "Android")
+                    .build();
 
-
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            //androidHttpTransport.debug = true;
-            SoapPrimitive result = null;
+            Request request = new Request.Builder()
+                    .url("http://135.23.195.19:8000/api/login")
+                    .post(formBody)
+                    .build();
             try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                //String requestDump = androidHttpTransport.requestDump.toString();
-                result = (SoapPrimitive) envelope.getResponse();
-                token = result.toString();
+                Response response = client.newCall(request).execute();
+                Gson gson = new Gson();
+                App.currentUser = gson.fromJson(response.body().string(), CurrentUser.class);
+
+                //We need to put the token string before the token for the header.
+                App.accessToken = "Token " + App.currentUser.getToken();
+
                 return null;
             } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
-                }
-
                 e.printStackTrace();
             }
             return getString(R.string.error_login);
@@ -242,73 +222,86 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             } else {
-                PrefUtils.save(LoginActivity.this, Prefs.ACCESS_TOKEN, token);
+                PrefUtils.save(LoginActivity.this, Prefs.ACCESS_TOKEN, App.currentUser.getToken());
                 PrefUtils.save(LoginActivity.this, Prefs.USERNAME, username);
-                App.accessToken = token;
-                AsyncTaskTools.execute(new AccountTask(LoginActivity.this, username));
+                if (!shouldCloseOnly) {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    AnimationManager.ActivityStart(LoginActivity.this);
+                }
+                finish();
             }
+
+            DialogManager.dismissBusyDialog(busyDialog);
         }
     }
-
-    public class AccountTask extends AsyncTask<Void, Void, String> {
-        private Context context;
-        private String username;
-
-        public AccountTask(Context context, String username) {
-            this.context = context;
-            this.username = username;
+    private class ValidTokenTask extends AsyncTask<Void, Void, String> {
+        String token;
+        boolean isValidToken = false;
+        public ValidTokenTask(String token)
+        {
+            this.token = token;
         }
-
         @Override
         protected void onPreExecute() {
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), LoginActivity.this);
         }
-
 
         @Override
         protected String doInBackground(Void... params) {
-            if (App.IsNetworkConnected()) {
-                try {
-                    JSONObject jsonAccount = Utils.GetJson(new WcfDataServiceUtility(context.getString(R.string.anime_data_service_path)).getEntity("Accounts").filter("Username%20eq%20%27" + username + "%27").expand("Roles").formatJson().build());
-
-                    Gson gson = new Gson();
-                    Account account = gson.fromJson(jsonAccount.getJSONArray("value").getJSONObject(0).toString(), Account.class);
-                    //Set global current user
-                    CurrentUser.SetCurrentUser(account);
-                } catch (Exception e) {
-                    return null;
-                }
-
-            } else {
-                return null;
+            if (!App.IsNetworkConnected()) {
+                return getString(R.string.error_internet_connection);
             }
 
-            return "Success";
+            OkHttpClient client = App.getHttpClient();
+            final MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType,'"' + token + '"');
+
+            Request request = new Request.Builder()
+                    .url("http://135.23.195.19:8000/api/ValidateToken")
+                    .post(body)
+                    .build();
+
+            try {
+                Gson gson = new Gson();
+                Response response = client.newCall(request).execute();
+                if(response.isSuccessful())
+                {
+                    App.currentUser = gson.fromJson(response.body().string(), CurrentUser.class);
+
+                    //We need to put the token string before the token for the header.
+                    App.accessToken = "Token " + App.currentUser.getToken();
+
+                    isValidToken = true;
+                }
+                return null;
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+            return getString(R.string.error_login);
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String error) {
             try {
                 DialogManager.dismissBusyDialog(busyDialog);
-                if (result == null) {
-                    //Failed to get the role
-                    Toast.makeText(LoginActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, getString(R.string.login_successful), Toast.LENGTH_LONG).show();
-                    if (!shouldCloseOnly) {
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        AnimationManager.ActivityStart(LoginActivity.this);
-                    }
+            } catch (Exception e) {
+            }
+            if (error != null) {
+                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+            } else {
+                if (!isValidToken) {
+                    Toast.makeText(LoginActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 }
 
-            } catch (Exception e)//catch all exception, handle orientation change
-            {
-                e.printStackTrace();
             }
         }
-
     }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();

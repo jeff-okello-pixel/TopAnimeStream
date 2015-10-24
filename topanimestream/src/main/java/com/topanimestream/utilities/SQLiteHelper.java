@@ -75,7 +75,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ANIMEID, String.valueOf(anime.getAnimeId()));
         values.put(KEY_NAME, anime.getName());
-        values.put(KEY_POSTER, ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w185.getValue()));
+        values.put(KEY_POSTER, ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w185));
         values.put(KEY_DESCRIPTION, anime.getDescription(App.getContext()));
         values.put(KEY_EPISODEID, String.valueOf(episodeId));
         values.put(KEY_EPISODENUMBER, episodeNumber);

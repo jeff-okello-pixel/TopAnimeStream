@@ -104,10 +104,10 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
 
         listView.setOnItemClickListener(this);
 
-        App.imageLoader.displayImage(CurrentUser.GetProfilePicResize("185"), imgProfilePic);
-        txtUsername.setText(CurrentUser.Username);
-        txtJoinedDate.setText(CurrentUser.AddedDate);
-        txtRank.setText(getString(R.string.rank) +  CurrentUser.GetRole().getName());
+        App.imageLoader.displayImage(App.currentUser.getProfilePicResize(ImageUtils.ImageSize.w185), imgProfilePic);
+        txtUsername.setText(App.currentUser.getUsername());
+        txtJoinedDate.setText(App.currentUser.getAddedDate());
+        txtRank.setText(getString(R.string.rank) +  App.currentUser.getRoleName());
 
         AsyncTaskTools.execute(new ProfileTask());
     }
@@ -158,7 +158,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_profile), MyProfileActivity.this);
-            firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
+            firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
         }
 
         @Override
@@ -187,7 +187,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
                 if(jsonAnimes.length() > 0) {
                     String jsonAnime = jsonAnimes.getJSONObject(0).getJSONObject("Anime").toString();
                     Anime anime = gson.fromJson(jsonAnime, Anime.class);
-                    firstFavoriteBackDropUrl = ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500.getValue());
+                    firstFavoriteBackDropUrl = ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500);
                 }
 
                 return null;

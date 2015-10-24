@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.utilities.ImageUtils;
 
 import java.util.ArrayList;
 
@@ -21,23 +22,14 @@ public class Account implements Parcelable {
     private String LastLoginDate;
     private String LastActivityDate;
     private ArrayList<Role> Roles;
+    private String PreferredVideoQuality;
+    private String PreferredAudioLang;
+    private String PreferredSubtitleLang;
     private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
+
     public Account() {
     }
 
-    public Account(int accountId, String username, String profilePic, String addedDate, String lastUpdatedDate, String about, boolean isDisabled, boolean isBanned, String bannedReason, String lastLoginDate, String lastActivityDate) {
-        AccountId = accountId;
-        Username = username;
-        ProfilePic = profilePic;
-        AddedDate = addedDate;
-        LastUpdatedDate = lastUpdatedDate;
-        About = about;
-        IsDisabled = isDisabled;
-        IsBanned = isBanned;
-        BannedReason = bannedReason;
-        LastLoginDate = lastLoginDate;
-        LastActivityDate = lastActivityDate;
-    }
     public Account(Parcel in) {
         AccountId = in.readInt();
         Username = in.readString();
@@ -50,7 +42,11 @@ public class Account implements Parcelable {
         BannedReason = in.readString();
         LastLoginDate = in.readString();
         LastActivityDate = in.readString();
+        PreferredVideoQuality = in.readString();
+        PreferredAudioLang = in.readString();
+        PreferredSubtitleLang = in.readString();
     }
+
     public ArrayList<Role> getRoles() {
         return Roles;
     }
@@ -86,7 +82,7 @@ public class Account implements Parcelable {
     {
         return ProfilePic;
     }
-    public String getProfilePicResize(String size) {
+    public String getProfilePicResize(ImageUtils.ImageSize size) {
 
         if (ProfilePic == null)
             return null;
@@ -94,10 +90,8 @@ public class Account implements Parcelable {
         if (size == null || size.equals(""))
             return imageHostPath + ProfilePic;
 
-        String imageName = ProfilePic.substring(ProfilePic.lastIndexOf("/") + 1);
-        imageName = "w" + size + "_" + imageName;
-        String fullProfilePicPath = imageHostPath + ProfilePic.substring(0, ProfilePic.lastIndexOf("/") + 1) + imageName;
-        return fullProfilePicPath;
+        return ImageUtils.resizeImage(imageHostPath + ProfilePic, size);
+
     }
 
     public void setProfilePic(String profilePic) {
@@ -144,6 +138,29 @@ public class Account implements Parcelable {
         IsBanned = isBanned;
     }
 
+    public String getPreferredVideoQuality() {
+        return PreferredVideoQuality;
+    }
+
+    public void setPreferredVideoQuality(String preferredVideoQuality) {
+        PreferredVideoQuality = preferredVideoQuality;
+    }
+
+    public String getPreferredAudioLang() {
+        return PreferredAudioLang;
+    }
+
+    public void setPreferredAudioLang(String preferredAudioLang) {
+        PreferredAudioLang = preferredAudioLang;
+    }
+
+    public String getPreferredSubtitleLang() {
+        return PreferredSubtitleLang;
+    }
+
+    public void setPreferredSubtitleLang(String preferredSubtitleLang) {
+        PreferredSubtitleLang = preferredSubtitleLang;
+    }
     public String getLastLoginDate() {
         return LastLoginDate;
     }
@@ -179,7 +196,9 @@ public class Account implements Parcelable {
         dest.writeString(BannedReason);
         dest.writeString(LastLoginDate);
         dest.writeString(LastActivityDate);
-
+        dest.writeString(PreferredVideoQuality);
+        dest.writeString(PreferredAudioLang);
+        dest.writeString(PreferredSubtitleLang);
     }
     public static final Creator<Account> CREATOR = new Creator<Account>() {
         public Account createFromParcel(Parcel in) {
@@ -190,4 +209,5 @@ public class Account implements Parcelable {
             return new Account[size];
         }
     };
+
 }

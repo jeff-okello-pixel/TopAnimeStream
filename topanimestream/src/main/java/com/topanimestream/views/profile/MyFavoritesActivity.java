@@ -216,7 +216,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_favorites), MyFavoritesActivity.this);
             animes = new ArrayList<Anime>();
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime/AnimeSources,Anime/AnimeInformations,Anime/Genres").filter("AccountId%20eq%20" + CurrentUser.AccountId).build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime/AnimeSources,Anime/AnimeInformations,Anime/Genres").filter("AccountId%20eq%20" + App.currentUser.getAccountId()).build();
 
         }
 

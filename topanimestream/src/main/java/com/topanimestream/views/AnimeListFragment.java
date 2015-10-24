@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.adapters.AnimeGridAdapter;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
@@ -47,7 +48,6 @@ public class AnimeListFragment extends Fragment {
     private String fragmentName;
     public Dialog busyDialog;
     public int animeId;
-    private AnimeTask task;
     private String customOrder;
     private String customFilter;
     private AnimeGridAdapter mAdapter;
@@ -98,7 +98,7 @@ public class AnimeListFragment extends Fragment {
         if (mMode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
             loadmore = false;
             currentSkip = 0;
-            AsyncTaskTools.execute(new AnimeTask(customOrder, customFilter));
+            GetAnimes(customOrder, customFilter);
         }
     }
 
@@ -129,7 +129,7 @@ public class AnimeListFragment extends Fragment {
             return; //don't do a search for empty queries
         }
 
-        AsyncTaskTools.execute(new AnimeTask(null, null));
+        GetAnimes(null, null);
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -144,7 +144,7 @@ public class AnimeListFragment extends Fragment {
         loadmore = false;
         customOrder = orderBy;
         customFilter = filter;
-        AsyncTaskTools.execute(new AnimeTask(customOrder, customFilter));
+        GetAnimes(customOrder, customFilter);
     }
 
     @Override
@@ -219,142 +219,73 @@ public class AnimeListFragment extends Fragment {
                     if (hasResults) {
                         currentSkip += currentLimit;
                         loadmore = true;
-                        task = new AnimeTask(customOrder, customFilter);
-                        AsyncTaskTools.execute(task);
-                    } else if (task == null) {
+                    }else {
                         loadmore = false;
-                        task = new AnimeTask(customOrder, customFilter);
                         currentSkip = 0;
-                        AsyncTaskTools.execute(task);
                     }
+
+                    if(mAdapter.getItemCount() != 0) {
+                        mAdapter.addLoading();
+                    }
+                    else {
+                        progressBarLoading.setVisibility(View.VISIBLE);
+                    }
+
+                    isLoading = true;
+
+                    String filter = "";
+                    if (fragmentName.equals(getString(R.string.tab_movie)))
+                        filter = "&$filter=IsMovie%20eq%20true";
+                    else if (fragmentName.equals(getString(R.string.tab_serie)))
+                        filter = "&$filter=IsMovie%20eq%20false";
+
+                    if (customFilter != null && !customFilter.equals(""))
+                        filter += customFilter;
+
+                    String order = "";
+                    if (customOrder != null && !customOrder.equals(""))
+                        order = "&$orderby=" + customOrder;
+
+                    GetAnimes(order, filter);
+
                 }
             }
         }
     };
-    private class AnimeTask extends AsyncTask<Void, Void, String> {
-        private ArrayList<Anime> newAnimes = new ArrayList<Anime>();
-        private String customOrderBy;
-        private String customFilter;
 
-        public AnimeTask(String orderBy, String filter) {
-            this.customOrderBy = orderBy;
-            this.customFilter = filter;
-        }
+    public void GetAnimes(String customOrder, String customFilter)
+    {
+        if(customOrder == null)
+            customOrder = "";
 
-        private String URL;
+        if(customFilter == null)
+            customFilter = "";
 
-        @Override
-        protected void onPreExecute() {
-            if(mAdapter.getItemCount() != 0) {
-                mAdapter.addLoading();
-            }
-            else {
-                progressBarLoading.setVisibility(View.VISIBLE);
-            }
-
-            isLoading = true;
-
-            WcfDataServiceUtility wcfCall = null;
-
-            if(mMode == Mode.NORMAL) {
-                wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").formatJson().expand("Genres,AnimeInformations,Status,Links").select("*,Links/LinkId,Genres,AnimeInformations,Status").skip(currentSkip).top(currentLimit);
-                String filter = "Links/any()";
-
-                if (fragmentName.equals(getString(R.string.tab_movie)))
-                    filter += "%20and%20IsMovie%20eq%20true";
-                else if (fragmentName.equals(getString(R.string.tab_serie)))
-                    filter += "%20and%20IsMovie%20eq%20false";
-                if (customFilter != null && !customFilter.equals(""))
-                    filter += customFilter;
-
-                wcfCall.filter(filter);
-
-                if (customOrderBy != null && !customOrderBy.equals(""))
-                    wcfCall.orderby(customOrderBy);
-
-            }
-            else if(mMode == Mode.SEARCH) {
-                try {
-                    wcfCall = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Search").formatJson().addParameter("query", "%27" + URLEncoder.encode(searchQuery, "UTF-8").replace("%27", "%27%27") + "%27").filter("Links/any()").expand("Genres,AnimeInformations,Links").skip(currentSkip).top(currentLimit);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-
-
-            URL = wcfCall.build();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            JSONObject json = Utils.GetJson(URL);
-            if (json == null) {
-                return null;
-            }
-            if (!json.isNull("error")) {
-                try {
-                    int error = json.getInt("error");
-                    if (error == 401) {
-                        return "401";
+        if(mMode == Mode.NORMAL) {
+            String url = "http://135.23.195.19:8000/odata/AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + "&$orderby=" + customOrder;
+            ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
+                @Override
+                public void onSuccess(ArrayList<Anime> animes) {
+                    if(animes.size() > 0)
+                    {
+                        hasResults = true;
                     }
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-            JSONArray animeArray = new JSONArray();
-
-            try {
-                animeArray = json.getJSONArray("value");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            hasResults = false;
-            Gson gson = new Gson();
-            for (int i = 0; i < animeArray.length(); i++) {
-                hasResults = true;
-                JSONObject animeJson;
-                try {
-                    animeJson = animeArray.getJSONObject(i);
-                    newAnimes.add(gson.fromJson(animeJson.toString(), Anime.class));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            return "Success";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result == null) {
-                    Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
-                } else if (result.equals("Success")) {
+                    isLoading = false;
                     if(progressBarLoading.isShown()) {
                         progressBarLoading.setVisibility(View.GONE);
                     }
 
-                    mAdapter.setItems(newAnimes);
-                } else {
-                    if (result.equals("401")) {
-                        Toast.makeText(getActivity(), getActivity().getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                        AnimeListFragment.this.startActivity(new Intent(AnimeListFragment.this.getActivity(), LoginActivity.class));
-                        AnimeListFragment.this.getActivity().finish();
-                    }
+                    mAdapter.setItems(animes);
                 }
-                isLoading = false;
 
-            } catch (Exception e)//catch all exception... handle orientation change
-            {
-                e.printStackTrace();
-            }
-
+                @Override
+                public void onFailure(Exception e) {
+                    isLoading = false;
+                }
+            });
         }
-
+        else if(mMode == Mode.SEARCH) {
+            //TODO
+        }
     }
 }

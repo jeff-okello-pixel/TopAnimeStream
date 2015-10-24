@@ -128,7 +128,7 @@ public class ReviewsActivity extends TASBaseActivity implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Review review = (Review) adapterView.getItemAtPosition(position);
-        if(review.getAccountId() == CurrentUser.AccountId)
+        if(review.getAccountId() == App.currentUser.getAccountId())
         {
             Intent intent = new Intent(ReviewsActivity.this, ManageReviewActivity.class);
             intent.putExtra("animeId", animeId);
@@ -158,8 +158,8 @@ public class ReviewsActivity extends TASBaseActivity implements AdapterView.OnIt
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_reviews), ReviewsActivity.this);
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").filter("AnimeId%20eq%20" + animeId + "%20and%20AccountId%20ne%20" + CurrentUser.AccountId).expand("Account").skip(currentSkip).top(currentLimit).formatJson().build();
-            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId + "%20and%20AnimeId%20eq%20" + animeId).expand("Account").build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").filter("AnimeId%20eq%20" + animeId + "%20and%20AccountId%20ne%20" + App.currentUser.getAccountId()).expand("Account").skip(currentSkip).top(currentLimit).formatJson().build();
+            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + animeId).expand("Account").build();
         }
 
 

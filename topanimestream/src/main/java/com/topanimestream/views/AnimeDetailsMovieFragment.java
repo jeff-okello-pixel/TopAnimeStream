@@ -82,9 +82,9 @@ public class AnimeDetailsMovieFragment extends Fragment implements View.OnClickL
     }
     public void setAnime(Anime anime) {
         if(PixelUtils.screenIsPortrait(getActivity()))
-            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w500.getValue()), imgPoster);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w500), imgPoster);
         else
-            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500.getValue()), imgPoster);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500), imgPoster);
 
         txtTitle.setText(anime.getName());
         txtDescription.setText(anime.getDescription(getActivity()));

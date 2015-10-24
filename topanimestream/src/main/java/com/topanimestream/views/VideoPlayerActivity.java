@@ -122,7 +122,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
         if(currentEpisode != null)
         {
-            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), ImageUtils.ImageSize.w780.getValue()), imgLoading);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), ImageUtils.ImageSize.w780), imgLoading);
         }
         AsyncTaskTools.execute(new GetSourcesAndSubsTask());
     }
@@ -650,7 +650,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     public void EpisodeSelected(Episode episode) {
         loadingSpinner.setVisibility(View.VISIBLE);
-        App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + episode.getScreenshotHD(), ImageUtils.ImageSize.w300.getValue()), imgLoading);
+        App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + episode.getScreenshotHD(), ImageUtils.ImageSize.w300), imgLoading);
         imgLoading.setVisibility(View.VISIBLE);
         currentEpisode = episode;
 

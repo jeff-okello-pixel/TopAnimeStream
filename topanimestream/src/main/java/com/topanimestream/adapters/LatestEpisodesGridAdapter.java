@@ -108,7 +108,7 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
             holder.addedDate.setVisibility(View.GONE);
 
             if (item.getEpisode().getScreenshotHD() != null && !item.getEpisode().getScreenshotHD().equals("")) {
-                Picasso.with(holder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getEpisode().getScreenshotHD(), ImageUtils.ImageSize.w500.getValue()))
+                Picasso.with(holder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getEpisode().getScreenshotHD(), ImageUtils.ImageSize.w500))
                         .resize(mItemWidth, mItemHeight)
                         .transform(DrawGradient.INSTANCE)
                         .into(holder.coverImage, new Callback() {

@@ -125,7 +125,7 @@ public class MyVotesActivity extends TASBaseActivity implements View.OnClickList
         protected void onPreExecute() {
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + CurrentUser.AccountId).orderby("AddedDate%20desc").skip(currentSkip).top(currentLimit).expand("Anime/Genres,Anime/AnimeInformations,Anime/Status,Anime/AnimeSources").build();
+            url = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId()).orderby("AddedDate%20desc").skip(currentSkip).top(currentLimit).expand("Anime/Genres,Anime/AnimeInformations,Anime/Status,Anime/AnimeSources").build();
         }
 
         @Override

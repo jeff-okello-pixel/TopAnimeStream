@@ -14,6 +14,8 @@ import java.util.Locale;
 
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.squareup.okhttp.OkHttpClient;
+import com.topanimestream.models.Account;
+import com.topanimestream.models.CurrentUser;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.NetworkChangeReceiver;
 import com.topanimestream.utilities.NetworkUtil;
@@ -35,6 +37,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static int sdkVersion;
     public static String currentLanguageId;
     private static OkHttpClient sHttpClient;
+    public static CurrentUser currentUser;
     public static Context getContext() {
         return context;
     }
@@ -74,6 +77,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
 
 
     }
+
 
     public static void setLocale() {
         Configuration config = getContext().getResources().getConfiguration();
