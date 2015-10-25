@@ -4,15 +4,13 @@
     <string name="description">Media Controls</string>
     <string name="app_name">Topanimestream</string>
     <string name="app_name_login">TopAnimeStream</string>
-    <string name="app_id" tools:ignore="MissingTranslation">43F674AF</string>w
+    <string name="app_id" tools:ignore="MissingTranslation">43F674AF</string>
     <string name="urc" tools:ignore="MissingTranslation">Jgd7fFD63Ss</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Topanimestream</string>
     <string name="topanimestream_website" tools:ignore="MissingTranslation">http://www.topanimestream.com/</string>
-    <string name="anime_service_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeService.svc/</string>
-    <string name="anime_service_path_no_dash" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeService.svc</string>
-    <string name="anime_data_service_path_no_dash" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeDataService.svc</string>
-    <string name="anime_data_service_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/AnimeServices/AnimeDataService.svc/</string>
+    <string name="odata_path" tools:ignore="MissingTranslation">http://135.23.195.19:8000/odata/</string>
+    <string name="api_path" tools:ignore="MissingTranslation">http://135.23.195.19:8000/api/</string>
     <string name="image_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/ImageHost/</string>
     <string name="sub_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/SubHost/</string>
     <!-- Menu actions -->

@@ -221,7 +221,7 @@ public class ManageReviewActivity extends TASBaseActivity implements View.OnTouc
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_review), ManageReviewActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         @Override
@@ -282,7 +282,7 @@ public class ManageReviewActivity extends TASBaseActivity implements View.OnTouc
             {
                 busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_your_review), ManageReviewActivity.this);
             }
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         @Override

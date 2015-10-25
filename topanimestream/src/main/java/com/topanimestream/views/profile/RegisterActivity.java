@@ -58,7 +58,7 @@ public class RegisterActivity extends TASBaseActivity implements View.OnClickLis
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.creating_your_account), RegisterActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
 
@@ -68,9 +68,6 @@ public class RegisterActivity extends TASBaseActivity implements View.OnClickLis
                 return getString(R.string.error_internet_connection);
             }
 
-            if (!Utils.IsServiceAvailable()) {
-                return getString(R.string.service_unavailable);
-            }
             SoapObject request = new SoapObject(NAMESPACE, method);
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 

@@ -158,7 +158,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_your_profile), MyProfileActivity.this);
-            firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
+            firstFavoriteUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Favorites").formatJson().expand("Anime").filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20Order%20eq%201").select("Anime/BackdropPath").build();
         }
 
         @Override

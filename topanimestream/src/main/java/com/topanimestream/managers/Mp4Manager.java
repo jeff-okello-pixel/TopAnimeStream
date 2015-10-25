@@ -188,7 +188,7 @@ public class Mp4Manager {
                 String base64 = Base64.encodeToString(data, Base64.DEFAULT);
 
 
-                String URL = act.getString(R.string.anime_data_service_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
+                String URL = act.getString(R.string.odata_path) + "GetMp4Url?provider='" + URLEncoder.encode(providerName) + "'" + (quality != null ? "&quality='" + quality + "'" : "") + "&$format=json";
                 //TODO test the okhttpclient
                 OkHttpClient client = new OkHttpClient();
                 final MediaType plain = MediaType.parse("text/plain");

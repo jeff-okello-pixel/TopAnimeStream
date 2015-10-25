@@ -295,7 +295,7 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.removing_vote), OldAnimeDetailsActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         @Override
@@ -357,7 +357,7 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_vote), OldAnimeDetailsActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         @Override
@@ -421,7 +421,7 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_from_favorites), OldAnimeDetailsActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         @Override
@@ -478,7 +478,7 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_to_favorites), OldAnimeDetailsActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         @Override
@@ -538,11 +538,11 @@ public class OldAnimeDetailsActivity extends TASBaseActivity implements Episodes
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime_details), OldAnimeDetailsActivity.this);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(OldAnimeDetailsActivity.this);
-            isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            userVoteUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            userReviewUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).expand("Account").build();
-            animeDetailUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntitySpecificRow("Animes", anime.getAnimeId(), false).expand("AnimeSources,Genres,AnimeInformations,Status").formatJson().build();
+            isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userVoteUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
+            userReviewUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).expand("Account").build();
+            animeDetailUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntitySpecificRow("Animes", anime.getAnimeId(), false).expand("AnimeSources,Genres,AnimeInformations,Status").formatJson().build();
         }
 
         @Override

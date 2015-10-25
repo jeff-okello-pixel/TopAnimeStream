@@ -176,36 +176,6 @@ public class Utils {
         return envelope;
     }
 
-    public static boolean IsServiceAvailable() {
-
-        try {
-            URL animeServiceUrl = new URL(App.getContext().getString(R.string.anime_service_path_no_dash));
-            HttpURLConnection animeServiceConnection = (HttpURLConnection) animeServiceUrl.openConnection();
-            animeServiceConnection.setRequestMethod("GET");
-            animeServiceConnection.connect();
-            int code = animeServiceConnection.getResponseCode();
-            if (code != 503 && code != 504 && code != 404) {
-                URL animeDataServiceUrl = new URL(App.getContext().getString(R.string.anime_data_service_path_no_dash));
-                HttpURLConnection animeDataServiceConnection = (HttpURLConnection) animeDataServiceUrl.openConnection();
-                animeDataServiceConnection.setRequestMethod("GET");
-                animeDataServiceConnection.connect();
-                code = animeDataServiceConnection.getResponseCode();
-                if (code != 503 && code != 504 && code != 404) {
-                    return true;
-                }
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-
-    }
-
     public static String ToLanguageId(String language) {
         language = language.toLowerCase();
         if (language.equals("en") || language.equals("english"))
@@ -332,7 +302,7 @@ public class Utils {
 
         @Override
         protected void onPreExecute() {
-            URL = App.getContext().getString(R.string.anime_service_path);
+            URL = App.getContext().getString(R.string.odata_path);
         }
 
         @Override

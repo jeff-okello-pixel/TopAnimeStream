@@ -194,7 +194,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     .build();
 
             Request request = new Request.Builder()
-                    .url("http://135.23.195.19:8000/api/login")
+                    .url(getString(R.string.api_path) + "login")
                     .post(formBody)
                     .build();
             try {
@@ -257,7 +257,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
             RequestBody body = RequestBody.create(mediaType,'"' + token + '"');
 
             Request request = new Request.Builder()
-                    .url("http://135.23.195.19:8000/api/ValidateToken")
+                    .url(getString(R.string.api_path) + "ValidateToken")
                     .post(body)
                     .build();
 

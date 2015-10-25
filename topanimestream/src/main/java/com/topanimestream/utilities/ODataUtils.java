@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -14,7 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ODataUtils {
 
@@ -78,7 +81,7 @@ public class ODataUtils {
             public void onResponse(Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
-                        Gson gson = new Gson();
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
                         JSONObject json = new JSONObject(response.body().string());
                         JSONArray jsonArray = json.getJSONArray("value");
                         final ArrayList<T> genericList = new ArrayList<T>();

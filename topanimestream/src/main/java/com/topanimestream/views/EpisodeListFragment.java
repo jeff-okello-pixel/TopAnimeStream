@@ -142,7 +142,7 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
         protected void onPreExecute() {
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Links/any()").expand("EpisodeInformations,Links").formatJson().build();
+            URL = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Links/any()").expand("EpisodeInformations,Links").formatJson().build();
         }
 
         @Override

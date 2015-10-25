@@ -228,12 +228,12 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
             sources = new ArrayList<Source>();
             subtitles = new ArrayList<Subtitle>();
             if(!anime.isMovie()) {
-                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
-                getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
+                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
+                getSubsUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
             }
             else {
-                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).expand("Link/Language").formatJson().build();
-                getSubsUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
+                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).expand("Link/Language").formatJson().build();
+                getSubsUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
             }
         }
 

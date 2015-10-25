@@ -22,33 +22,28 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.models.Anime;
 import com.topanimestream.models.Link;
+import com.topanimestream.models.Update;
 import com.topanimestream.utilities.AnimUtils;
 import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.PixelUtils;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import hugo.weaving.DebugLog;
 
 
-public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int mItemWidth, mItemHeight, mMargin, mColumns;
     private ArrayList<OverviewItem> mItems = new ArrayList<>();
     //	private ArrayList<Media> mData = new ArrayList<>();
-    private LatestEpisodesGridAdapter.OnItemClickListener mItemClickListener;
+    private LatestUpdatesGridAdapter.OnItemClickListener mItemClickListener;
     final int NORMAL = 0, LOADING = 1;
 
-    public LatestEpisodesGridAdapter(Context context, ArrayList<Link> items, Integer columns) {
+    public LatestUpdatesGridAdapter(Context context, ArrayList<Update> items, Integer columns) {
         mColumns = columns;
 
         int screenWidth = PixelUtils.getScreenWidth(context);
@@ -59,7 +54,7 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
         setItems(items);
     }
     public interface OnItemClickListener {
-        public void onItemClick(View v, Link item, int position);
+        public void onItemClick(View v, Update item, int position);
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -67,11 +62,11 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
         switch (viewType) {
             case LOADING:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_griditem_loading, parent, false);
-                return new LatestEpisodesGridAdapter.LoadingHolder(v);
+                return new LatestUpdatesGridAdapter.LoadingHolder(v);
             case NORMAL:
             default:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_griditem, parent, false);
-                return new LatestEpisodesGridAdapter.ViewHolder(v);
+                return new LatestUpdatesGridAdapter.ViewHolder(v);
         }
     }
 
@@ -93,13 +88,12 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
         if (getItemViewType(position) == NORMAL) {
             final ViewHolder holder = (ViewHolder) viewHolder;
             final OverviewItem overviewItem = getItem(position);
-            Link item = overviewItem.link;
+            Update item = overviewItem.update;
 
 
             holder.title.setText(item.getAnime().getName());
-            Timestamp timeStamp = Timestamp.valueOf(item.getAddedDate().replace("T", " "));
             long now = System.currentTimeMillis();
-            long addedDate = timeStamp.getTime();
+            long addedDate = item.getLastUpdateDate().getTime();
             holder.addedDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
 
 
@@ -136,7 +130,7 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
         return mItems.size();
     }
 
-    public void setOnItemClickListener(LatestEpisodesGridAdapter.OnItemClickListener listener) {
+    public void setOnItemClickListener(LatestUpdatesGridAdapter.OnItemClickListener listener) {
         mItemClickListener = listener;
     }
 
@@ -173,10 +167,10 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     @DebugLog
-    public void setItems(ArrayList<Link> items) {
+    public void setItems(ArrayList<Update> items) {
         // Add new items, if available
-        if (null != items) {
-            for (Link item : items) {
+        if (items != null) {
+            for (Update item : items) {
                 mItems.add(new OverviewItem(item));
             }
         }
@@ -239,7 +233,7 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
         public void onClick(View view) {
             if (mItemClickListener != null) {
                 int position = getPosition();
-                Link item = getItem(position).link;
+                Update item = getItem(position).update;
                 mItemClickListener.onItemClick(view, item, position);
             }
         }
@@ -259,12 +253,12 @@ public class LatestEpisodesGridAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class OverviewItem {
-        Link link;
+        Update update;
         boolean isImageError = true;
         boolean isLoadingItem = false;
 
-        OverviewItem(Link link) {
-            this.link = link;
+        OverviewItem(Update update) {
+            this.update = update;
         }
 
         OverviewItem(boolean loading) {

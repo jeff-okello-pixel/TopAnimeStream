@@ -11,10 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,15 +18,14 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.adapters.AnimeGridAdapter;
-import com.topanimestream.adapters.LatestEpisodesAdapter;
-import com.topanimestream.adapters.LatestEpisodesGridAdapter;
-import com.topanimestream.managers.AnimationManager;
+import com.topanimestream.adapters.LatestUpdatesGridAdapter;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Link;
+import com.topanimestream.models.Update;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.views.profile.LoginActivity;
@@ -53,9 +48,8 @@ public class LatestUpdatesFragment extends Fragment {
     public Dialog busyDialog;
     private GridLayoutManager mLayoutManager;
     private Integer mColumns = 2;
-    private LatestEpisodesTask task;
-    private LatestEpisodesGridAdapter mAdapter;
-    private ArrayList<Link> mItems = new ArrayList<>();
+    private LatestUpdatesGridAdapter mAdapter;
+    private ArrayList<Update> mItems = new ArrayList<>();
     private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3;
 
     @Bind(R.id.recyclerView)
@@ -97,7 +91,7 @@ public class LatestUpdatesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         loadmore = false;
         currentSkip = 0;
-        AsyncTaskTools.execute(new LatestEpisodesTask());
+        GetLatestUpdates();
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -106,7 +100,7 @@ public class LatestUpdatesFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnScrollListener(mScrollListener);
         //adapter should only ever be created once on fragment initialise.
-        mAdapter = new LatestEpisodesGridAdapter(getActivity(), mItems, mColumns);
+        mAdapter = new LatestUpdatesGridAdapter(getActivity(), mItems, mColumns);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -116,9 +110,9 @@ public class LatestUpdatesFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
     }
-    private LatestEpisodesGridAdapter.OnItemClickListener mOnItemClickListener = new LatestEpisodesGridAdapter.OnItemClickListener() {
+    private LatestUpdatesGridAdapter.OnItemClickListener mOnItemClickListener = new LatestUpdatesGridAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(View v, Link item, int position) {
+        public void onItemClick(View v, Update item, int position) {
 
             AsyncTaskTools.execute(new LoadAnimeAndEpisodesTask(item));
         }
@@ -138,15 +132,11 @@ public class LatestUpdatesFragment extends Fragment {
                     if (hasResults) {
                         currentSkip += currentLimit;
                         loadmore = true;
-
-                        task = new LatestEpisodesTask();
-                        AsyncTaskTools.execute(task);
-                    } else if (task == null) {
+                    } else{
                         loadmore = false;
-                        task = new LatestEpisodesTask();
                         currentSkip = 0;
-                        AsyncTaskTools.execute(task);
                     }
+                    GetLatestUpdates();
                 }
             }
         }
@@ -170,95 +160,39 @@ public class LatestUpdatesFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;
     }
-
-    private class LatestEpisodesTask extends AsyncTask<Void, Void, String> {
-        private ArrayList<Link> newLinks = new ArrayList<Link>();
-
-        public LatestEpisodesTask() {
+    private void GetLatestUpdates()
+    {
+        if(mAdapter.getItemCount() != 0) {
+            mAdapter.addLoading();
+        }
+        else {
+            progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        private String URL;
+        isLoading = true;
 
-        @Override
-        protected void onPreExecute() {
-            if(mAdapter.getItemCount() != 0) {
-                mAdapter.addLoading();
-            }
-            else {
-                progressBarLoading.setVisibility(View.VISIBLE);
-            }
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Updates?$expand=Anime,Episode,Language&$orderby=LastUpdateDate%20desc" + "&$skip=" + currentSkip + "&$top=" + currentLimit, Update.class, new ODataUtils.Callback<ArrayList<Update>>() {
+            @Override
+            public void onSuccess(ArrayList<Update> updates) {
+                if(updates.size() > 0 )
+                    hasResults = true;
 
-            isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("LatestDistinctLinks").formatJson().expand("Anime,Episode").skip(currentSkip).top(currentLimit).orderby("AddedDate%20desc").build();
-
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            JSONObject json = Utils.GetJson(URL);
-            if (json == null) {
-                return null;
-            }
-            if (!json.isNull("error")) {
-                try {
-                    int error = json.getInt("error");
-                    if (error == 401) {
-                        return "401";
-                    }
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-            JSONArray linksArray = new JSONArray();
-
-            try {
-                linksArray = json.getJSONArray("value");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            hasResults = false;
-            Gson gson = new Gson();
-            for (int i = 0; i < linksArray.length(); i++) {
-                hasResults = true;
-                try {
-                    newLinks.add(gson.fromJson(linksArray.getJSONObject(i).toString(), Link.class));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if(progressBarLoading.isShown()) {
+                    progressBarLoading.setVisibility(View.GONE);
                 }
 
-            }
+                mAdapter.setItems(updates);
 
-            return "Success";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result == null) {
-                    Toast.makeText(getActivity(), getActivity().getString(R.string.error_loading_animes), Toast.LENGTH_LONG).show();
-                } else if (result.equals("Success")) {
-                    if(progressBarLoading.isShown()) {
-                        progressBarLoading.setVisibility(View.GONE);
-                    }
-
-                    mAdapter.setItems(newLinks);
-
-
-                } else {
-                    if (result.equals("401")) {
-                        Toast.makeText(getActivity(), getActivity().getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                        LatestUpdatesFragment.this.startActivity(new Intent(LatestUpdatesFragment.this.getActivity(), LoginActivity.class));
-                        LatestUpdatesFragment.this.getActivity().finish();
-                    }
-                }
                 isLoading = false;
-            } catch (Exception e)//catch all exception... handle orientation change
-            {
-                e.printStackTrace();
             }
-        }
+
+            @Override
+            public void onFailure(Exception e) {
+                isLoading = false;
+
+            }
+        });
+
 
     }
 
@@ -266,16 +200,16 @@ public class LatestUpdatesFragment extends Fragment {
         private Dialog busyDialog;
         private String animeUrl;
         private String episodesUrl;
-        private Link link;
+        private Update link;
         private Anime anime;
-        public LoadAnimeAndEpisodesTask(Link link) {
+        public LoadAnimeAndEpisodesTask(Update update) {
             this.link = link;
         }
 
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), getActivity());
-            animeUrl = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Animes").filter("AnimeId%20eq%20" + link.getAnimeId()).expand("Genres,AnimeInformations,Status,Episodes/Links,Episodes/EpisodeInformations").formatJson().build();
+            animeUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Animes").filter("AnimeId%20eq%20" + link.getAnimeId()).expand("Genres,AnimeInformations,Status,Episodes/Links,Episodes/EpisodeInformations").formatJson().build();
         }
 
 

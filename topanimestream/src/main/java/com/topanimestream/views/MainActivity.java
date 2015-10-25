@@ -569,7 +569,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.logging_out), MainActivity.this);
-            URL = getString(R.string.anime_service_path);
+            URL = getString(R.string.odata_path);
         }
 
         ;

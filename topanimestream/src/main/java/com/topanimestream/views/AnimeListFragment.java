@@ -224,15 +224,6 @@ public class AnimeListFragment extends Fragment {
                         currentSkip = 0;
                     }
 
-                    if(mAdapter.getItemCount() != 0) {
-                        mAdapter.addLoading();
-                    }
-                    else {
-                        progressBarLoading.setVisibility(View.VISIBLE);
-                    }
-
-                    isLoading = true;
-
                     GetAnimes(customOrder, customFilter);
 
                 }
@@ -242,6 +233,14 @@ public class AnimeListFragment extends Fragment {
 
     public void GetAnimes(String customOrder, String customFilter)
     {
+        isLoading = true;
+        if(mAdapter.getItemCount() != 0) {
+            mAdapter.addLoading();
+        }
+        else {
+            progressBarLoading.setVisibility(View.VISIBLE);
+        }
+
         String filter = "";
         if (fragmentName.equals(getString(R.string.tab_movie)))
             filter = "IsMovie%20eq%20true";
@@ -262,7 +261,7 @@ public class AnimeListFragment extends Fragment {
             customFilter = "&$filter=" + filter;
 
         if(mMode == Mode.NORMAL) {
-            String url = "http://135.23.195.19:8000/odata/AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + customOrder;
+            String url = getString(R.string.odata_path) + "AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + customOrder;
             ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
                 @Override
                 public void onSuccess(ArrayList<Anime> animes) {

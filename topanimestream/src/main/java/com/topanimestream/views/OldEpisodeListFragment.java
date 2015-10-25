@@ -195,7 +195,7 @@ public class OldEpisodeListFragment extends Fragment implements OnItemClickListe
             Utils.lockScreen(getActivity());
             progressBarLoadMore.setVisibility(View.VISIBLE);
             isLoading = true;
-            URL = new WcfDataServiceUtility(getString(R.string.anime_data_service_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + PrefUtils.get(getActivity(), Prefs.LOCALE, "1") + "%20and%20m/AnimeSource/IsSubbed%20eq%20" + isSubbed + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").skip(currentSkip).top(currentLimit).formatJson().build();
+            URL = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Episodes").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20Mirrors/any(m:m/AnimeSource/LanguageId%20eq%20" + PrefUtils.get(getActivity(), Prefs.LOCALE, "1") + "%20and%20m/AnimeSource/IsSubbed%20eq%20" + isSubbed + ")").expand("Mirrors/AnimeSource,Mirrors/Provider,EpisodeInformations").skip(currentSkip).top(currentLimit).formatJson().build();
             episodes = new ArrayList<Episode>();
         }
 
