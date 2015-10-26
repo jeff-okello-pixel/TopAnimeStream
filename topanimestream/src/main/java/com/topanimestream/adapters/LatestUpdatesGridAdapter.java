@@ -22,13 +22,11 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.models.Link;
 import com.topanimestream.models.Update;
 import com.topanimestream.utilities.AnimUtils;
 import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.PixelUtils;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -65,7 +63,7 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
                 return new LatestUpdatesGridAdapter.LoadingHolder(v);
             case NORMAL:
             default:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_griditem, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.update_griditem, parent, false);
                 return new LatestUpdatesGridAdapter.ViewHolder(v);
         }
     }
@@ -88,40 +86,51 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
         if (getItemViewType(position) == NORMAL) {
             final ViewHolder holder = (ViewHolder) viewHolder;
             final OverviewItem overviewItem = getItem(position);
-            Update item = overviewItem.update;
-
-
-            holder.title.setText(item.getAnime().getName());
-            long now = System.currentTimeMillis();
-            long addedDate = item.getLastUpdateDate().getTime();
-            holder.addedDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
-
 
             holder.coverImage.setVisibility(View.GONE);
             holder.title.setVisibility(View.GONE);
             holder.addedDate.setVisibility(View.GONE);
+            holder.imgFlag.setVisibility(View.GONE);
 
-            if (item.getEpisode().getScreenshotHD() != null && !item.getEpisode().getScreenshotHD().equals("")) {
-                Picasso.with(holder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getEpisode().getScreenshotHD(), ImageUtils.ImageSize.w500))
-                        .resize(mItemWidth, mItemHeight)
-                        .transform(DrawGradient.INSTANCE)
-                        .into(holder.coverImage, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                overviewItem.isImageError = false;
-                                AnimUtils.fadeIn(holder.coverImage);
-                                AnimUtils.fadeIn(holder.title);
-                                AnimUtils.fadeIn(holder.addedDate);
-                            }
+            Update item = overviewItem.update;
 
-                            @Override
-                            public void onError() {
-                                overviewItem.isImageError = true;
-                                AnimUtils.fadeIn(holder.title);
-                                AnimUtils.fadeIn(holder.addedDate);
-                            }
-                        });
+            holder.title.setText(item.getAnime().getName());
+
+            long now = System.currentTimeMillis();
+            long addedDate = item.getLastUpdateDate().getTime();
+            holder.addedDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+            holder.imgFlag.setImageResource(item.getLanguage().getFlagDrawable());
+
+            String imagePath = item.getAnime().getBackdropPath();
+            if(!item.getAnime().isMovie())
+            {
+                if(item.getEpisode() != null && item.getEpisode().getScreenshotHD() != null && !item.getEpisode().getScreenshotHD().equals(""))
+                {
+                    imagePath = item.getEpisode().getScreenshotHD();
+                }
             }
+
+            Picasso.with(holder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + imagePath, ImageUtils.ImageSize.w500))
+                    .resize(mItemWidth, mItemHeight)
+                    .transform(DrawGradient.INSTANCE)
+                    .into(holder.coverImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            overviewItem.isImageError = false;
+                            AnimUtils.fadeIn(holder.coverImage);
+                            AnimUtils.fadeIn(holder.title);
+                            AnimUtils.fadeIn(holder.addedDate);
+                            AnimUtils.fadeIn(holder.imgFlag);
+                        }
+
+                        @Override
+                        public void onError() {
+                            overviewItem.isImageError = true;
+                            AnimUtils.fadeIn(holder.title);
+                            AnimUtils.fadeIn(holder.addedDate);
+                            AnimUtils.fadeIn(holder.imgFlag);
+                        }
+                    });
         }
     }
 
@@ -201,6 +210,8 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
         View itemView;
         @Bind(R.id.focus_overlay)
         View focusOverlay;
+        @Bind(R.id.imgFlag)
+        ImageView imgFlag;
         @Bind(R.id.cover_image)
         ImageView coverImage;
         @Bind(R.id.title)
