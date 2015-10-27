@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -41,6 +43,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static Context getContext() {
         return context;
     }
+    public static Gson mGson;
 
     @Override
     public void onCreate() {
@@ -118,6 +121,13 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
             sHttpClient.setCache(cache);
         }
         return sHttpClient;
+    }
+
+    public static Gson getGson() {
+        if (mGson == null) {
+            mGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+        }
+        return mGson;
     }
 
     @Override

@@ -5,19 +5,17 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.topanimestream.App;
+import com.topanimestream.models.OdataRequestInfo;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ODataUtils {
 
@@ -40,9 +38,10 @@ public class ODataUtils {
             public void onResponse(Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
-                        Gson gson = new Gson();
+                        Gson gson = App.getGson();
+                        final OdataRequestInfo info = gson.fromJson(response.body().string(), OdataRequestInfo.class);
                         T result = gson.fromJson(response.body().string(), classType);
-                        callback.onSuccess(result);
+                        callback.onSuccess(result, info);
                         return;
                     }
 
@@ -81,17 +80,19 @@ public class ODataUtils {
             public void onResponse(Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
-                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+                        Gson gson = App.getGson();
                         JSONObject json = new JSONObject(response.body().string());
+                        final OdataRequestInfo info = gson.fromJson(json.toString(), OdataRequestInfo.class);
                         JSONArray jsonArray = json.getJSONArray("value");
                         final ArrayList<T> genericList = new ArrayList<T>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             genericList.add(gson.fromJson(jsonArray.get(i).toString(), classType));
                         }
+
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onSuccess(genericList);
+                                callback.onSuccess(genericList, info);
                             }
                         });
 
@@ -114,7 +115,7 @@ public class ODataUtils {
 
     public interface Callback<T>
     {
-        void onSuccess(T entity);
+        void onSuccess(T entity, OdataRequestInfo info);
         void onFailure(Exception e);
     }
 

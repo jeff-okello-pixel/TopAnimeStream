@@ -24,6 +24,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.google.gson.Gson;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.topanimestream.App;
@@ -241,9 +242,8 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
                 JSONArray jsonFavorites = json.getJSONArray("value");
                 for (int i = 0; i < jsonFavorites.length(); i++) {
 
-                    Anime anime = new Anime(jsonFavorites.getJSONObject(i).getJSONObject("Anime"), MyFavoritesActivity.this);
-                    anime.setOrder(!jsonFavorites.getJSONObject(i).isNull("Order") ? jsonFavorites.getJSONObject(i).getInt("Order") : 0);
-                    animes.add(anime);
+                    Gson gson = new Gson();
+                    animes.add(gson.fromJson(jsonFavorites.getJSONObject(i).getJSONObject("Anime").toString(), Anime.class));
 
                 }
                 return null;

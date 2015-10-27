@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.adapters.AnimeGridAdapter;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.Utils;
@@ -43,8 +44,7 @@ public class AnimeListFragment extends Fragment {
     public int currentSkip = 0;
     public int currentLimit = 40;
     public boolean isLoading = false;
-    public boolean loadmore = false;
-    public boolean hasResults = false;
+    public boolean isEndOfList = false;
     private String fragmentName;
     public Dialog busyDialog;
     public int animeId;
@@ -96,7 +96,6 @@ public class AnimeListFragment extends Fragment {
 
         //don't load initial data in search mode
         if (mMode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
-            loadmore = false;
             currentSkip = 0;
             GetAnimes(customOrder, customFilter);
         }
@@ -141,7 +140,6 @@ public class AnimeListFragment extends Fragment {
         //TODO refresh the fragment
         currentSkip = 0;
         mAdapter.clearItems();
-        loadmore = false;
         customOrder = orderBy;
         customFilter = filter;
         GetAnimes(customOrder, customFilter);
@@ -184,23 +182,11 @@ public class AnimeListFragment extends Fragment {
     private AnimeGridAdapter.OnItemClickListener mOnItemClickListener = new AnimeGridAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(final View view, final Anime anime, final int position) {
-            //HD
-            if(anime.getLinks() != null && anime.getLinks().size() > 0) {
-                Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("Anime", anime);
-                intent.putExtras(bundle);
-                startActivity(intent);
-
-            }
-            else
-            {
-                Intent intent = new Intent(getActivity(), OldAnimeDetailsActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("Anime", anime);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", anime);
+            intent.putExtras(bundle);
+            startActivity(intent);
             AnimationManager.ActivityStart(getActivity());
 
         }
@@ -216,12 +202,8 @@ public class AnimeListFragment extends Fragment {
                 int lastInScreen = mFirstVisibleItem + mVisibleItemCount;
 
                 if ((lastInScreen >= mTotalItemCount - 6) && !(isLoading)) {
-                    if (hasResults) {
+                    if (!isEndOfList) {
                         currentSkip += currentLimit;
-                        loadmore = true;
-                    }else {
-                        loadmore = false;
-                        currentSkip = 0;
                     }
 
                     GetAnimes(customOrder, customFilter);
@@ -261,14 +243,13 @@ public class AnimeListFragment extends Fragment {
             customFilter = "&$filter=" + filter;
 
         if(mMode == Mode.NORMAL) {
-            String url = getString(R.string.odata_path) + "AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + customOrder;
+            String url = getString(R.string.odata_path) + "AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + customOrder + "&$count=true";
             ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
                 @Override
-                public void onSuccess(ArrayList<Anime> animes) {
-                    if(animes.size() > 0)
-                    {
-                        hasResults = true;
-                    }
+                public void onSuccess(ArrayList<Anime> animes, OdataRequestInfo info) {
+                    if(info.getCount() == mAdapter.getItemCount() + animes.size())
+                        isEndOfList = true;
+
                     isLoading = false;
                     if(progressBarLoading.isShown()) {
                         progressBarLoading.setVisibility(View.GONE);

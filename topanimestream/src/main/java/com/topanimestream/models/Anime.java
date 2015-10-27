@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 
 import com.topanimestream.App;
 import com.topanimestream.preferences.Prefs;
@@ -32,7 +33,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private int RunningTime;
     private String ReleasedDate;
     private String BackdropPath;
-    private boolean isCartoon;
+    private boolean IsCartoon;
     private Double Rating;
     private String SourceUrl;
     private ArrayList<Episode> Episodes;
@@ -43,6 +44,13 @@ public class Anime implements Parcelable, Comparator<Anime> {
     private ArrayList<Theme> Themes;
     private int Order;
     private int VoteCount;
+    private boolean IsFavorite;
+    private Date LinkedDate;
+    private boolean IsInMyList;
+    private boolean IsAvailable;
+    private int EpisodeCount;
+    private int AgeRatingId;
+    private int MyAnimeListId;
 
     public Anime() {
         super();
@@ -103,71 +111,18 @@ public class Anime implements Parcelable, Comparator<Anime> {
         RunningTime = in.readInt();
         ReleasedDate = in.readString();
         BackdropPath = in.readString();
-        isCartoon = in.readByte() != 0;
+        IsCartoon = in.readByte() != 0;
         Rating = in.readDouble();
         SourceUrl = in.readString();
         Order = in.readInt();
         VoteCount = in.readInt();
-    }
-
-    public Anime(JSONObject animeJson, Context context) {
-        try {
-            AnimeSources = new ArrayList<AnimeSource>();
-            Episodes = new ArrayList<Episode>();
-            Genres = new ArrayList<Genre>();
-            AnimeInformations = new ArrayList<AnimeInformation>();
-            Themes = new ArrayList<Theme>();
-            this.setAnimeId(!animeJson.isNull("AnimeId") ? animeJson.getInt("AnimeId") : 0);
-            this.setStatusId(!animeJson.isNull("StatusId") ? animeJson.getInt("StatusId") : 0);
-            this.setAddedDate(!animeJson.isNull("AddedDate") ? animeJson.getString("AddedDate") : null);
-            this.setLastUpdatedDate(!animeJson.isNull("LastUpdatedDate") ? animeJson.getString("LastUpdatedDate") : null);
-            this.setName(!animeJson.isNull("OriginalName") ? animeJson.getString("OriginalName") : null);
-            this.setPosterPath(!animeJson.isNull("PosterPath") ? animeJson.getString("PosterPath") : null);
-            this.setRunningTime(!animeJson.isNull("RunningTime") ? animeJson.getInt("RunningTime") : 0);
-            this.setReleaseDate(!animeJson.isNull("ReleaseDate") ? animeJson.getString("ReleaseDate") : null);
-            this.setBackdropPath(!animeJson.isNull("BackdropPath") ? animeJson.getString("BackdropPath") : null);
-            this.setRating(!animeJson.isNull("Rating") ? animeJson.getDouble("Rating") : null);
-            this.setSourceUrl(!animeJson.isNull("SourceUrl") ? animeJson.getString("SourceUrl") : null);
-            this.setIsMovie(!animeJson.isNull("IsMovie") ? animeJson.getBoolean("IsMovie") : false);
-            this.setCartoon(!animeJson.isNull("IsCartoon") ? animeJson.getBoolean("IsCartoon") : false);
-            this.setOrder(!animeJson.isNull("Order") ? animeJson.getInt("Order") : 0);
-            this.setVoteCount(!animeJson.isNull("VoteCount") ? animeJson.getInt("VoteCount") : 0);
-            if (!animeJson.isNull("AnimeInformations")) {
-                JSONArray jsonAnimeInformations = animeJson.getJSONArray("AnimeInformations");
-                for (int i = 0; i < jsonAnimeInformations.length(); i++) {
-                    AnimeInformations.add(new AnimeInformation(jsonAnimeInformations.getJSONObject(i)));
-                }
-
-            }
-
-            if (!animeJson.isNull("Genres")) {
-                JSONArray jsonGenres = animeJson.getJSONArray("Genres");
-                for (int i = 0; i < jsonGenres.length(); i++) {
-                    Genres.add(new Genre(jsonGenres.getJSONObject(i)));
-                }
-            }
-            if (!animeJson.isNull("Episodes")) {
-                JSONArray jsonEpisodes = animeJson.getJSONArray("Episodes");
-                for (int i = 0; i < jsonEpisodes.length(); i++) {
-                    Episodes.add(new Episode(jsonEpisodes.getJSONObject(i), context));
-                }
-            }
-            if (!animeJson.isNull("AnimeSources")) {
-                JSONArray jsonAnimeSources = animeJson.getJSONArray("AnimeSources");
-                for (int i = 0; i < jsonAnimeSources.length(); i++) {
-                    AnimeSources.add(new AnimeSource(jsonAnimeSources.getJSONObject(i)));
-                }
-            }
-            if (!animeJson.isNull("Themes")) {
-                JSONArray jsonThemes = animeJson.getJSONArray("Themes");
-                for (int i = 0; i < jsonThemes.length(); i++) {
-                    Themes.add(new Theme(jsonThemes.getJSONObject(i)));
-                }
-            }
-
-        } catch (JSONException e) {
-
-        }
+        IsFavorite = in.readByte() != 0;
+        LinkedDate = new Date(in.readLong()); //better performance than serializing it.
+        IsInMyList = in.readByte() != 0;
+        IsAvailable = in.readByte() != 0;
+        EpisodeCount = in.readInt();
+        AgeRatingId = in.readInt();
+        MyAnimeListId = in.readInt();
     }
 
     public ArrayList<Link> getLinks() {
@@ -249,12 +204,12 @@ public class Anime implements Parcelable, Comparator<Anime> {
     }
 
     public boolean isCartoon() {
-        return isCartoon;
+        return IsCartoon;
     }
 
 
     public void setCartoon(boolean isCartoon) {
-        this.isCartoon = isCartoon;
+        this.IsCartoon = isCartoon;
     }
 
 
@@ -418,6 +373,62 @@ public class Anime implements Parcelable, Comparator<Anime> {
         BackdropPath = backdropPath;
     }
 
+    public int getMyAnimeListId() {
+        return MyAnimeListId;
+    }
+
+    public void setMyAnimeListId(int myAnimeListId) {
+        MyAnimeListId = myAnimeListId;
+    }
+
+    public boolean isFavorite() {
+        return IsFavorite;
+    }
+
+    public void setIsFavorite(boolean isFavorite) {
+        IsFavorite = isFavorite;
+    }
+
+    public Date getLinkedDate() {
+        return LinkedDate;
+    }
+
+    public void setLinkedDate(Date linkedDate) {
+        LinkedDate = linkedDate;
+    }
+
+    public boolean isInMyList() {
+        return IsInMyList;
+    }
+
+    public void setIsInMyList(boolean isInMyList) {
+        IsInMyList = isInMyList;
+    }
+
+    public boolean isAvailable() {
+        return IsAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        IsAvailable = isAvailable;
+    }
+
+    public int getEpisodeCount() {
+        return EpisodeCount;
+    }
+
+    public void setEpisodeCount(int episodeCount) {
+        EpisodeCount = episodeCount;
+    }
+
+    public int getAgeRatingId() {
+        return AgeRatingId;
+    }
+
+    public void setAgeRatingId(int ageRatingId) {
+        AgeRatingId = ageRatingId;
+    }
+
     @Override
     public int describeContents() {
         // TODO Auto-generated method stub
@@ -469,13 +480,18 @@ public class Anime implements Parcelable, Comparator<Anime> {
         dest.writeInt(RunningTime);
         dest.writeString(ReleasedDate);
         dest.writeString(BackdropPath);
-        dest.writeByte((byte) (isCartoon ? 1 : 0));
+        dest.writeByte((byte) (IsCartoon ? 1 : 0));
         dest.writeDouble(Rating != null ? Rating : 0);
         dest.writeString(SourceUrl);
         dest.writeInt(Order);
         dest.writeInt(VoteCount);
-
-
+        dest.writeByte((byte) (IsFavorite ? 1 : 0));
+        dest.writeLong(LinkedDate.getTime());//better performance than serializing it.
+        dest.writeByte((byte) (IsInMyList ? 1 : 0));
+        dest.writeByte((byte) (IsAvailable ? 1 : 0));
+        dest.writeInt(EpisodeCount);
+        dest.writeInt(AgeRatingId);
+        dest.writeInt(MyAnimeListId);
     }
 
     public static final Creator<Anime> CREATOR = new Creator<Anime>() {
