@@ -18,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,15 +35,15 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.SQLiteHelper;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
-import com.topanimestream.models.CurrentUser;
 import com.topanimestream.models.Episode;
 import com.topanimestream.R;
 import com.topanimestream.models.Item;
@@ -56,11 +55,8 @@ import com.topanimestream.views.profile.LoginActivity;
 import butterknife.Bind;
 
 public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator, AnimeDetailsMovieFragment.AnimeDetailsMovieCallback {
-    public ArrayList<String> mItems;
     private Anime anime;
-    private SQLiteHelper db;
     private EpisodeListFragment episodeListFragment;
-    private boolean isFavorite = false;
     private Vote currentUserVote;
     public static Review currentUserReview;
     private Recommendation currentUserRecommendation;
@@ -82,8 +78,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
 
         currentUserReview = null;
-        db = new SQLiteHelper(this);
-        mItems = new ArrayList<String>();
 
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("Anime");
@@ -103,7 +97,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
 
         if (savedInstanceState != null) {
             anime = savedInstanceState.getParcelable("anime");
-
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -138,8 +131,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
             }
         }
 
-        AsyncTaskTools.execute(new AnimeDetailsTask(false));
-
 
     }
 
@@ -171,7 +162,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
 
     @Override
     protected void onDestroy() {
-        db.close();
         super.onDestroy();
     }
 
@@ -187,7 +177,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         switch (item.getItemId()) {
             case R.id.action_moreoptions:
                 final Item[] items = {
-                        new Item(isFavorite ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), isFavorite ? R.drawable.ic_action_star : R.drawable.ic_action_star_empty),
+                        new Item(anime.isFavorite() ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), anime.isFavorite() ? R.drawable.ic_action_star : R.drawable.ic_action_star_empty),
                         new Item(getString(R.string.add_vote), R.drawable.ic_vote),
                         new Item(getString(R.string.reviews), R.drawable.ic_review)
                         //new Item(getString(R.string.recommendations), R.drawable.ic_recommendation)
@@ -490,7 +480,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
             if (error != null) {
                 Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
-                isFavorite = false;
+                anime.setIsFavorite(false);
                 Toast.makeText(AnimeDetailsActivity.this, getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
             }
         }
@@ -547,13 +537,26 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
             if (error != null) {
                 Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
-                isFavorite = true;
+                anime.setIsFavorite(true);
                 Toast.makeText(AnimeDetailsActivity.this, getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
             }
         }
     }
+    private void GetAnimeDetails()
+    {
+        ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + anime.getAnimeId() + ")?$expand=AnimeSources,Genres,AnimeInformations,Status", Anime.class, new ODataUtils.Callback<Anime>() {
+            @Override
+            public void onSuccess(Anime anime, OdataRequestInfo info) {
+
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+    }
     private class AnimeDetailsTask extends AsyncTask<Void, Void, String> {
-        private String isFavoriteUrl;
         private String userReviewUrl;
         private String userRecommendationUrl;
         private String userVoteUrl;
@@ -570,7 +573,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
-            isFavoriteUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Favorites").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userVoteUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
             userReviewUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).expand("Account").build();
@@ -585,19 +587,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
 
             try {
 
-                JSONObject jsonFavorite = Utils.GetJson(isFavoriteUrl);
-                String errors = Utils.checkDataServiceErrors(jsonFavorite, getString(R.string.error_loading_anime_details));
-                if(errors != null)
-                    return errors;
-
-                if(jsonFavorite.getJSONArray("value").length() > 0)
-                    isFavorite = true;
-                else
-                    isFavorite = false;
-
                 Gson gson = new Gson();
                 JSONObject jsonVote = Utils.GetJson(userVoteUrl);
-                errors = Utils.checkDataServiceErrors(jsonVote, getString(R.string.error_loading_anime_details));
+                String errors = Utils.checkDataServiceErrors(jsonVote, getString(R.string.error_loading_anime_details));
                 if(errors != null)
                     return errors;
                 if(jsonVote.getJSONArray("value").length() > 0)
