@@ -9,13 +9,8 @@
     android:focusableInTouchMode="false"
     android:background="@color/overlay">
 
-    <ImageView
-        android:id="@+id/imgFlag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:padding="5dp" />
+
+
     <ImageView
         android:id="@+id/placeholder_image"
         android:layout_width="match_parent"
@@ -39,8 +34,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="@dimen/griditem_title_horizontal"
-        android:paddingRight="@dimen/griditem_title_horizontal"
+        android:paddingLeft="@dimen/griditem_update_title_horizontal"
+        android:paddingRight="@dimen/griditem_update_title_horizontal"
         android:paddingTop="@dimen/griditem_title_top"
         android:paddingBottom="@dimen/griditem_title_bottom"
         android:gravity="start|center_vertical"
@@ -56,13 +51,26 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:paddingLeft="@dimen/griditem_title_horizontal"
-        android:paddingRight="@dimen/griditem_title_horizontal"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:paddingLeft="@dimen/griditem_update_title_horizontal"
+        android:paddingRight="@dimen/griditem_update_title_horizontal"
         android:gravity="start|center_vertical"
         android:textSize="@dimen/griditem_title_textsize"
         android:textColor="@android:color/white"
         app:typeface="roboto_medium"
         tools:text="Interstellar" />
+
+    <ImageView
+        android:id="@+id/imgFlag"
+        android:alpha="0.85"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:paddingTop="10dp"
+        android:paddingLeft="@dimen/griditem_update_title_horizontal"
+        android:paddingRight="@dimen/griditem_update_title_horizontal" />
 
     <View
         android:id="@+id/focus_overlay"

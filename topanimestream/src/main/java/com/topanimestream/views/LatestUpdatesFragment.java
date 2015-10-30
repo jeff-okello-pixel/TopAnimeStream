@@ -23,6 +23,7 @@ import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Link;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Update;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.ODataUtils;
@@ -43,13 +44,12 @@ public class LatestUpdatesFragment extends Fragment {
     public int currentSkip = 0;
     public int currentLimit = 40;
     public boolean isLoading = false;
-    public boolean loadmore = false;
-    public boolean hasResults = false;
     public Dialog busyDialog;
     private GridLayoutManager mLayoutManager;
     private Integer mColumns = 2;
     private LatestUpdatesGridAdapter mAdapter;
     private ArrayList<Update> mItems = new ArrayList<>();
+    private boolean isEndOfList;
     private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount = 0, mLoadingTreshold = mColumns * 3;
 
     @Bind(R.id.recyclerView)
@@ -89,7 +89,6 @@ public class LatestUpdatesFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadmore = false;
         currentSkip = 0;
         GetLatestUpdates();
     }
@@ -118,6 +117,7 @@ public class LatestUpdatesFragment extends Fragment {
         }
 
     };
+
     private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -129,14 +129,11 @@ public class LatestUpdatesFragment extends Fragment {
                 int lastInScreen = mFirstVisibleItem + mVisibleItemCount;
 
                 if ((lastInScreen >= mTotalItemCount - 6) && !(isLoading)) {
-                    if (hasResults) {
+                    if (!isEndOfList) {
                         currentSkip += currentLimit;
-                        loadmore = true;
-                    } else{
-                        loadmore = false;
-                        currentSkip = 0;
+                        GetLatestUpdates();
                     }
-                    GetLatestUpdates();
+
                 }
             }
         }
@@ -162,6 +159,8 @@ public class LatestUpdatesFragment extends Fragment {
     }
     private void GetLatestUpdates()
     {
+        isLoading = true;
+
         if(mAdapter.getItemCount() != 0) {
             mAdapter.addLoading();
         }
@@ -169,13 +168,19 @@ public class LatestUpdatesFragment extends Fragment {
             progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        isLoading = true;
 
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Updates?$expand=Anime,Episode,Language&$orderby=LastUpdateDate%20desc" + "&$skip=" + currentSkip + "&$top=" + currentLimit, Update.class, new ODataUtils.Callback<ArrayList<Update>>() {
+
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Updates?$expand=Anime,Episode,Language&$orderby=LastUpdateDate%20desc" + "&$skip=" + currentSkip + "&$top=" + currentLimit + "&$count=true", Update.class, new ODataUtils.Callback<ArrayList<Update>>() {
             @Override
-            public void onSuccess(ArrayList<Update> updates) {
-                if(updates.size() > 0 )
-                    hasResults = true;
+            public void onSuccess(ArrayList<Update> updates, OdataRequestInfo info) {
+                int currentItemCount = 0;
+                if(mAdapter.getItemCount() != 0)
+                    currentItemCount = mAdapter.getItemCount() - 1; //remove the loading
+
+                if(info.getCount() == currentItemCount + updates.size())
+                    isEndOfList = true;
+
+                isLoading = false;
 
                 if(progressBarLoading.isShown()) {
                     progressBarLoading.setVisibility(View.GONE);
@@ -183,7 +188,7 @@ public class LatestUpdatesFragment extends Fragment {
 
                 mAdapter.setItems(updates);
 
-                isLoading = false;
+
             }
 
             @Override

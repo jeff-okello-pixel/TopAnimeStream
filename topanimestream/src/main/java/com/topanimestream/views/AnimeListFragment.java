@@ -204,10 +204,8 @@ public class AnimeListFragment extends Fragment {
                 if ((lastInScreen >= mTotalItemCount - 6) && !(isLoading)) {
                     if (!isEndOfList) {
                         currentSkip += currentLimit;
+                        GetAnimes(customOrder, customFilter);
                     }
-
-                    GetAnimes(customOrder, customFilter);
-
                 }
             }
         }
@@ -223,11 +221,11 @@ public class AnimeListFragment extends Fragment {
             progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        String filter = "";
+        String filter = "&$filter=IsAvailable%20eq%20true";
         if (fragmentName.equals(getString(R.string.tab_movie)))
-            filter = "IsMovie%20eq%20true";
+            filter += "%20and%20IsMovie%20eq%20true";
         else if (fragmentName.equals(getString(R.string.tab_serie)))
-            filter = "IsMovie%20eq%20false";
+            filter += "%20and%20IsMovie%20eq%20false";
 
         if (customFilter != null && !customFilter.equals(""))
             filter += customFilter;
@@ -237,17 +235,16 @@ public class AnimeListFragment extends Fragment {
         else
             customOrder = "&$orderby=" + customOrder;
 
-        if(filter == null) //should never happen!
-            customFilter = "";
-        else
-            customFilter = "&$filter=" + filter;
-
         if(mMode == Mode.NORMAL) {
-            String url = getString(R.string.odata_path) + "AvailableAnimes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + customFilter + customOrder + "&$count=true";
+            String url = getString(R.string.odata_path) + "Animes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + filter + customOrder + "&$count=true";
             ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
                 @Override
                 public void onSuccess(ArrayList<Anime> animes, OdataRequestInfo info) {
-                    if(info.getCount() == mAdapter.getItemCount() + animes.size())
+                    int currentItemCount = 0;
+                    if(mAdapter.getItemCount() != 0)
+                        currentItemCount = mAdapter.getItemCount() - 1; //remove the loading
+
+                    if(info.getCount() == currentItemCount + animes.size())
                         isEndOfList = true;
 
                     isLoading = false;
