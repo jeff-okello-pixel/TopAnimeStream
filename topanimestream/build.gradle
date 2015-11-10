@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.hugo'
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.topanimestream"
         minSdkVersion 13
-        targetSdkVersion 21
+        targetSdkVersion 23
         multiDexEnabled = true
     }
 
@@ -32,13 +32,14 @@ dependencies {
     compile files('libs/ksoap2.jar')
     compile files('libs/gson-2.2.4.jar')
     compile files('libs/juniversalchardet-1.0.3.jar')
+    compile 'com.android.support:design:23.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.larswerkman:HoloColorPicker:1.5'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.+'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.github.nirhart:parallaxscroll:1.0'
-    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:appcompat-v7:23.1.0'
 
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'

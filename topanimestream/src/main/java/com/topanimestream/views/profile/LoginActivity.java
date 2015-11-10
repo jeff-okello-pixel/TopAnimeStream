@@ -36,7 +36,6 @@ import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.MainActivity;
 import com.topanimestream.views.TASBaseActivity;
 import butterknife.Bind;
-
 public class LoginActivity extends TASBaseActivity implements View.OnClickListener {
     @Bind(R.id.btnLogin)
     Button btnLogin;
@@ -209,18 +208,14 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return getString(R.string.error_login);
+            return getString(R.string.error_while_login);
         }
 
         @Override
         protected void onPostExecute(String error) {
 
             if (error != null) {
-                if (error.equals(getString(R.string.service_unavailable))) {
-                    DialogManager.ShowNoServiceDialog(LoginActivity.this);
-                } else {
-                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 PrefUtils.save(LoginActivity.this, Prefs.ACCESS_TOKEN, App.currentUser.getToken());
                 PrefUtils.save(LoginActivity.this, Prefs.USERNAME, username);
