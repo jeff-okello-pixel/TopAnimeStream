@@ -68,7 +68,7 @@ containing a value of this type.
         /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
-        public static int tabBackground=0x7f010008;
+        public static int tabBackgroundColor=0x7f010008;
         /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
 Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
 in (inches), mm (millimeters).
@@ -138,7 +138,7 @@ containing a value of this type.
            <tr><td><code>{@link #PagerSlidingTabStrip_indicatorHeight com.astuetz.viewpager.extensions:indicatorHeight}</code></td><td></td></tr>
            <tr><td><code>{@link #PagerSlidingTabStrip_scrollOffset com.astuetz.viewpager.extensions:scrollOffset}</code></td><td></td></tr>
            <tr><td><code>{@link #PagerSlidingTabStrip_shouldExpand com.astuetz.viewpager.extensions:shouldExpand}</code></td><td></td></tr>
-           <tr><td><code>{@link #PagerSlidingTabStrip_tabBackground com.astuetz.viewpager.extensions:tabBackground}</code></td><td></td></tr>
+           <tr><td><code>{@link #PagerSlidingTabStrip_tabBackgroundColor com.astuetz.viewpager.extensions:tabBackgroundColor}</code></td><td></td></tr>
            <tr><td><code>{@link #PagerSlidingTabStrip_tabPaddingLeftRight com.astuetz.viewpager.extensions:tabPaddingLeftRight}</code></td><td></td></tr>
            <tr><td><code>{@link #PagerSlidingTabStrip_textAllCapsTab com.astuetz.viewpager.extensions:textAllCapsTab}</code></td><td></td></tr>
            <tr><td><code>{@link #PagerSlidingTabStrip_underlineColor com.astuetz.viewpager.extensions:underlineColor}</code></td><td></td></tr>
@@ -150,7 +150,7 @@ containing a value of this type.
            @see #PagerSlidingTabStrip_indicatorHeight
            @see #PagerSlidingTabStrip_scrollOffset
            @see #PagerSlidingTabStrip_shouldExpand
-           @see #PagerSlidingTabStrip_tabBackground
+           @see #PagerSlidingTabStrip_tabBackgroundColor
            @see #PagerSlidingTabStrip_tabPaddingLeftRight
            @see #PagerSlidingTabStrip_textAllCapsTab
            @see #PagerSlidingTabStrip_underlineColor
@@ -254,15 +254,15 @@ containing a value of this type.
         */
         public static final int PagerSlidingTabStrip_shouldExpand = 9;
         /**
-          <p>This symbol is the offset where the {@link com.astuetz.viewpager.extensions.R.attr#tabBackground}
+          <p>This symbol is the offset where the {@link com.astuetz.viewpager.extensions.R.attr#tabBackgroundColor}
           attribute's value can be found in the {@link #PagerSlidingTabStrip} array.
 
 
           <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
-          @attr name com.astuetz.viewpager.extensions:tabBackground
+          @attr name com.astuetz.viewpager.extensions:tabBackgroundColor
         */
-        public static final int PagerSlidingTabStrip_tabBackground = 8;
+        public static final int PagerSlidingTabStrip_tabBackgroundColor = 8;
         /**
           <p>This symbol is the offset where the {@link com.astuetz.viewpager.extensions.R.attr#tabPaddingLeftRight}
           attribute's value can be found in the {@link #PagerSlidingTabStrip} array.

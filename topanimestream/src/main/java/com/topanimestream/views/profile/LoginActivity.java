@@ -7,6 +7,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,6 +28,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.topanimestream.App;
+import com.topanimestream.models.OdataErrorMessage;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.PrefUtils;
@@ -66,6 +70,9 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
 
     @Bind(R.id.layLogin)
     LinearLayout layLogin;
+
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
 
     private Dialog busyDialog;
     private Boolean shouldCloseOnly;//Used to start the mainactivity or not
@@ -199,12 +206,22 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
             try {
                 Response response = client.newCall(request).execute();
                 Gson gson = new Gson();
-                App.currentUser = gson.fromJson(response.body().string(), CurrentUser.class);
+                if(response.isSuccessful()) {
+                    App.currentUser = gson.fromJson(response.body().string(), CurrentUser.class);
 
-                //We need to put the token string before the token for the header.
-                App.accessToken = "Token " + App.currentUser.getToken();
+                    //We need to put the token string before the token for the header.
+                    App.accessToken = "Token " + App.currentUser.getToken();
 
-                return null;
+                    return null;
+                }
+                else
+                {
+                    OdataErrorMessage errorMessage = gson.fromJson(response.body().string(), OdataErrorMessage.class);
+                    if(errorMessage.getMessage() != null &&  !errorMessage.getMessage().equals(""))
+                    {
+                        return errorMessage.getMessage();
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -215,7 +232,15 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
         protected void onPostExecute(String error) {
 
             if (error != null) {
-                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, error, Snackbar.LENGTH_LONG)
+                        .setAction("DISMISS", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //empty click will close the snackbar.
+                            }
+                        })
+                        .setActionTextColor(ContextCompat.getColor(LoginActivity.this, android.R.color.white))
+                        .show();
             } else {
                 PrefUtils.save(LoginActivity.this, Prefs.ACCESS_TOKEN, App.currentUser.getToken());
                 PrefUtils.save(LoginActivity.this, Prefs.USERNAME, username);
@@ -248,6 +273,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
             }
 
             OkHttpClient client = App.getHttpClient();
+
             final MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType,'"' + token + '"');
 
@@ -267,8 +293,25 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     App.accessToken = "Token " + App.currentUser.getToken();
 
                     isValidToken = true;
+                    return null;
                 }
-                return null;
+                else
+                {
+                    OdataErrorMessage errorMessage = gson.fromJson(response.body().string(), OdataErrorMessage.class);
+                    if(errorMessage.getMessage() != null &&  !errorMessage.getMessage().equals(""))
+                    {
+                        if(errorMessage.getMessage().equals("Token invalid."))
+                        {
+                            return null; //simply show the login screen
+                        }
+                        else
+                        {
+                            return errorMessage.getMessage();
+                        }
+
+                    }
+                }
+
             } catch (Exception e) {
 
                 e.printStackTrace();
@@ -282,18 +325,22 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                 DialogManager.dismissBusyDialog(busyDialog);
             } catch (Exception e) {
             }
+
             if (error != null) {
-                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, error, Snackbar.LENGTH_LONG)
+                        .setAction("DISMISS", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //empty click will close the snackbar.
+                            }
+                        })
+                        .setActionTextColor(ContextCompat.getColor(LoginActivity.this, android.R.color.white))
+                        .show();
             } else {
-                if (!isValidToken) {
-                    Toast.makeText(LoginActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                }
-                else
-                {
+                if(isValidToken) {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 }
-
             }
         }
     }
