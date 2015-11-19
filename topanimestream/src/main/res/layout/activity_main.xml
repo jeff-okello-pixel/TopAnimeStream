@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ap="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -38,15 +38,14 @@
 
 
 
-            <ListView android:id="@+id/left_drawer"
-                      android:paddingTop="10dp"
-                      android:layout_width="250dp"
-                      android:layout_height="match_parent"
-                      android:layout_gravity="left"
-                      android:scrollbars="none"
-                      android:background="@color/blueDrawer"
-                      android:divider="@android:color/transparent"
-                      android:dividerHeight="8dp"/>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/blueDrawer"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer"/>
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>
 

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,6 +54,7 @@ import java.util.Locale;
 import com.topanimestream.App;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.NetworkUtil;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
@@ -105,11 +108,11 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Bind(R.id.tabs)
     PagerSlidingTabStrip tabs;
 
-    @Bind(R.id.left_drawer)
-    ListView listView;
-
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.navigationView)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +148,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             }
         }
 
+        /*
         listView.setOnItemClickListener(this);
         listView.setCacheColorHint(0);
         listView.setScrollingCacheEnabled(false);
@@ -154,7 +158,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         menuAdapter = new MenuArrayAdapter(this, getResources().getStringArray(R.array.menu_drawer_full));
 
         listView.setAdapter(menuAdapter);
-
+*/
         if (mDrawerLayout != null) {
             mDrawerLayout.setDrawerListener(new DrawerListener());
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -164,12 +168,20 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                     R.string.app_name, R.string.app_name);
             mDrawerToggle.syncState();
 
-            if (firstTime) {
-                drawerIsOpened = true;
-                mDrawerLayout.openDrawer(listView);
-                firstTime = false;
-            }
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    mDrawerLayout.closeDrawers();
+                    return true;
+                }
+            });
+
+            //TODO fix image
+            View header = navigationView.getHeaderView(0);
+            ImageView imgHeaderBackground = (ImageView) header.findViewById(R.id.imgHeaderBackground);
+            App.imageLoader.displayImage(getString(R.string.image_host_path) + ImageUtils.resizeImage(App.currentUser.getProfilePic(), ImageUtils.ImageSize.w500),imgHeaderBackground);
         }
+
 
         if (PrefUtils.get(this,Prefs.LOCALE, "0").equals("0")) {
             CharSequence[] items = null;
@@ -406,11 +418,8 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (!drawerIsOpened)
-                    mDrawerLayout.openDrawer(listView);
-                else
-                    mDrawerLayout.closeDrawer(listView);
-                break;
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
             case R.id.action_filter:
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -446,15 +455,15 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                 });
                 dialog.show();
 
-                break;
+                return true;
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
-                break;
+                return true;
             case R.id.action_search:
                 startActivity(new Intent(MainActivity.this, AnimeSearchActivity.class));
-                break;
+                return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void filterToDataServiceQuery(String selectedOrder, String selectedStatus, String selectedDubbedSubbed, String selectCategory) {
