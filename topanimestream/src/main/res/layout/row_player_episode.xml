@@ -21,7 +21,7 @@
                     android:id="@+id/txtEpisodeNumber"
                     android:paddingTop="5dp"
                     android:textSize="18sp"
-                    android:textColor="@color/text_white"
+                    style="@style/TextViewWhite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -29,7 +29,7 @@
                     android:id="@+id/txtAiredDate"
                     android:paddingTop="5dp"
                     android:textSize="15sp"
-                    android:textColor="@color/text_white"
+                    style="@style/TextViewWhite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

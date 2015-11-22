@@ -14,7 +14,7 @@
     <color name="table_text">#484848</color>
     <color name="edit_text_background_start">#EFF6FF</color>
     <color name="edit_text_background_end">#FBFDFF</color>
-    <color name="text_white">#f5f5f5</color>
+    <color name="white">#f5f5f5</color>
     <color name="dark_grey">#2d3134</color>
     <color name="black">#000000</color>
     <drawable name="black">#000000</drawable>

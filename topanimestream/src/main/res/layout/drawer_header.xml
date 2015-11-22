@@ -23,6 +23,11 @@
         app:shadow_radius="10"
         app:shadow_color="#000000"/>
 
+    <TextView
+        android:id="@+id/txtUsername"
+        style="@style/TextViewWhite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

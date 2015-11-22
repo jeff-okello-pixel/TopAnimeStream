@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="TopAnime\nStream"
         android:largeHeap="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppBaseTheme" >
         <provider
             android:name=".utilities.SuggestionProvider"
             android:authorities="com.topanimestream.utilities.SuggestionProvider" />
@@ -66,7 +66,6 @@
             android:name=".views.AnimeSearchActivity"
             android:configChanges="locale|layoutDirection"
             android:label="@string/title_activity_anime_search"
-            android:theme="@style/Theme.Activity.Search"
             android:parentActivityName=".views.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
