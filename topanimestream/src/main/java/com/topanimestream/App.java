@@ -76,9 +76,9 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         imageLoader.init(imgConfig);
 
         App.accessToken = PrefUtils.get(getApplicationContext(), Prefs.ACCESS_TOKEN, "");
-        setLocale();
 
-
+        currentLanguageId = "1";
+        //setLocale();
     }
 
 

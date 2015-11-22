@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -179,64 +180,11 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             //TODO fix image
             View header = navigationView.getHeaderView(0);
             ImageView imgHeaderBackground = (ImageView) header.findViewById(R.id.imgHeaderBackground);
-            App.imageLoader.displayImage(getString(R.string.image_host_path) + ImageUtils.resizeImage(App.currentUser.getProfilePic(), ImageUtils.ImageSize.w500),imgHeaderBackground);
+            if(App.currentUser != null)
+                imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.attackontitanbackdrop));
         }
 
-
-        if (PrefUtils.get(this,Prefs.LOCALE, "0").equals("0")) {
-            CharSequence[] items = null;
-            if (App.phoneLanguage.equals("1"))
-                items = new CharSequence[]{getString(R.string.language_english) + " " + getString(R.string.parenthese_default), getString(R.string.language_french), getString(R.string.language_spanish)};
-            else if (App.phoneLanguage.equals("2"))
-                items = new CharSequence[]{getString(R.string.language_english), getString(R.string.language_french) + " " + getString(R.string.parenthese_default), getString(R.string.language_spanish)};
-            else if (App.phoneLanguage.equals("4"))
-                items = new CharSequence[]{getString(R.string.language_english), getString(R.string.language_french), getString(R.string.language_spanish) + " " + getString(R.string.parenthese_default)};
-
-            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertBuilder.setTitle(getString(R.string.title_alert_languages));
-            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    switch (item) {
-                        case 0:
-                            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "1");
-                            break;
-                        case 1:
-                            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "2");
-                            break;
-                        case 2:
-                            PrefUtils.save(MainActivity.this, Prefs.LOCALE, "4");
-                            break;
-                    }
-                    App.setLocale();
-                    Utils.restartActivity(MainActivity.this);
-                }
-            });
-
-            alertLanguages = alertBuilder.create();
-            alertLanguages.setCancelable(false);
-            alertLanguages.setOnKeyListener(new Dialog.OnKeyListener() {
-
-                @Override
-                public boolean onKey(DialogInterface arg0, int keyCode,
-                                     KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        PrefUtils.save(MainActivity.this, Prefs.LOCALE, App.phoneLanguage);
-                        alertLanguages.dismiss();
-                        SetViewPager();
-                        App.setLocale();
-                        Utils.restartActivity(MainActivity.this);
-                    }
-                    return true;
-                }
-            });
-            try {
-                //leaked error
-                alertLanguages.show();
-            } catch (Exception e) {
-            }
-        } else {
-            SetViewPager();
-        }
+        SetViewPager();
 
         App.SetEvent(this);
         setPagerVisibility(App.networkConnection);

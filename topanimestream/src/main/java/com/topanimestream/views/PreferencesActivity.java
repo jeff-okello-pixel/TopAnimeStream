@@ -75,6 +75,7 @@ public class PreferencesActivity extends TASBaseActivity
         mPrefItems = new ArrayList<>();
         mPrefItems.add(getString(R.string.general));
 
+        /*
         mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_language, R.string.app_language, Prefs.LOCALE, "",
                 new PrefItem.OnClickListener() {
                     @Override
@@ -106,7 +107,7 @@ public class PreferencesActivity extends TASBaseActivity
                         return Utils.ToLanguageStringDisplay(langCode);
 
                     }
-                }));
+                }));*/
 
 
         mPrefItems.add(getString(R.string.videos));

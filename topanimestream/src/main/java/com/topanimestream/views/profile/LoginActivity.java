@@ -8,8 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -105,11 +103,6 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
         String token = PrefUtils.get(this, Prefs.ACCESS_TOKEN, null);
         if(token != null)
             AsyncTaskTools.execute(new ValidTokenTask(token));
-        else
-        {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        }
     }
 
     @Override
@@ -232,15 +225,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
         protected void onPostExecute(String error) {
 
             if (error != null) {
-                Snackbar.make(coordinatorLayout, error, Snackbar.LENGTH_LONG)
-                        .setAction("DISMISS", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                //empty click will close the snackbar.
-                            }
-                        })
-                        .setActionTextColor(ContextCompat.getColor(LoginActivity.this, android.R.color.white))
-                        .show();
+                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 PrefUtils.save(LoginActivity.this, Prefs.ACCESS_TOKEN, App.currentUser.getToken());
                 PrefUtils.save(LoginActivity.this, Prefs.USERNAME, username);
@@ -327,15 +312,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
             }
 
             if (error != null) {
-                Snackbar.make(coordinatorLayout, error, Snackbar.LENGTH_LONG)
-                        .setAction("DISMISS", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                //empty click will close the snackbar.
-                            }
-                        })
-                        .setActionTextColor(ContextCompat.getColor(LoginActivity.this, android.R.color.white))
-                        .show();
+                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
                 if(isValidToken) {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
