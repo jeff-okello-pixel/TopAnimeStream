@@ -21,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -180,8 +181,12 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             //TODO fix image
             View header = navigationView.getHeaderView(0);
             ImageView imgHeaderBackground = (ImageView) header.findViewById(R.id.imgHeaderBackground);
-            if(App.currentUser != null)
-                imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.attackontitanbackdrop));
+            TextView txtUsername = (TextView) header.findViewById(R.id.txtUsername);
+            TextView txtJoinedDate = (TextView) header.findViewById(R.id.txtJoinedDate);
+
+            imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.attackontitanbackdrop));
+            txtUsername.setText(App.currentUser.getUsername().substring(0, 1).toUpperCase() + App.currentUser.getUsername().substring(1));
+            //txtJoinedDate.setText(DateUtils.getRelativeDateTimeString(MainActivity.this, System.currentTimeMillis(), App.currentUser.getAddedDate(), DateUtils.FORMAT_ABBREV_ALL));
         }
 
         SetViewPager();

@@ -8,19 +8,20 @@ import com.topanimestream.R;
 import com.topanimestream.utilities.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Account implements Parcelable {
     private int AccountId;
     private String Username;
     private String ProfilePic;
-    private String AddedDate;
-    private String LastUpdatedDate;
+    private Date AddedDate;
+    private Date LastUpdatedDate;
     private String About;
     private boolean IsDisabled;
     private boolean IsBanned;
     private String BannedReason;
-    private String LastLoginDate;
-    private String LastActivityDate;
+    private Date LastLoginDate;
+    private Date LastActivityDate;
     private ArrayList<Role> Roles;
     private String PreferredVideoQuality;
     private String PreferredAudioLang;
@@ -34,14 +35,14 @@ public class Account implements Parcelable {
         AccountId = in.readInt();
         Username = in.readString();
         ProfilePic = in.readString();
-        AddedDate = in.readString();
-        LastUpdatedDate = in.readString();
+        AddedDate = new Date(in.readLong());
+        LastUpdatedDate = new Date(in.readLong());
         About = in.readString();
         IsDisabled = in.readByte() != 0;
         IsBanned = in.readByte() != 0;
         BannedReason = in.readString();
-        LastLoginDate = in.readString();
-        LastActivityDate = in.readString();
+        LastLoginDate = new Date(in.readLong());
+        LastActivityDate = new Date(in.readLong());
         PreferredVideoQuality = in.readString();
         PreferredAudioLang = in.readString();
         PreferredSubtitleLang = in.readString();
@@ -98,19 +99,19 @@ public class Account implements Parcelable {
         ProfilePic = profilePic;
     }
 
-    public String getAddedDate() {
+    public Date getAddedDate() {
         return AddedDate;
     }
 
-    public void setAddedDate(String addedDate) {
+    public void setAddedDate(Date addedDate) {
         AddedDate = addedDate;
     }
 
-    public String getLastUpdatedDate() {
+    public Date getLastUpdatedDate() {
         return LastUpdatedDate;
     }
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
         LastUpdatedDate = lastUpdatedDate;
     }
 
@@ -161,19 +162,19 @@ public class Account implements Parcelable {
     public void setPreferredSubtitleLang(String preferredSubtitleLang) {
         PreferredSubtitleLang = preferredSubtitleLang;
     }
-    public String getLastLoginDate() {
+    public Date getLastLoginDate() {
         return LastLoginDate;
     }
 
-    public void setLastLoginDate(String lastLoginDate) {
+    public void setLastLoginDate(Date lastLoginDate) {
         LastLoginDate = lastLoginDate;
     }
 
-    public String getLastActivityDate() {
+    public Date getLastActivityDate() {
         return LastActivityDate;
     }
 
-    public void setLastActivityDate(String lastActivityDate) {
+    public void setLastActivityDate(Date lastActivityDate) {
         LastActivityDate = lastActivityDate;
     }
 
@@ -188,14 +189,14 @@ public class Account implements Parcelable {
         dest.writeInt(AccountId);
         dest.writeString(Username);
         dest.writeString(ProfilePic);
-        dest.writeString(AddedDate);
-        dest.writeString(LastUpdatedDate);
+        dest.writeLong(AddedDate.getTime());
+        dest.writeLong(LastUpdatedDate.getTime());
         dest.writeString(About);
         dest.writeByte((byte) (IsDisabled ? 1 : 0));
         dest.writeByte((byte) (IsBanned ? 1 : 0));
         dest.writeString(BannedReason);
-        dest.writeString(LastLoginDate);
-        dest.writeString(LastActivityDate);
+        dest.writeLong(LastLoginDate.getTime());
+        dest.writeLong(LastActivityDate.getTime());
         dest.writeString(PreferredVideoQuality);
         dest.writeString(PreferredAudioLang);
         dest.writeString(PreferredSubtitleLang);

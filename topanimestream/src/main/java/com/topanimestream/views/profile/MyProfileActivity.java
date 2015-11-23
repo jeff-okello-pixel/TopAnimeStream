@@ -106,7 +106,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
 
         App.imageLoader.displayImage(App.currentUser.getProfilePicResize(ImageUtils.ImageSize.w185), imgProfilePic);
         txtUsername.setText(App.currentUser.getUsername());
-        txtJoinedDate.setText(App.currentUser.getAddedDate());
+        txtJoinedDate.setText(App.currentUser.getAddedDate().toString());
         txtRank.setText(getString(R.string.rank) +  App.currentUser.getRoleName());
 
         AsyncTaskTools.execute(new ProfileTask());

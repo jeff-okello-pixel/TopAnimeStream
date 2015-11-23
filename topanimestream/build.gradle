@@ -30,7 +30,6 @@ dependencies {
     compile project(':drag-sort')
     compile files('libs/jsoup-1.7.3.jar')
     compile files('libs/ksoap2.jar')
-    compile files('libs/gson-2.2.4.jar')
     compile files('libs/juniversalchardet-1.0.3.jar')
     compile 'com.android.support:design:23.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -40,7 +39,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.github.nirhart:parallaxscroll:1.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
-
+    compile 'com.google.code.gson:gson:2.4'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
