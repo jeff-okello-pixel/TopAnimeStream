@@ -4,6 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar"/>
+    <RelativeLayout
+        android:id="@+id/layRecentlyWatched"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/attackontitanbackdrop"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#55000000"></RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Attack on titan"
+                android:layout_marginLeft="5dp"
+                style="@style/TextViewWhite"
+                android:layout_centerVertical="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_play_dark"/>
+
+    </RelativeLayout>
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -45,6 +74,9 @@
         android:layout_gravity="start"
         android:background="@color/blueDrawer"
         app:headerLayout="@layout/drawer_header"
+        app:itemBackground="@color/menu_state_list"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"
         app:menu="@menu/drawer"/>
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

@@ -203,7 +203,9 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                Gson gson = new Gson();
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                Gson gson = gsonBuilder.create();
                 if(response.isSuccessful()) {
                     App.currentUser = gson.fromJson(response.body().string(), CurrentUser.class);
 
@@ -273,10 +275,8 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     .build();
 
             try {
-                //TODO test this
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-                gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
                 Gson gson = gsonBuilder.create();
                 Response response = client.newCall(request).execute();
                 if(response.isSuccessful())

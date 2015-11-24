@@ -165,9 +165,9 @@ public class AnimeListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setOnScrollListener(mScrollListener);
+        mRecyclerView.addOnScrollListener(mScrollListener);
+
         //adapter should only ever be created once on fragment initialise.
         mAdapter = new AnimeGridAdapter(getActivity(), mItems, mColumns);
         mAdapter.setOnItemClickListener(mOnItemClickListener);

@@ -11,6 +11,7 @@
     <color name="translucent_black">#44000000</color>
     <color name="translucent">#00000000</color>
     <color name="blueDrawer">#D9245169</color>
+    <color name="blue">#245169</color>
     <color name="table_text">#484848</color>
     <color name="edit_text_background_start">#EFF6FF</color>
     <color name="edit_text_background_end">#FBFDFF</color>

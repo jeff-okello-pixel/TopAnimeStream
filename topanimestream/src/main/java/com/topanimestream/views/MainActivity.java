@@ -2,11 +2,15 @@ package com.topanimestream.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -19,6 +23,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -26,13 +31,17 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.topanimestream.App;
+import com.topanimestream.models.Link;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.ImageUtils;
@@ -116,13 +126,15 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Bind(R.id.navigationView)
     NavigationView navigationView;
 
+    @Bind(R.id.layRecentlyWatched)
+    RelativeLayout layRecentlyWatched;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main);
 
         setSupportActionBar(toolbar);
         ToolbarUtils.updateToolbarHeight(this, toolbar);
-
         tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_updates)};
 
         //fill default filter dialog spinner values
@@ -183,10 +195,12 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             ImageView imgHeaderBackground = (ImageView) header.findViewById(R.id.imgHeaderBackground);
             TextView txtUsername = (TextView) header.findViewById(R.id.txtUsername);
             TextView txtJoinedDate = (TextView) header.findViewById(R.id.txtJoinedDate);
+            TextView txtAbout = (TextView) header.findViewById(R.id.txtAbout);
 
             imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.attackontitanbackdrop));
             txtUsername.setText(App.currentUser.getUsername().substring(0, 1).toUpperCase() + App.currentUser.getUsername().substring(1));
-            //txtJoinedDate.setText(DateUtils.getRelativeDateTimeString(MainActivity.this, System.currentTimeMillis(), App.currentUser.getAddedDate(), DateUtils.FORMAT_ABBREV_ALL));
+            txtJoinedDate.setText("Since: " + DateUtils.getRelativeTimeSpanString(App.currentUser.getAddedDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));
+            txtAbout.setText(App.currentUser.getAbout());
         }
 
         SetViewPager();
@@ -358,7 +372,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
         return true;
     }
 

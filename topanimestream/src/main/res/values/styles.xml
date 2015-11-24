@@ -61,7 +61,7 @@
     </style>
 
     <style name="TextViewWhite">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">#ffffff</item>
     </style>
 
     <style name="SignInEditText">

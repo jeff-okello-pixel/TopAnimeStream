@@ -13,6 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.squareup.okhttp.OkHttpClient;
@@ -108,7 +109,8 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
     public static OkHttpClient getHttpClient() {
         if (sHttpClient == null) {
             sHttpClient = new OkHttpClient();
-
+            sHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
+            sHttpClient.setReadTimeout(10, TimeUnit.SECONDS);
             int cacheSize = 10 * 1024 * 1024;
             File cacheLocation = new File(PrefUtils.get(getContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(getContext()).toString()));
             cacheLocation.mkdirs();
