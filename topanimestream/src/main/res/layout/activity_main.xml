@@ -4,57 +4,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar"/>
-    <RelativeLayout
-        android:id="@+id/layRecentlyWatched"
-        android:layout_width="match_parent"
-        android:layout_height="100dp">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/attackontitanbackdrop"/>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#55000000"></RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Attack on titan"
-                android:layout_marginLeft="5dp"
-                style="@style/TextViewWhite"
-                android:layout_centerVertical="true"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_play_dark"/>
-
-    </RelativeLayout>
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <RelativeLayout
+            android:id="@+id/layRecentlyWatched"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/attackontitanbackdrop"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#55000000"></RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Attack on titan"
+                    android:layout_marginLeft="5dp"
+                    style="@style/TextViewWhite"
+                    android:layout_centerVertical="true"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_play_dark"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-                <LinearLayout
+            <com.topanimestream.custom.CoordinatedHeader
+                android:id="@+id/activity_home_header"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" >
+                <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+                    android:id="@+id/tabs"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
-                        android:id="@+id/tabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp" />
-                    <android.support.v4.view.ViewPager
-                        android:id="@+id/pager"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-                </LinearLayout>
+                    android:layout_height="48dp" />
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pager"
+                    android:layout_below="@id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
                 <TextView
                     android:id="@+id/txtNoConnection"
                     android:textSize="20sp"
@@ -63,7 +67,8 @@
                     android:layout_centerInParent="true"
                     android:visibility="gone"
                     android:text="@string/no_connection"/>
-            </RelativeLayout>
+            </com.topanimestream.custom.CoordinatedHeader>
+        </RelativeLayout>
 
 
 

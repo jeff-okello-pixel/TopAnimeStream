@@ -165,6 +165,8 @@ public class AnimeListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        RecyclerViewHeader header = RecyclerViewHeader.fromXml(getActivity(), R.layout.fake_header);
+
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(mScrollListener);
 
