@@ -2,54 +2,40 @@ package com.topanimestream.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
@@ -63,22 +49,17 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.topanimestream.App;
-import com.topanimestream.models.Link;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
-import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.NetworkUtil;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
-import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.MenuArrayAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.managers.VersionManager;
-import com.topanimestream.models.Account;
 import com.topanimestream.R;
-import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.profile.LoginActivity;
 import com.topanimestream.views.profile.MyFavoritesActivity;
 import com.topanimestream.views.profile.MyProfileActivity;
@@ -88,7 +69,6 @@ import butterknife.Bind;
 
 public class MainActivity extends TASBaseActivity implements OnItemClickListener, App.Connection {
 
-    private boolean firstTime;
     private boolean drawerIsOpened;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean doubleBackToExitPressedOnce;
@@ -97,8 +77,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     private AnimeListFragment serieFragment;
     private AnimeListFragment movieFragment;
     private LatestUpdatesFragment latestUpdatesFragment;
-    private Dialog busyDialog;
-    private AlertDialog alertLanguages;
     private MenuArrayAdapter menuAdapter;
     private String spinnerOrderByValue;
     private String spinnerStatusValue;
@@ -135,7 +113,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
         setSupportActionBar(toolbar);
         ToolbarUtils.updateToolbarHeight(this, toolbar);
-        tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.latest_updates)};
+        tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.updates)};
 
         //fill default filter dialog spinner values
         if (savedInstanceState != null) {
@@ -234,7 +212,9 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         mAdapter = new PagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(mAdapter);
 
+
         tabs.setViewPager(viewPager);
+        tabs.setShouldExpand(true);
         tabs.setDividerColor(getResources().getColor(R.color.blueTab));
         tabs.setUnderlineColor(getResources().getColor(R.color.blueTab));
         //tabs.setTextColor(Color.parseColor("#55a73d"));
@@ -278,7 +258,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                 case 1:
                     movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL, order, filter);
                     return movieFragment;
-                //Latest updates
+                //Updates
                 case 2:
                     latestUpdatesFragment = LatestUpdatesFragment.newInstance();
                     return latestUpdatesFragment;

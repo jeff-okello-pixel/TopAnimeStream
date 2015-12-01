@@ -8,10 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -20,10 +22,10 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-
 import com.google.gson.Gson;
 import com.topanimestream.App;
 import com.topanimestream.adapters.AnimeGridAdapter;
+import com.topanimestream.custom.CoordinatedHeader;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.ODataUtils;
@@ -95,7 +97,7 @@ public class AnimeListFragment extends Fragment {
             //mEmptyView.setText(getString(R.string.no_search_results));
 
         //don't load initial data in search mode
-        if (mMode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
+        if (mMode != Mode.SEARCH && mAdapter.getItemCount() == 1) {
             currentSkip = 0;
             GetAnimes(customOrder, customFilter);
         }
@@ -158,6 +160,22 @@ public class AnimeListFragment extends Fragment {
         mLoadingTreshold = mColumns * 3;
 
         mLayoutManager = new GridLayoutManager(getActivity(), mColumns);
+
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch(mAdapter.getItemViewType(position)){
+                    case AnimeGridAdapter.TYPE_HEADER:
+                        return mLayoutManager.getSpanCount();
+                    case AnimeGridAdapter.TYPE_NORMAL:
+                        return 1;
+                    case AnimeGridAdapter.TYPE_LOADING:
+                        return 1;
+                    default:
+                        return -1;
+                }
+            }
+        });
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         return rootView;
@@ -165,10 +183,47 @@ public class AnimeListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerViewHeader header = RecyclerViewHeader.fromXml(getActivity(), R.layout.fake_header);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(mScrollListener);
+
+        final CoordinatedHeader header = (CoordinatedHeader) getActivity().findViewById(R.id.activity_home_header);
+        final View anchor = getActivity().findViewById(R.id.tabs);
+        final Toolbar toolbar =(Toolbar) getActivity().findViewById(R.id.toolbar);
+        final RelativeLayout layRecentlyWatched = (RelativeLayout) getActivity().findViewById(R.id.layRecentlyWatched);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = mLayoutManager.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount() - (mAdapter.isLoading() ? 1 : 0);
+                int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+                // Determine the maximum allowed scroll height
+                final int maxScrollHeight = header.getHeight() - anchor.getHeight();
+
+                //Anchor the header if the recentlywatched is not there
+                if(layRecentlyWatched.getVisibility() == View.GONE)
+                {
+                    header.storeCoordinate(0, toolbar.getHeight());
+
+                } else if (firstVisibleItem != 0) {
+                    // If the first item has scrolled off screen, anchor the header
+                    header.storeCoordinate(0, -maxScrollHeight + toolbar.getHeight());
+                    return;
+                }
+
+                final View firstChild = recyclerView.getChildAt(firstVisibleItem);
+                if (firstChild == null) {
+                    return;
+                }
+
+
+                // Determine the offset to scroll the header
+                final float offset = Math.min(-firstChild.getY(), maxScrollHeight);
+                header.storeCoordinate(0, -offset + toolbar.getHeight());
+            }
+
+        });
 
         //adapter should only ever be created once on fragment initialise.
         mAdapter = new AnimeGridAdapter(getActivity(), mItems, mColumns);
@@ -216,12 +271,13 @@ public class AnimeListFragment extends Fragment {
     public void GetAnimes(String customOrder, String customFilter)
     {
         isLoading = true;
+        /*
         if(mAdapter.getItemCount() != 0) {
             mAdapter.addLoading();
         }
         else {
             progressBarLoading.setVisibility(View.VISIBLE);
-        }
+        }*/
 
         String filter = "&$filter=IsAvailable%20eq%20true";
         if (fragmentName.equals(getString(R.string.tab_movie)))

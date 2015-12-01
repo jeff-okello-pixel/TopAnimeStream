@@ -38,12 +38,12 @@ import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 
 
-public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
     private int mItemWidth, mItemHeight, mMargin, mColumns;
     private ArrayList<OverviewItem> mItems = new ArrayList<>();
     //	private ArrayList<Media> mData = new ArrayList<>();
     private AnimeGridAdapter.OnItemClickListener mItemClickListener;
-    final int NORMAL = 0, LOADING = 1;
+    public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
 
     public AnimeGridAdapter(Context context, ArrayList<Anime> items, Integer columns) {
         mColumns = columns;
@@ -55,17 +55,54 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         setItems(items);
     }
+
     public interface OnItemClickListener {
         public void onItemClick(View v, Anime item, int position);
     }
+
+    public void setOnItemClickListener(AnimeGridAdapter.OnItemClickListener listener) {
+        mItemClickListener = listener;
+    }
+
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public boolean useHeader() {
+        return true;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fake_header, parent, false);
+        return new AnimeGridAdapter.HeaderItem(v);
+    }
+
+    @Override
+    public void onBindHeaderView(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
+    public boolean useFooter() {
+        return false;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateFooterViewHolder(ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindFooterView(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateBasicItemViewHolder(ViewGroup parent, int viewType) {
         View v;
         switch (viewType) {
-            case LOADING:
+            case TYPE_LOADING:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_griditem_loading, parent, false);
                 return new AnimeGridAdapter.LoadingHolder(v);
-            case NORMAL:
+            case TYPE_NORMAL:
             default:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_griditem, parent, false);
                 return new AnimeGridAdapter.ViewHolder(v);
@@ -73,7 +110,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindBasicItemView(RecyclerView.ViewHolder viewHolder, int position) {
         int double_margin = mMargin * 2;
         int top_margin = (position < mColumns) ? mMargin * 2 : mMargin;
 
@@ -87,86 +124,81 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         viewHolder.itemView.setLayoutParams(layoutParams);
 
-        if (getItemViewType(position) == NORMAL) {
-            final ViewHolder videoViewHolder = (ViewHolder) viewHolder;
-            final OverviewItem overviewItem = getItem(position);
-            Anime item = overviewItem.Anime;
+
+        final ViewHolder videoViewHolder = (ViewHolder) viewHolder;
+        final OverviewItem overviewItem = getItem(position);
+        Anime item = overviewItem.Anime;
 
 
-            videoViewHolder.title.setText(item.getName());
-            if(item.getReleaseDate() != null && !item.getReleaseDate().equals("")) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                Date convertedDate = null;
-                try {
-                    convertedDate = format.parse(item.getReleaseDate().replace("T", " "));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(convertedDate);
-                int year = cal.get(Calendar.YEAR);
-                if (convertedDate != null)
-                    videoViewHolder.year.setText(String.valueOf(year));
-
+        videoViewHolder.title.setText(item.getName());
+        if(item.getReleaseDate() != null && !item.getReleaseDate().equals("")) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            Date convertedDate = null;
+            try {
+                convertedDate = format.parse(item.getReleaseDate().replace("T", " "));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-            videoViewHolder.coverImage.setVisibility(View.GONE);
-            videoViewHolder.title.setVisibility(View.GONE);
-            videoViewHolder.year.setVisibility(View.GONE);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(convertedDate);
+            int year = cal.get(Calendar.YEAR);
+            if (convertedDate != null)
+                videoViewHolder.year.setText(String.valueOf(year));
 
-            if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
-                Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), ImageUtils.ImageSize.w500))
-                        .resize(mItemWidth, mItemHeight)
-                        .transform(DrawGradient.INSTANCE)
-                        .into(videoViewHolder.coverImage, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                overviewItem.isImageError = false;
-                                AnimUtils.fadeIn(videoViewHolder.coverImage);
-                                AnimUtils.fadeIn(videoViewHolder.title);
-                                AnimUtils.fadeIn(videoViewHolder.year);
-                            }
+        }
+        videoViewHolder.coverImage.setVisibility(View.GONE);
+        videoViewHolder.title.setVisibility(View.GONE);
+        videoViewHolder.year.setVisibility(View.GONE);
 
-                            @Override
-                            public void onError() {
-                                overviewItem.isImageError = true;
-                                AnimUtils.fadeIn(videoViewHolder.title);
-                                AnimUtils.fadeIn(videoViewHolder.year);
-                            }
-                        });
-            }
+        if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
+            Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), ImageUtils.ImageSize.w500))
+                    .resize(mItemWidth, mItemHeight)
+                    .transform(DrawGradient.INSTANCE)
+                    .into(videoViewHolder.coverImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            overviewItem.isImageError = false;
+                            AnimUtils.fadeIn(videoViewHolder.coverImage);
+                            AnimUtils.fadeIn(videoViewHolder.title);
+                            AnimUtils.fadeIn(videoViewHolder.year);
+                        }
+
+                        @Override
+                        public void onError() {
+                            overviewItem.isImageError = true;
+                            AnimUtils.fadeIn(videoViewHolder.title);
+                            AnimUtils.fadeIn(videoViewHolder.year);
+                        }
+                    });
         }
     }
 
     @Override
-    public int getItemCount() {
+    public int getBasicItemCount() {
         return mItems.size();
     }
 
-    public void setOnItemClickListener(AnimeGridAdapter.OnItemClickListener listener) {
-        mItemClickListener = listener;
-    }
-
     @Override
-    public int getItemViewType(int position) {
-        if (getItem(position).isLoadingItem) {
-            return LOADING;
-        }
-        return NORMAL;
+    public int getBasicItemType(int position) {
+        if (useHeader())
+            return mItems.get(position - 1).isLoadingItem ? TYPE_LOADING : TYPE_NORMAL;
+        else
+            return mItems.get(position).isLoadingItem ? TYPE_LOADING : TYPE_NORMAL;
     }
 
     public OverviewItem getItem(int position) {
-        if (position < 0 || mItems.size() <= position) return null;
+        //if (position < 0 || mItems.size() <= position) return null;
         return mItems.get(position);
     }
 
     @DebugLog
     public void addLoading() {
         OverviewItem item = null;
-        if (getItemCount() != 0) {
-            item = mItems.get(getItemCount() - 1);
+        if (getItemCount() < 1) {
+            item = mItems.get(getItemCount() - 2);
         }
 
-        if (getItemCount() == 0 || (item != null && !item.isLoadingItem)) {
+        if (getItemCount() == 1 || (item != null && !item.isLoadingItem)) {
             mItems.add(new OverviewItem(true));
             notifyDataSetChanged();
         }
@@ -174,8 +206,8 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @DebugLog
     public boolean isLoading() {
-        if (getItemCount() <= 0) return false;
-        return getItemViewType(getItemCount() - 1) == LOADING;
+        if (getItemCount() <= 1) return false;
+        return getItemViewType(getItemCount() - 2) == TYPE_LOADING;
     }
 
     @DebugLog
@@ -188,6 +220,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         notifyDataSetChanged();
         //Remove the isloading
+        /*
         if (getItemCount() <= 0) return;
         try {
             OverviewItem overviewItem = mItems.get(getItemCount() - items.size() - 1);
@@ -199,7 +232,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         {
             //theres no loading overview
             return;
-        }
+        }*/
 
     }
 
@@ -244,7 +277,7 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Override
         public void onClick(View view) {
             if (mItemClickListener != null) {
-                int position = getPosition();
+                int position = getAdapterPosition();
                 Anime item = getItem(position).Anime;
                 mItemClickListener.onItemClick(view, item, position);
             }
@@ -275,6 +308,14 @@ public class AnimeGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         OverviewItem(boolean loading) {
             this.isLoadingItem = loading;
+        }
+
+    }
+
+    class HeaderItem extends RecyclerView.ViewHolder {
+
+        public HeaderItem(View itemView) {
+            super(itemView);
         }
     }
 
