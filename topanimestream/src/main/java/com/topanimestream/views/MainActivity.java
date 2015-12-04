@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -49,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.topanimestream.App;
+import com.topanimestream.custom.CoordinatedHeader;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.NetworkUtil;
@@ -106,6 +108,9 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     @Bind(R.id.layRecentlyWatched)
     RelativeLayout layRecentlyWatched;
+
+    @Bind(R.id.activity_home_header)
+    CoordinatedHeader header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,6 +219,17 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
 
         tabs.setViewPager(viewPager);
+        tabs.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if(state != ViewPager.SCROLL_STATE_IDLE)
+                {
+                    //wait until the pager is idle to animate the header
+                    return;
+                }
+                header.restoreCoordinate(viewPager.getCurrentItem(), 250);
+            }
+        });
         tabs.setShouldExpand(true);
         tabs.setDividerColor(getResources().getColor(R.color.blueTab));
         tabs.setUnderlineColor(getResources().getColor(R.color.blueTab));

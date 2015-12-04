@@ -19,7 +19,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -27,7 +26,6 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.topanimestream.App;
-import com.topanimestream.gson.DateDeserializer;
 import com.topanimestream.models.OdataErrorMessage;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -39,8 +37,6 @@ import com.topanimestream.R;
 import com.topanimestream.models.CurrentUser;
 import com.topanimestream.views.MainActivity;
 import com.topanimestream.views.TASBaseActivity;
-
-import java.util.Date;
 
 import butterknife.Bind;
 public class LoginActivity extends TASBaseActivity implements View.OnClickListener {
@@ -203,9 +199,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-                Gson gson = gsonBuilder.create();
+                Gson gson = App.getGson();
                 if(response.isSuccessful()) {
                     App.currentUser = gson.fromJson(response.body().string(), CurrentUser.class);
 
@@ -275,9 +269,7 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                     .build();
 
             try {
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-                Gson gson = gsonBuilder.create();
+                Gson gson = App.getGson();
                 Response response = client.newCall(request).execute();
                 if(response.isSuccessful())
                 {
