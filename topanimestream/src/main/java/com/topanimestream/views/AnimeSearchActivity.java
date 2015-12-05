@@ -36,7 +36,7 @@ public class AnimeSearchActivity extends TASBaseActivity {
         }
 
         mFragment =
-                AnimeListFragment.newInstance("Search", AnimeListFragment.Mode.SEARCH, "", "");
+                AnimeListFragment.newInstance("Search", AnimeListFragment.Mode.SEARCH, "", "", 0);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mFragment).commit();
     }

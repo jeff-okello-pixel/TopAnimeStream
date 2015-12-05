@@ -70,12 +70,13 @@ public class AnimeListFragment extends Fragment {
     @Bind(R.id.progressBarLoading)
     ProgressBar progressBarLoading;
 
-    public static AnimeListFragment newInstance(String fragmentName, Mode mode, String orderby, String filter) {
+    public static AnimeListFragment newInstance(String fragmentName, Mode mode, String orderby, String filter, int index) {
         AnimeListFragment ttFrag = new AnimeListFragment();
         Bundle args = new Bundle();
         args.putString("fragmentName", fragmentName);
         args.putString("orderby", orderby);
         args.putString("filter", filter);
+        args.putInt("index", index);
         args.putSerializable(EXTRA_MODE, mode);
         ttFrag.setArguments(args);
         return ttFrag;
@@ -191,12 +192,11 @@ public class AnimeListFragment extends Fragment {
         final View anchor = getActivity().findViewById(R.id.tabs);
         final Toolbar toolbar =(Toolbar) getActivity().findViewById(R.id.toolbar);
         final RelativeLayout layRecentlyWatched = (RelativeLayout) getActivity().findViewById(R.id.layRecentlyWatched);
+        final int index = getArguments().getInt("index");
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int visibleItemCount = mLayoutManager.getChildCount();
-                int totalItemCount = mLayoutManager.getItemCount() - (mAdapter.isLoading() ? 1 : 0);
                 int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
                 // Determine the maximum allowed scroll height
                 final int maxScrollHeight = header.getHeight() - anchor.getHeight();
@@ -220,7 +220,7 @@ public class AnimeListFragment extends Fragment {
 
                 // Determine the offset to scroll the header
                 final float offset = Math.min(-firstChild.getY(), maxScrollHeight);
-                header.storeCoordinate(0, -offset + toolbar.getHeight());
+                header.storeCoordinate(index, -offset + toolbar.getHeight());
             }
 
         });

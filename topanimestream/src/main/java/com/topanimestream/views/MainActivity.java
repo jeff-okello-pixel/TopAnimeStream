@@ -216,18 +216,18 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         viewPager.setOffscreenPageLimit(1);
         mAdapter = new PagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(mAdapter);
-
+        viewPager.setOffscreenPageLimit(mAdapter.getCount());
 
         tabs.setViewPager(viewPager);
+
         tabs.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageScrollStateChanged(int state) {
-                if(state != ViewPager.SCROLL_STATE_IDLE)
-                {
+                if (state != ViewPager.SCROLL_STATE_IDLE) {
                     //wait until the pager is idle to animate the header
                     return;
                 }
-                header.restoreCoordinate(viewPager.getCurrentItem(), 250);
+                header.restoreCoordinate(viewPager.getCurrentItem(), 150);
             }
         });
         tabs.setShouldExpand(true);
@@ -268,11 +268,11 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             switch (index) {
                 //Serie
                 case 0:
-                    serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), AnimeListFragment.Mode.NORMAL, order, filter);
+                    serieFragment = AnimeListFragment.newInstance(getString(R.string.tab_serie), AnimeListFragment.Mode.NORMAL, order, filter, 0);
                     return serieFragment;
                 //Movie
                 case 1:
-                    movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL, order, filter);
+                    movieFragment = AnimeListFragment.newInstance(getString(R.string.tab_movie), AnimeListFragment.Mode.NORMAL, order, filter, 1);
                     return movieFragment;
                 //Updates
                 case 2:

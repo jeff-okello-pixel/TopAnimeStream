@@ -9,8 +9,8 @@
     <string name="search_hint">Search</string>
     <string name="app_label">Topanimestream</string>
     <string name="topanimestream_website" tools:ignore="MissingTranslation">http://www.topanimestream.com/</string>
-    <string name="odata_path" tools:ignore="MissingTranslation">http://135.23.195.19:8000/odata/</string>
-    <string name="api_path" tools:ignore="MissingTranslation">http://135.23.195.19:8000/api/</string>
+    <string name="odata_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/odata/</string>
+    <string name="api_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/api/</string>
     <string name="image_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/ImageHost/</string>
     <string name="sub_host_path" tools:ignore="MissingTranslation">http://www.topanimestream.com/SubHost/</string>
     <!-- Menu actions -->
