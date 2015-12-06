@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 public abstract class HeaderRecyclerViewAdapter extends RecyclerView.Adapter {
     public static final int TYPE_HEADER = Integer.MIN_VALUE;
     public static final int TYPE_FOOTER = Integer.MIN_VALUE + 1;
-    public static final int TYPE_ADAPTEE_OFFSET = 2;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -15,7 +14,7 @@ public abstract class HeaderRecyclerViewAdapter extends RecyclerView.Adapter {
         } else if (viewType == TYPE_FOOTER) {
             return onCreateFooterViewHolder(parent, viewType);
         }
-        return onCreateBasicItemViewHolder(parent, viewType - TYPE_ADAPTEE_OFFSET);
+        return onCreateBasicItemViewHolder(parent, viewType);
     }
 
     @Override
@@ -49,10 +48,8 @@ public abstract class HeaderRecyclerViewAdapter extends RecyclerView.Adapter {
         if (position == getBasicItemCount() && useFooter()) {
             return TYPE_FOOTER;
         }
-        if (getBasicItemType(position) >= Integer.MAX_VALUE - TYPE_ADAPTEE_OFFSET) {
-            new IllegalStateException("HeaderRecyclerViewAdapter offsets your BasicItemType by " + TYPE_ADAPTEE_OFFSET + ".");
-        }
-        return getBasicItemType(position);
+
+        return getBasicItemType(position - (useHeader() ? 1 : 0));
     }
 
     public abstract boolean useHeader();

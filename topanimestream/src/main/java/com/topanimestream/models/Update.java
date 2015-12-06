@@ -5,12 +5,11 @@ import java.util.Date;
 public class Update {
     private int AnimeId;
     private int LanguageId;
-    private int TotalUpdates;
-    private int LastLinkId;
     private int LastEpisodeId;
-    private int LastUploadId;
-    private int LastLinkedBy;
-    private Date LastUpdateDate;
+    private String FirstEpisodeNumber;
+    private String LastEpisodeNumber;
+    private int TotalEpisodes;
+    private Date LastUpdatedDate;
     private Anime Anime;
     private Episode Episode;
     private Language Language;
@@ -34,22 +33,6 @@ public class Update {
         LanguageId = languageId;
     }
 
-    public int getTotalUpdates() {
-        return TotalUpdates;
-    }
-
-    public void setTotalUpdates(int totalUpdates) {
-        TotalUpdates = totalUpdates;
-    }
-
-    public int getLastLinkId() {
-        return LastLinkId;
-    }
-
-    public void setLastLinkId(int lastLinkId) {
-        LastLinkId = lastLinkId;
-    }
-
     public int getLastEpisodeId() {
         return LastEpisodeId;
     }
@@ -58,28 +41,12 @@ public class Update {
         LastEpisodeId = lastEpisodeId;
     }
 
-    public int getLastUploadId() {
-        return LastUploadId;
+    public Date getLastUpdatedDate() {
+        return LastUpdatedDate;
     }
 
-    public void setLastUploadId(int lastUploadId) {
-        LastUploadId = lastUploadId;
-    }
-
-    public int getLastLinkedBy() {
-        return LastLinkedBy;
-    }
-
-    public void setLastLinkedBy(int lastLinkedBy) {
-        LastLinkedBy = lastLinkedBy;
-    }
-
-    public Date getLastUpdateDate() {
-        return LastUpdateDate;
-    }
-
-    public void setLastUpdateDate(Date lastUpdateDate) {
-        LastUpdateDate = lastUpdateDate;
+    public void setLastUpdateDate(Date lastUpdatedDate) {
+        LastUpdatedDate = lastUpdatedDate;
     }
 
     public com.topanimestream.models.Anime getAnime() {
@@ -104,5 +71,33 @@ public class Update {
 
     public void setLanguage(com.topanimestream.models.Language language) {
         Language = language;
+    }
+
+    public String getFirstEpisodeNumber() {
+        return FirstEpisodeNumber;
+    }
+
+    public void setFirstEpisodeNumber(String firstEpisodeNumber) {
+        FirstEpisodeNumber = firstEpisodeNumber;
+    }
+
+    public String getLastEpisodeNumber() {
+        return LastEpisodeNumber;
+    }
+
+    public void setLastEpisodeNumber(String lastEpisodeNumber) {
+        LastEpisodeNumber = lastEpisodeNumber;
+    }
+
+    public int getTotalEpisodes() {
+        return TotalEpisodes;
+    }
+
+    public void setTotalEpisodes(int totalEpisodes) {
+        TotalEpisodes = totalEpisodes;
+    }
+
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
+        LastUpdatedDate = lastUpdatedDate;
     }
 }

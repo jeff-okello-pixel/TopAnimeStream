@@ -127,7 +127,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
 
     public static Gson getGson() {
         if (mGson == null) {
-            mGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").create();
+            mGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
         }
         return mGson;
     }

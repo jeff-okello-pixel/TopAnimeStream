@@ -34,12 +34,12 @@ import butterknife.ButterKnife;
 import hugo.weaving.DebugLog;
 
 
-public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class LatestUpdatesGridAdapter extends HeaderRecyclerViewAdapter {
     private int mItemWidth, mItemHeight, mMargin, mColumns;
     private ArrayList<OverviewItem> mItems = new ArrayList<>();
     //	private ArrayList<Media> mData = new ArrayList<>();
     private LatestUpdatesGridAdapter.OnItemClickListener mItemClickListener;
-    final int NORMAL = 0, LOADING = 1;
+    final public static int TYPE_NORMAL = 0, TYPE_LOADING = 1;
 
     public LatestUpdatesGridAdapter(Context context, ArrayList<Update> items, Integer columns) {
         mColumns = columns;
@@ -55,13 +55,13 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
         public void onItemClick(View v, Update item, int position);
     }
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateBasicItemViewHolder(ViewGroup parent, int viewType) {
         View v;
         switch (viewType) {
-            case LOADING:
+            case TYPE_LOADING:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_griditem_loading, parent, false);
                 return new LatestUpdatesGridAdapter.LoadingHolder(v);
-            case NORMAL:
+            case TYPE_NORMAL:
             default:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.update_griditem, parent, false);
                 return new LatestUpdatesGridAdapter.ViewHolder(v);
@@ -69,7 +69,7 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindBasicItemView(RecyclerView.ViewHolder viewHolder, int position) {
         int double_margin = mMargin * 2;
         int top_margin = (position < mColumns) ? mMargin * 2 : mMargin;
 
@@ -83,21 +83,26 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
         }
         viewHolder.itemView.setLayoutParams(layoutParams);
 
-        if (getItemViewType(position) == NORMAL) {
+        if (getBasicItemType(position) == TYPE_NORMAL) {
             final ViewHolder holder = (ViewHolder) viewHolder;
             final OverviewItem overviewItem = getItem(position);
 
             holder.coverImage.setVisibility(View.GONE);
-            holder.title.setVisibility(View.GONE);
+            holder.txtTitle.setVisibility(View.GONE);
             holder.addedDate.setVisibility(View.GONE);
             holder.imgFlag.setVisibility(View.GONE);
+            holder.txtAddedEpisodes.setVisibility(View.GONE);
 
             Update item = overviewItem.update;
 
-            holder.title.setText(item.getAnime().getName());
+            holder.txtTitle.setText(item.getAnime().getName());
+            String addedEpisodes = App.getContext().getString(R.string.episode) + " " + item.getFirstEpisodeNumber();
+            if(!item.getFirstEpisodeNumber().equals(item.getLastEpisodeNumber()))
+                addedEpisodes += " " + App.getContext().getString(R.string.to) + " " + item.getLastEpisodeNumber();
+            holder.txtAddedEpisodes.setText(addedEpisodes);
 
             long now = System.currentTimeMillis();
-            long addedDate = item.getLastUpdateDate().getTime();
+            long addedDate = item.getLastUpdatedDate().getTime();
             holder.addedDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
             holder.imgFlag.setImageResource(item.getLanguage().getFlagDrawable());
 
@@ -118,25 +123,22 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
                         public void onSuccess() {
                             overviewItem.isImageError = false;
                             AnimUtils.fadeIn(holder.coverImage);
-                            AnimUtils.fadeIn(holder.title);
+                            AnimUtils.fadeIn(holder.txtTitle);
                             AnimUtils.fadeIn(holder.addedDate);
                             AnimUtils.fadeIn(holder.imgFlag);
+                            AnimUtils.fadeIn(holder.txtAddedEpisodes);
                         }
 
                         @Override
                         public void onError() {
                             overviewItem.isImageError = true;
-                            AnimUtils.fadeIn(holder.title);
+                            AnimUtils.fadeIn(holder.txtTitle);
                             AnimUtils.fadeIn(holder.addedDate);
                             AnimUtils.fadeIn(holder.imgFlag);
+                            AnimUtils.fadeIn(holder.txtAddedEpisodes);
                         }
                     });
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return mItems.size();
     }
 
     public void setOnItemClickListener(LatestUpdatesGridAdapter.OnItemClickListener listener) {
@@ -144,26 +146,63 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (getItem(position).isLoadingItem) {
-            return LOADING;
-        }
-        return NORMAL;
+    public boolean useHeader() {
+        return true;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fake_header, parent, false);
+        return new LatestUpdatesGridAdapter.HeaderItem(v);
+    }
+
+    @Override
+    public void onBindHeaderView(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
+    public boolean useFooter() {
+        return false;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateFooterViewHolder(ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindFooterView(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+
+
+    @Override
+    public int getBasicItemCount() {
+        return mItems.size();
+    }
+
+    @Override
+    public int getBasicItemType(int position) {
+        if(mItems.get(position).isLoadingItem)
+            return TYPE_LOADING;
+        else
+            return TYPE_NORMAL;
     }
 
     public OverviewItem getItem(int position) {
-        if (position < 0 || mItems.size() <= position) return null;
         return mItems.get(position);
     }
 
     @DebugLog
     public void addLoading() {
         OverviewItem item = null;
-        if (getItemCount() != 0) {
-            item = mItems.get(getItemCount() - 1);
+        if (getBasicItemCount() > 0) {
+            item = mItems.get(getBasicItemCount() - 1);
         }
 
-        if (getItemCount() == 0 || (item != null && !item.isLoadingItem)) {
+        if (getBasicItemCount() == 0 || (item != null && !item.isLoadingItem)) {
             mItems.add(new OverviewItem(true));
             notifyDataSetChanged();
         }
@@ -171,8 +210,8 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @DebugLog
     public boolean isLoading() {
-        if (getItemCount() <= 0) return false;
-        return getItemViewType(getItemCount() - 1) == LOADING;
+        if (getBasicItemCount() <= 0) return false;
+        return getItemViewType(getBasicItemCount() - 1) == TYPE_LOADING;
     }
 
     @DebugLog
@@ -185,11 +224,11 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
         }
         notifyDataSetChanged();
         //Remove the isloading
-        if (getItemCount() <= 0) return;
+        if (getBasicItemCount() <= 0) return;
         try {
-            OverviewItem overviewItem = mItems.get(getItemCount() - items.size() - 1);
+            OverviewItem overviewItem = mItems.get(getBasicItemCount() - items.size() - 1);
             if (overviewItem.isLoadingItem) {
-                mItems.remove(getItemCount() - items.size() - 1);
+                mItems.remove(getBasicItemCount() - items.size() - 1);
                 notifyDataSetChanged();
             }
         }catch(ArrayIndexOutOfBoundsException e)
@@ -214,10 +253,12 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
         ImageView imgFlag;
         @Bind(R.id.cover_image)
         ImageView coverImage;
-        @Bind(R.id.title)
-        TextView title;
+        @Bind(R.id.txtTitle)
+        TextView txtTitle;
         @Bind(R.id.addedDate)
         TextView addedDate;
+        @Bind(R.id.txtAddedEpisodes)
+        TextView txtAddedEpisodes;
 
         private View.OnFocusChangeListener mOnFocusChangeListener = new View.OnFocusChangeListener() {
             @Override
@@ -274,6 +315,13 @@ public class LatestUpdatesGridAdapter extends RecyclerView.Adapter<RecyclerView.
 
         OverviewItem(boolean loading) {
             this.isLoadingItem = loading;
+        }
+    }
+
+    class HeaderItem extends RecyclerView.ViewHolder {
+
+        public HeaderItem(View itemView) {
+            super(itemView);
         }
     }
 

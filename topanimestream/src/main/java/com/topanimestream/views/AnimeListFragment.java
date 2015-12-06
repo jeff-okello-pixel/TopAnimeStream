@@ -204,11 +204,11 @@ public class AnimeListFragment extends Fragment {
                 //Anchor the header if the recentlywatched is not there
                 if(layRecentlyWatched.getVisibility() == View.GONE)
                 {
-                    header.storeCoordinate(0, toolbar.getHeight());
+                    header.storeCoordinate(index, toolbar.getHeight());
 
                 } else if (firstVisibleItem != 0) {
                     // If the first item has scrolled off screen, anchor the header
-                    header.storeCoordinate(0, -maxScrollHeight + toolbar.getHeight());
+                    header.storeCoordinate(index, -maxScrollHeight + toolbar.getHeight());
                     return;
                 }
 
@@ -271,13 +271,13 @@ public class AnimeListFragment extends Fragment {
     public void GetAnimes(String customOrder, String customFilter)
     {
         isLoading = true;
-        /*
-        if(mAdapter.getItemCount() != 0) {
+
+        if(mAdapter.getBasicItemCount() != 0) {
             mAdapter.addLoading();
         }
         else {
             progressBarLoading.setVisibility(View.VISIBLE);
-        }*/
+        }
 
         String filter = "&$filter=IsAvailable%20eq%20true";
         if (fragmentName.equals(getString(R.string.tab_movie)))
@@ -300,7 +300,7 @@ public class AnimeListFragment extends Fragment {
                 public void onSuccess(ArrayList<Anime> animes, OdataRequestInfo info) {
                     int currentItemCount = 0;
                     if(mAdapter.getItemCount() != 0)
-                        currentItemCount = mAdapter.getItemCount() - 1; //remove the loading
+                        currentItemCount = mAdapter.getBasicItemCount() - 1; //remove the loading
 
                     if(info.getCount() == currentItemCount + animes.size())
                         isEndOfList = true;
@@ -316,6 +316,7 @@ public class AnimeListFragment extends Fragment {
                 @Override
                 public void onFailure(Exception e) {
                     isLoading = false;
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         }

@@ -124,52 +124,44 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
         }
         viewHolder.itemView.setLayoutParams(layoutParams);
 
+        if (getBasicItemType(position) == TYPE_NORMAL) {
+            final ViewHolder videoViewHolder = (ViewHolder) viewHolder;
+            final OverviewItem overviewItem = getItem(position);
+            Anime item = overviewItem.Anime;
 
-        final ViewHolder videoViewHolder = (ViewHolder) viewHolder;
-        final OverviewItem overviewItem = getItem(position);
-        Anime item = overviewItem.Anime;
 
+            videoViewHolder.title.setText(item.getName());
 
-        videoViewHolder.title.setText(item.getName());
-        if(item.getReleaseDate() != null && !item.getReleaseDate().equals("")) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-            Date convertedDate = null;
-            try {
-                convertedDate = format.parse(item.getReleaseDate().replace("T", " "));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if(item.getReleaseDate() != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(item.getReleaseDate());
+                videoViewHolder.year.setText(String.valueOf(cal.get(Calendar.YEAR)));
             }
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(convertedDate);
-            int year = cal.get(Calendar.YEAR);
-            if (convertedDate != null)
-                videoViewHolder.year.setText(String.valueOf(year));
+            videoViewHolder.coverImage.setVisibility(View.GONE);
+            videoViewHolder.title.setVisibility(View.GONE);
+            videoViewHolder.year.setVisibility(View.GONE);
 
-        }
-        videoViewHolder.coverImage.setVisibility(View.GONE);
-        videoViewHolder.title.setVisibility(View.GONE);
-        videoViewHolder.year.setVisibility(View.GONE);
+            if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
+                Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), ImageUtils.ImageSize.w500))
+                        .resize(mItemWidth, mItemHeight)
+                        .transform(DrawGradient.INSTANCE)
+                        .into(videoViewHolder.coverImage, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                overviewItem.isImageError = false;
+                                AnimUtils.fadeIn(videoViewHolder.coverImage);
+                                AnimUtils.fadeIn(videoViewHolder.title);
+                                AnimUtils.fadeIn(videoViewHolder.year);
+                            }
 
-        if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
-            Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), ImageUtils.ImageSize.w500))
-                    .resize(mItemWidth, mItemHeight)
-                    .transform(DrawGradient.INSTANCE)
-                    .into(videoViewHolder.coverImage, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            overviewItem.isImageError = false;
-                            AnimUtils.fadeIn(videoViewHolder.coverImage);
-                            AnimUtils.fadeIn(videoViewHolder.title);
-                            AnimUtils.fadeIn(videoViewHolder.year);
-                        }
-
-                        @Override
-                        public void onError() {
-                            overviewItem.isImageError = true;
-                            AnimUtils.fadeIn(videoViewHolder.title);
-                            AnimUtils.fadeIn(videoViewHolder.year);
-                        }
-                    });
+                            @Override
+                            public void onError() {
+                                overviewItem.isImageError = true;
+                                AnimUtils.fadeIn(videoViewHolder.title);
+                                AnimUtils.fadeIn(videoViewHolder.year);
+                            }
+                        });
+            }
         }
     }
 
@@ -180,10 +172,10 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
 
     @Override
     public int getBasicItemType(int position) {
-        if (useHeader())
-            return mItems.get(position - 1).isLoadingItem ? TYPE_LOADING : TYPE_NORMAL;
+        if(mItems.get(position).isLoadingItem)
+            return TYPE_LOADING;
         else
-            return mItems.get(position).isLoadingItem ? TYPE_LOADING : TYPE_NORMAL;
+            return TYPE_NORMAL;
     }
 
     public OverviewItem getItem(int position) {
@@ -194,11 +186,11 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
     @DebugLog
     public void addLoading() {
         OverviewItem item = null;
-        if (getItemCount() < 1) {
-            item = mItems.get(getItemCount() - 2);
+        if (getBasicItemCount() > 0) {
+            item = mItems.get(getBasicItemCount() - 1);
         }
 
-        if (getItemCount() == 1 || (item != null && !item.isLoadingItem)) {
+        if (getBasicItemCount() == 0 || (item != null && !item.isLoadingItem)) {
             mItems.add(new OverviewItem(true));
             notifyDataSetChanged();
         }
@@ -206,8 +198,8 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
 
     @DebugLog
     public boolean isLoading() {
-        if (getItemCount() <= 1) return false;
-        return getItemViewType(getItemCount() - 2) == TYPE_LOADING;
+        if (getBasicItemCount() <= 0) return false;
+        return getItemViewType(getBasicItemCount() - 1) == TYPE_LOADING;
     }
 
     @DebugLog
@@ -220,19 +212,18 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
         }
         notifyDataSetChanged();
         //Remove the isloading
-        /*
-        if (getItemCount() <= 0) return;
+        if (getBasicItemCount() <= 0) return;
         try {
-            OverviewItem overviewItem = mItems.get(getItemCount() - items.size() - 1);
+            OverviewItem overviewItem = mItems.get(getBasicItemCount() - items.size() - 1);
             if (overviewItem.isLoadingItem) {
-                mItems.remove(getItemCount() - items.size() - 1);
+                mItems.remove(getBasicItemCount() - items.size() - 1);
                 notifyDataSetChanged();
             }
         }catch(ArrayIndexOutOfBoundsException e)
         {
             //theres no loading overview
             return;
-        }*/
+        }
 
     }
 

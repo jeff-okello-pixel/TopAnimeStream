@@ -22,8 +22,10 @@ import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
 import com.topanimestream.models.Anime;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.R;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.adapters.EpisodeListAdapter;
@@ -119,7 +121,26 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
         listViewEpisodes.setFastScrollEnabled(true);
         listViewEpisodes.setOnItemClickListener(this);
-        AsyncTaskTools.execute(new EpisodesTask());
+        progressBarLoadMore.setVisibility(View.VISIBLE);
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links", Episode.class, new ODataUtils.Callback<ArrayList<Episode>>() {
+            @Override
+            public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
+                Collections.sort(episodes, new Episode());
+                anime.setEpisodes(episodes);
+                adapter = new EpisodeListAdapter(getActivity(), anime);
+                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);
+                assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
+                listViewEpisodes.setAdapter(swingBottomInAnimationAdapter);
+                progressBarLoadMore.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                progressBarLoadMore.setVisibility(View.GONE);
+            }
+        });
         return rootView;
     }
 

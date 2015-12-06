@@ -36,8 +36,7 @@
         android:layout_alignParentBottom="true"
         android:paddingLeft="@dimen/griditem_update_title_horizontal"
         android:paddingRight="@dimen/griditem_update_title_horizontal"
-        android:paddingTop="@dimen/griditem_title_top"
-        android:paddingBottom="@dimen/griditem_title_bottom"
+        android:paddingBottom="@dimen/griditem_update_title_horizontal"
         android:gravity="start|center_vertical"
         android:textSize="@dimen/griditem_year_textsize"
         android:textColor="@android:color/white"
@@ -45,8 +44,24 @@
         tools:text="3 hours ago" />
 
     <com.devspark.robototextview.widget.RobotoTextView
-        android:id="@+id/title"
+        android:id="@+id/txtAddedEpisodes"
         android:layout_above="@id/addedDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="@dimen/griditem_update_title_horizontal"
+        android:paddingRight="@dimen/griditem_update_title_horizontal"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/griditem_year_textsize"
+        android:textColor="@android:color/white"
+        android:alpha="0.7"
+        tools:text="Episode 1 to 13" />
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/txtTitle"
+        android:layout_above="@id/txtAddedEpisodes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"

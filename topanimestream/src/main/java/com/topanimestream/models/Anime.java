@@ -1,37 +1,27 @@
 package com.topanimestream.models;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
 import com.topanimestream.App;
-import com.topanimestream.preferences.Prefs;
-import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.Utils;
-import com.topanimestream.R;
 
 public class Anime implements Parcelable, Comparator<Anime> {
     private int AnimeId;
     private String Description;
     private int StatusId;
     private String OriginalName;
-    private String AddedDate;
-    private String LastUpdatedDate;
+    private Date AddedDate;
+    private Date LastUpdatedDate;
     private boolean IsMovie;
     private String PosterPath;
     private int RunningTime;
-    private String ReleasedDate;
+    private Date ReleasedDate;
     private String BackdropPath;
     private boolean IsCartoon;
     private Double Rating;
@@ -104,12 +94,24 @@ public class Anime implements Parcelable, Comparator<Anime> {
         Description = in.readString();
         StatusId = in.readInt();
         OriginalName = in.readString();
-        AddedDate = in.readString();
-        LastUpdatedDate = in.readString();
+        long addedDateTime = in.readLong();
+        if(addedDateTime != 0)
+            AddedDate = new Date(addedDateTime);
+        else
+            AddedDate = null;
+        long lastUpdatedDateTime = in.readLong();
+        if(lastUpdatedDateTime != 0)
+            LastUpdatedDate = new Date(lastUpdatedDateTime);
+        else
+            LastUpdatedDate = null;
         IsMovie = in.readByte() != 0;
         PosterPath = in.readString();
         RunningTime = in.readInt();
-        ReleasedDate = in.readString();
+        long releasedDateTime = in.readLong();
+        if(releasedDateTime != 0)
+            ReleasedDate = new Date(releasedDateTime);
+        else
+            ReleasedDate = null;
         BackdropPath = in.readString();
         IsCartoon = in.readByte() != 0;
         Rating = in.readDouble();
@@ -117,7 +119,11 @@ public class Anime implements Parcelable, Comparator<Anime> {
         Order = in.readInt();
         VoteCount = in.readInt();
         IsFavorite = in.readByte() != 0;
-        LinkedDate = new Date(in.readLong()); //better performance than serializing it.
+        long linkedDateTime = in.readLong();
+        if(linkedDateTime != 0)
+            LinkedDate = new Date(linkedDateTime); //better performance than serializing it.
+        else
+            LinkedDate = null;
         IsInMyList = in.readByte() != 0;
         IsAvailable = in.readByte() != 0;
         EpisodeCount = in.readInt();
@@ -291,19 +297,19 @@ public class Anime implements Parcelable, Comparator<Anime> {
         OriginalName = name;
     }
 
-    public String getAddedDate() {
+    public Date getAddedDate() {
         return AddedDate;
     }
 
-    public void setAddedDate(String addedDate) {
+    public void setAddedDate(Date addedDate) {
         AddedDate = addedDate;
     }
 
-    public String getLastUpdatedDate() {
+    public Date getLastUpdatedDate() {
         return LastUpdatedDate;
     }
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
         LastUpdatedDate = lastUpdatedDate;
     }
 
@@ -344,11 +350,11 @@ public class Anime implements Parcelable, Comparator<Anime> {
         RunningTime = runningTime;
     }
 
-    public String getReleaseDate() {
+    public Date getReleaseDate() {
         return ReleasedDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(Date releaseDate) {
         ReleasedDate = releaseDate;
     }
 
@@ -473,12 +479,12 @@ public class Anime implements Parcelable, Comparator<Anime> {
         dest.writeString(Description);
         dest.writeInt(StatusId);
         dest.writeString(OriginalName);
-        dest.writeString(AddedDate);
-        dest.writeString(LastUpdatedDate);
+        dest.writeLong(AddedDate != null ? AddedDate.getTime() : 0);
+        dest.writeLong(LastUpdatedDate != null ? LastUpdatedDate.getTime() : 0);
         dest.writeByte((byte) (IsMovie ? 1 : 0));
         dest.writeString(PosterPath);
         dest.writeInt(RunningTime);
-        dest.writeString(ReleasedDate);
+        dest.writeLong(ReleasedDate != null ? ReleasedDate.getTime() : 0);
         dest.writeString(BackdropPath);
         dest.writeByte((byte) (IsCartoon ? 1 : 0));
         dest.writeDouble(Rating != null ? Rating : 0);
@@ -486,7 +492,7 @@ public class Anime implements Parcelable, Comparator<Anime> {
         dest.writeInt(Order);
         dest.writeInt(VoteCount);
         dest.writeByte((byte) (IsFavorite ? 1 : 0));
-        dest.writeLong(LinkedDate.getTime());//better performance than serializing it.
+        dest.writeLong(LinkedDate != null ? LinkedDate.getTime() : 0);
         dest.writeByte((byte) (IsInMyList ? 1 : 0));
         dest.writeByte((byte) (IsAvailable ? 1 : 0));
         dest.writeInt(EpisodeCount);
