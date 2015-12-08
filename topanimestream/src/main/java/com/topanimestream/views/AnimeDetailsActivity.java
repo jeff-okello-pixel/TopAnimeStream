@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,8 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,9 +39,13 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
 
+import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
+import com.topanimestream.adapters.EpisodeListAdapter;
+import com.topanimestream.custom.DrawGradient;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
@@ -54,24 +63,20 @@ import com.topanimestream.views.profile.LoginActivity;
 
 import butterknife.Bind;
 
-public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesContainerFragment.ProviderFragmentCoordinator, AnimeDetailsMovieFragment.AnimeDetailsMovieCallback {
+public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetailsMovieFragment.AnimeDetailsMovieCallback {
     private Anime anime;
-    private EpisodeListFragment episodeListFragment;
     private Vote currentUserVote;
     public static Review currentUserReview;
     private Recommendation currentUserRecommendation;
-    private AnimeDetailsFragment animeDetailsFragment;
-    private AnimeDetailsMovieFragment animeDetailsMovieFragment;
 
-    @Bind(R.id.layEpisodes)
-    LinearLayout layEpisodes;
+    @Bind(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
-    @Nullable
-    @Bind(R.id.separator)
-    View separator;
+    @Bind(R.id.imgBackdrop)
+    ImageView imgBackdrop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("Anime");
 
-        toolbar.setTitle(getString(R.string.episodes_of) + " " + anime.getName());
+        toolbar.setTitle(anime.getName());
         setSupportActionBar(toolbar);
 
         if(getSupportActionBar() != null)
@@ -99,39 +104,25 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
             anime = savedInstanceState.getParcelable("anime");
         }
 
-        FragmentManager fm = getSupportFragmentManager();
-        if(!anime.isMovie())
+        Picasso.with(AnimeDetailsActivity.this)
+                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500))
+                .transform(DrawGradient.INSTANCE)
+                .into(imgBackdrop);
+
+        ArrayList<Episode> episodes = new ArrayList<Episode>();
+        for(int i = 1; i < 50; i++)
         {
-            animeDetailsFragment = (AnimeDetailsFragment) fm.findFragmentByTag("animeDetailsFragment");
-            if (animeDetailsFragment == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.layDetails, AnimeDetailsFragment.newInstance(anime), "animeDetailsFragment");
-                ft.commit();
-            }
-
-            episodeListFragment = (EpisodeListFragment) fm.findFragmentByTag("episodeListFragment");
-            if (episodeListFragment == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                //ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
-                ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime), "episodeListFragment");
-                ft.commit();
-            }
+            Episode episode = new Episode();
+            episode.setEpisodeName("NAME " + i);
+            episode.setEpisodeNumber("NUMBER" + i);
+            episodes.add(episode);
         }
-        else
-        {
-            layEpisodes.setVisibility(View.GONE);
-            if(separator != null)
-                separator.setVisibility(View.GONE);
-            animeDetailsMovieFragment = (AnimeDetailsMovieFragment) fm.findFragmentByTag("animeDetailsMovieFragment");
-            if (animeDetailsMovieFragment == null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                //ft.add(layEpisodes.getId(), EpisodeListFragment.newInstance(anime.getAnimeId(), anime.getName(), anime.getDescription(AnimeDetailsActivity.this), anime.getPosterPath("500"), anime.getRelativeBackdropPath(null), anime.getGenresFormatted(), String.valueOf(anime.getRating())), "episodeListFragment");
-                ft.add(R.id.layDetails, AnimeDetailsMovieFragment.newInstance(anime), "animeDetailsMovieFragment");
-                ft.commit();
-            }
-        }
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(AnimeDetailsActivity.this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
 
-
+        EpisodeListAdapter adapter = new EpisodeListAdapter(AnimeDetailsActivity.this, episodes);
+        recyclerView.setAdapter(adapter);
     }
 
 
@@ -644,6 +635,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
             {
                 if(isReload)
                 {
+                    /*
                     if(!anime.isMovie()) {
                         if (animeDetailsFragment != null)
                             animeDetailsFragment.setAnime(anime);
@@ -652,25 +644,11 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodesCon
                     {
                         if (animeDetailsMovieFragment != null)
                             animeDetailsMovieFragment.setAnime(anime);
-                    }
+                    }*/
                 }
             }
             DialogManager.dismissBusyDialog(busyDialog);
         }
-    }
-
-    @Override
-    public void onEpisodeSelected(final Episode episode, String type) {
-        Intent intent = new Intent(this, EpisodeDetailsActivity.class);
-        intent.putExtra("Episode", episode);
-        intent.putExtra("Type", type);
-        //bug when episode + anime in the same bundle... still don't know why
-        Bundle hackBundle = new Bundle();
-        hackBundle.putParcelable("Anime", anime);
-        intent.putExtra("hackBundle", hackBundle);
-        startActivity(intent);
-        if (!App.isTablet)
-            AnimationManager.ActivityStart(this);
     }
 
 

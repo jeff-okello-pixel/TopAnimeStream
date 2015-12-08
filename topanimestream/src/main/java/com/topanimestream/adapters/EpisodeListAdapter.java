@@ -1,142 +1,88 @@
 package com.topanimestream.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import com.topanimestream.models.Anime;
-import com.topanimestream.utilities.SQLiteHelper;
-import com.topanimestream.models.Episode;
-import com.topanimestream.models.EpisodeInformations;
+
 import com.topanimestream.R;
+import com.topanimestream.models.Episode;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
-public class EpisodeListAdapter extends BaseAdapter {
+public class EpisodeListAdapter extends RecyclerView.Adapter {
     private final Context context;
-    private ArrayList<Episode> values;
-    private Resources re;
-    private Context mContext;
-    private ViewHolder holder;
-    private Anime anime;
+    private ArrayList<Episode> episodes;
+    private EpisodeListAdapter.OnItemClickListener mItemClickListener;
 
-    public EpisodeListAdapter(Context context, Anime anime) {
+    public EpisodeListAdapter(Context context, ArrayList<Episode> episodes) {
         this.context = context;
-        this.anime = anime;
-        this.values = anime.getEpisodes();
-        this.re = context.getResources();
-        this.mContext = context;
-
+        this.episodes = episodes;
     }
 
-    public void update() {
-        notifyDataSetChanged();
+    public interface OnItemClickListener {
+        public void onItemClick(View v, Episode episode, int position);
     }
 
-    public void add(Episode episode) {
-        values.add(episode);
+    public void setOnItemClickListener(EpisodeListAdapter.OnItemClickListener listener) {
+        mItemClickListener = listener;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        View vi = convertView;
-        Episode episode = values.get(position);
-        if (convertView == null) {
-            vi = inflater.inflate(R.layout.row_episode, null);
-            holder = new ViewHolder();
-            holder.txtEpisodeNumber = (TextView) vi.findViewById(R.id.txtEpisodeNumber);
-            holder.txtEpisodeName = (TextView) vi.findViewById(R.id.txtEpisodeName);
-            holder.imgWatched = (ImageView) vi.findViewById(R.id.imgWatched);
-            vi.setTag(holder);
-        } else {
-            holder = (ViewHolder) vi.getTag();
-        }
-        holder.imgWatched.setOnClickListener(new imageViewClickListener(position, holder.imgWatched));
-        holder.txtEpisodeNumber.setText(re.getString(R.string.episode) + " " + episode.getEpisodeNumber());
-        EpisodeInformations episodeInfo = episode.getEpisodeInformations();
-        if (episodeInfo != null) {
-            if (episodeInfo.getEpisodeName() != null && !episodeInfo.getEpisodeName().equals("")) {
-                holder.txtEpisodeName.setVisibility(View.VISIBLE);
-                holder.txtEpisodeName.setText(episodeInfo.getEpisodeName());
-            } else {
-                holder.txtEpisodeName.setVisibility(View.GONE);
-            }
-        } else {
-            holder.txtEpisodeName.setVisibility(View.GONE);
-        }
-        SQLiteHelper sqlite = new SQLiteHelper(mContext);
-        if (sqlite.isWatched(episode.getEpisodeId())) {
-            holder.imgWatched.setBackgroundColor(Color.parseColor("#D9245169"));
-            holder.imgWatched.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
-        } else {
-            holder.imgWatched.setBackgroundColor(Color.parseColor("#00000000"));
-            holder.imgWatched.setImageDrawable(re.getDrawable(R.drawable.ic_not_watched));
-        }
-        sqlite.close();
-
-        return vi;
-    }
-
-    static class ViewHolder {
-        TextView txtEpisodeNumber;
-        TextView txtEpisodeName;
-        ImageView imgWatched;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode, parent, false);
+        return new EpisodeListAdapter.ViewHolder(v);
     }
 
     @Override
-    public int getCount() {
-        return values.size();
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        final ViewHolder episodeHolder = (ViewHolder) holder;
+        final Episode episode = getItem(position);
+
+        episodeHolder.txtEpisodeName.setText(episode.getEpisodeName());
+        episodeHolder.txtEpisodeNumber.setText(episode.getEpisodeNumber());
     }
 
     @Override
+    public int getItemCount() {
+        return episodes.size();
+    }
+
     public Episode getItem(int position) {
-        return values.get(position);
-    }
-    public ArrayList<Episode> getAllEpisodes()
-    {
-        return values;
-    }
-    @Override
-    public long getItemId(int position) {
-        return 0;
+        return episodes.get(position);
     }
 
-    class imageViewClickListener implements OnClickListener {
-        int position;
-        ImageView imgView;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public imageViewClickListener(int pos, ImageView img) {
-            position = pos;
-            imgView = img;
+        View itemView;
+
+        @Bind(R.id.txtEpisodeNumber)
+        TextView txtEpisodeNumber;
+
+        @Bind(R.id.txtEpisodeName)
+        TextView txtEpisodeName;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            this.itemView = itemView;
+            itemView.setOnClickListener(this);
         }
 
-        public void onClick(View v) {
-            Episode episode = values.get(position);
-            SQLiteHelper sqlite = new SQLiteHelper(mContext);
-            if (sqlite.isWatched(episode.getEpisodeId())) {
-                sqlite.removeWatched(episode.getEpisodeId());
-                v.setBackgroundColor(Color.parseColor("#00000000"));
-                imgView.setImageDrawable(re.getDrawable(R.drawable.ic_not_watched));
-            } else {
-                sqlite.addWatched(anime, episode.getEpisodeId(), episode.getEpisodeNumber());
-                v.setBackgroundColor(Color.parseColor("#D9245169"));
-                imgView.setImageDrawable(re.getDrawable(R.drawable.ic_watched));
+        @Override
+        public void onClick(View view) {
+            if (mItemClickListener != null) {
+                int position = getAdapterPosition();
+                Episode episode = getItem(position);
+                mItemClickListener.onItemClick(view, episode, position);
             }
-            sqlite.close();
         }
+
     }
-
-
 }

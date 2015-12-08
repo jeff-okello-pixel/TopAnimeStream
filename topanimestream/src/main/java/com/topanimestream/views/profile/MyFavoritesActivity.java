@@ -36,8 +36,7 @@ import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
-import com.topanimestream.models.CurrentUser;
-import com.topanimestream.views.OldAnimeDetailsActivity;
+import com.topanimestream.views.AnimeDetailsActivity;
 import com.topanimestream.views.TASBaseActivity;
 
 import butterknife.Bind;
@@ -127,7 +126,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
         Anime anime = animes.get(position);
-        Intent intent = new Intent(this, OldAnimeDetailsActivity.class);
+        Intent intent = new Intent(this, AnimeDetailsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Anime", anime);
         intent.putExtras(bundle);

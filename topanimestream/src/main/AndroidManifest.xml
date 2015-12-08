@@ -76,10 +76,6 @@
             android:configChanges="locale|layoutDirection" >
         </activity>
         <activity
-            android:name=".views.OldAnimeDetailsActivity"
-            android:configChanges="locale|layoutDirection" >
-        </activity>
-        <activity
             android:name=".views.profile.EditProfileActivity"
             android:configChanges="locale|layoutDirection" >
         </activity>

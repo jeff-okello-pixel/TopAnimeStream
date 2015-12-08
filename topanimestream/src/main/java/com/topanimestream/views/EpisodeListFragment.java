@@ -111,12 +111,13 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
 
         if (savedInstanceState != null) {
             anime = savedInstanceState.getParcelable("anime");
+            /*
             if (anime.getEpisodes() != null && anime.getEpisodes().size() > 0)
-                listViewEpisodes.setAdapter(new EpisodeListAdapter(this.getActivity(), anime));
+                listViewEpisodes.setAdapter(new EpisodeListAdapter(this.getActivity(), anime.getEpisodes()));
             else {
                 listViewEpisodes.setVisibility(View.GONE);
                 txtNoEpisode.setVisibility(View.VISIBLE);
-            }
+            }*/
         }
 
         listViewEpisodes.setFastScrollEnabled(true);
@@ -127,13 +128,14 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
             public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
                 Collections.sort(episodes, new Episode());
                 anime.setEpisodes(episodes);
-                adapter = new EpisodeListAdapter(getActivity(), anime);
+                //adapter = new EpisodeListAdapter(getActivity(), anime);
+                /*
                 SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                 swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);
                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                 swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
                 listViewEpisodes.setAdapter(swingBottomInAnimationAdapter);
-                progressBarLoadMore.setVisibility(View.GONE);
+                progressBarLoadMore.setVisibility(View.GONE);*/
             }
 
             @Override
@@ -218,12 +220,13 @@ public class EpisodeListFragment extends Fragment implements OnItemClickListener
                 } else {
                     Collections.sort(episodes, new Episode());
                     anime.setEpisodes(episodes);
+                    /*
                     adapter = new EpisodeListAdapter(getActivity(), anime);
                     SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                     swingBottomInAnimationAdapter.setAbsListView(listViewEpisodes);
                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
-                    listViewEpisodes.setAdapter(swingBottomInAnimationAdapter);
+                    listViewEpisodes.setAdapter(swingBottomInAnimationAdapter);*/
                 }
 
                 progressBarLoadMore.setVisibility(View.GONE);

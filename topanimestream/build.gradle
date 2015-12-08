@@ -36,7 +36,6 @@ dependencies {
     compile 'com.larswerkman:HoloColorPicker:1.5'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.+'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.github.nirhart:parallaxscroll:1.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.google.code.gson:gson:2.4'

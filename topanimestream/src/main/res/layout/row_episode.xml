@@ -2,16 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/imgWatched"
-        android:padding="15dp"
-        android:src="@drawable/ic_not_watched"
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
     <LinearLayout
-        android:layout_toLeftOf="@id/imgWatched"
         android:layout_width="match_parent"
         android:layout_centerVertical="true"
         android:layout_height="wrap_content"
