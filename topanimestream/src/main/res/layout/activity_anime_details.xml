@@ -39,8 +39,6 @@
                             android:indeterminateDrawable="@drawable/progress" />
                 </RelativeLayout>
 
-
-
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
@@ -53,6 +51,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:focusable="true"
@@ -61,4 +60,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_play"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|right|end"/>
+
 </android.support.design.widget.CoordinatorLayout>

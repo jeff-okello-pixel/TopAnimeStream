@@ -20,7 +20,7 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
     private final Context context;
     private ArrayList<Episode> episodes;
     private EpisodeListAdapter.OnItemClickListener mItemClickListener;
-
+    public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
     public EpisodeListAdapter(Context context, ArrayList<Episode> episodes) {
         this.context = context;
         this.episodes = episodes;
@@ -36,8 +36,16 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode, parent, false);
-        return new EpisodeListAdapter.ViewHolder(v);
+        View v;
+        switch (viewType) {
+            case TYPE_LOADING:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode, parent, false);
+                return new EpisodeListAdapter.LoadingHolder(v);
+            case TYPE_NORMAL:
+            default:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode, parent, false);
+                return new EpisodeListAdapter.ViewHolder(v);
+        }
     }
 
     @Override
@@ -82,6 +90,17 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
                 Episode episode = getItem(position);
                 mItemClickListener.onItemClick(view, episode, position);
             }
+        }
+
+    }
+
+    class LoadingHolder extends RecyclerView.ViewHolder {
+
+        View itemView;
+
+        public LoadingHolder(View itemView) {
+            super(itemView);
+            this.itemView = itemView;
         }
 
     }
