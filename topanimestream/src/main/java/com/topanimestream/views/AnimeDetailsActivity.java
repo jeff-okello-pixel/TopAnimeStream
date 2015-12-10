@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +42,7 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
 import com.topanimestream.adapters.EpisodeListAdapter;
@@ -78,9 +82,26 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     @Bind(R.id.imgBackdrop)
     ImageView imgBackdrop;
 
+    @Bind(R.id.appbar)
+    AppBarLayout appbar;
+
+    @Bind(R.id.progressBackdrop)
+    ProgressBar progressBackdrop;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
+
+        Configuration configuration = getResources().getConfiguration();
+        int screenWidthDp = configuration.screenHeightDp;
+
+        final float scale = getResources().getDisplayMetrics().density;
+        int heightScreenPixels = (int) (screenWidthDp * scale + 0.5f);
+
+        ViewGroup.LayoutParams params = appbar.getLayoutParams();
+        params.height = (int)Math.round((heightScreenPixels / 5) * 2.5);
+        appbar.setLayoutParams(params);
+
 
         currentUserReview = null;
 
@@ -107,7 +128,17 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         Picasso.with(AnimeDetailsActivity.this)
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500))
                 .transform(DrawGradient.INSTANCE)
-                .into(imgBackdrop);
+                .into(imgBackdrop, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBackdrop.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        progressBackdrop.setVisibility(View.GONE);
+                    }
+                });
 
         ArrayList<Episode> episodes = new ArrayList<Episode>();
         for(int i = 1; i < 50; i++)
