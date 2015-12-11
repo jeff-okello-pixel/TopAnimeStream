@@ -18,6 +18,7 @@ import com.topanimestream.utilities.Utils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class PlayerEpisodesAdapter extends BaseAdapter {
@@ -66,10 +67,7 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
         App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + episode.getScreenshotHD(), ImageUtils.ImageSize.w300), holder.imgScreenshot);
         holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + episode.getEpisodeNumber());
         if(episode.getAiredDate() != null) {
-            Timestamp timeStamp = Timestamp.valueOf(episode.getAiredDate().replace("T", " "));
-            long now = System.currentTimeMillis();
-            long addedDate = timeStamp.getTime();
-            holder.txtAiredDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+            holder.txtAiredDate.setText(DateUtils.getRelativeTimeSpanString(episode.getAiredDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));
         }
 
 

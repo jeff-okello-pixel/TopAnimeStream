@@ -29,7 +29,6 @@ import butterknife.ButterKnife;
 public class EpisodeDetailsActivity extends TASBaseActivity {
     private Episode episode;
     private String type;
-    private ProviderListFragment providerListFragment;
     private Anime anime;
 
     @Bind(R.id.txtEpisodeName)
@@ -113,15 +112,6 @@ public class EpisodeDetailsActivity extends TASBaseActivity {
         else
             imgScreenshot.setVisibility(View.GONE);
 
-        FragmentManager fm = getSupportFragmentManager();
-        providerListFragment = (ProviderListFragment) fm.findFragmentByTag("providerFragment");
-        if (providerListFragment == null) {
-
-            FragmentTransaction ft = fm.beginTransaction();
-            providerListFragment = ProviderListFragment.newInstance(-1, episode, type, anime);
-            ft.add(R.id.layEpisodeDetails, providerListFragment, "providerFragment");
-            ft.commit();
-        }
 
     }
 

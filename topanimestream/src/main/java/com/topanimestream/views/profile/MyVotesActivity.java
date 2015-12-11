@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
-import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.VoteListAdapter;
@@ -181,11 +180,7 @@ public class MyVotesActivity extends TASBaseActivity implements View.OnClickList
                     adapter.update();
                 } else {
                     adapter = new VoteListAdapter(MyVotesActivity.this, newVotes);
-                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
-                    swingBottomInAnimationAdapter.setAbsListView(listViewMyVotes);
-                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
-                    listViewMyVotes.setAdapter(swingBottomInAnimationAdapter);
+                    listViewMyVotes.setAdapter(adapter);
                 }
 
                 isLoading = false;

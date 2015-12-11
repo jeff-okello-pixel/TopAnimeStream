@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.topanimestream.App;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -255,12 +254,7 @@ public class ReviewsActivity extends TASBaseActivity implements AdapterView.OnIt
                             adapter.add(newReviews.get(i));
 
                         adapter.update();
-
-                        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
-                        swingBottomInAnimationAdapter.setAbsListView(listViewReviews);
-                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
-                        listViewReviews.setAdapter(swingBottomInAnimationAdapter);
+                        listViewReviews.setAdapter(adapter);
                     }
 
                     isLoading = false;
