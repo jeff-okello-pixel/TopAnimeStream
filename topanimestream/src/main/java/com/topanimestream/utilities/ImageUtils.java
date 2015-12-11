@@ -21,17 +21,17 @@ public class ImageUtils {
         }
 
     }
-    public static String resizeImage(String image, ImageSize size) {
+    public static String resizeImage(String image, int size) {
         if (image == null)
             return null;
 
-        if (size == null)
+        if (size == 0 || size > 2000)
+            return null;
+
+        //original size
+        if(size == -1)
             return image;
 
-        String imageNameToReplace = image.substring(image.lastIndexOf("/") + 1);
-        String imageName = "w" + size.getValue() + "_" + imageNameToReplace;
-
-        image = image.replace(imageNameToReplace, imageName);
-        return image;
+        return image + "?width=" + size;
     }
 }

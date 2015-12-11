@@ -67,7 +67,7 @@ public class AnimeListAdapter extends BaseAdapter {
             holder.txtGenres.setVisibility(View.GONE);
         holder.imgPoster.setImageResource(android.R.color.transparent);
         holder.txtDescription.setText(anime.getDescription(context));
-        App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + anime.getPosterPath(), ImageUtils.ImageSize.w185), holder.imgPoster);
+        App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + anime.getPosterPath(), 185), holder.imgPoster);
 
         return vi;
     }

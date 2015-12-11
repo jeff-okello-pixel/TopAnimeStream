@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
@@ -88,6 +89,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     @Bind(R.id.progressBackdrop)
     ProgressBar progressBackdrop;
 
+    @Bind(R.id.fabPlay)
+    FloatingActionButton fabPlay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
@@ -126,7 +130,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         }
 
         Picasso.with(AnimeDetailsActivity.this)
-                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500))
+                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 500))
                 .transform(DrawGradient.INSTANCE)
                 .into(imgBackdrop, new Callback() {
                     @Override

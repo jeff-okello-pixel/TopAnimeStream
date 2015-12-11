@@ -76,7 +76,7 @@ public class AnimeDetailsFragment extends Fragment {
 
     public void setAnime(Anime anime) {
         if (anime.getBackdropPath() != null)
-            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500), imgBackdrop);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), 500), imgBackdrop);
         else
             imgBackdrop.setVisibility(View.GONE);
 

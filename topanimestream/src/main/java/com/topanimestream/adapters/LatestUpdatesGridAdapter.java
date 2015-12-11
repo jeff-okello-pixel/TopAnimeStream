@@ -115,7 +115,7 @@ public class LatestUpdatesGridAdapter extends HeaderRecyclerViewAdapter {
                 }
             }
 
-            Picasso.with(holder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + imagePath, ImageUtils.ImageSize.w500))
+            Picasso.with(holder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + imagePath, 500))
                     .resize(mItemWidth, mItemHeight)
                     .transform(DrawGradient.INSTANCE)
                     .into(holder.coverImage, new Callback() {

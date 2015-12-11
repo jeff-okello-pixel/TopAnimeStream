@@ -143,7 +143,7 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
             videoViewHolder.year.setVisibility(View.GONE);
 
             if (item.getPosterPath()!= null && !item.getPosterPath().equals("")) {
-                Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), ImageUtils.ImageSize.w500))
+                Picasso.with(videoViewHolder.coverImage.getContext()).load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + item.getPosterPath(), 500))
                         .resize(mItemWidth, mItemHeight)
                         .transform(DrawGradient.INSTANCE)
                         .into(videoViewHolder.coverImage, new Callback() {

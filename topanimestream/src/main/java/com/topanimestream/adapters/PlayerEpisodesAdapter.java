@@ -64,7 +64,7 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
         }
 
         holder.imgScreenshot.setImageResource(android.R.color.transparent);
-        App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + episode.getScreenshotHD(), ImageUtils.ImageSize.w300), holder.imgScreenshot);
+        App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + episode.getScreenshotHD(), 300), holder.imgScreenshot);
         holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + episode.getEpisodeNumber());
         if(episode.getAiredDate() != null) {
             holder.txtAiredDate.setText(DateUtils.getRelativeTimeSpanString(episode.getAiredDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));

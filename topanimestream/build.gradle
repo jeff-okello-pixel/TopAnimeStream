@@ -43,5 +43,6 @@ dependencies {
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.mikhaellopez:circularimageview:2.0.2'
+    compile 'com.android.support:palette-v7:21.0.0'
 
 }

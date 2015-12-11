@@ -83,17 +83,6 @@ public class Account implements Parcelable {
     {
         return ProfilePic;
     }
-    public String getProfilePicResize(ImageUtils.ImageSize size) {
-
-        if (ProfilePic == null)
-            return null;
-
-        if (size == null || size.equals(""))
-            return imageHostPath + ProfilePic;
-
-        return ImageUtils.resizeImage(imageHostPath + ProfilePic, size);
-
-    }
 
     public void setProfilePic(String profilePic) {
         ProfilePic = profilePic;

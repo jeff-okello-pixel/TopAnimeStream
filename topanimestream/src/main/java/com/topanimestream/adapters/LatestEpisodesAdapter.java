@@ -64,11 +64,11 @@ public class LatestEpisodesAdapter extends BaseAdapter {
         holder.imgScreenshot.setImageResource(android.R.color.transparent);
         if(link.getEpisode() != null) {
             holder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + link.getEpisode().getEpisodeNumber());
-            App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + link.getEpisode().getScreenshotHD(), ImageUtils.ImageSize.w300), holder.imgScreenshot);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + link.getEpisode().getScreenshotHD(), 300), holder.imgScreenshot);
         }
         else {
             holder.txtEpisodeNumber.setText(context.getString(R.string.tab_movie));
-            App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + link.getAnime().getRelativeBackdropPath(null), ImageUtils.ImageSize.w300), holder.imgScreenshot);
+            App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + link.getAnime().getRelativeBackdropPath(null), 300), holder.imgScreenshot);
         }
         Timestamp timeStamp = Timestamp.valueOf(link.getAddedDate().replace("T", " "));
         long now = System.currentTimeMillis();

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.nirhart.parallaxscroll.views.ParallaxListView;
+import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.managers.DialogManager;
@@ -104,7 +105,10 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
 
         listView.setOnItemClickListener(this);
 
-        App.imageLoader.displayImage(App.currentUser.getProfilePicResize(ImageUtils.ImageSize.w185), imgProfilePic);
+        Picasso .with(this)
+                .load(ImageUtils.resizeImage(getString(R.string.image_host_path) + App.currentUser.getProfilePic(), 185))
+                .into(imgProfilePic);
+
         txtUsername.setText(App.currentUser.getUsername());
         txtJoinedDate.setText(App.currentUser.getAddedDate().toString());
         txtRank.setText(getString(R.string.rank) +  App.currentUser.getRoleName());
@@ -187,7 +191,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
                 if(jsonAnimes.length() > 0) {
                     String jsonAnime = jsonAnimes.getJSONObject(0).getJSONObject("Anime").toString();
                     Anime anime = gson.fromJson(jsonAnime, Anime.class);
-                    firstFavoriteBackDropUrl = ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), ImageUtils.ImageSize.w500);
+                    firstFavoriteBackDropUrl = ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), 500);
                 }
 
                 return null;
