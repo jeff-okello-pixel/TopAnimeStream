@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -45,6 +48,7 @@ import java.util.ArrayList;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.topanimestream.App;
 import com.topanimestream.adapters.EpisodeListAdapter;
 import com.topanimestream.custom.DrawGradient;
@@ -92,6 +96,28 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     @Bind(R.id.fabPlay)
     FloatingActionButton fabPlay;
 
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+                    fabPlay.setBackgroundColor(palette.getDarkVibrantColor(getColor(R.color.dark_green)));
+                }
+            });
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            fabPlay.setBackgroundColor(getColor(R.color.dark_green));
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
@@ -128,6 +154,10 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         if (savedInstanceState != null) {
             anime = savedInstanceState.getParcelable("anime");
         }
+
+        Picasso.with(AnimeDetailsActivity.this)
+                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 50))
+                .into(target);
 
         Picasso.with(AnimeDetailsActivity.this)
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 500))

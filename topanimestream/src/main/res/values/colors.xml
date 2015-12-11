@@ -22,6 +22,8 @@
     <drawable name="red">#e14d4d</drawable>
     <drawable name="nocolor">#00000000</drawable>
 
+
+    <color name="dark_green">#FF0E6438</color>
     <color name="table_text_light">#A6A6A6</color>
     <color name="black_overlay">#66000000</color>
     <color name="overlay">#ff000000</color>
