@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -14,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
@@ -102,14 +104,14 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
             Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(Palette palette) {
-                    fabPlay.setBackgroundColor(palette.getDarkVibrantColor(getColor(R.color.dark_green)));
+                    fabPlay.setBackgroundTintList(ColorStateList.valueOf(palette.getVibrantColor(ContextCompat.getColor(AnimeDetailsActivity.this, R.color.dark_green))));
                 }
             });
         }
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
-            fabPlay.setBackgroundColor(getColor(R.color.dark_green));
+            fabPlay.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AnimeDetailsActivity.this, R.color.dark_green)));
         }
 
         @Override
@@ -156,7 +158,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         }
 
         Picasso.with(AnimeDetailsActivity.this)
-                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 50))
+                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 500))
                 .into(target);
 
         Picasso.with(AnimeDetailsActivity.this)
