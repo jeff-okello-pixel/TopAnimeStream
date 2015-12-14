@@ -7,19 +7,14 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,9 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -45,15 +38,10 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.topanimestream.App;
-import com.topanimestream.adapters.EpisodeListAdapter;
 import com.topanimestream.custom.DrawGradient;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -101,11 +89,24 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
 
     private Target target = new Target() {
         @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            //24 for images with people face, http://developer.android.com/reference/android/support/v7/graphics/Palette.Builder.html
+            Palette.generateAsync(bitmap, 24, new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(Palette palette) {
-                    fabPlay.setBackgroundTintList(ColorStateList.valueOf(palette.getVibrantColor(ContextCompat.getColor(AnimeDetailsActivity.this, R.color.dark_green))));
+                    imgBackdrop.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+
+                    Palette.Swatch vibrant = palette.getVibrantSwatch();
+                    if(vibrant != null) {
+                        fabPlay.setBackgroundTintList(ColorStateList.valueOf(vibrant.getRgb()));
+                        return;
+                    }
+
+                    Palette.Swatch darkVibrant = palette.getDarkVibrantSwatch();
+                    if(darkVibrant != null) {
+                        fabPlay.setBackgroundTintList(ColorStateList.valueOf(darkVibrant.getRgb()));
+                        return;
+                    }
                 }
             });
         }
@@ -160,22 +161,8 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
 
         Picasso.with(AnimeDetailsActivity.this)
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 500))
-                .into(target);
-
-        Picasso.with(AnimeDetailsActivity.this)
-                .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 500))
                 .transform(DrawGradient.INSTANCE)
-                .into(imgBackdrop, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        progressBackdrop.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onError() {
-                        progressBackdrop.setVisibility(View.GONE);
-                    }
-                });
+                .into(target);
 
         fragmentEpisodesList.setEpisodeListCallback(this);
 
