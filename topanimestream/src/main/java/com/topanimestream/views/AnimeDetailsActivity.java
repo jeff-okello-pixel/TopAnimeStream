@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -84,7 +85,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     @Bind(R.id.fabPlay)
     FloatingActionButton fabPlay;
 
-    @Bind(R.id.fragmentEpisodesList)
     EpisodeListFragment fragmentEpisodesList;
 
     private Target target = new Target() {
@@ -125,6 +125,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentEpisodesList = (EpisodeListFragment) fragmentManager.findFragmentById(R.id.fragmentEpisodesList);
 
         Configuration configuration = getResources().getConfiguration();
         int screenWidthDp = configuration.screenHeightDp;
