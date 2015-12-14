@@ -75,6 +75,38 @@ public class Episode implements Parcelable, Comparator<Episode> {
         EpisodeName = in.readString();
     }
 
+    public ArrayList<Subtitle> getSubtitles() {
+        return Subtitles;
+    }
+
+    public void setSubtitles(ArrayList<Subtitle> subtitles) {
+        Subtitles = subtitles;
+    }
+
+    public String getThumbnail() {
+        return Thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        Thumbnail = thumbnail;
+    }
+
+    public boolean isAvailable() {
+        return IsAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        IsAvailable = isAvailable;
+    }
+
+    public Date getAvailableDate() {
+        return AvailableDate;
+    }
+
+    public void setAvailableDate(Date availableDate) {
+        AvailableDate = availableDate;
+    }
+
     public String getScreenshotHD() {
         return ScreenshotHD;
     }

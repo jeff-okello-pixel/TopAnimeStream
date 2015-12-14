@@ -46,6 +46,7 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import com.squareup.picasso.Callback;
@@ -74,14 +75,11 @@ import com.topanimestream.views.profile.LoginActivity;
 
 import butterknife.Bind;
 
-public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetailsMovieFragment.AnimeDetailsMovieCallback {
+public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetailsMovieFragment.AnimeDetailsMovieCallback, EpisodeListFragment.EpisodeListCallback {
     private Anime anime;
     private Vote currentUserVote;
     public static Review currentUserReview;
     private Recommendation currentUserRecommendation;
-
-    @Bind(R.id.recyclerView)
-    RecyclerView recyclerView;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -97,6 +95,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
 
     @Bind(R.id.fabPlay)
     FloatingActionButton fabPlay;
+
+    @Bind(R.id.fragmentEpisodesList)
+    EpisodeListFragment fragmentEpisodesList;
 
     private Target target = new Target() {
         @Override
@@ -176,20 +177,8 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
                     }
                 });
 
-        ArrayList<Episode> episodes = new ArrayList<Episode>();
-        for(int i = 1; i < 50; i++)
-        {
-            Episode episode = new Episode();
-            episode.setEpisodeName("NAME " + i);
-            episode.setEpisodeNumber("NUMBER" + i);
-            episodes.add(episode);
-        }
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(AnimeDetailsActivity.this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
+        fragmentEpisodesList.setEpisodeListCallback(this);
 
-        EpisodeListAdapter adapter = new EpisodeListAdapter(AnimeDetailsActivity.this, episodes);
-        recyclerView.setAdapter(adapter);
     }
 
 
@@ -362,6 +351,16 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     public void OnMoviePlayClick() {
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
+        startActivity(intent);
+    }
+
+    @Override
+    public void OnEpisodeSelected(Episode episodeToPlay, ArrayList<Episode> episodes) {
+        anime.setEpisodes(episodes);
+
+        Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
+        intent.putExtra("anime", anime);
+        intent.putExtra("episodeToPlay", episodeToPlay);
         startActivity(intent);
     }
 

@@ -52,14 +52,11 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:focusable="true"
-        android:focusableInTouchMode="false"
-        android:scrollbars="vertical"
+    <fragment
+        android:id="@+id/fragmentEpisodesList"
+        android:name="com.topanimestream.views.EpisodeListFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabPlay"
