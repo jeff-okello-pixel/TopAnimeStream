@@ -17,7 +17,7 @@
                     android:scaleType="centerCrop"/>
 
                 <TextView
-                    android:id="@+id/txtAddedDate"
+                    android:id="@+id/txtReleasedDate"
                     android:textSize="10sp"
                     android:textColor="#f5f5f5"
                     android:layout_alignParentBottom="true"

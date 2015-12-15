@@ -2,6 +2,7 @@ package com.topanimestream.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -85,6 +88,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     @Bind(R.id.fabPlay)
     FloatingActionButton fabPlay;
 
+    @Bind(R.id.episodefragContainer)
+    LinearLayout episodefragContainer;
+
     EpisodeListFragment fragmentEpisodesList;
 
     private Target target = new Target() {
@@ -102,9 +108,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
                         return;
                     }
 
-                    Palette.Swatch darkVibrant = palette.getDarkVibrantSwatch();
-                    if(darkVibrant != null) {
-                        fabPlay.setBackgroundTintList(ColorStateList.valueOf(darkVibrant.getRgb()));
+                    Palette.Swatch darkMuted = palette.getDarkMutedSwatch();
+                    if(darkMuted != null) {
+                        fabPlay.setBackgroundTintList(ColorStateList.valueOf(darkMuted.getRgb()));
                         return;
                     }
                 }
@@ -126,8 +132,14 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_anime_details);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentEpisodesList = (EpisodeListFragment) fragmentManager.findFragmentById(R.id.fragmentEpisodesList);
+        Bundle bundle = getIntent().getExtras();
+        anime = bundle.getParcelable("Anime");
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction trans = fm.beginTransaction();
+        trans.add(episodefragContainer.getId(), EpisodeListFragment.newInstance(anime.getAnimeId()), "frag_episodes");
+        trans.commit();
+
 
         Configuration configuration = getResources().getConfiguration();
         int screenWidthDp = configuration.screenHeightDp;
@@ -141,9 +153,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
 
 
         currentUserReview = null;
-
-        Bundle bundle = getIntent().getExtras();
-        anime = bundle.getParcelable("Anime");
 
         toolbar.setTitle(anime.getName());
         setSupportActionBar(toolbar);
@@ -167,10 +176,15 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
                 .transform(DrawGradient.INSTANCE)
                 .into(target);
 
-        fragmentEpisodesList.setEpisodeListCallback(this);
-
     }
 
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        FragmentManager fm = getSupportFragmentManager();
+        fragmentEpisodesList = (EpisodeListFragment) fm.findFragmentByTag("frag_episodes");
+        fragmentEpisodesList.setEpisodeListCallback(this);
+    }
 
     @Override
     protected void onResume() {
