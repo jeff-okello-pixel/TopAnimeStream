@@ -25,8 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -89,27 +89,29 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     FloatingActionButton fabPlay;
 
     @Bind(R.id.episodefragContainer)
-    LinearLayout episodefragContainer;
+    FrameLayout episodefragContainer;
 
     EpisodeListFragment fragmentEpisodesList;
 
     private Target target = new Target() {
         @Override
         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            Palette.Builder builder = new Palette.Builder(bitmap);
             //24 for images with people face, http://developer.android.com/reference/android/support/v7/graphics/Palette.Builder.html
-            Palette.generateAsync(bitmap, 24, new Palette.PaletteAsyncListener() {
+            builder.maximumColorCount(24);
+            builder.generate(new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(Palette palette) {
                     imgBackdrop.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
 
                     Palette.Swatch vibrant = palette.getVibrantSwatch();
-                    if(vibrant != null) {
+                    if (vibrant != null) {
                         fabPlay.setBackgroundTintList(ColorStateList.valueOf(vibrant.getRgb()));
                         return;
                     }
 
                     Palette.Swatch darkMuted = palette.getDarkMutedSwatch();
-                    if(darkMuted != null) {
+                    if (darkMuted != null) {
                         fabPlay.setBackgroundTintList(ColorStateList.valueOf(darkMuted.getRgb()));
                         return;
                     }
