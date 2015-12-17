@@ -14,12 +14,12 @@ import java.util.Calendar;
 
 import com.squareup.picasso.Picasso;
 import com.topanimestream.R;
+import com.topanimestream.enums.Languages;
 import com.topanimestream.models.Episode;
 import com.topanimestream.utilities.ImageUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
 
 public class EpisodeListAdapter extends RecyclerView.Adapter {
     private final Context context;
@@ -68,8 +68,8 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
                         .load(context.getString(R.string.image_host_path) + ImageUtils.resizeImage(episode.getScreenshotHD(), 250))
                         .into(episodeHolder.imgScreenshot);
 
-                episodeHolder.txtEpisodeName.setText(episode.getEpisodeName());
-                episodeHolder.txtEpisodeNumber.setText(episode.getEpisodeNumber());
+                episodeHolder.txtEpisodeName.setText(episode.getEpisodeName(Languages.English));
+                episodeHolder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + episode.getEpisodeNumber());
 
                 if(episode.getAiredDate() != null) {
                     long now = System.currentTimeMillis();

@@ -16,6 +16,8 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
+            android:paddingTop="15dp"
+            android:clipToPadding="false"
             android:focusable="true"
             android:focusableInTouchMode="false"
             android:scrollbars="vertical"

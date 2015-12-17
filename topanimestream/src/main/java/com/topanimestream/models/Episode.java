@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 import com.topanimestream.App;
+import com.topanimestream.enums.Languages;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.PrefUtils;
 
@@ -26,7 +27,6 @@ public class Episode implements Parcelable, Comparator<Episode> {
     private String Thumbnail;
     private boolean IsAvailable;
     private Date AvailableDate;
-    private String EpisodeName;
 
     public Episode() {
         super();
@@ -72,7 +72,6 @@ public class Episode implements Parcelable, Comparator<Episode> {
             AvailableDate = new Date(AvailableDateTime); //better performance than serializing it.
         else
             AvailableDate = null;
-        EpisodeName = in.readString();
     }
 
     public ArrayList<Subtitle> getSubtitles() {
@@ -181,12 +180,16 @@ public class Episode implements Parcelable, Comparator<Episode> {
         EpisodeNumber = episodeNumber;
     }
 
-    public String getEpisodeName() {
-        return EpisodeName;
-    }
+    public String getEpisodeName(Languages language) {
+        for(EpisodeInformations episodeInformation: EpisodeInformations)
+        {
+            if(episodeInformation.getLanguageId() == language.getLanguageId())
+            {
+                return episodeInformation.getEpisodeName();
+            }
+        }
 
-    public void setEpisodeName(String episodeName) {
-        EpisodeName = episodeName;
+        return "";
     }
 
     public Date getAiredDate() {
@@ -231,7 +234,6 @@ public class Episode implements Parcelable, Comparator<Episode> {
         dest.writeString(Thumbnail);
         dest.writeByte((byte) (IsAvailable ? 1 : 0));
         dest.writeLong(AvailableDate != null ? AvailableDate.getTime() : 0);
-        dest.writeString(EpisodeName);
 
     }
 

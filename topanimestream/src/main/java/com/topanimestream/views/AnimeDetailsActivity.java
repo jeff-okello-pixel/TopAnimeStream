@@ -96,6 +96,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     private Target target = new Target() {
         @Override
         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            progressBackdrop.setVisibility(View.GONE);
             Palette.Builder builder = new Palette.Builder(bitmap);
             //24 for images with people face, http://developer.android.com/reference/android/support/v7/graphics/Palette.Builder.html
             builder.maximumColorCount(24);
@@ -121,6 +122,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
+            progressBackdrop.setVisibility(View.GONE);
             fabPlay.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AnimeDetailsActivity.this, R.color.dark_green)));
         }
 
@@ -175,7 +177,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
 
         Picasso.with(AnimeDetailsActivity.this)
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 500))
-                .transform(DrawGradient.INSTANCE)
                 .into(target);
 
     }

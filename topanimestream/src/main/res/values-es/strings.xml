@@ -317,4 +317,5 @@
     <string name="ok">OK</string>
     <string name="error_while_login">An error has occurred while logging in.</string>
     <string name="to">to</string>
+    <string name="movie">Movie</string>
 </resources>

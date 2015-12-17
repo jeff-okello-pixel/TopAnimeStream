@@ -140,10 +140,12 @@ public class EpisodeListFragment extends Fragment  {
 
     public void GetEpisodes()
     {
+        isLoading = true;
         mAdapter.addLoading();
         ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + animeId + "&$expand=EpisodeInformations,Links&$orderby=Order&$top=" + currentLimit + "&$skip=" + currentSkip, Episode.class, new ODataUtils.Callback<ArrayList<Episode>>() {
             @Override
             public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
+                isLoading = false;
                 mAdapter.removeLoading();
 
                 int currentItemCount = mAdapter.getItemCount();
@@ -156,6 +158,7 @@ public class EpisodeListFragment extends Fragment  {
 
             @Override
             public void onFailure(Exception e) {
+                isLoading = false;
                 //TODO Also show a retry button?
                 txtNoEpisode.setVisibility(View.VISIBLE);
             }

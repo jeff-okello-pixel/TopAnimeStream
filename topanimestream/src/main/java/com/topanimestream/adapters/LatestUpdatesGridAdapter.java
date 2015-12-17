@@ -96,10 +96,14 @@ public class LatestUpdatesGridAdapter extends HeaderRecyclerViewAdapter {
             Update item = overviewItem.update;
 
             holder.txtTitle.setText(item.getAnime().getName());
-            String addedEpisodes = App.getContext().getString(R.string.episode) + " " + item.getFirstEpisodeNumber();
-            if(!item.getFirstEpisodeNumber().equals(item.getLastEpisodeNumber()))
-                addedEpisodes += " " + App.getContext().getString(R.string.to) + " " + item.getLastEpisodeNumber();
-            holder.txtAddedEpisodes.setText(addedEpisodes);
+            if(overviewItem.update.getEpisode() != null) {
+                String addedEpisodes = App.getContext().getString(R.string.episode) + " " + item.getFirstEpisodeNumber();
+                if (!item.getFirstEpisodeNumber().equals(item.getLastEpisodeNumber()))
+                    addedEpisodes += " " + App.getContext().getString(R.string.to) + " " + item.getLastEpisodeNumber();
+                holder.txtAddedEpisodes.setText(addedEpisodes);
+            }
+            else
+                holder.txtAddedEpisodes.setText(App.getContext().getString(R.string.movie));
 
             long now = System.currentTimeMillis();
             long addedDate = item.getLastUpdatedDate().getTime();
