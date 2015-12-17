@@ -76,6 +76,10 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
                     long addedDate = episode.getAiredDate().getTime();
                     episodeHolder.txtReleasedDate.setText(DateUtils.getRelativeTimeSpanString(addedDate, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
                 }
+                else
+                {
+                    episodeHolder.txtReleasedDate.setText(context.getString(R.string.unknown_aired_date));
+                }
                 break;
             case TYPE_UNAVAILABLE:
                 final UnavailableHolder unavailableHolder = (UnavailableHolder) holder;
