@@ -92,7 +92,6 @@ public class AnimeListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         fragmentName = getArguments().getString("fragmentName");
-        mMode = (Mode) getArguments().getSerializable(EXTRA_MODE);
 
         //if (mMode == Mode.SEARCH)
             //mEmptyView.setText(getString(R.string.no_search_results));
@@ -154,6 +153,7 @@ public class AnimeListFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_anime_list, container, false);
         ButterKnife.bind(this, rootView);
 
+        mMode = (Mode) getArguments().getSerializable(EXTRA_MODE);
         customOrder = getArguments().getString("orderby", null);
         customFilter = getArguments().getString("filter", null);
 
@@ -193,40 +193,47 @@ public class AnimeListFragment extends Fragment {
         final Toolbar toolbar =(Toolbar) getActivity().findViewById(R.id.toolbar);
         final RelativeLayout layRecentlyWatched = (RelativeLayout) getActivity().findViewById(R.id.layRecentlyWatched);
         final int index = getArguments().getInt("index");
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-                // Determine the maximum allowed scroll height
-                final int maxScrollHeight = header.getHeight() - anchor.getHeight();
 
-                //Anchor the header if the recentlywatched is not there
-                if(layRecentlyWatched.getVisibility() == View.GONE)
-                {
-                    header.storeCoordinate(index, toolbar.getHeight());
+        if(mMode == Mode.NORMAL) {
+            mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+                    // Determine the maximum allowed scroll height
+                    final int maxScrollHeight = header.getHeight() - anchor.getHeight();
 
-                } else if (firstVisibleItem != 0) {
-                    // If the first item has scrolled off screen, anchor the header
-                    header.storeCoordinate(index, -maxScrollHeight + toolbar.getHeight());
-                    return;
+                    //Anchor the header if the recentlywatched is not there
+                    if (layRecentlyWatched.getVisibility() == View.GONE) {
+                        header.storeCoordinate(index, toolbar.getHeight());
+
+                    } else if (firstVisibleItem != 0) {
+                        // If the first item has scrolled off screen, anchor the header
+                        header.storeCoordinate(index, -maxScrollHeight + toolbar.getHeight());
+                        return;
+                    }
+
+                    final View firstChild = recyclerView.getChildAt(firstVisibleItem);
+                    if (firstChild == null) {
+                        return;
+                    }
+
+
+                    // Determine the offset to scroll the header
+                    final float offset = Math.min(-firstChild.getY(), maxScrollHeight);
+                    header.storeCoordinate(index, -offset + toolbar.getHeight());
                 }
 
-                final View firstChild = recyclerView.getChildAt(firstVisibleItem);
-                if (firstChild == null) {
-                    return;
-                }
-
-
-                // Determine the offset to scroll the header
-                final float offset = Math.min(-firstChild.getY(), maxScrollHeight);
-                header.storeCoordinate(index, -offset + toolbar.getHeight());
-            }
-
-        });
+            });
+        }
 
         //adapter should only ever be created once on fragment initialise.
         mAdapter = new AnimeGridAdapter(getActivity(), mItems, mColumns);
+        if(mMode == Mode.NORMAL)
+            mAdapter.setUseHeader(true);
+        else
+            mAdapter.setUseHeader(false);
+
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -295,33 +302,39 @@ public class AnimeListFragment extends Fragment {
 
         if(mMode == Mode.NORMAL) {
             String url = getString(R.string.odata_path) + "Animes?$expand=Genres,AnimeInformations,Status&$skip=" + currentSkip + "&$top=" + currentLimit + filter + customOrder + "&$count=true";
-            ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
-                @Override
-                public void onSuccess(ArrayList<Anime> animes, OdataRequestInfo info) {
-                    int currentItemCount = 0;
-                    if(mAdapter.getItemCount() != 0)
-                        currentItemCount = mAdapter.getBasicItemCount() - 1; //remove the loading
-
-                    if(info.getCount() == currentItemCount + animes.size())
-                        isEndOfList = true;
-
-                    isLoading = false;
-                    if(progressBarLoading.isShown()) {
-                        progressBarLoading.setVisibility(View.GONE);
-                    }
-
-                    mAdapter.setItems(animes);
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    isLoading = false;
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
+            CallService(url);
         }
         else if(mMode == Mode.SEARCH) {
-            //TODO
+            String url = getString(R.string.odata_path) + "Animes?$filter=startswith(tolower(OriginalName),%20%27" + searchQuery.toLowerCase() + "%27)&$orderby=IsAvailable%20desc&$top=30&$count=true";
+            CallService(url);
         }
+    }
+
+    private void CallService(String url)
+    {
+        ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
+            @Override
+            public void onSuccess(ArrayList<Anime> animes, OdataRequestInfo info) {
+                int currentItemCount = 0;
+                if(mAdapter.getItemCount() != 0)
+                    currentItemCount = mAdapter.getBasicItemCount() - 1; //remove the loading
+
+                if(info.getCount() == currentItemCount + animes.size())
+                    isEndOfList = true;
+
+                isLoading = false;
+                if(progressBarLoading.isShown()) {
+                    progressBarLoading.setVisibility(View.GONE);
+                }
+
+                mAdapter.setItems(animes);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                isLoading = false;
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

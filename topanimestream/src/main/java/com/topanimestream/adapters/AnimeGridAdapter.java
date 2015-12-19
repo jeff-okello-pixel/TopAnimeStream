@@ -45,7 +45,7 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
     //	private ArrayList<Media> mData = new ArrayList<>();
     private AnimeGridAdapter.OnItemClickListener mItemClickListener;
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
-
+    private boolean useHeader;
     public AnimeGridAdapter(Context context, ArrayList<Anime> items, Integer columns) {
         mColumns = columns;
 
@@ -67,7 +67,7 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
 
     @Override
     public boolean useHeader() {
-        return true;
+        return useHeader;
     }
 
     @Override
@@ -166,6 +166,10 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
         }
     }
 
+    public void setUseHeader(boolean useHeader)
+    {
+        this.useHeader = useHeader;
+    }
     @Override
     public int getBasicItemCount() {
         return mItems.size();
