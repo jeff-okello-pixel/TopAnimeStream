@@ -42,6 +42,7 @@ import com.topanimestream.custom.StrokedRobotoTextView;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Language;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
 import com.topanimestream.models.subs.Caption;
@@ -52,6 +53,7 @@ import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.FileUtils;
 import com.topanimestream.utilities.ImageUtils;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
@@ -124,7 +126,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         {
             App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + currentEpisode.getScreenshotHD(), 780), imgLoading);
         }
-        AsyncTaskTools.execute(new GetSourcesAndSubsTask());
+        GetSourcesAndSubs();
     }
     private long getCurrentTime()
     {
@@ -216,88 +218,57 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                    }
                });
     }
-    private class GetSourcesAndSubsTask extends AsyncTask<Void, Void, String> {
 
-        public GetSourcesAndSubsTask() {
+    public void GetSourcesAndSubs()
+    {
+        String getSourcesUrl;
+        String getSubsUrl;
+        sources = new ArrayList<Source>();
+        subtitles = new ArrayList<Subtitle>();
 
+        if(!anime.isMovie()) {
+            http://www.topanimestream.com/odata/Subtitles?$filter=AnimeId%20eq%201656%20and%20EpisodeId%20eq%2029259&$expand=Language
+            getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=" + currentEpisode.getEpisodeId() + ")?$expand=Link($expand=Language)";
+            //new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
+            getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId() + "&$expand=Language";
+            //new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
         }
-        private String getSourcesUrl;
-        private String getSubsUrl;
-        @Override
-        protected void onPreExecute() {
-            sources = new ArrayList<Source>();
-            subtitles = new ArrayList<Subtitle>();
-            if(!anime.isMovie()) {
-                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
-                getSubsUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
-            }
-            else {
-                getSourcesUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).expand("Link/Language").formatJson().build();
-                getSubsUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
-            }
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if(!App.IsNetworkConnected())
-            {
-                return getString(R.string.error_internet_connection);
-            }
-
-            try
-            {
-                Gson gson = new Gson();
-                JSONObject jsonSources = Utils.GetJson(getSourcesUrl);
-                JSONArray sourceArray = jsonSources.getJSONArray("value");
-                for(int i = 0; i < sourceArray.length(); i++)
-                {
-                    sources.add(gson.fromJson(sourceArray.getJSONObject(i).toString(), Source.class));
-
-                }
-
-                JSONObject jsonSubtitles = Utils.GetJson(getSubsUrl);
-                JSONArray subtitleArray = jsonSubtitles.getJSONArray("value");
-                for(int i = 0; i < subtitleArray.length(); i++)
-                {
-                    subtitles.add(gson.fromJson(subtitleArray.getJSONObject(i).toString(), Subtitle.class));
-
-                }
-
-                return null;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            return getString(R.string.error_loading_sources);
+        else {
+            getSourcesUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).expand("Link/Language").formatJson().build();
+            getSubsUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
         }
 
-        @Override
-        protected void onPostExecute(String error) {
-            if(error != null)
-            {
-                Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_LONG).show();
+        ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.Callback<ArrayList<Source>>() {
+            @Override
+            public void onSuccess(ArrayList<Source> newSources, OdataRequestInfo info) {
+                String defaultLanguageId = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3");
+                String defaultQuality = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_QUALITY, "1080p");
+                String defaultSubtitle = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
+
+                sources = newSources;
+
+                SelectSourceAndPlay(defaultLanguageId, defaultQuality, defaultSubtitle);
             }
-            else
-            {
-                try {
-                    String defaultLanguageId = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3");
-                    String defaultQuality = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_QUALITY, "1080p");
-                    String defaultSubtitle = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
 
-                    SelectSourceAndPlay(defaultLanguageId, defaultQuality, defaultSubtitle);
-
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
-
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.error_loading_sources), Toast.LENGTH_LONG).show();
             }
-        }
+        });
+
+        ODataUtils.GetEntityList(getSubsUrl, Subtitle.class, new ODataUtils.Callback<ArrayList<Subtitle>>() {
+            @Override
+            public void onSuccess(ArrayList<Subtitle> newSubtitles, OdataRequestInfo info) {
+                subtitles = newSubtitles;
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(VideoPlayerActivity.this, getString(R.string.error_loading_subtitles), Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
     private class SubtitleTask extends AsyncTask<Void, Void, String> {
             String fileName;
 
@@ -656,7 +627,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
         ResetMediaPlayer(true);
 
-        AsyncTaskTools.execute(new GetSourcesAndSubsTask());
+        GetSourcesAndSubs();
     }
 
     @Override

@@ -70,7 +70,7 @@ import com.topanimestream.views.profile.LoginActivity;
 
 import butterknife.Bind;
 
-public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetailsMovieFragment.AnimeDetailsMovieCallback, EpisodeListFragment.EpisodeListCallback {
+public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetailsMovieFragment.AnimeDetailsMovieCallback, EpisodeListFragment.EpisodeListCallback, View.OnClickListener {
     private Anime anime;
     private Vote currentUserVote;
     public static Review currentUserReview;
@@ -142,11 +142,17 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("Anime");
 
+        fabPlay.setOnClickListener(this);
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction trans = fm.beginTransaction();
         trans.add(episodefragContainer.getId(), EpisodeListFragment.newInstance(anime.getAnimeId()), "frag_episodes");
         trans.commit();
+        fm.executePendingTransactions();
 
+
+        fragmentEpisodesList = (EpisodeListFragment) fm.findFragmentByTag("frag_episodes");
+        fragmentEpisodesList.setEpisodeListCallback(this);
 
         Configuration configuration = getResources().getConfiguration();
         int screenWidthDp = configuration.screenHeightDp;
@@ -190,14 +196,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 600))
                 .into(target);
 
-    }
-
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
-        FragmentManager fm = getSupportFragmentManager();
-        fragmentEpisodesList = (EpisodeListFragment) fm.findFragmentByTag("frag_episodes");
-        fragmentEpisodesList.setEpisodeListCallback(this);
     }
 
     @Override
@@ -379,6 +377,15 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
         intent.putExtra("episodeToPlay", episodeToPlay);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
+        intent.putExtra("anime", anime);
+        //TODO implement watchlist and get episode from there
+        intent.putExtra("episodeToPlay", new Episode());
         startActivity(intent);
     }
 
