@@ -39,8 +39,9 @@ public class ODataUtils {
                 try {
                     if (response.isSuccessful()) {
                         Gson gson = App.getGson();
-                        final OdataRequestInfo info = gson.fromJson(response.body().string(), OdataRequestInfo.class);
-                        T result = gson.fromJson(response.body().string(), classType);
+                        String json = response.body().string();
+                        final OdataRequestInfo info = gson.fromJson(json, OdataRequestInfo.class);
+                        T result = gson.fromJson(json, classType);
                         callback.onSuccess(result, info);
                         return;
                     }

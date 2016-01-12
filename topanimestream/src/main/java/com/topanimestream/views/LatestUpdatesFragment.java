@@ -153,9 +153,24 @@ public class LatestUpdatesFragment extends Fragment {
     }
     private LatestUpdatesGridAdapter.OnItemClickListener mOnItemClickListener = new LatestUpdatesGridAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(View v, Update item, int position) {
+        public void onItemClick(View v, final Update update, int position) {
 
-            AsyncTaskTools.execute(new LoadAnimeAndEpisodesTask(item));
+            final Dialog loadingDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), getActivity());
+            ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + update.getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.Callback<Anime>() {
+                @Override
+                public void onSuccess(Anime anime, OdataRequestInfo info) {
+                    loadingDialog.dismiss();
+                    Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+                    intent.putExtra("anime", anime);
+                    intent.putExtra("episodeToPlay", update.getEpisode());
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    loadingDialog.dismiss();
+                }
+            });
         }
 
     };
@@ -256,75 +271,5 @@ public class LatestUpdatesFragment extends Fragment {
         });
 
 
-    }
-
-    public class LoadAnimeAndEpisodesTask extends AsyncTask<Void, Void, String> {
-        private Dialog busyDialog;
-        private String animeUrl;
-        private String episodesUrl;
-        private Update link;
-        private Anime anime;
-        public LoadAnimeAndEpisodesTask(Update update) {
-            this.link = link;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), getActivity());
-            animeUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Animes").filter("AnimeId%20eq%20" + link.getAnimeId()).expand("Genres,AnimeInformations,Status,Episodes/Links,Episodes/EpisodeInformations").formatJson().build();
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                JSONObject jsonAnime = Utils.GetJson(animeUrl);
-                String errors = Utils.checkDataServiceErrors(jsonAnime, getString(R.string.error_loading_reviews));
-                if (errors != null)
-                    return errors;
-                Gson gson = new Gson();
-                anime = gson.fromJson(jsonAnime.getJSONArray("value").getJSONObject(0).toString(), Anime.class);
-                for(int i = 0; i < anime.getEpisodes().size(); i++)
-                {
-                    //Remove all episodes without a link.
-                    Episode episode = anime.getEpisodes().get(i);
-                    if(episode.getLinks() == null || episode.getLinks().size() < 1)
-                    {
-                        anime.getEpisodes().remove(i);
-                    }
-                }
-
-                return null;
-            } catch (Exception e) {
-                return getString(R.string.error_loading_reviews);
-
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String error) {
-            try {
-                if (error != null) {
-                    if (error.equals("401")) {
-                        Toast.makeText(getActivity(), getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                        getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
-                        getActivity().finish();
-                    } else {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-                    intent.putExtra("anime", anime);
-                    intent.putExtra("episodeToPlay", link.getEpisode());
-                    startActivity(intent);
-                }
-
-            } catch (Exception e)//catch all exception, handle orientation change
-            {
-                e.printStackTrace();
-            }
-
-            DialogManager.dismissBusyDialog(busyDialog);
-        }
     }
 }
