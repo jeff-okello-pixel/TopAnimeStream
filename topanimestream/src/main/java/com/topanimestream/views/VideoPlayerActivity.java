@@ -36,6 +36,13 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
@@ -128,6 +135,35 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         }
         GetSourcesAndSubs();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, "{"jsonExample":"value"}");
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode")
+                .post(body)
+                .addHeader("Authorization", App.accessToken)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+            }
+        });
+
+    }
+
     private long getCurrentTime()
     {
         try {
