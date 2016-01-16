@@ -138,9 +138,10 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
     @Override
     protected void onStop() {
-        super.onStop();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = RequestBody.create(JSON, "{"jsonExample":"value"}");
+        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + currentEpisode.getEpisodeId() + ", time:" + getCurrentTime() +  ", duration:" + getDuration() + "}";
+        RequestBody body = RequestBody.create(JSON, jsonBodyString);
+
 
         OkHttpClient client = new OkHttpClient();
 
@@ -162,6 +163,18 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
             }
         });
 
+        checkForSubtitle = false;
+        if(player != null)
+        {
+            try {
+                player.stop();
+                player.release();
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        super.onStop();
     }
 
     private long getCurrentTime()
@@ -178,17 +191,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        checkForSubtitle = false;
-        if(player != null)
-        {
-            try {
-                player.stop();
-                player.release();
-            }catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     protected void checkSubs() {
