@@ -12,18 +12,19 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import com.topanimestream.App;
+import com.topanimestream.models.Favorite;
 import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 
 
-public class AnimeListAdapter extends BaseAdapter {
+public class FavoriteListAdapter extends BaseAdapter {
     private final Context context;
-    private ArrayList<Anime> values;
+    private ArrayList<Favorite> values;
     private ViewHolder holder;
 
-    public AnimeListAdapter(Context context, ArrayList<Anime> values) {
+    public FavoriteListAdapter(Context context, ArrayList<Favorite> values) {
         this.context = context;
         this.values = values;
     }
@@ -32,12 +33,12 @@ public class AnimeListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void add(Anime anime) {
-        values.add(anime);
+    public void add(Favorite favorite) {
+        values.add(favorite);
     }
 
-    public void remove(Anime anime) {
-        values.remove(anime);
+    public void remove(Favorite favorite) {
+        values.remove(favorite);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class AnimeListAdapter extends BaseAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View vi = convertView;
-        Anime anime = values.get(position);
+        Anime anime = values.get(position).getAnime();
         if (convertView == null) {
             vi = inflater.inflate(R.layout.row_anime, null);
             holder = new ViewHolder();
@@ -91,7 +92,7 @@ public class AnimeListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Anime getItem(int position) {
+    public Favorite getItem(int position) {
         return values.get(position);
     }
 

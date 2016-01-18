@@ -28,10 +28,13 @@ import com.google.gson.Gson;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import com.topanimestream.App;
+import com.topanimestream.adapters.FavoriteListAdapter;
+import com.topanimestream.models.Favorite;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.Utils;
 import com.topanimestream.utilities.WcfDataServiceUtility;
-import com.topanimestream.adapters.AnimeListAdapter;
 import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
@@ -42,8 +45,8 @@ import com.topanimestream.views.TASBaseActivity;
 import butterknife.Bind;
 
 public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickListener {
-    private ArrayList<Anime> animes;
-    private AnimeListAdapter adapter;
+    private ArrayList<Favorite> favorites;
+    private FavoriteListAdapter adapter;
 
     @Bind(R.id.txtNoFavorite)
     TextView txtNoFavorite;
@@ -95,13 +98,13 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
     private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
         @Override
         public void remove(int which) {
-            Anime anime = animes.get(which);
-            animes.remove(anime);
+            Favorite favorite = favorites.get(which);
+            favorites.remove(favorite);
             adapter.notifyDataSetChanged();
 
-            AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
+            AsyncTaskTools.execute(new RemoveFavoriteTask(favorite.getAnime().getAnimeId()));
 
-            if (animes.size() > 0)
+            if (favorites.size() > 0)
                 txtNoFavorite.setVisibility(View.GONE);
             else
                 txtNoFavorite.setVisibility(View.VISIBLE);
@@ -112,11 +115,11 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
                 @Override
                 public void drop(int from, int to) {
                     if (from != to) {
-                        Anime item = adapter.getItem(from);
-                        animes.remove(item);
-                        animes.add(to, item);
+                        Favorite item = adapter.getItem(from);
+                        favorites.remove(item);
+                        favorites.add(to, item);
                         adapter.notifyDataSetChanged();
-                        AsyncTaskTools.execute(new ChangeFavoriteOrderTask(item.getAnimeId(), to + 1));
+                        AsyncTaskTools.execute(new ChangeFavoriteOrderTask(item.getAnime().getAnimeId(), to + 1));
                     }
                 }
             };
@@ -125,7 +128,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
-        Anime anime = animes.get(position);
+        Anime anime = favorites.get(position).getAnime();
         Intent intent = new Intent(this, AnimeDetailsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Anime", anime);
@@ -138,6 +141,23 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
     protected void onResume() {
         super.onResume();
         AsyncTaskTools.execute(new GetFavoriteTask());
+
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyFavorites?$expand=Anime&$orderby=Order", Favorite.class, new ODataUtils.Callback<ArrayList<Favorite>>() {
+            @Override
+            public void onSuccess(ArrayList<Favorite> entity, OdataRequestInfo info) {
+                adapter = new FavoriteListAdapter(MyFavoritesActivity.this, favorites);
+                listViewFavorites.setAdapter(adapter);
+                if (favorites.size() > 0)
+                    txtNoFavorite.setVisibility(View.GONE);
+                else
+                    txtNoFavorite.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -215,7 +235,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
         @Override
         protected void onPreExecute() {
             busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_favorites), MyFavoritesActivity.this);
-            animes = new ArrayList<Anime>();
+            favorites = new ArrayList<Favorite>();
             url = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Favorites").formatJson().expand("Anime/AnimeSources,Anime/AnimeInformations,Anime/Genres").filter("AccountId%20eq%20" + App.currentUser.getAccountId()).build();
 
         }
@@ -242,7 +262,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
                 for (int i = 0; i < jsonFavorites.length(); i++) {
 
                     Gson gson = new Gson();
-                    animes.add(gson.fromJson(jsonFavorites.getJSONObject(i).getJSONObject("Anime").toString(), Anime.class));
+                    favorites.add(gson.fromJson(jsonFavorites.getJSONObject(i).getJSONObject("Anime").toString(), Anime.class));
 
                 }
                 return null;
