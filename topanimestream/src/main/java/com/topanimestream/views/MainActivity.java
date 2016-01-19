@@ -49,11 +49,16 @@ import org.kxml2.kdom.Node;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
 import com.topanimestream.custom.CoordinatedHeader;
+import com.topanimestream.models.OdataRequestInfo;
+import com.topanimestream.models.WatchedVideo;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.NetworkUtil;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
@@ -87,7 +92,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     public String filter = "";
     public String order = "";
     private TextView txtTitle;
-
+    final static public int UpdateWatchCode = 1000;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
@@ -112,12 +117,20 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Bind(R.id.activity_home_header)
     CoordinatedHeader header;
 
+    @Bind(R.id.imgWatchedBackdrop)
+    ImageView imgWatchedBackdrop;
+
+    @Bind(R.id.txtWatchedTitle)
+    TextView txtWatchedTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main);
-
         setSupportActionBar(toolbar);
         ToolbarUtils.updateToolbarHeight(this, toolbar);
+
+        UpdateRecentlyWatched();
+
         tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.updates)};
 
         //fill default filter dialog spinner values
@@ -207,6 +220,26 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         setTitleWithFilter();
     }
 
+    private void UpdateRecentlyWatched()
+    {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedVideos?$expand=Episode,Anime&$orderby=LastWatchedDate%20desc&$top=1", WatchedVideo.class, new ODataUtils.Callback<ArrayList<WatchedVideo>>() {
+
+            @Override
+            public void onSuccess(ArrayList<WatchedVideo> watchedVideos, OdataRequestInfo info) {
+                WatchedVideo watchedVideo = watchedVideos.get(0);
+                Picasso.with(MainActivity.this)
+                        .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 250))
+                        .into(imgWatchedBackdrop);
+
+                txtWatchedTitle.setText(watchedVideo.getAnime().getName());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -608,5 +641,12 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == UpdateWatchCode)
+        {
 
+        }
+    }
 }

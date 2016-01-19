@@ -250,7 +250,7 @@ public class AnimeListFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putParcelable("Anime", anime);
             intent.putExtras(bundle);
-            startActivity(intent);
+            getActivity().startActivityForResult(intent, MainActivity.UpdateWatchCode);
             AnimationManager.ActivityStart(getActivity());
 
         }

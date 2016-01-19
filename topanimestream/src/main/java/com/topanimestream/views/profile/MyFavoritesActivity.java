@@ -262,7 +262,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
                 for (int i = 0; i < jsonFavorites.length(); i++) {
 
                     Gson gson = new Gson();
-                    favorites.add(gson.fromJson(jsonFavorites.getJSONObject(i).getJSONObject("Anime").toString(), Anime.class));
+                    favorites.add(gson.fromJson(jsonFavorites.getJSONObject(i).getJSONObject("Anime").toString(), Favorite.class));
 
                 }
                 return null;
@@ -285,13 +285,14 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
                     AsyncTaskTools.execute(new GetFavoriteTask());
                 }
             } else {
+                /*
                 Collections.sort(animes, new Anime());
                 adapter = new AnimeListAdapter(MyFavoritesActivity.this, animes);
                 listViewFavorites.setAdapter(adapter);
                 if (animes.size() > 0)
                     txtNoFavorite.setVisibility(View.GONE);
                 else
-                    txtNoFavorite.setVisibility(View.VISIBLE);
+                    txtNoFavorite.setVisibility(View.VISIBLE);*/
             }
         }
     }

@@ -367,7 +367,8 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     public void OnMoviePlayClick() {
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
-        startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+        startActivityForResult(intent, MainActivity.UpdateWatchCode);
     }
 
     @Override
@@ -377,7 +378,16 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
         intent.putExtra("episodeToPlay", episodeToPlay);
-        startActivity(intent);
+        startActivityForResult(intent, MainActivity.UpdateWatchCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == MainActivity.UpdateWatchCode)
+        {
+            setResult(MainActivity.UpdateWatchCode);
+        }
     }
 
     @Override

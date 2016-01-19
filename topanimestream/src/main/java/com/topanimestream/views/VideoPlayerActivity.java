@@ -12,6 +12,7 @@ import java.util.Collection;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -52,6 +53,7 @@ import com.topanimestream.models.Language;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
+import com.topanimestream.models.WatchedVideo;
 import com.topanimestream.models.subs.Caption;
 import com.topanimestream.models.subs.FormatASS;
 import com.topanimestream.models.subs.FormatSRT;
@@ -137,33 +139,35 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     }
 
     @Override
-    protected void onStop() {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + currentEpisode.getEpisodeId() + ", time:" + getCurrentTime() +  ", duration:" + getDuration() + "}";
-        RequestBody body = RequestBody.create(JSON, jsonBodyString);
+    protected void onPause()
+    {
+        SaveWatchTime();
+        checkForSubtitle = false;
+        super.onPause();
+    }
 
+    public void SaveWatchTime()
+    {
+        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + currentEpisode.getEpisodeId() + ", time:" + getCurrentTime() / 1000 +  ", duration:" + getDuration() / 1000 + "}";
 
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode")
-                .post(body)
-                .addHeader("Authorization", App.accessToken)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
+        ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
             @Override
-            public void onFailure(Request request, IOException e) {
-
+            public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
+                Intent intent = getIntent();
+                //intent.putExtra()
+                setResult(MainActivity.UpdateWatchCode);
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onFailure(Exception e) {
 
             }
         });
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-        checkForSubtitle = false;
         if(player != null)
         {
             try {
@@ -174,7 +178,6 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                 e.printStackTrace();
             }
         }
-        super.onStop();
     }
 
     private long getCurrentTime()
@@ -659,6 +662,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     }
     @Override
     public void EpisodeSelected(Episode episode) {
+        SaveWatchTime(); //Save current episode watch time
         loadingSpinner.setVisibility(View.VISIBLE);
         App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + episode.getScreenshotHD(), 300), imgLoading);
         imgLoading.setVisibility(View.VISIBLE);
