@@ -1,8 +1,11 @@
 package com.topanimestream.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public class WatchedVideo {
+public class WatchedVideo implements Parcelable {
     private int WatchedVideoId;
     private long DurationInSeconds;
     private long TimeInSeconds;
@@ -18,7 +21,29 @@ public class WatchedVideo {
 
     public WatchedVideo() {
     }
+    public WatchedVideo(Parcel in) {
 
+        WatchedVideoId = in.readInt();
+        DurationInSeconds = in.readLong();
+        TimeInSeconds = in.readLong();
+        DisplayTime = in.readString();
+        DisplayDuration = in.readString();
+        long addedDateTime = in.readLong();
+        if(addedDateTime != 0)
+            AddedDate = new Date(addedDateTime);
+        else
+            AddedDate = null;
+        Time = in.readString();
+        Duration = in.readString();
+        IsComplete = in.readByte() != 0;
+        long lastWatchedDateTime = in.readLong();
+        if(lastWatchedDateTime != 0)
+            LastWatchedDate = new Date(lastWatchedDateTime);
+        else
+            LastWatchedDate = null;
+        Episode = in.readParcelable(Episode.getClass().getClassLoader());
+        Anime = in.readParcelable(Anime.getClass().getClassLoader());
+    }
     public int getWatchedVideoId() {
         return WatchedVideoId;
     }
@@ -113,5 +138,27 @@ public class WatchedVideo {
 
     public void setAnime(com.topanimestream.models.Anime anime) {
         Anime = anime;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(WatchedVideoId);
+        dest.writeLong(DurationInSeconds);
+        dest.writeLong(TimeInSeconds);
+        dest.writeString(DisplayTime);
+        dest.writeString(DisplayDuration);
+        dest.writeLong(AddedDate != null ? AddedDate.getTime() : 0);
+        dest.writeString(Time);
+        dest.writeString(Duration);
+        dest.writeByte((byte) (IsComplete ? 1 : 0));
+        dest.writeLong(LastWatchedDate != null ? LastWatchedDate.getTime() : 0);
+        dest.writeParcelable(Episode, flags);
+        dest.writeParcelable(Anime, flags);
+
     }
 }
