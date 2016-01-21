@@ -31,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ import org.kxml2.kdom.Node;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
 import com.topanimestream.custom.CoordinatedHeader;
@@ -122,6 +124,9 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     @Bind(R.id.txtWatchedTitle)
     TextView txtWatchedTitle;
+
+    @Bind(R.id.progressBarWatched)
+    ProgressBar progressBarWatched;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,23 +227,37 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     private void UpdateRecentlyWatched()
     {
+        progressBarWatched.setVisibility(View.VISIBLE);
         ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedVideos?$expand=Episode,Anime&$orderby=LastWatchedDate%20desc&$top=1", WatchedVideo.class, new ODataUtils.Callback<ArrayList<WatchedVideo>>() {
 
             @Override
             public void onSuccess(ArrayList<WatchedVideo> watchedVideos, OdataRequestInfo info) {
                 WatchedVideo watchedVideo = watchedVideos.get(0);
                 Picasso.with(MainActivity.this)
-                        .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 250))
-                        .into(imgWatchedBackdrop);
+                        .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 500))
+                        .into(imgWatchedBackdrop, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                progressBarWatched.setVisibility(View.GONE);
+                            }
 
-                txtWatchedTitle.setText(watchedVideo.getAnime().getName());
+                            @Override
+                            public void onError() {
+                                progressBarWatched.setVisibility(View.GONE);
+                            }
+                        });
+
+                txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - Episode " + watchedVideo.getEpisode().getEpisodeNumber());
+
             }
 
             @Override
             public void onFailure(Exception e) {
+                progressBarWatched.setVisibility(View.GONE);
 
             }
         });
+
     }
     @Override
     protected void onDestroy() {
@@ -576,8 +595,6 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             URL = getString(R.string.odata_path);
         }
 
-        ;
-
         @Override
         protected String doInBackground(Void... params) {
             if (!App.IsNetworkConnected()) {
@@ -644,9 +661,14 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == UpdateWatchCode)
+        if(resultCode == UpdateWatchCode)
         {
-
+            UpdateRecentlyWatched();
         }
+    }
+
+    public interface WatchedVideoCallback
+    {
+        WatchedVideo VideoWatched();
     }
 }

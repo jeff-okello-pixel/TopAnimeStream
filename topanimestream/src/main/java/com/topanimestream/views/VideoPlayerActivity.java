@@ -36,14 +36,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.custom.StrokedRobotoTextView;
@@ -141,6 +133,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     protected void onPause()
     {
+        setResult(MainActivity.UpdateWatchCode);
         SaveWatchTime();
         checkForSubtitle = false;
         super.onPause();
@@ -153,9 +146,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
             @Override
             public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
-                Intent intent = getIntent();
-                //intent.putExtra()
-                setResult(MainActivity.UpdateWatchCode);
+
             }
 
             @Override
@@ -321,7 +312,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
             @Override
             protected void onPreExecute() {
-                subUrl = getString(R.string.sub_host_path) + currentEpisodeSubtitle.getRelativePath();
+                subUrl = getString(R.string.odata_path) + "GetSubtitles(subtitleId=" + currentEpisodeSubtitle.getSubtitleId() + ")";
             }
 
             @Override

@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class WatchedVideo implements Parcelable {
     private int WatchedVideoId;
-    private long DurationInSeconds;
-    private long TimeInSeconds;
+    private double DurationInSeconds;
+    private double TimeInSeconds;
     private String DisplayTime;
     private String DisplayDuration;
     private Date AddedDate;
@@ -24,8 +24,8 @@ public class WatchedVideo implements Parcelable {
     public WatchedVideo(Parcel in) {
 
         WatchedVideoId = in.readInt();
-        DurationInSeconds = in.readLong();
-        TimeInSeconds = in.readLong();
+        DurationInSeconds = in.readDouble();
+        TimeInSeconds = in.readDouble();
         DisplayTime = in.readString();
         DisplayDuration = in.readString();
         long addedDateTime = in.readLong();
@@ -52,19 +52,19 @@ public class WatchedVideo implements Parcelable {
         WatchedVideoId = watchedVideoId;
     }
 
-    public long getDurationInSeconds() {
+    public double getDurationInSeconds() {
         return DurationInSeconds;
     }
 
-    public void setDurationInSeconds(long durationInSeconds) {
+    public void setDurationInSeconds(double durationInSeconds) {
         DurationInSeconds = durationInSeconds;
     }
 
-    public long getTimeInSeconds() {
+    public double getTimeInSeconds() {
         return TimeInSeconds;
     }
 
-    public void setTimeInSeconds(long timeInSeconds) {
+    public void setTimeInSeconds(double timeInSeconds) {
         TimeInSeconds = timeInSeconds;
     }
 
@@ -148,8 +148,8 @@ public class WatchedVideo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(WatchedVideoId);
-        dest.writeLong(DurationInSeconds);
-        dest.writeLong(TimeInSeconds);
+        dest.writeDouble(DurationInSeconds);
+        dest.writeDouble(TimeInSeconds);
         dest.writeString(DisplayTime);
         dest.writeString(DisplayDuration);
         dest.writeLong(AddedDate != null ? AddedDate.getTime() : 0);

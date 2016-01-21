@@ -382,11 +382,11 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         if(requestCode == MainActivity.UpdateWatchCode)
         {
-            setResult(MainActivity.UpdateWatchCode);
+            setResult(MainActivity.UpdateWatchCode, intent);
         }
     }
 

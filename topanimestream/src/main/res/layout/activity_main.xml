@@ -25,32 +25,57 @@
                             android:id="@+id/layRecentlyWatched"
                             android:layout_width="match_parent"
                             android:layout_height="100dp">
+
                             <ImageView
                                 android:id="@+id/imgWatchedBackdrop"
                                 android:layout_width="match_parent"
                                 android:layout_height="100dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/attackontitanbackdrop"/>
+                                android:scaleType="centerCrop" />
+
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="#55000000"></RelativeLayout>
-                            <TextView
-                                android:id="@+id/txtWatchedTitle"
+                                android:background="#6e000000"></RelativeLayout>
+
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Attack on titan"
-                                android:layout_marginLeft="5dp"
-                                style="@style/TextViewWhite"
-                                android:layout_centerVertical="true"/>
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="10dp"
+                                android:orientation="vertical">
+                                    <TextView
+                                        android:id="@+id/txtContinueWatching"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        style="@style/TextViewWhite"
+                                        android:textSize="20sp"
+                                        android:layout_marginBottom="10dp"
+                                        android:text="Continue watching"/>
+
+                                    <TextView
+                                        android:id="@+id/txtWatchedTitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="20sp"
+                                        style="@style/TextViewWhite" />
+                            </LinearLayout>
+
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
                                 android:scaleType="centerCrop"
+                                android:padding="10dp"
                                 android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
                                 android:src="@drawable/ic_play_dark"/>
 
+                            <ProgressBar
+                                android:id="@+id/progressBarWatched"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:indeterminateDrawable="@drawable/progress" />
                         </RelativeLayout>
                         <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
                             android:id="@+id/tabs"
