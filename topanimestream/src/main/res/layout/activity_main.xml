@@ -23,6 +23,7 @@
 
                         <RelativeLayout
                             android:id="@+id/layRecentlyWatched"
+                            android:clickable="true"
                             android:layout_width="match_parent"
                             android:layout_height="100dp">
 
@@ -68,7 +69,7 @@
                                 android:padding="10dp"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
-                                android:src="@drawable/ic_play_dark"/>
+                                android:src="@drawable/ic_play"/>
 
                             <ProgressBar
                                 android:id="@+id/progressBarWatched"

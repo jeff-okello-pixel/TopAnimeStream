@@ -232,13 +232,23 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
             @Override
             public void onSuccess(ArrayList<WatchedVideo> watchedVideos, OdataRequestInfo info) {
-                WatchedVideo watchedVideo = watchedVideos.get(0);
+                final WatchedVideo watchedVideo = watchedVideos.get(0);
                 Picasso.with(MainActivity.this)
                         .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 500))
                         .into(imgWatchedBackdrop, new Callback() {
                             @Override
                             public void onSuccess() {
                                 progressBarWatched.setVisibility(View.GONE);
+                                layRecentlyWatched.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        //TODO continue playing
+                                        watchedVideo.getAnime();
+                                        Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+
+                                        startActivity(intent);
+                                    }
+                                });
                             }
 
                             @Override
