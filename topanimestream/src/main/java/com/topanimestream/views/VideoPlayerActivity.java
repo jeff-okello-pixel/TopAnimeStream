@@ -133,12 +133,16 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     protected void onPause()
     {
-        setResult(MainActivity.UpdateWatchCode);
         SaveWatchTime();
         checkForSubtitle = false;
         super.onPause();
     }
 
+    @Override
+    public void finish() {
+        setResult(MainActivity.UpdateWatchCode);
+        super.finish();
+    }
     public void SaveWatchTime()
     {
         String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + currentEpisode.getEpisodeId() + ", time:" + getCurrentTime() / 1000 +  ", duration:" + getDuration() / 1000 + "}";
@@ -312,7 +316,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
             @Override
             protected void onPreExecute() {
-                subUrl = getString(R.string.odata_path) + "GetSubtitles(subtitleId=" + currentEpisodeSubtitle.getSubtitleId() + ")";
+                subUrl = getString(R.string.odata_path) + "GetSubtitle(subtitleId=" + currentEpisodeSubtitle.getSubtitleId() + ")";
             }
 
             @Override
@@ -358,14 +362,9 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
                     String inputString = FileUtils.inputstreamToCharsetString(input);
                     String[] inputText = inputString.split("\n|\r\n");
-                    if (subUrl.contains(".ass") || subUrl.contains(".ssa")) {
-                        FormatASS formatASS = new FormatASS();
-                        subtitleObject = formatASS.parseFile(subUrl, inputText);
-                    }
-                    else if (subUrl.contains(".srt")) {
-                        FormatSRT formatSRT = new FormatSRT();
-                        subtitleObject = formatSRT.parseFile(subUrl, inputText);
-                    }
+
+                    FormatSRT formatSRT = new FormatSRT();
+                    subtitleObject = formatSRT.parseFile(subUrl, inputText);
 
                     if (subtitleObject != null) {
                         subtitleObject.setOffset(3700);
@@ -492,6 +491,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         controller.ShowMenuItems();
         txtSubtitle.setText("");
         player.start();
+
         if(videoTime != -1)
         {
             player.seekTo(videoTime);
@@ -834,12 +834,31 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         currentVideoQuality = sourceToPlay.getQuality();
         currentVideoLanguageId = String.valueOf(sourceToPlay.getLink().getLanguageId());
 
-        try {
-            player.setDataSource(VideoPlayerActivity.this, Uri.parse(sourceToPlay.getUrl()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        player.prepareAsync();
+        final Source finalSourceToPlay = sourceToPlay;
+        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + currentEpisode.getEpisodeId() + ")", WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
+            @Override
+            public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
+                try {
+                    player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                player.prepareAsync();
+
+                videoTime = (int)watchedVideo.getTimeInSeconds() * 1000;
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                //start the video from the beginning
+                try {
+                    player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
+                player.prepareAsync();
+            }
+        });
     }
 
 }

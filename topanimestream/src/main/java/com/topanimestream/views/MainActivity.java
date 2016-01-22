@@ -54,6 +54,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
 import com.topanimestream.custom.CoordinatedHeader;
+import com.topanimestream.models.Anime;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.WatchedVideo;
 import com.topanimestream.preferences.Prefs;
@@ -242,11 +243,22 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                                 layRecentlyWatched.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        //TODO continue playing
-                                        watchedVideo.getAnime();
-                                        Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                                        final Dialog loadingDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), MainActivity.this);
+                                        ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + watchedVideo.getAnime().getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.Callback<Anime>() {
+                                            @Override
+                                            public void onSuccess(Anime anime, OdataRequestInfo info) {
+                                                loadingDialog.dismiss();
+                                                Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                                                intent.putExtra("anime", anime);
+                                                intent.putExtra("episodeToPlay", watchedVideo.getEpisode());
+                                                MainActivity.this.startActivityForResult(intent, UpdateWatchCode);
+                                            }
 
-                                        startActivity(intent);
+                                            @Override
+                                            public void onFailure(Exception e) {
+                                                loadingDialog.dismiss();
+                                            }
+                                        });
                                     }
                                 });
                             }
