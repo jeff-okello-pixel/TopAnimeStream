@@ -70,7 +70,7 @@ import com.topanimestream.views.profile.LoginActivity;
 
 import butterknife.Bind;
 
-public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetailsMovieFragment.AnimeDetailsMovieCallback, EpisodeListFragment.EpisodeListCallback, View.OnClickListener {
+public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeListFragment.EpisodeListCallback, View.OnClickListener {
     private Anime anime;
     private Vote currentUserVote;
     public static Review currentUserReview;
@@ -364,14 +364,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
     }
 
     @Override
-    public void OnMoviePlayClick() {
-        Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
-        intent.putExtra("anime", anime);
-        intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-        startActivityForResult(intent, MainActivity.UpdateWatchCode);
-    }
-
-    @Override
     public void OnEpisodeSelected(Episode episodeToPlay, ArrayList<Episode> episodes) {
         anime.setEpisodes(episodes);
 
@@ -396,7 +388,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements AnimeDetail
         intent.putExtra("anime", anime);
         //TODO implement watchlist and get episode from there
         intent.putExtra("episodeToPlay", new Episode());
-        startActivity(intent);
+        startActivityForResult(intent, MainActivity.UpdateWatchCode);
     }
 
     private class RemoveVoteTask extends AsyncTask<Void, Void, String> {

@@ -269,7 +269,10 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                             }
                         });
 
-                txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - Episode " + watchedVideo.getEpisode().getEpisodeNumber());
+                if(!watchedVideo.getAnime().isMovie())
+                    txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - " + getString(R.string.Episode) + " " + watchedVideo.getEpisode().getEpisodeNumber());
+                else
+                    txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - " + getString(R.string.movie));
 
             }
 

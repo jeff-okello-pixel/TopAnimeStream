@@ -320,4 +320,5 @@
     <string name="movie">Movie</string>
     <string name="unknown_aired_date">Unknown aired date.</string>
     <string name="error_loading_subtitles">An error has occurred while loading the subtitles</string>
+    <string name="Episode">Episode</string>
 </resources>

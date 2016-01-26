@@ -145,7 +145,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     }
     public void SaveWatchTime()
     {
-        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + currentEpisode.getEpisodeId() + ", time:" + getCurrentTime() / 1000 +  ", duration:" + getDuration() / 1000 + "}";
+        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ", time:" + getCurrentTime() / 1000 +  ", duration:" + getDuration() / 1000 + "}";
 
         ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
             @Override
@@ -264,15 +264,12 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         subtitles = new ArrayList<Subtitle>();
 
         if(!anime.isMovie()) {
-            http://www.topanimestream.com/odata/Subtitles?$filter=AnimeId%20eq%201656%20and%20EpisodeId%20eq%2029259&$expand=Language
             getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=" + currentEpisode.getEpisodeId() + ")?$expand=Link($expand=Language)";
-            //new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).queryString("episodeId", String.valueOf(currentEpisode.getEpisodeId())).expand("Link/Language").formatJson().build();
             getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId() + "&$expand=Language";
-            //new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + currentEpisode.getEpisodeId()).expand("Language").formatJson().build();
         }
         else {
-            getSourcesUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("GetSources").queryString("animeId", String.valueOf(anime.getAnimeId())).expand("Link/Language").formatJson().build();
-            getSubsUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Subtitles").filter("AnimeId%20eq%20" + anime.getAnimeId()).expand("Language").formatJson().build();
+            getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=null)?$expand=Link($expand=Language)";
+            getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=Language";
         }
 
         ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.Callback<ArrayList<Source>>() {
