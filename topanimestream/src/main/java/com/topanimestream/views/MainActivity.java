@@ -233,46 +233,52 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
             @Override
             public void onSuccess(ArrayList<WatchedVideo> watchedVideos, OdataRequestInfo info) {
-                final WatchedVideo watchedVideo = watchedVideos.get(0);
-                Picasso.with(MainActivity.this)
-                        .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 500))
-                        .into(imgWatchedBackdrop, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                progressBarWatched.setVisibility(View.GONE);
-                                layRecentlyWatched.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        final Dialog loadingDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), MainActivity.this);
-                                        ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + watchedVideo.getAnime().getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.Callback<Anime>() {
-                                            @Override
-                                            public void onSuccess(Anime anime, OdataRequestInfo info) {
-                                                loadingDialog.dismiss();
-                                                Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                                                intent.putExtra("anime", anime);
-                                                intent.putExtra("episodeToPlay", watchedVideo.getEpisode());
-                                                MainActivity.this.startActivityForResult(intent, UpdateWatchCode);
-                                            }
+                if(watchedVideos.size() > 0) {
+                    final WatchedVideo watchedVideo = watchedVideos.get(0);
+                    Picasso.with(MainActivity.this)
+                            .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 500))
+                            .into(imgWatchedBackdrop, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    progressBarWatched.setVisibility(View.GONE);
+                                    layRecentlyWatched.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            final Dialog loadingDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), MainActivity.this);
+                                            ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + watchedVideo.getAnime().getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.Callback<Anime>() {
+                                                @Override
+                                                public void onSuccess(Anime anime, OdataRequestInfo info) {
+                                                    loadingDialog.dismiss();
+                                                    Intent intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                                                    intent.putExtra("anime", anime);
+                                                    intent.putExtra("episodeToPlay", watchedVideo.getEpisode());
+                                                    MainActivity.this.startActivityForResult(intent, UpdateWatchCode);
+                                                }
 
-                                            @Override
-                                            public void onFailure(Exception e) {
-                                                loadingDialog.dismiss();
-                                            }
-                                        });
-                                    }
-                                });
-                            }
+                                                @Override
+                                                public void onFailure(Exception e) {
+                                                    loadingDialog.dismiss();
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
 
-                            @Override
-                            public void onError() {
-                                progressBarWatched.setVisibility(View.GONE);
-                            }
-                        });
+                                @Override
+                                public void onError() {
+                                    progressBarWatched.setVisibility(View.GONE);
+                                }
+                            });
 
-                if(!watchedVideo.getAnime().isMovie())
-                    txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - " + getString(R.string.Episode) + " " + watchedVideo.getEpisode().getEpisodeNumber());
+                    if (!watchedVideo.getAnime().isMovie())
+                        txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - " + getString(R.string.Episode) + " " + watchedVideo.getEpisode().getEpisodeNumber());
+                    else
+                        txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - " + getString(R.string.movie));
+                }
                 else
-                    txtWatchedTitle.setText(watchedVideo.getAnime().getName() + " - " + getString(R.string.movie));
+                {
+                    layRecentlyWatched.setVisibility(View.GONE);
+                }
 
             }
 

@@ -157,6 +157,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             menuSubtitles = toolbar.getMenu().findItem(R.id.menuSubtitles);
             menuLanguage = toolbar.getMenu().findItem(R.id.menuLanguage);
             menuSettings = toolbar.getMenu().findItem(R.id.menuSettings);
+
             mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
             leftDrawerEpisodes = (ListView) v.findViewById(R.id.leftDrawerEpisodes);
 
@@ -282,9 +283,9 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
         installPrevNextListeners();
     }
     //called from the activity
-    public void ShowMenuItems()
+    public void ShowMenuItems(boolean showSubtitles)
     {
-        menuSubtitles.setVisible(true);
+        menuSubtitles.setVisible(showSubtitles);
         menuLanguage.setVisible(true);
         menuSettings.setVisible(true);
     }
@@ -310,6 +311,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             if(!containsLanguage)
                 currentVideoLanguages.add(source.getLink().getLanguage());
         }
+
     }
     private void ShowLanguageMenu()
     {
@@ -401,62 +403,61 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     }
     private void ShowSubtitleMenu()
     {
-        //add None option
+        if(currentVideoSubtitles.size() > 0) {
+            //add None option
+            ArrayList<Subtitle> tempSubList = currentVideoSubtitles;
+            if (tempSubList.get(0).getSubtitleId() != 0)
+                tempSubList.add(0, new Subtitle());
+            Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
+            final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
+            ListAdapter adapter = new ArrayAdapter<Subtitle>(
+                    mContext,
+                    android.R.layout.select_dialog_singlechoice,
+                    android.R.id.text1,
+                    finalSubtitleArray) {
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    //User super class to create the View
+                    View v = super.getView(position, convertView, parent);
+                    TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                    if (position == 0) {
 
-        ArrayList<Subtitle> tempSubList = currentVideoSubtitles;
-        if(tempSubList.get(0).getSubtitleId() != 0)
-            tempSubList.add(0, new Subtitle());
-        Subtitle[] subtitleArray = new Subtitle[currentVideoSubtitles.size()];
-        final Subtitle[] finalSubtitleArray = currentVideoSubtitles.toArray(subtitleArray);
-        ListAdapter adapter = new ArrayAdapter<Subtitle>(
-                mContext,
-                android.R.layout.select_dialog_singlechoice,
-                android.R.id.text1,
-                finalSubtitleArray){
-            public View getView(int position, View convertView, ViewGroup parent) {
-                //User super class to create the View
-                View v = super.getView(position, convertView, parent);
-                TextView tv = (TextView)v.findViewById(android.R.id.text1);
-                if(position == 0)
-                {
+                        //Put the image on the TextView
+                        tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.flag_none, 0, 0, 0);
 
-                    //Put the image on the TextView
-                    tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.flag_none, 0, 0, 0);
+                        //Add margin between image and text (support various screen densities)
+                        int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                        tv.setCompoundDrawablePadding(dp5);
 
-                    //Add margin between image and text (support various screen densities)
-                    int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
-                    tv.setCompoundDrawablePadding(dp5);
+                        tv.setText(mContext.getString(R.string.none));
+                    } else {
+                        Subtitle sub = finalSubtitleArray[position];
+                        //Put the image on the TextView
+                        tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);
 
-                    tv.setText(mContext.getString(R.string.none));
-                }
-                else {
-                    Subtitle sub = finalSubtitleArray[position];
-                    //Put the image on the TextView
-                    tv.setCompoundDrawablesWithIntrinsicBounds(sub.getLanguage().getFlagDrawable(), 0, 0, 0);
+                        //Add margin between image and text (support various screen densities)
+                        int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
+                        tv.setCompoundDrawablePadding(dp5);
 
-                    //Add margin between image and text (support various screen densities)
-                    int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
-                    tv.setCompoundDrawablePadding(dp5);
-
-                    tv.setText(sub.getLanguage().getName() + (!sub.getSpecification().equals("") ? "(" + sub.getSpecification() + ")" : ""));
-                }
-                return v;
-            }
-        };
-
-        new AlertDialog.Builder(mContext)
-                .setTitle(mContext.getString(R.string.choose_option))
-                .setSingleChoiceItems(adapter, mCallback.GetCurrentSubtitlePosition(), new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int position) {
-                        Subtitle selectedSub = finalSubtitleArray[position];
-                        if (position != mCallback.GetCurrentSubtitlePosition()) {
-                            mCallback.SubtitleSelected(selectedSub);
-                        } else {
-                            Toast.makeText(mContext, mContext.getString(R.string.already_have) + selectedSub.getLanguage().getName() + selectedSub.getSpecification(), Toast.LENGTH_LONG).show();
-                        }
-                        dialog.dismiss();
+                        tv.setText(sub.getLanguage().getName() + (!sub.getSpecification().equals("") ? "(" + sub.getSpecification() + ")" : ""));
                     }
-                }).show();
+                    return v;
+                }
+            };
+
+            new AlertDialog.Builder(mContext)
+                    .setTitle(mContext.getString(R.string.choose_option))
+                    .setSingleChoiceItems(adapter, mCallback.GetCurrentSubtitlePosition(), new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int position) {
+                            Subtitle selectedSub = finalSubtitleArray[position];
+                            if (position != mCallback.GetCurrentSubtitlePosition()) {
+                                mCallback.SubtitleSelected(selectedSub);
+                            } else {
+                                Toast.makeText(mContext, mContext.getString(R.string.already_have) + selectedSub.getLanguage().getName() + selectedSub.getSpecification(), Toast.LENGTH_LONG).show();
+                            }
+                            dialog.dismiss();
+                        }
+                    }).show();
+        }
     }
     private class DrawerListener implements DrawerLayout.DrawerListener {
         @Override

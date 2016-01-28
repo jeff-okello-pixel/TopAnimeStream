@@ -485,7 +485,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         setVideoSize();
         controller.SetSubtitles(subtitles);
         controller.SetSources(sources);
-        controller.ShowMenuItems();
+        controller.ShowMenuItems(subtitles.size() > 0);
         txtSubtitle.setText("");
         player.start();
 
@@ -832,7 +832,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         currentVideoLanguageId = String.valueOf(sourceToPlay.getLink().getLanguageId());
 
         final Source finalSourceToPlay = sourceToPlay;
-        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + currentEpisode.getEpisodeId() + ")", WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
+        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ")", WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
             @Override
             public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
                 try {

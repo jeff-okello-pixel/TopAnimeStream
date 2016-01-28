@@ -23,7 +23,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
     private Date AiredDate;
     private String Screenshot;
     private String ScreenshotHD;
-    private int Order;
+    private float Order;
     private String Thumbnail;
     private boolean IsAvailable;
     private Date AvailableDate;
@@ -64,7 +64,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
             AiredDate = null;
         Screenshot = in.readString();
         ScreenshotHD = in.readString();
-        Order = in.readInt();
+        Order = in.readFloat();
         Thumbnail = in.readString();
         IsAvailable = in.readByte() != 0;
         long AvailableDateTime = in.readLong();
@@ -122,11 +122,11 @@ public class Episode implements Parcelable, Comparator<Episode> {
         ScreenshotHD = screenshotHD;
     }
 
-    public int getOrder() {
+    public float getOrder() {
         return Order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(float order) {
         Order = order;
     }
 
@@ -230,7 +230,7 @@ public class Episode implements Parcelable, Comparator<Episode> {
         dest.writeLong(AiredDate != null ? AiredDate.getTime() : 0);
         dest.writeString(Screenshot);
         dest.writeString(ScreenshotHD);
-        dest.writeInt(Order);
+        dest.writeFloat(Order);
         dest.writeString(Thumbnail);
         dest.writeByte((byte) (IsAvailable ? 1 : 0));
         dest.writeLong(AvailableDate != null ? AvailableDate.getTime() : 0);
