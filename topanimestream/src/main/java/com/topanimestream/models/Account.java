@@ -14,6 +14,7 @@ public class Account implements Parcelable {
     private int AccountId;
     private String Username;
     private String ProfilePic;
+    private String Backdrop;
     private Date AddedDate;
     private Date LastUpdatedDate;
     private String About;
@@ -26,7 +27,6 @@ public class Account implements Parcelable {
     private String PreferredVideoQuality;
     private String PreferredAudioLang;
     private String PreferredSubtitleLang;
-    private String imageHostPath = App.getContext().getResources().getString(R.string.image_host_path);
 
     public Account() {
     }
@@ -35,6 +35,7 @@ public class Account implements Parcelable {
         AccountId = in.readInt();
         Username = in.readString();
         ProfilePic = in.readString();
+        Backdrop = in.readString();
         AddedDate = new Date(in.readLong());
         LastUpdatedDate = new Date(in.readLong());
         About = in.readString();
@@ -46,6 +47,14 @@ public class Account implements Parcelable {
         PreferredVideoQuality = in.readString();
         PreferredAudioLang = in.readString();
         PreferredSubtitleLang = in.readString();
+    }
+
+    public String getBackdrop() {
+        return Backdrop;
+    }
+
+    public void setBackdrop(String backdrop) {
+        Backdrop = backdrop;
     }
 
     public ArrayList<Role> getRoles() {
@@ -178,6 +187,7 @@ public class Account implements Parcelable {
         dest.writeInt(AccountId);
         dest.writeString(Username);
         dest.writeString(ProfilePic);
+        dest.writeString(Backdrop);
         dest.writeLong(AddedDate.getTime());
         dest.writeLong(LastUpdatedDate.getTime());
         dest.writeString(About);

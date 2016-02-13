@@ -87,7 +87,7 @@ public class AnimeDetailsMovieFragment extends Fragment implements View.OnClickL
             App.imageLoader.displayImage(ImageUtils.resizeImage(getString(R.string.image_host_path) + anime.getBackdropPath(), 500), imgPoster);
 
         txtTitle.setText(anime.getName());
-        txtDescription.setText(anime.getDescription(getActivity()));
+        txtDescription.setText(anime.getSynopsis());
         txtGenres.setText(anime.getGenresFormatted());
         if (anime.getRating() != null)
             rtbRating.setRating((float) Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));

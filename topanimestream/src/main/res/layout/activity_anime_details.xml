@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -44,6 +43,7 @@
                                     android:indeterminateDrawable="@drawable/progress" />
                         </RelativeLayout>
 
+
                         <android.support.v7.widget.Toolbar
                             android:id="@+id/toolbar"
                             android:layout_width="match_parent"
@@ -61,7 +61,7 @@
             android:id="@+id/episodefragContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabPlay"

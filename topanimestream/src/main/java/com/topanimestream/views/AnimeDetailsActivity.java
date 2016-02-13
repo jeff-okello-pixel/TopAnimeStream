@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -184,17 +185,16 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
             anime = savedInstanceState.getParcelable("anime");
         }
         Picasso.Builder builder = new Picasso.Builder(this);
-        builder.listener(new Picasso.Listener()
-        {
+        builder.listener(new Picasso.Listener() {
             @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
-            {
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                 exception.printStackTrace();
             }
         });
         builder.build()
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 600))
                 .into(target);
+
 
     }
 

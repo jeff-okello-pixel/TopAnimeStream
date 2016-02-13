@@ -25,7 +25,6 @@
             android:id="@+id/imgHeaderProfilePic"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/attackontitanbackdrop"
             app:border_color="#EEEEEE"
             app:border_width="4dp"
             app:shadow="true"

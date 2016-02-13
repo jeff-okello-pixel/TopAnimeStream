@@ -50,6 +50,7 @@ import org.kxml2.kdom.Node;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
@@ -192,14 +193,21 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                 }
             });
 
-            //TODO fix image
             View header = navigationView.getHeaderView(0);
             ImageView imgHeaderBackground = (ImageView) header.findViewById(R.id.imgHeaderBackground);
+            CircularImageView imgHeaderProfilePic = (CircularImageView) header.findViewById(R.id.imgHeaderProfilePic);
             TextView txtUsername = (TextView) header.findViewById(R.id.txtUsername);
             TextView txtJoinedDate = (TextView) header.findViewById(R.id.txtJoinedDate);
             TextView txtAbout = (TextView) header.findViewById(R.id.txtAbout);
 
-            imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.attackontitanbackdrop));
+            Picasso.with(this)
+                    .load(getString(R.string.image_host_path) + App.currentUser.getProfilePic())
+                    .into(imgHeaderProfilePic);
+
+            Picasso.with(this)
+                    .load(getString(R.string.image_host_path) + App.currentUser.getBackdrop())
+                    .into(imgHeaderBackground);
+
             txtUsername.setText(App.currentUser.getUsername().substring(0, 1).toUpperCase() + App.currentUser.getUsername().substring(1));
             txtJoinedDate.setText("Since: " + DateUtils.getRelativeTimeSpanString(App.currentUser.getAddedDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));
             txtAbout.setText(App.currentUser.getAbout());

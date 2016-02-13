@@ -81,7 +81,7 @@ public class AnimeDetailsFragment extends Fragment {
             imgBackdrop.setVisibility(View.GONE);
 
         txtTitle.setText(anime.getName());
-        txtDescription.setText(anime.getDescription(getActivity()));
+        txtDescription.setText(anime.getSynopsis());
         txtGenres.setText(anime.getGenresFormatted());
         if (anime.getRating() != null)
             rtbRating.setRating((float) Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));

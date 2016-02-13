@@ -67,7 +67,7 @@ public class FavoriteListAdapter extends BaseAdapter {
         if (holder.txtGenres.getText().equals(""))
             holder.txtGenres.setVisibility(View.GONE);
         holder.imgPoster.setImageResource(android.R.color.transparent);
-        holder.txtDescription.setText(anime.getDescription(context));
+        holder.txtDescription.setText(anime.getSynopsis());
         App.imageLoader.displayImage(ImageUtils.resizeImage(context.getString(R.string.image_host_path) + anime.getPosterPath(), 185), holder.imgPoster);
 
         return vi;

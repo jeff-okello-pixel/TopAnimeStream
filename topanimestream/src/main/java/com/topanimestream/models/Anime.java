@@ -235,7 +235,17 @@ public class Anime implements Parcelable, Comparator<Anime> {
         AnimeId = animeId;
     }
 
-    public String getDescription(Context context) {
+    public String getDescription() {
+        for (AnimeInformation animeInfo : this.getAnimeInformations()) {
+            if (String.valueOf(animeInfo.getLanguageId()).equals(App.currentLanguageId)) {
+                if(animeInfo.getDescription() != null)
+                    return animeInfo.getDescription().trim();
+            }
+        }
+        return "";
+    }
+
+    public String getSynopsis() {
         for (AnimeInformation animeInfo : this.getAnimeInformations()) {
             if (String.valueOf(animeInfo.getLanguageId()).equals(App.currentLanguageId)) {
                 if (animeInfo.getOverview() != null && !animeInfo.getOverview().equals(""))
