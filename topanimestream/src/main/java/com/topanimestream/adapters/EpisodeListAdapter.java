@@ -12,23 +12,27 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 import com.topanimestream.R;
 import com.topanimestream.enums.Languages;
+import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.utilities.ImageUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class EpisodeListAdapter extends RecyclerView.Adapter {
+public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
     private final Context context;
     private ArrayList<EpisodeItem> mItems = new ArrayList<>();
     private EpisodeListAdapter.OnItemClickListener mItemClickListener;
+    private Anime anime;
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1, TYPE_UNAVAILABLE = 2;
-    public EpisodeListAdapter(Context context, ArrayList<Episode> episodes) {
+    public EpisodeListAdapter(Context context, Anime anime) {
         this.context = context;
-        addItems(episodes);
+        this.anime = anime;
+        addItems(anime.getEpisodes());
     }
 
     public interface OnItemClickListener {
@@ -39,8 +43,64 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
         mItemClickListener = listener;
     }
 
+    public void addItems(ArrayList<Episode> items) {
+        if (items != null) {
+            for (Episode item : items) {
+                mItems.add(new EpisodeItem(item));
+            }
+            notifyDataSetChanged();
+        }
+    }
+
+    public void addLoading() {
+        mItems.add(new EpisodeItem(true));
+        notifyDataSetChanged();
+    }
+
+    public void removeLoading() {
+        if(mItems.get(getBasicItemCount() - 1).isLoadingItem)
+            mItems.remove(getBasicItemCount() - 1);
+    }
+
+    public boolean isLoading() {
+        if (getBasicItemCount() <= 0) return false;
+        return getItemViewType(getBasicItemCount() - 1) == TYPE_LOADING;
+    }
+
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public boolean useHeader() {
+        return true;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_anime_details, parent, false);
+        return new EpisodeListAdapter.HeaderViewHolder(v);
+    }
+
+    @Override
+    public void onBindHeaderView(RecyclerView.ViewHolder viewHolder, int position) {
+        final HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
+        headerViewHolder.txtSysnopsis.setText(anime.getSynopsis());
+    }
+
+    @Override
+    public boolean useFooter() {
+        return false;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateFooterViewHolder(ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindFooterView(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateBasicItemViewHolder(ViewGroup parent, int viewType) {
         View v;
         switch (viewType) {
             case TYPE_LOADING:
@@ -58,9 +118,9 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindBasicItemView(RecyclerView.ViewHolder holder, int position) {
         Episode episode = getItem(position);
-        switch(getItemViewType(position))
+        switch(getBasicItemType(position))
         {
             case TYPE_NORMAL:
                 final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
@@ -90,47 +150,19 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void addItems(ArrayList<Episode> items) {
-        if (items != null) {
-            for (Episode item : items) {
-                mItems.add(new EpisodeItem(item));
-            }
-            notifyDataSetChanged();
-        }
-    }
-
-    public void addLoading() {
-        mItems.add(new EpisodeItem(true));
-        notifyDataSetChanged();
-    }
-
-    public void removeLoading() {
-        if(mItems.get(getItemCount() - 1).isLoadingItem)
-            mItems.remove(getItemCount() - 1);
-    }
-
-    public boolean isLoading() {
-        if (getItemCount() <= 0) return false;
-        return getItemViewType(getItemCount() - 1) == TYPE_LOADING;
-    }
-
     @Override
-    public int getItemViewType(int position) {
-        EpisodeItem episodeItem = mItems.get(position);
-
-
-        if(episodeItem.isLoadingItem)
-            return TYPE_LOADING;
-        else if(episodeItem.episode.isAvailable())
-            return TYPE_NORMAL;
-        else
-            return TYPE_UNAVAILABLE;
-    }
-
-    @Override
-    public int getItemCount() {
+    public int getBasicItemCount() {
         return mItems.size();
     }
+
+    @Override
+    public int getBasicItemType(int position) {
+        if(mItems.get(position).isLoadingItem)
+            return TYPE_LOADING;
+        else
+            return TYPE_NORMAL;
+    }
+
 
     public Episode getItem(int position) {
         return mItems.get(position).episode;
@@ -200,6 +232,19 @@ public class EpisodeListAdapter extends RecyclerView.Adapter {
             this.itemView = itemView;
         }
 
+    }
+
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.expand_text_view)
+        ExpandableTextView txtSysnopsis;
+
+        View itemView;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            this.itemView = itemView;
+        }
     }
 
     class EpisodeItem {

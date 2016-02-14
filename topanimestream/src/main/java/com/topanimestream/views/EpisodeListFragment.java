@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import com.topanimestream.App;
 import com.topanimestream.adapters.EpisodeListAdapter;
+import com.topanimestream.models.Anime;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.R;
 import com.topanimestream.utilities.ODataUtils;
@@ -27,7 +28,6 @@ public class EpisodeListFragment extends Fragment  {
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    private int animeId;
     public int currentSkip = 0;
     public int currentLimit = 40;
     public boolean isLoading = false;
@@ -38,14 +38,15 @@ public class EpisodeListFragment extends Fragment  {
     private LinearLayoutManager mLayoutManager;
     private EpisodeListAdapter mAdapter;
     private EpisodeListCallback callback;
+    private Anime anime;
     public EpisodeListFragment() {
 
     }
 
-    public static EpisodeListFragment newInstance(int animeId) {
+    public static EpisodeListFragment newInstance(Anime anime) {
         EpisodeListFragment ttFrag = new EpisodeListFragment();
         Bundle args = new Bundle();
-        args.putInt("animeId", animeId);
+        args.putParcelable("anime", anime);
         ttFrag.setArguments(args);
         return ttFrag;
     }
@@ -110,10 +111,10 @@ public class EpisodeListFragment extends Fragment  {
         final View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        animeId = getArguments().getInt("animeId");
+        anime = getArguments().getParcelable("anime");
 
         if (savedInstanceState != null) {
-            animeId = savedInstanceState.getInt("animeId");
+            anime = savedInstanceState.getParcelable("anime");
         }
 
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -122,7 +123,7 @@ public class EpisodeListFragment extends Fragment  {
         mRecyclerView.addOnScrollListener(mScrollListener);
 
         //adapter should only ever be created once on fragment initialise.
-        mAdapter = new EpisodeListAdapter(getActivity(), null);
+        mAdapter = new EpisodeListAdapter(getActivity(), anime);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -134,7 +135,7 @@ public class EpisodeListFragment extends Fragment  {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("animeId", animeId);
+        outState.putParcelable("anime", anime);
         super.onSaveInstanceState(outState);
     }
 
@@ -142,7 +143,7 @@ public class EpisodeListFragment extends Fragment  {
     {
         isLoading = true;
         mAdapter.addLoading();
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + animeId + "&$expand=EpisodeInformations,Links&$orderby=Order&$top=" + currentLimit + "&$skip=" + currentSkip, Episode.class, new ODataUtils.Callback<ArrayList<Episode>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links&$orderby=Order&$top=" + currentLimit + "&$skip=" + currentSkip, Episode.class, new ODataUtils.Callback<ArrayList<Episode>>() {
             @Override
             public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
                 isLoading = false;

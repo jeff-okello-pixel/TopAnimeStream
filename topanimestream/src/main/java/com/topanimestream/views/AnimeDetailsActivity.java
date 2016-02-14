@@ -147,7 +147,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction trans = fm.beginTransaction();
-        trans.add(episodefragContainer.getId(), EpisodeListFragment.newInstance(anime.getAnimeId()), "frag_episodes");
+        trans.add(episodefragContainer.getId(), EpisodeListFragment.newInstance(anime), "frag_episodes");
         trans.commit();
         fm.executePendingTransactions();
 

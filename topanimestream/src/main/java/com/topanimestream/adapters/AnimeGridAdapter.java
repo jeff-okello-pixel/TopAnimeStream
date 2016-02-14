@@ -216,7 +216,7 @@ public class AnimeGridAdapter extends HeaderRecyclerViewAdapter {
             }
         }
         notifyDataSetChanged();
-        //Remove the isloading
+        //getBasicItemCount the isloading
         if (getBasicItemCount() <= 0) return;
         try {
             OverviewItem overviewItem = mItems.get(getBasicItemCount() - items.size() - 1);
