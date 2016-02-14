@@ -82,6 +82,8 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     private String currentVideoQuality;
     private double lastSubtitleTime;
     private int videoTime = -1;
+    private boolean hasToFinish = false;
+    private boolean hasSavedTime = false;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -133,7 +135,8 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     protected void onPause()
     {
-        SaveWatchTime();
+        if(!hasSavedTime)
+            SaveWatchTime();
         checkForSubtitle = false;
         super.onPause();
     }
@@ -141,8 +144,13 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     public void finish() {
         setResult(MainActivity.UpdateWatchCode);
-        super.finish();
+        hasToFinish = true;
+        if(hasSavedTime)
+            super.finish();
+        else
+            SaveWatchTime();
     }
+
     public void SaveWatchTime()
     {
         String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ", time:" + getCurrentTime() / 1000 +  ", duration:" + getDuration() / 1000 + "}";
@@ -150,7 +158,10 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
             @Override
             public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
-
+                if(hasToFinish) {
+                    hasSavedTime = true;
+                    finish();
+                }
             }
 
             @Override

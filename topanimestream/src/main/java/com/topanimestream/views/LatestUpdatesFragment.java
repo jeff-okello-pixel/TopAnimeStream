@@ -163,7 +163,7 @@ public class LatestUpdatesFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
                     intent.putExtra("anime", anime);
                     intent.putExtra("episodeToPlay", update.getEpisode());
-                    startActivity(intent);
+                    getActivity().startActivityForResult(intent, MainActivity.UpdateWatchCode);
                 }
 
                 @Override

@@ -288,8 +288,8 @@ public class LatestUpdatesGridAdapter extends HeaderRecyclerViewAdapter {
         @Override
         public void onClick(View view) {
             if (mItemClickListener != null) {
-                int position = getPosition();
-                Update item = getItem(position).update;
+                int position = getAdapterPosition();
+                Update item = getItem(position - (useHeader() ? 1 : 0)).update;
                 mItemClickListener.onItemClick(view, item, position);
             }
         }
