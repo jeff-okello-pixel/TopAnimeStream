@@ -126,7 +126,6 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateHidden" >
 
             <intent-filter>

@@ -82,8 +82,6 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     private String currentVideoQuality;
     private double lastSubtitleTime;
     private int videoTime = -1;
-    private boolean hasToFinish = false;
-    private boolean hasSavedTime = false;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -135,33 +133,27 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     protected void onPause()
     {
-        if(!hasSavedTime)
-            SaveWatchTime();
+        SaveWatchTime();
         checkForSubtitle = false;
         super.onPause();
     }
 
     @Override
     public void finish() {
-        setResult(MainActivity.UpdateWatchCode);
-        hasToFinish = true;
-        if(hasSavedTime)
-            super.finish();
-        else
-            SaveWatchTime();
+        super.finish();
     }
 
     public void SaveWatchTime()
     {
-        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ", time:" + getCurrentTime() / 1000 +  ", duration:" + getDuration() / 1000 + "}";
+        double duration = getDuration() / 1000;
+        double timeInSeconds = getCurrentTime() / 1000;
+
+        String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ", time:" + timeInSeconds +  ", duration:" + duration + "}";
 
         ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
             @Override
             public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
-                if(hasToFinish) {
-                    hasSavedTime = true;
-                    finish();
-                }
+
             }
 
             @Override
@@ -169,6 +161,17 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
             }
         });
+
+        //TODO test this
+        WatchedVideo watchedVideo = new WatchedVideo();
+        watchedVideo.setDurationInSeconds(duration);
+        watchedVideo.setTimeInSeconds(timeInSeconds);
+        watchedVideo.setEpisode(!anime.isMovie() ? currentEpisode : null);
+        watchedVideo.setAnime(anime);
+        Intent data = new Intent();
+        data.putExtra("watchedvideo", watchedVideo);
+
+        setResult(MainActivity.UpdateWatchCode, data);
     }
     @Override
     protected void onStop() {
