@@ -202,6 +202,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                             startActivity(new Intent(MainActivity.this, MyFavoritesActivity.class));
                             break;
                         case R.id.nav_item_watchlist:
+                            startActivity(new Intent(MainActivity.this, MyWatchlistActivity.class));
                             break;
                         case R.id.nav_item_share:
                             Intent sendIntent = new Intent();
