@@ -2,24 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/navigation_item_favorites"
+            android:id="@+id/nav_item_favorites"
             android:checked="true"
             android:icon="@drawable/ic_favorite"
             android:title="@string/menu_favorites" />
 
         <item
-            android:id="@+id/navigation_item_history"
+            android:id="@+id/nav_item_watchlist"
             android:icon="@drawable/ic_history_white"
             android:title="@string/menu_history" />
 
         <item
-            android:id="@+id/navigation_item_share"
+            android:id="@+id/nav_item_share"
             android:icon="@drawable/ic_share"
             android:title="@string/menu_share" />
 
         <item
-            android:id="@+id/navigation_item_settings"
+            android:id="@+id/nav_item_settings"
             android:icon="@drawable/ic_tools"
             android:title="@string/menu_settings" />
+
+        <item
+            android:id="@+id/nav_item_logout"
+            android:icon="@drawable/ic_action_logout"
+            android:title="@string/menu_logout" />
     </group>
 </menu>

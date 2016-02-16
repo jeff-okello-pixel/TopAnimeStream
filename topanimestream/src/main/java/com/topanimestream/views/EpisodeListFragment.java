@@ -111,10 +111,11 @@ public class EpisodeListFragment extends Fragment  {
         final View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        anime = getArguments().getParcelable("anime");
-
         if (savedInstanceState != null) {
             anime = savedInstanceState.getParcelable("anime");
+        }
+        else {
+            anime = getArguments().getParcelable("anime");
         }
 
         mLayoutManager = new LinearLayoutManager(getActivity());

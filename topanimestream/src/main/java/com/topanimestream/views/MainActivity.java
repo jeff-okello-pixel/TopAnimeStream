@@ -50,12 +50,20 @@ import org.kxml2.kdom.Node;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.google.gson.Gson;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.topanimestream.App;
 import com.topanimestream.custom.CoordinatedHeader;
 import com.topanimestream.models.Anime;
+import com.topanimestream.models.CurrentUser;
+import com.topanimestream.models.OdataErrorMessage;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.WatchedVideo;
 import com.topanimestream.preferences.Prefs;
@@ -188,6 +196,27 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem item) {
+                    switch(item.getItemId())
+                    {
+                        case R.id.nav_item_favorites:
+                            startActivity(new Intent(MainActivity.this, MyFavoritesActivity.class));
+                            break;
+                        case R.id.nav_item_watchlist:
+                            break;
+                        case R.id.nav_item_share:
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, "http://www.topanimestream.com/");
+                            sendIntent.setType("text/plain");
+                            startActivity(sendIntent);
+                            break;
+                        case R.id.nav_item_settings:
+                            startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                            break;
+                        case R.id.nav_item_logout:
+
+                            break;
+                    }
                     mDrawerLayout.closeDrawers();
                     return true;
                 }
@@ -623,24 +652,19 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
             AnimationManager.ActivityStart(this);
         } else if (menuItem.equals(getString(R.string.menu_logout))) {
-            AsyncTaskTools.execute(new LogoutTask());
+            AsyncTaskTools.execute(new LogOutTask());
         }
 
 
     }
 
-    private class LogoutTask extends AsyncTask<Void, Void, String> {
+    private class LogOutTask extends AsyncTask<Void, Void, String> {
+        boolean isValidToken = false;
         private Dialog busyDialog;
-
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String URL;
-        private String method = "LogOut";
 
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging_out), MainActivity.this);
-            URL = getString(R.string.odata_path);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), MainActivity.this);
         }
 
         @Override
@@ -648,44 +672,61 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             if (!App.IsNetworkConnected()) {
                 return getString(R.string.error_internet_connection);
             }
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            request.addProperty("token", App.accessToken);
 
-            envelope.headerOut = new Element[1];
-            Element lang = new Element().createElement("", "Lang");
-            lang.addChild(Node.TEXT, Locale.getDefault().getLanguage());
-            envelope.headerOut[0] = lang;
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            SoapPrimitive result = null;
+            OkHttpClient client = App.getHttpClient();
+
+            final MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType,'"' + App.currentUser.getToken() + '"');
+
+            Request request = new Request.Builder()
+                    .url(getString(R.string.api_path) + "LogOut")
+                    .post(body)
+                    .build();
+
             try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive) envelope.getResponse();
-
-                return null;
-            } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
+                Gson gson = App.getGson();
+                Response response = client.newCall(request).execute();
+                if(response.isSuccessful())
+                {
+                    return null;
                 }
+                else
+                {
+                    OdataErrorMessage errorMessage = gson.fromJson(response.body().string(), OdataErrorMessage.class);
+                    if(errorMessage.getMessage() != null &&  !errorMessage.getMessage().equals(""))
+                    {
+                        if(errorMessage.getMessage().equals("Token is not valid."))
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return errorMessage.getMessage();
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
 
                 e.printStackTrace();
             }
-            return getString(R.string.error_logout);
+            return getString(R.string.error_login);
         }
 
         @Override
         protected void onPostExecute(String error) {
-            DialogManager.dismissBusyDialog(busyDialog);
+            try {
+                DialogManager.dismissBusyDialog(busyDialog);
+            } catch (Exception e) {
+            }
+
             if (error != null) {
                 Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                prefs.edit().putString("AccessToken", null).commit();
-                App.accessToken = null;
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+                if(isValidToken) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                }
             }
         }
     }
