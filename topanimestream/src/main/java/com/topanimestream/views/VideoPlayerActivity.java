@@ -82,6 +82,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     private String currentVideoQuality;
     private double lastSubtitleTime;
     private int videoTime = -1;
+    private boolean finishCalled = false;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -133,13 +134,17 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     protected void onPause()
     {
-        SaveWatchTime();
+        if(!finishCalled)
+            SaveWatchTime();
+
         checkForSubtitle = false;
         super.onPause();
     }
 
     @Override
     public void finish() {
+        finishCalled = true;
+        SaveWatchTime();
         super.finish();
     }
 
@@ -162,7 +167,6 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
             }
         });
 
-        //TODO test this
         WatchedVideo watchedVideo = new WatchedVideo();
         watchedVideo.setDurationInSeconds(duration);
         watchedVideo.setTimeInSeconds(timeInSeconds);
@@ -249,7 +253,10 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                                            checkSubs();
                                            sleep(50);
                                        }
-                                   } catch (InterruptedException e) {
+                                       if(txtSubtitle != null)
+                                           txtSubtitle.setText("");
+                                   }
+                                   catch (Exception e) {
                                        e.printStackTrace();
                                    }
 

@@ -41,9 +41,22 @@ public class WatchedVideo implements Parcelable {
             LastWatchedDate = new Date(lastWatchedDateTime);
         else
             LastWatchedDate = null;
-        Episode = in.readParcelable(Episode.getClass().getClassLoader());
-        Anime = in.readParcelable(Anime.getClass().getClassLoader());
+        Episode = in.readParcelable(com.topanimestream.models.Episode.class.getClassLoader());
+        Anime = in.readParcelable(com.topanimestream.models.Anime.class.getClassLoader());
     }
+
+    public static final Creator<WatchedVideo> CREATOR = new Creator<WatchedVideo>() {
+        @Override
+        public WatchedVideo createFromParcel(Parcel in) {
+            return new WatchedVideo(in);
+        }
+
+        @Override
+        public WatchedVideo[] newArray(int size) {
+            return new WatchedVideo[size];
+        }
+    };
+
     public int getWatchedVideoId() {
         return WatchedVideoId;
     }
@@ -155,7 +168,7 @@ public class WatchedVideo implements Parcelable {
         dest.writeLong(AddedDate != null ? AddedDate.getTime() : 0);
         dest.writeString(Time);
         dest.writeString(Duration);
-        dest.writeByte((byte) (IsComplete ? 1 : 0));
+        dest.writeByte((byte) (IsComplete != null && IsComplete ? 1 : 0));
         dest.writeLong(LastWatchedDate != null ? LastWatchedDate.getTime() : 0);
         dest.writeParcelable(Episode, flags);
         dest.writeParcelable(Anime, flags);
