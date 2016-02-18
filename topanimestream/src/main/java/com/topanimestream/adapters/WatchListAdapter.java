@@ -2,6 +2,7 @@ package com.topanimestream.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,12 @@ import butterknife.ButterKnife;
 
 public class WatchListAdapter extends RecyclerView.Adapter {
 
-    private final Context context;
     private WatchListAdapter.OnItemClickListener mItemClickListener;
     private ArrayList<WatchedAnimeItem> mItems;
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
+    private LayoutInflater mInflater;
     public WatchListAdapter(Context context, ArrayList<WatchedAnime> watchedAnimes) {
-        this.context = context;
+        mInflater = LayoutInflater.from(context);
         mItems = new ArrayList<>();
         addItems(watchedAnimes);
     }
@@ -33,11 +34,11 @@ public class WatchListAdapter extends RecyclerView.Adapter {
         View v;
         switch (viewType) {
             case TYPE_LOADING:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_loading, parent, false);
+                v = mInflater.inflate(R.layout.row_loading, parent, false);
                 return new WatchListAdapter.LoadingHolder(v);
             case TYPE_NORMAL:
             default:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_watch, parent, false);
+                v = mInflater.inflate(R.layout.row_watch, parent, false);
                 return new WatchListAdapter.ViewHolder(v);
         }
     }
