@@ -215,7 +215,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                             startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                             break;
                         case R.id.nav_item_logout:
-
+                            AsyncTaskTools.execute(new LogOutTask());
                             break;
                     }
                     mDrawerLayout.closeDrawers();
@@ -665,7 +665,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
         @Override
         protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging), MainActivity.this);
+            busyDialog = DialogManager.showBusyDialog(getString(R.string.logging_out), MainActivity.this);
         }
 
         @Override
@@ -724,10 +724,8 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             if (error != null) {
                 Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
             } else {
-                if(isValidToken) {
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    finish();
-                }
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
             }
         }
     }

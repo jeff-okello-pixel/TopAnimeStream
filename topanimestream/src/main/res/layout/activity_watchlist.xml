@@ -3,29 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
         <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
-        <TextView
-            android:id="@+id/txtNoWatch"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="20sp"
-            android:text="@string/empty_history"/>
 
-        <ProgressBar
-            android:id="@+id/progressBarLoading"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/translucent"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:focusable="true"
-            android:focusableInTouchMode="false"
-            android:scrollbars="vertical"
+        <RelativeLayout
+            android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/txtNoWatch"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="20sp"
+                android:text="@string/empty_history"/>
+
+            <ProgressBar
+                android:id="@+id/progressBarLoading"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/translucent"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
 </RelativeLayout>

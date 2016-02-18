@@ -5,12 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.topanimestream.R;
 import com.topanimestream.models.WatchedAnime;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class WatchListAdapter extends RecyclerView.Adapter {
@@ -21,6 +24,7 @@ public class WatchListAdapter extends RecyclerView.Adapter {
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
     public WatchListAdapter(Context context, ArrayList<WatchedAnime> watchedAnimes) {
         this.context = context;
+        mItems = new ArrayList<>();
         addItems(watchedAnimes);
     }
 
@@ -29,8 +33,8 @@ public class WatchListAdapter extends RecyclerView.Adapter {
         View v;
         switch (viewType) {
             case TYPE_LOADING:
-                //v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode_loading, parent, false);
-                //return new EpisodeListAdapter.SimpleHolder(v);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_loading, parent, false);
+                return new WatchListAdapter.LoadingHolder(v);
             case TYPE_NORMAL:
             default:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_watch, parent, false);
@@ -45,7 +49,9 @@ public class WatchListAdapter extends RecyclerView.Adapter {
         {
             case TYPE_NORMAL:
                 final ViewHolder watchedAnimeHolder = (ViewHolder) holder;
-
+                watchedAnimeHolder.txtTitle.setText(watchedAnime.getAnime().getName());
+                watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
+                watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
                 break;
             case TYPE_LOADING:
                 break;
@@ -74,7 +80,32 @@ public class WatchListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mItems.size();
+    }
+
+    public void addLoading() {
+        mItems.add(new WatchedAnimeItem(true));
+        notifyDataSetChanged();
+    }
+
+    public void removeLoading() {
+        if(getItemCount() > 0) {
+            if (mItems.get(getItemCount() - 1).isLoadingItem)
+                mItems.remove(getItemCount() - 1);
+        }
+    }
+
+    public boolean isLoading() {
+        if (getItemCount() <= 0) return false;
+        return getItemViewType(getItemCount() - 1) == TYPE_LOADING;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mItems.get(position).isLoadingItem)
+            return TYPE_LOADING;
+        else
+            return TYPE_NORMAL;
     }
 
     public interface OnItemClickListener {
@@ -87,6 +118,12 @@ public class WatchListAdapter extends RecyclerView.Adapter {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View itemView;
+
+        @Bind(R.id.txtTitle)
+        TextView txtTitle;
+
+        @Bind(R.id.progressBarWatch)
+        ProgressBar progressBarWatch;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -103,6 +140,17 @@ public class WatchListAdapter extends RecyclerView.Adapter {
                 mItemClickListener.onItemClick(view, item, position);
             }
         }
+    }
+
+    class LoadingHolder extends RecyclerView.ViewHolder {
+
+        View itemView;
+
+        public LoadingHolder(View itemView) {
+            super(itemView);
+            this.itemView = itemView;
+        }
+
     }
 
     class WatchedAnimeItem {

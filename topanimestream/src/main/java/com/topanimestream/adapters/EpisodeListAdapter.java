@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
@@ -104,7 +103,7 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
         View v;
         switch (viewType) {
             case TYPE_LOADING:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode_loading, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_loading, parent, false);
                 return new EpisodeListAdapter.SimpleHolder(v);
             case TYPE_NORMAL:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode, parent, false);
