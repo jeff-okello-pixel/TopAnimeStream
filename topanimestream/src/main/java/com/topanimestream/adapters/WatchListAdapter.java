@@ -8,7 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.daimajia.swipe.SimpleSwipeListener;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl;
 import com.topanimestream.R;
 import com.topanimestream.models.WatchedAnime;
 
@@ -17,12 +22,15 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class WatchListAdapter extends RecyclerView.Adapter {
+public class WatchListAdapter extends RecyclerSwipeAdapter {
 
     private WatchListAdapter.OnItemClickListener mItemClickListener;
     private ArrayList<WatchedAnimeItem> mItems;
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
     private LayoutInflater mInflater;
+    protected SwipeItemRecyclerMangerImpl mItemManger = new SwipeItemRecyclerMangerImpl(this);
+
+
     public WatchListAdapter(Context context, ArrayList<WatchedAnime> watchedAnimes) {
         mInflater = LayoutInflater.from(context);
         mItems = new ArrayList<>();
@@ -38,7 +46,7 @@ public class WatchListAdapter extends RecyclerView.Adapter {
                 return new WatchListAdapter.LoadingHolder(v);
             case TYPE_NORMAL:
             default:
-                v = mInflater.inflate(R.layout.row_watch, parent, false);
+                v = mInflater.inflate(R.layout.swipe, parent, false);
                 return new WatchListAdapter.ViewHolder(v);
         }
     }
@@ -51,8 +59,24 @@ public class WatchListAdapter extends RecyclerView.Adapter {
             case TYPE_NORMAL:
                 final ViewHolder watchedAnimeHolder = (ViewHolder) holder;
                 watchedAnimeHolder.txtTitle.setText(watchedAnime.getAnime().getName());
-                watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
-                watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
+                //watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
+                //watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
+
+                watchedAnimeHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+                watchedAnimeHolder.swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                    @Override
+                    public void onOpen(SwipeLayout layout) {
+
+                    }
+                });
+                watchedAnimeHolder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
+                    @Override
+                    public void onDoubleClick(SwipeLayout layout, boolean surface) {
+
+                    }
+                });
+
+                mItemManger.bindView(watchedAnimeHolder.itemView, position);
                 break;
             case TYPE_LOADING:
                 break;
@@ -109,6 +133,11 @@ public class WatchListAdapter extends RecyclerView.Adapter {
             return TYPE_NORMAL;
     }
 
+    @Override
+    public int getSwipeLayoutResourceId(int position) {
+        return R.id.swipe;
+    }
+
     public interface OnItemClickListener {
         void onItemClick(View v, WatchedAnime watchedAnime, int position);
     }
@@ -118,18 +147,16 @@ public class WatchListAdapter extends RecyclerView.Adapter {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        View itemView;
 
-        @Bind(R.id.txtTitle)
         TextView txtTitle;
-
-        @Bind(R.id.progressBarWatch)
-        ProgressBar progressBarWatch;
+        //ProgressBar progressBarWatch;
+        SwipeLayout swipeLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
-            this.itemView = itemView;
+            txtTitle = (TextView) itemView.findViewById(R.id.text_data);
+            //progressBarWatch = (ProgressBar) itemView.findViewById(R.id.progressBarWatch);
+            swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
             itemView.setOnClickListener(this);
         }
 
