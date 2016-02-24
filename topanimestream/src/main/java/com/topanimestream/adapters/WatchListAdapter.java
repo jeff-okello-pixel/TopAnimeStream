@@ -2,13 +2,12 @@ package com.topanimestream.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daimajia.swipe.SimpleSwipeListener;
 import com.daimajia.swipe.SwipeLayout;
@@ -59,17 +58,17 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
             case TYPE_NORMAL:
                 final ViewHolder watchedAnimeHolder = (ViewHolder) holder;
                 watchedAnimeHolder.txtTitle.setText(watchedAnime.getAnime().getName());
-                //watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
-                //watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
+                watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
+                watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
 
-                watchedAnimeHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
-                watchedAnimeHolder.swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                watchedAnimeHolder.laySwipe.setShowMode(SwipeLayout.ShowMode.PullOut);
+                watchedAnimeHolder.laySwipe.addSwipeListener(new SimpleSwipeListener() {
                     @Override
                     public void onOpen(SwipeLayout layout) {
 
                     }
                 });
-                watchedAnimeHolder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
+                watchedAnimeHolder.laySwipe.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
                     @Override
                     public void onDoubleClick(SwipeLayout layout, boolean surface) {
 
@@ -120,6 +119,12 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
         }
     }
 
+    public void deleteItem(int position)
+    {
+        mItems.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public boolean isLoading() {
         if (getItemCount() <= 0) return false;
         return getItemViewType(getItemCount() - 1) == TYPE_LOADING;
@@ -135,11 +140,12 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
 
     @Override
     public int getSwipeLayoutResourceId(int position) {
-        return R.id.swipe;
+        return R.id.laySwipe;
     }
 
     public interface OnItemClickListener {
         void onItemClick(View v, WatchedAnime watchedAnime, int position);
+        void onDeleteClick(View v, WatchedAnime watchedAnime, int position);
     }
 
     public void setOnItemClickListener(WatchListAdapter.OnItemClickListener listener) {
@@ -148,16 +154,24 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        @Bind(R.id.txtTitle)
         TextView txtTitle;
-        //ProgressBar progressBarWatch;
-        SwipeLayout swipeLayout;
+
+        @Bind(R.id.progressBarWatch)
+        ProgressBar progressBarWatch;
+
+        @Bind(R.id.btnDelete)
+        ImageView btnDelete;
+
+        @Bind(R.id.laySwipe)
+        SwipeLayout laySwipe;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            txtTitle = (TextView) itemView.findViewById(R.id.text_data);
-            //progressBarWatch = (ProgressBar) itemView.findViewById(R.id.progressBarWatch);
-            swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
+            ButterKnife.bind(this, itemView);
+
             itemView.setOnClickListener(this);
+            btnDelete.setOnClickListener(this);
         }
 
         @Override
@@ -165,7 +179,15 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
             if (mItemClickListener != null) {
                 int position = getAdapterPosition();
                 WatchedAnime item = getItem(position);
-                mItemClickListener.onItemClick(view, item, position);
+                switch(view.getId())
+                {
+                    case R.id.btnDelete:
+                        mItemClickListener.onDeleteClick(view, item, position);
+                        break;
+                    default:
+                        mItemClickListener.onItemClick(view, item, position);
+                        break;
+                }
             }
         }
     }

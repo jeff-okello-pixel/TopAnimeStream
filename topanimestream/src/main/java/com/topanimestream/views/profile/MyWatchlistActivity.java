@@ -103,6 +103,11 @@ public class MyWatchlistActivity extends TASBaseActivity {
             intent.putExtras(bundle);
             startActivityForResult(intent, MainActivity.UpdateWatchCode);
         }
+
+        @Override
+        public void onDeleteClick(View v, WatchedAnime watchedAnime, int position) {
+            mAdapter.deleteItem(position);
+        }
     };
 
     @Override
