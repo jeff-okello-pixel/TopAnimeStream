@@ -67,57 +67,13 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/imgPrivate"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_lock_black_48dp"/>
-
                 <TextView
                     android:id="@+id/txtTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/imgPrivate"
                     android:textSize="18sp"
-                    android:layout_centerVertical="true"
                     android:textColor="@color/black" />
-            </RelativeLayout>
 
-
-            <TextView
-                android:id="@+id/txtAddedDate"
-                android:includeFontPadding="false"
-                android:textSize="13sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/txtLastWatch"
-                android:includeFontPadding="false"
-                android:textSize="13sp"
-                android:layout_marginBottom="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/txtProgress"
-                android:layout_marginBottom="-4dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/transparent" />
-
-            <ProgressBar
-                android:id="@+id/progressBarWatch"
-                android:layout_below="@id/txtProgress"
-                style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </com.daimajia.swipe.SwipeLayout>

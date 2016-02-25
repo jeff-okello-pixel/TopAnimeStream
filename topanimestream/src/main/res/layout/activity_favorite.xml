@@ -4,25 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
         <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
-    	<TextView 
-    	    android:id="@+id/txtNoFavorite"
-    	    android:visibility="gone"
-    	    android:layout_height="wrap_content"
-    	    android:layout_width="wrap_content"
-    	    android:layout_centerInParent="true"
-    	    android:textSize="20sp"
-    	    android:text="@string/no_favorite"/>
-        <com.mobeta.android.dslv.DragSortListView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:dslv="http://schemas.android.com/apk/res/com.topanimestream"
+
+        <RelativeLayout
             android:layout_below="@id/toolbar"
-            android:id="@+id/listViewFavorites"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:dividerHeight="1px"
-            dslv:track_drag_sort="false"
-            dslv:drag_enabled="true"
-            dslv:float_alpha="0.6"
-            dslv:drag_scroll_start="0.7"
-            dslv:use_default_controller="true" />
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/txtNoFavorite"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="20sp"
+                android:text="@string/no_favorite"/>>
+
+            <ProgressBar
+                android:id="@+id/progressBarLoading"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/translucent"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
 </RelativeLayout>

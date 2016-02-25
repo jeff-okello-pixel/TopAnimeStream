@@ -145,7 +145,7 @@
     <string name="pro_version_needed">Pro version needed</string>
     <string name="buy_full_version">Buy full version</string>
     <string name="loading_favorites">Loading favorites...</string>
-    <string name="error_loading_favorites">An error has occured while loading the favorites. Try to login again.</string>
+    <string name="error_loading_favorites">An error has occurred while loading the favorites.</string>
     <string name="deleting_from_favorites">Deleting from favorite...</string>
     <string name="error_remove_favorite">An error has occurred while removing the favorite</string>
     <string name="error_adding_anime">An error has occurred while adding the anime</string>
@@ -323,4 +323,5 @@
     <string name="Episode">Episode</string>
     <string name="error_loading_watchlist">An error has occurred while loading your watchlist.</string>
     <string name="error_deleting_watchanime">An error has occurred while deleting the anime from the list.</string>
+    <string name="added">Added</string>
 </resources>

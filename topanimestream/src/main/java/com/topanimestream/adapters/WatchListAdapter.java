@@ -29,10 +29,12 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
     private ArrayList<WatchedAnimeItem> mItems;
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1;
     private LayoutInflater mInflater;
+    private Context mContext;
     protected SwipeItemRecyclerMangerImpl mItemManger = new SwipeItemRecyclerMangerImpl(this);
 
 
     public WatchListAdapter(Context context, ArrayList<WatchedAnime> watchedAnimes) {
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         mItems = new ArrayList<>();
         addItems(watchedAnimes);
@@ -63,7 +65,7 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
                 watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
                 watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
                 watchedAnimeHolder.txtProgress.setText(watchedAnime.getTotalWatchedEpisodes() + "/" + (watchedAnime.getAnime().isMovie() ? 1 : watchedAnime.getAnime().getEpisodeCount()) + ", " + watchedAnime.getWatchType().getName());
-                watchedAnimeHolder.txtAddedDate.setText("Added: " + DateUtils.getRelativeTimeSpanString(watchedAnime.getAddedDate().getTime()));
+                watchedAnimeHolder.txtAddedDate.setText(mContext.getString(R.string.added) + ": " + DateUtils.getRelativeTimeSpanString(watchedAnime.getAddedDate().getTime()));
 
                 if(watchedAnime.getLastWatchedDate() != null)
                     watchedAnimeHolder.txtLastWatch.setText("Last watch: " + DateUtils.getRelativeTimeSpanString(watchedAnime.getLastWatchedDate().getTime()));
