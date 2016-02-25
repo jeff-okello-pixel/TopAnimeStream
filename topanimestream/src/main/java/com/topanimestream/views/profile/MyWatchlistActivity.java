@@ -106,7 +106,19 @@ public class MyWatchlistActivity extends TASBaseActivity {
 
         @Override
         public void onDeleteClick(View v, WatchedAnime watchedAnime, int position) {
+            ODataUtils.DeleteEntity(getString(R.string.odata_path) + "/WatchedAnimes(" + watchedAnime.getWatchedAnimeId() + ")", new ODataUtils.DeleteCallback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(MyWatchlistActivity.this, getString(R.string.error_deleting_watchanime), Toast.LENGTH_SHORT).show();
+                }
+            });
             mAdapter.deleteItem(position);
+
         }
     };
 

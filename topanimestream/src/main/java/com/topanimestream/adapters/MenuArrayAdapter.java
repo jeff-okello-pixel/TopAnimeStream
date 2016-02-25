@@ -40,7 +40,7 @@ public class MenuArrayAdapter extends ArrayAdapter<String> {
             textViewIcon = re.getDrawable(R.drawable.ic_action_profile);
         }else if (values[position].equals(re.getString(R.string.menu_favorites))) {
             textViewIcon = re.getDrawable(R.drawable.ic_favorite);
-        } else if (values[position].equals(re.getString(R.string.menu_history))) {
+        } else if (values[position].equals(re.getString(R.string.menu_mylist))) {
             textViewIcon = re.getDrawable(R.drawable.ic_history_white);
         } else if (values[position].equals(re.getString(R.string.menu_share))) {
             textViewIcon = re.getDrawable(R.drawable.ic_share);

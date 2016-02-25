@@ -27,7 +27,7 @@
     <!-- Titles -->
     <string name="title_alert_languages">Elija su idioma preferido</string>
     <string name="title_favorites">Favoritos</string>
-    <string name="title_history">Vistos</string>
+    <string name="title_watchlist">Vistos</string>
     <string name="title_providers">Proveedores</string>
 
     <!-- Loadings -->
@@ -57,7 +57,7 @@
     <!-- Menu drawer -->
     <string name="menu_myprofile">Mi perfil</string>
     <string name="menu_favorites">Favoritos</string>
-    <string name="menu_history">Vistos</string>
+    <string name="menu_mylist">Vistos</string>
     <string name="menu_share">Compartir</string>
     <string name="menu_settings">Configuración</string>
     <string name="menu_logout">Salir</string>
@@ -322,4 +322,5 @@
     <string name="error_loading_subtitles">An error has occurred while loading the subtitles</string>
     <string name="Episode">Episode</string>
     <string name="error_loading_watchlist">An error has occurred while loading your watchlist.</string>
+    <string name="error_deleting_watchanime">An error has occurred while deleting the anime from the list.</string>
 </resources>

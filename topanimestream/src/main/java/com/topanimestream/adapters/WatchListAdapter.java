@@ -2,11 +2,13 @@ package com.topanimestream.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SimpleSwipeListener;
@@ -60,6 +62,20 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
                 watchedAnimeHolder.txtTitle.setText(watchedAnime.getAnime().getName());
                 watchedAnimeHolder.progressBarWatch.setMax(watchedAnime.getAnime().getEpisodeCount());
                 watchedAnimeHolder.progressBarWatch.setProgress(watchedAnime.getTotalWatchedEpisodes());
+                watchedAnimeHolder.txtProgress.setText(watchedAnime.getTotalWatchedEpisodes() + "/" + (watchedAnime.getAnime().isMovie() ? 1 : watchedAnime.getAnime().getEpisodeCount()) + ", " + watchedAnime.getWatchType().getName());
+                watchedAnimeHolder.txtAddedDate.setText("Added: " + DateUtils.getRelativeTimeSpanString(watchedAnime.getAddedDate().getTime()));
+
+                if(watchedAnime.getLastWatchedDate() != null)
+                    watchedAnimeHolder.txtLastWatch.setText("Last watch: " + DateUtils.getRelativeTimeSpanString(watchedAnime.getLastWatchedDate().getTime()));
+                else if(watchedAnime.getAnime().isAvailable())
+                    watchedAnimeHolder.txtLastWatch.setText("Never watched on TopAnimeStream.");
+                else
+                    watchedAnimeHolder.txtLastWatch.setText("Not available on TopAnimeStream.");
+
+                if(watchedAnime.isPrivate())
+                    watchedAnimeHolder.imgPrivate.setVisibility(View.VISIBLE);
+                else
+                    watchedAnimeHolder.imgPrivate.setVisibility(View.GONE);
 
                 watchedAnimeHolder.laySwipe.setShowMode(SwipeLayout.ShowMode.PullOut);
                 watchedAnimeHolder.laySwipe.addSwipeListener(new SimpleSwipeListener() {
@@ -160,11 +176,23 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
         @Bind(R.id.progressBarWatch)
         ProgressBar progressBarWatch;
 
+        @Bind(R.id.txtProgress)
+        TextView txtProgress;
+
         @Bind(R.id.btnDelete)
-        ImageView btnDelete;
+        RelativeLayout btnDelete;
 
         @Bind(R.id.laySwipe)
         SwipeLayout laySwipe;
+
+        @Bind(R.id.txtAddedDate)
+        TextView txtAddedDate;
+
+        @Bind(R.id.txtLastWatch)
+        TextView txtLastWatch;
+
+        @Bind(R.id.imgPrivate)
+        ImageView imgPrivate;
 
         public ViewHolder(View itemView) {
             super(itemView);

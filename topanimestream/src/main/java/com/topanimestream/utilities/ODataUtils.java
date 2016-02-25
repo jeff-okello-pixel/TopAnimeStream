@@ -64,6 +64,39 @@ public class ODataUtils {
             }
         });
     }
+    public static void DeleteEntity(final String url, final DeleteCallback callback)
+    {
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", App.accessToken)
+                .delete()
+                .build();
+
+        OkHttpClient client = App.getHttpClient();
+
+        client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                callback.onFailure(e);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        callback.onSuccess();
+                        return;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    callback.onFailure(e);
+                }
+                callback.onFailure(new NetworkErrorException("Failed to fetch the data."));
+            }
+        });
+    }
     public static <T> void GetEntity(String url, final Class<T> classType, final Callback<T> callback)
     {
         Request request = new Request.Builder()
@@ -162,6 +195,12 @@ public class ODataUtils {
     public interface Callback<T>
     {
         void onSuccess(T entity, OdataRequestInfo info);
+        void onFailure(Exception e);
+    }
+
+    public interface DeleteCallback
+    {
+        void onSuccess();
         void onFailure(Exception e);
     }
 

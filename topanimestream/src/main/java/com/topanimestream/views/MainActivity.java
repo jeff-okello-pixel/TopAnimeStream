@@ -199,10 +199,10 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                     switch(item.getItemId())
                     {
                         case R.id.nav_item_favorites:
-                            startActivity(new Intent(MainActivity.this, MyFavoritesActivity.class));
+                            startActivityForResult(new Intent(MainActivity.this, MyFavoritesActivity.class), UpdateWatchCode);
                             break;
                         case R.id.nav_item_watchlist:
-                            startActivity(new Intent(MainActivity.this, MyWatchlistActivity.class));
+                            startActivityForResult(new Intent(MainActivity.this, MyWatchlistActivity.class), UpdateWatchCode);
                             break;
                         case R.id.nav_item_share:
                             Intent sendIntent = new Intent();
@@ -640,7 +640,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         else if (menuItem.equals(getString(R.string.menu_favorites))) {
             startActivity(new Intent(MainActivity.this, MyFavoritesActivity.class));
             AnimationManager.ActivityStart(this);
-        } else if (menuItem.equals(getString(R.string.menu_history))) {
+        } else if (menuItem.equals(getString(R.string.menu_mylist))) {
             startActivity(new Intent(MainActivity.this, MyWatchlistActivity.class));
             AnimationManager.ActivityStart(this);
         } else if (menuItem.equals(getString(R.string.menu_share))) {

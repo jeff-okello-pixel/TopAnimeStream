@@ -60,7 +60,7 @@
         <activity
             android:name=".views.profile.MyWatchlistActivity"
             android:configChanges="locale|layoutDirection"
-            android:label="History" >
+            android:label="My List" >
         </activity>
         <activity
             android:name=".views.AnimeSearchActivity"

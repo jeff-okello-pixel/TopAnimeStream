@@ -27,7 +27,7 @@
     <!-- Titles -->
     <string name="title_alert_languages">Choisissez votre langue préférée</string>
     <string name="title_favorites">Favoris</string>
-    <string name="title_history">Liste de visionnage</string>
+    <string name="title_watchlist">Liste de visionnage</string>
     <string name="title_providers">Fournisseurs</string>
 
     <!-- Loadings -->
@@ -57,7 +57,7 @@
     <!-- Menu drawer -->
     <string name="menu_myprofile">Mon profil</string>
     <string name="menu_favorites">Favoris</string>
-    <string name="menu_history">Liste de visionnage</string>
+    <string name="menu_mylist">Liste de visionnage</string>
     <string name="menu_share">Partager</string>
     <string name="menu_settings">Configuration</string>
     <string name="menu_pro">Acheter la version pro</string>
@@ -321,4 +321,5 @@
     <string name="error_loading_subtitles">An error has occurred while loading the subtitles</string>
     <string name="Episode">Episode</string>
     <string name="error_loading_watchlist">An error has occurred while loading your watchlist.</string>
+    <string name="error_deleting_watchanime">An error has occurred while deleting the anime from the list.</string>
 </resources>

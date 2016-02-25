@@ -1,62 +1,124 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.daimajia.swipe.SwipeLayout
         android:id="@+id/laySwipe"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
         <LinearLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="#FF5534"
-            android:gravity="center"
-            android:weightSum="10">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <android.support.percent.PercentRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/btnDelete"
-                android:clickable="true"
-                android:layout_width="27dp"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_delete_white_48dp" />
+                <RelativeLayout
+                    android:id="@+id/btnEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray"
+                    android:clickable="true"
+                    app:layout_heightPercent="100%"
+                    app:layout_aspectRatio="100%">
 
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_mode_edit_white_48dp" />
+
+                </RelativeLayout>
+            </android.support.percent.PercentRelativeLayout>
+
+            <android.support.percent.PercentRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <RelativeLayout
+                    android:id="@+id/btnDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    app:layout_heightPercent="100%"
+                    app:layout_aspectRatio="100%"
+                    android:background="#FF5534">
+
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_delete_white_48dp" />
+
+                </RelativeLayout>
+            </android.support.percent.PercentRelativeLayout>
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="5dp"
-            android:padding="10dp">
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imgPrivate"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_lock_black_48dp"/>
+
+                <TextView
+                    android:id="@+id/txtTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/imgPrivate"
+                    android:textSize="18sp"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/black" />
+            </RelativeLayout>
+
 
             <TextView
-                android:id="@+id/txtTitle"
-                android:textSize="16sp"
+                android:id="@+id/txtAddedDate"
+                android:includeFontPadding="false"
+                android:textSize="13sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/txtLastWatch"
+                android:includeFontPadding="false"
+                android:textSize="13sp"
+                android:layout_marginBottom="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/txtProgress"
+                android:layout_marginBottom="-4dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                android:textSize="13sp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/transparent" />
 
-                <ProgressBar
-                    android:id="@+id/progressBarWatch"
-                    style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginTop="24dp" />
+            <ProgressBar
+                android:id="@+id/progressBarWatch"
+                android:layout_below="@id/txtProgress"
+                style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/txtProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    android:layout_centerInParent="true" />
-
-            </RelativeLayout>
         </LinearLayout>
     </com.daimajia.swipe.SwipeLayout>
-</LinearLayout>
+</RelativeLayout>

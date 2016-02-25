@@ -68,7 +68,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
         final Item[] items = {
                 new Item(getString(R.string.edit_profile), R.drawable.ic_edit),
                 new Item(getString(R.string.menu_favorites), R.drawable.ic_star),
-                new Item(getString(R.string.menu_history), R.drawable.ic_history_black),
+                new Item(getString(R.string.menu_mylist), R.drawable.ic_history_black),
                 new Item(getString(R.string.menu_votes), R.drawable.ic_vote),
                 new Item(getString(R.string.reviews), R.drawable.ic_review),
                 new Item(getString(R.string.friends), R.drawable.ic_friends),
@@ -143,7 +143,7 @@ public class MyProfileActivity extends TASBaseActivity implements View.OnClickLi
             startActivity(new Intent(MyProfileActivity.this, EditProfileActivity.class));
         }else if(txtMenuTitle.getText().equals(getString(R.string.menu_favorites))){
             startActivity(new Intent(MyProfileActivity.this, MyFavoritesActivity.class));
-        }else if(txtMenuTitle.getText().equals(getString(R.string.menu_history))){
+        }else if(txtMenuTitle.getText().equals(getString(R.string.menu_mylist))){
             startActivity(new Intent(MyProfileActivity.this, MyWatchlistActivity.class));
         }else if(txtMenuTitle.getText().equals(getString(R.string.menu_votes))) {
             startActivity(new Intent(MyProfileActivity.this, MyVotesActivity.class));
