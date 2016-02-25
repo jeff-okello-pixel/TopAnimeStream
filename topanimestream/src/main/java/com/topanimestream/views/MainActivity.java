@@ -278,7 +278,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                             @Override
                             public void onClick(View view) {
                                 final Dialog loadingDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), MainActivity.this);
-                                ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + watchedVideo.getAnime().getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.Callback<Anime>() {
+                                ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + watchedVideo.getAnime().getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.EntityCallback<Anime>() {
                                     @Override
                                     public void onSuccess(Anime anime, OdataRequestInfo info) {
                                         loadingDialog.dismiss();
@@ -312,7 +312,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
     private void FetchRecentlyWatched()
     {
         progressBarWatched.setVisibility(View.VISIBLE);
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedVideos?$expand=Episode,Anime&$orderby=LastWatchedDate%20desc&$top=1", WatchedVideo.class, new ODataUtils.Callback<ArrayList<WatchedVideo>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedVideos?$expand=Episode,Anime&$orderby=LastWatchedDate%20desc&$top=1", WatchedVideo.class, new ODataUtils.EntityCallback<ArrayList<WatchedVideo>>() {
 
             @Override
             public void onSuccess(ArrayList<WatchedVideo> watchedVideos, OdataRequestInfo info) {
@@ -751,9 +751,11 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == UpdateWatchCode)
         {
-            WatchedVideo watchedVideo = data.getParcelableExtra("watchedvideo");
-            if(watchedVideo != null)
-                UpdateRecentlyWatched(watchedVideo);
+            if(data != null) {
+                WatchedVideo watchedVideo = data.getParcelableExtra("watchedvideo");
+                if (watchedVideo != null)
+                    UpdateRecentlyWatched(watchedVideo);
+            }
         }
     }
 

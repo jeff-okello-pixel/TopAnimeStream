@@ -144,7 +144,7 @@ public class EpisodeListFragment extends Fragment  {
     {
         isLoading = true;
         mAdapter.addLoading();
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links&$orderby=Order&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", Episode.class, new ODataUtils.Callback<ArrayList<Episode>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links&$orderby=Order&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", Episode.class, new ODataUtils.EntityCallback<ArrayList<Episode>>() {
             @Override
             public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
                 isLoading = false;

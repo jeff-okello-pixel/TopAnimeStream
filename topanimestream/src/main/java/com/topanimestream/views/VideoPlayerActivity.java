@@ -155,7 +155,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
         String jsonBodyString = "{ animeId:" + anime.getAnimeId() + ", episodeId:" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ", time:" + timeInSeconds +  ", duration:" + duration + "}";
 
-        ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
+        ODataUtils.PostWithEntityResponse(getString(R.string.odata_path) + "WatchedVideos/WatchTime?$expand=Anime,Episode", jsonBodyString, WatchedVideo.class, new ODataUtils.EntityCallback<WatchedVideo>() {
             @Override
             public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
 
@@ -293,7 +293,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
             getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=Language";
         }
 
-        ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.Callback<ArrayList<Source>>() {
+        ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.EntityCallback<ArrayList<Source>>() {
             @Override
             public void onSuccess(ArrayList<Source> newSources, OdataRequestInfo info) {
                 String defaultLanguageId = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3");
@@ -311,7 +311,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
             }
         });
 
-        ODataUtils.GetEntityList(getSubsUrl, Subtitle.class, new ODataUtils.Callback<ArrayList<Subtitle>>() {
+        ODataUtils.GetEntityList(getSubsUrl, Subtitle.class, new ODataUtils.EntityCallback<ArrayList<Subtitle>>() {
             @Override
             public void onSuccess(ArrayList<Subtitle> newSubtitles, OdataRequestInfo info) {
                 subtitles = newSubtitles;
@@ -853,7 +853,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         currentVideoLanguageId = String.valueOf(sourceToPlay.getLink().getLanguageId());
 
         final Source finalSourceToPlay = sourceToPlay;
-        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ")", WatchedVideo.class, new ODataUtils.Callback<WatchedVideo>() {
+        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ")", WatchedVideo.class, new ODataUtils.EntityCallback<WatchedVideo>() {
             @Override
             public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
                 try {

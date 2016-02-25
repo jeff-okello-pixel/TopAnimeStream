@@ -628,7 +628,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     }
     private void GetAnimeDetails()
     {
-        ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + anime.getAnimeId() + ")?$expand=AnimeSources,Genres,AnimeInformations,Status", Anime.class, new ODataUtils.Callback<Anime>() {
+        ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + anime.getAnimeId() + ")?$expand=AnimeSources,Genres,AnimeInformations,Status", Anime.class, new ODataUtils.EntityCallback<Anime>() {
             @Override
             public void onSuccess(Anime anime, OdataRequestInfo info) {
 

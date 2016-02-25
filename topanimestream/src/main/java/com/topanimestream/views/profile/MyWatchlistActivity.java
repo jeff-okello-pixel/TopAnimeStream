@@ -106,7 +106,7 @@ public class MyWatchlistActivity extends TASBaseActivity {
 
         @Override
         public void onDeleteClick(View v, WatchedAnime watchedAnime, int position) {
-            ODataUtils.DeleteEntity(getString(R.string.odata_path) + "/WatchedAnimes(" + watchedAnime.getWatchedAnimeId() + ")", new ODataUtils.DeleteCallback() {
+            ODataUtils.DeleteEntity(getString(R.string.odata_path) + "/WatchedAnimes(" + watchedAnime.getWatchedAnimeId() + ")", new ODataUtils.Callback() {
                 @Override
                 public void onSuccess() {
 
@@ -136,7 +136,7 @@ public class MyWatchlistActivity extends TASBaseActivity {
             progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedAnimes?$expand=Anime,WatchType&$orderby=LastWatchedDate&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", WatchedAnime.class, new ODataUtils.Callback<ArrayList<WatchedAnime>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedAnimes?$expand=Anime,WatchType&$orderby=LastWatchedDate&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", WatchedAnime.class, new ODataUtils.EntityCallback<ArrayList<WatchedAnime>>() {
             @Override
             public void onSuccess(ArrayList<WatchedAnime> watchedAnimes, OdataRequestInfo info) {
                 mAdapter.removeLoading();

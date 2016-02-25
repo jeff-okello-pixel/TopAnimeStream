@@ -49,7 +49,7 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
                 return new WatchListAdapter.LoadingHolder(v);
             case TYPE_NORMAL:
             default:
-                v = mInflater.inflate(R.layout.swipe, parent, false);
+                v = mInflater.inflate(R.layout.row_watch, parent, false);
                 return new WatchListAdapter.ViewHolder(v);
         }
     }

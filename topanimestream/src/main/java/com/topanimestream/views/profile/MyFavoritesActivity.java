@@ -45,11 +45,12 @@ import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.R;
 import com.topanimestream.views.AnimeDetailsActivity;
+import com.topanimestream.views.MainActivity;
 import com.topanimestream.views.TASBaseActivity;
 
 import butterknife.Bind;
 
-public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickListener {
+public class MyFavoritesActivity extends TASBaseActivity {
 
     @Bind(R.id.txtNoFavorite)
     TextView txtNoFavorite;
@@ -99,12 +100,29 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
     private FavoriteListAdapter.OnItemClickListener mOnItemClickListener = new FavoriteListAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View v, Favorite favorite, int position) {
-
+            Intent intent = new Intent(MyFavoritesActivity.this, AnimeDetailsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("Anime", favorite.getAnime());
+            intent.putExtras(bundle);
+            startActivityForResult(intent, MainActivity.UpdateWatchCode);
         }
 
         @Override
         public void onDeleteClick(View v, Favorite favorite, int position) {
+            String jsonBodyString = "{animeId: " + favorite.getAnime().getAnimeId() + "}";
+            ODataUtils.Post(getString(R.string.odata_path) + "Favorites/RemoveFromMyFavorites", jsonBodyString, new ODataUtils.Callback() {
+                @Override
+                public void onSuccess() {
 
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(MyFavoritesActivity.this, R.string.error_deleting_favorite, Toast.LENGTH_LONG).show();
+                }
+            });
+
+            mAdapter.deleteItem(position);
         }
     };
 
@@ -138,7 +156,7 @@ public class MyFavoritesActivity extends TASBaseActivity implements OnItemClickL
             progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyFavorites?$expand=Anime&$orderby=Order", Favorite.class, new ODataUtils.Callback<ArrayList<Favorite>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyFavorites?$expand=Anime&$orderby=Order&$skip=" + currentSkip + "&$top=" + currentLimit + "&$count=true", Favorite.class, new ODataUtils.EntityCallback<ArrayList<Favorite>>() {
             @Override
             public void onSuccess(ArrayList<Favorite> favorites, OdataRequestInfo info) {
                 mAdapter.removeLoading();

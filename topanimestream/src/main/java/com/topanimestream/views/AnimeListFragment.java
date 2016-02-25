@@ -312,7 +312,7 @@ public class AnimeListFragment extends Fragment {
 
     private void CallService(String url)
     {
-        ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.Callback<ArrayList<Anime>>() {
+        ODataUtils.GetEntityList(url, Anime.class, new ODataUtils.EntityCallback<ArrayList<Anime>>() {
             @Override
             public void onSuccess(ArrayList<Anime> animes, OdataRequestInfo info) {
                 int currentItemCount = 0;

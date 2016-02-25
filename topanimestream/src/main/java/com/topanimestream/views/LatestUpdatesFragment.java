@@ -156,7 +156,7 @@ public class LatestUpdatesFragment extends Fragment {
         public void onItemClick(View v, final Update update, int position) {
 
             final Dialog loadingDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime), getActivity());
-            ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + update.getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.Callback<Anime>() {
+            ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + update.getAnimeId() + ")?$expand=Genres,AnimeInformations,Status,Episodes($expand=Links,EpisodeInformations)", Anime.class, new ODataUtils.EntityCallback<Anime>() {
                 @Override
                 public void onSuccess(Anime anime, OdataRequestInfo info) {
                     loadingDialog.dismiss();
@@ -242,7 +242,7 @@ public class LatestUpdatesFragment extends Fragment {
 
 
 
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Updates?$expand=Anime,Episode,Language&$orderby=LastUpdatedDate%20desc" + "&$skip=" + currentSkip + "&$top=" + currentLimit + "&$count=true", Update.class, new ODataUtils.Callback<ArrayList<Update>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Updates?$expand=Anime,Episode,Language&$orderby=LastUpdatedDate%20desc" + "&$skip=" + currentSkip + "&$top=" + currentLimit + "&$count=true", Update.class, new ODataUtils.EntityCallback<ArrayList<Update>>() {
             @Override
             public void onSuccess(ArrayList<Update> updates, OdataRequestInfo info) {
                 int currentItemCount = 0;

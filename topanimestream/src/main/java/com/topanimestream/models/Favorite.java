@@ -2,9 +2,18 @@ package com.topanimestream.models;
 
 public class Favorite {
     private int Order;
+    private int FavoriteId;
     private Anime Anime;
 
     public Favorite() {
+    }
+
+    public int getFavoriteId() {
+        return FavoriteId;
+    }
+
+    public void setFavoriteId(int favoriteId) {
+        FavoriteId = favoriteId;
     }
 
     public int getOrder() {

@@ -1,6 +1,7 @@
 package com.topanimestream.utilities;
 
 import android.accounts.NetworkErrorException;
+import android.content.Entity;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 public class ODataUtils {
 
-    public static <T> void PostWithEntityResponse(String url, String jsonBody, final Class<T> classType, final Callback<T> callback)
+    public static <T> void PostWithEntityResponse(String url, String jsonBody, final Class<T> classType, final EntityCallback<T> callback)
     {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, jsonBody);
@@ -64,7 +65,44 @@ public class ODataUtils {
             }
         });
     }
-    public static void DeleteEntity(final String url, final DeleteCallback callback)
+    public static void Post(String url, String jsonBody, final Callback callback)
+    {
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, jsonBody);
+
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Authorization", App.accessToken)
+                .build();
+
+        client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                callback.onFailure(e);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+                try {
+                    if (response.isSuccessful()) {
+                        callback.onSuccess();
+                        return;
+                    }
+                }
+                catch (Exception e)
+                {
+                    callback.onFailure(e);
+                }
+                callback.onFailure(new NetworkErrorException("Failed to post/fetch the data."));
+            }
+        });
+    }
+    public static void DeleteEntity(final String url, final Callback callback)
     {
         Request request = new Request.Builder()
                 .url(url)
@@ -97,7 +135,7 @@ public class ODataUtils {
             }
         });
     }
-    public static <T> void GetEntity(String url, final Class<T> classType, final Callback<T> callback)
+    public static <T> void GetEntity(String url, final Class<T> classType, final EntityCallback<T> callback)
     {
         Request request = new Request.Builder()
                 .url(url)
@@ -134,7 +172,7 @@ public class ODataUtils {
         });
     }
 
-    public static <T> void GetEntityList(String url, final Class<T> classType, final Callback<ArrayList<T>> callback)
+    public static <T> void GetEntityList(String url, final Class<T> classType, final EntityCallback<ArrayList<T>> callback)
     {
         final Request request = new Request.Builder()
                 .url(url)
@@ -192,13 +230,13 @@ public class ODataUtils {
         });
     }
 
-    public interface Callback<T>
+    public interface EntityCallback<T>
     {
         void onSuccess(T entity, OdataRequestInfo info);
         void onFailure(Exception e);
     }
 
-    public interface DeleteCallback
+    public interface Callback
     {
         void onSuccess();
         void onFailure(Exception e);
