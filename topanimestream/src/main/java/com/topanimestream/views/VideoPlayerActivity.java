@@ -302,7 +302,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
                 sources = newSources;
 
-                SelectSourceAndPlay(defaultLanguageId, defaultQuality, defaultSubtitle);
+                SelectSourceAndPlay(defaultLanguageId, defaultQuality, defaultSubtitle, true);
             }
 
             @Override
@@ -686,7 +686,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     public void QualitySelected(String quality) {
         videoTime = player.getCurrentPosition();
         ResetMediaPlayer(false);
-        SelectSourceAndPlay(currentVideoLanguageId, quality, String.valueOf(currentEpisodeSubtitle.getLanguageId()));
+        SelectSourceAndPlay(currentVideoLanguageId, quality, String.valueOf(currentEpisodeSubtitle.getLanguageId()), false);
     }
 
     @Override
@@ -707,16 +707,16 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                 Toast.makeText(VideoPlayerActivity.this, getString(R.string.subtitles_reset_default), Toast.LENGTH_LONG).show();
             }
 
-            SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, defaultSubtitleLanguage);
+            SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, defaultSubtitleLanguage, false);
 
         }
         else {
-            SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, "0");
+            SelectSourceAndPlay(String.valueOf(language.getLanguageId()), currentVideoQuality, "0", false);
         }
 
     }
 
-    private void SelectSourceAndPlay(String language, String quality, String subtitleLanguageId)
+    private void SelectSourceAndPlay(String language, String quality, String subtitleLanguageId, boolean shouldGetVideoTime)
     {
         if(sources.size() < 1)
         {
@@ -853,30 +853,42 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         currentVideoLanguageId = String.valueOf(sourceToPlay.getLink().getLanguageId());
 
         final Source finalSourceToPlay = sourceToPlay;
-        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ")", WatchedVideo.class, new ODataUtils.EntityCallback<WatchedVideo>() {
-            @Override
-            public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
-                try {
-                    player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                player.prepareAsync();
+        if(shouldGetVideoTime) {
+            ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=" + (!anime.isMovie() ? currentEpisode.getEpisodeId() : null) + ")", WatchedVideo.class, new ODataUtils.EntityCallback<WatchedVideo>() {
+                @Override
+                public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
+                    try {
+                        player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    player.prepareAsync();
 
-                videoTime = (int)watchedVideo.getTimeInSeconds() * 1000;
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                //start the video from the beginning
-                try {
-                    player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
-                } catch (IOException io) {
-                    io.printStackTrace();
+                    videoTime = (int) watchedVideo.getTimeInSeconds() * 1000;
                 }
-                player.prepareAsync();
+
+                @Override
+                public void onFailure(Exception e) {
+                    //start the video from the beginning
+                    try {
+                        player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
+                    } catch (IOException io) {
+                        io.printStackTrace();
+                    }
+                    player.prepareAsync();
+                }
+            });
+        }
+        else
+        {
+            //The video will start with the current time (videoTime variable)
+            try {
+                player.setDataSource(VideoPlayerActivity.this, Uri.parse(finalSourceToPlay.getUrl()));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+            player.prepareAsync();
+        }
     }
 
 }

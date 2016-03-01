@@ -137,6 +137,12 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
         }
     }
 
+    public void updateItem(WatchedAnime updatedWatchedAnime, int position)
+    {
+        mItems.set(position, new WatchedAnimeItem(updatedWatchedAnime));
+        notifyItemChanged(position);
+    }
+
     public void deleteItem(int position)
     {
         mItems.remove(position);
@@ -163,6 +169,7 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
 
     public interface OnItemClickListener {
         void onItemClick(View v, WatchedAnime watchedAnime, int position);
+        void onEditClick(View v, WatchedAnime watchedAnime, int position);
         void onDeleteClick(View v, WatchedAnime watchedAnime, int position);
     }
 
@@ -184,6 +191,9 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
         @Bind(R.id.btnDelete)
         RelativeLayout btnDelete;
 
+        @Bind(R.id.btnEdit)
+        RelativeLayout btnEdit;
+
         @Bind(R.id.laySwipe)
         SwipeLayout laySwipe;
 
@@ -202,6 +212,7 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
 
             itemView.setOnClickListener(this);
             btnDelete.setOnClickListener(this);
+            btnEdit.setOnClickListener(this);
         }
 
         @Override
@@ -213,6 +224,9 @@ public class WatchListAdapter extends RecyclerSwipeAdapter {
                 {
                     case R.id.btnDelete:
                         mItemClickListener.onDeleteClick(view, item, position);
+                        break;
+                    case R.id.btnEdit:
+                        mItemClickListener.onEditClick(view, item, position);
                         break;
                     default:
                         mItemClickListener.onItemClick(view, item, position);

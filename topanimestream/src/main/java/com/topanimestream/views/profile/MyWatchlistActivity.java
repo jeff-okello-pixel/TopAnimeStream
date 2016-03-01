@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import com.topanimestream.App;
 import com.topanimestream.adapters.WatchListAdapter;
+import com.topanimestream.dialogfragments.EditWatchDialogFragment;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.WatchedAnime;
 import com.topanimestream.utilities.ODataUtils;
@@ -94,6 +95,13 @@ public class MyWatchlistActivity extends TASBaseActivity {
         }
     };
 
+    private EditWatchDialogFragment.EditWatchCallback mEditWatchCallback = new EditWatchDialogFragment.EditWatchCallback(){
+        @Override
+        public void onEditSuccess(WatchedAnime updatedWatchedAnime, int position) {
+            mAdapter.updateItem(updatedWatchedAnime, position);
+        }
+    };
+
     private WatchListAdapter.OnItemClickListener mOnItemClickListener = new WatchListAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(final View view, final WatchedAnime watchedAnime, final int position) {
@@ -105,6 +113,12 @@ public class MyWatchlistActivity extends TASBaseActivity {
         }
 
         @Override
+        public void onEditClick(View v, WatchedAnime watchedAnime, int position) {
+            EditWatchDialogFragment dialogFragment = EditWatchDialogFragment.newInstance(watchedAnime, position);
+            dialogFragment.setEditWatchCallback(mEditWatchCallback);
+            dialogFragment.show(getSupportFragmentManager(), "EditWatchDialogFragment");
+        }
+
         public void onDeleteClick(View v, WatchedAnime watchedAnime, int position) {
             ODataUtils.DeleteEntity(getString(R.string.odata_path) + "/WatchedAnimes(" + watchedAnime.getWatchedAnimeId() + ")", new ODataUtils.Callback() {
                 @Override
@@ -136,7 +150,7 @@ public class MyWatchlistActivity extends TASBaseActivity {
             progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedAnimes?$expand=Anime,WatchType&$orderby=LastWatchedDate&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", WatchedAnime.class, new ODataUtils.EntityCallback<ArrayList<WatchedAnime>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyWatchedAnimes?$expand=Anime($expand=AnimeInformations),WatchType&$orderby=AddedDate%20desc&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", WatchedAnime.class, new ODataUtils.EntityCallback<ArrayList<WatchedAnime>>() {
             @Override
             public void onSuccess(ArrayList<WatchedAnime> watchedAnimes, OdataRequestInfo info) {
                 mAdapter.removeLoading();

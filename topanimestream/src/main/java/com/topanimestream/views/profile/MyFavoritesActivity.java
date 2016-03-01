@@ -156,7 +156,7 @@ public class MyFavoritesActivity extends TASBaseActivity {
             progressBarLoading.setVisibility(View.VISIBLE);
         }
 
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyFavorites?$expand=Anime&$orderby=Order&$skip=" + currentSkip + "&$top=" + currentLimit + "&$count=true", Favorite.class, new ODataUtils.EntityCallback<ArrayList<Favorite>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyFavorites?$expand=Anime($expand=AnimeInformations)&$orderby=Order&$skip=" + currentSkip + "&$top=" + currentLimit + "&$count=true", Favorite.class, new ODataUtils.EntityCallback<ArrayList<Favorite>>() {
             @Override
             public void onSuccess(ArrayList<Favorite> favorites, OdataRequestInfo info) {
                 mAdapter.removeLoading();
@@ -186,6 +186,15 @@ public class MyFavoritesActivity extends TASBaseActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if(requestCode == MainActivity.UpdateWatchCode)
+        {
+            setResult(MainActivity.UpdateWatchCode, intent);
+        }
     }
 
 

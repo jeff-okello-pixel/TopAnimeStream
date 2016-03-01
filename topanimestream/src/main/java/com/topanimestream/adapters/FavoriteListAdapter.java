@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,8 +15,10 @@ import com.daimajia.swipe.SimpleSwipeListener;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl;
+import com.squareup.picasso.Picasso;
 import com.topanimestream.models.Favorite;
 import com.topanimestream.R;
+import com.topanimestream.utilities.ImageUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,8 +60,15 @@ public class FavoriteListAdapter extends RecyclerSwipeAdapter {
         {
             case TYPE_NORMAL:
                 final ViewHolder favoriteHolder = (ViewHolder) holder;
-                favoriteHolder.txtTitle.setText(favorite.getAnime().getName());
+                if(!favorite.getAnime().isAvailable())
+                    favoriteHolder.txtNotAvailable.setVisibility(View.VISIBLE);
+                else
+                    favoriteHolder.txtNotAvailable.setVisibility(View.GONE);
 
+                favoriteHolder.txtTitle.setText(favorite.getAnime().getName());
+                Picasso .with(mContext)
+                        .load(ImageUtils.resizeImage(mContext.getString(R.string.image_host_path) + favorite.getAnime().getBackdropPath(), 500))
+                        .into(favoriteHolder.imgBackdrop);
                 favoriteHolder.laySwipe.setShowMode(SwipeLayout.ShowMode.PullOut);
                 favoriteHolder.laySwipe.addSwipeListener(new SimpleSwipeListener() {
                     @Override
@@ -159,6 +169,12 @@ public class FavoriteListAdapter extends RecyclerSwipeAdapter {
 
         @Bind(R.id.txtTitle)
         TextView txtTitle;
+
+        @Bind(R.id.imgBackdrop)
+        ImageView imgBackdrop;
+
+        @Bind(R.id.txtNotAvailable)
+        TextView txtNotAvailable;
 
         public ViewHolder(View itemView) {
             super(itemView);
