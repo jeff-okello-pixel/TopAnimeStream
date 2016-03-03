@@ -470,7 +470,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         @Override
         public void onDrawerClosed(View drawerView) {
-            hide();
+            show(1000);//3000 is too long, user might press on the screen for nothing
             drawerIsOpened = false;
             mDrawerToggle.onDrawerClosed(drawerView);
 
@@ -581,6 +581,8 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             mHandler.removeMessages(FADE_OUT);
             mHandler.sendMessageDelayed(msg, timeout);
         }
+        else
+            mHandler.removeMessages(FADE_OUT);
     }
     
     public boolean isShowing() {
@@ -906,7 +908,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if(mCanTouchAgain) {
-            if(view.getId() != R.id.drawer_layout)
+            if(view.getId() != R.id.drawer_layout && view.getId() != R.id.leftDrawerEpisodes)
             {
                 show(sDefaultTimeout);
             }
