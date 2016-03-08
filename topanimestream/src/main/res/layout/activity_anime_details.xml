@@ -32,9 +32,14 @@
                                     android:scaleType="centerCrop" />
                                 <View
                                     android:layout_width="match_parent"
+                                    android:layout_height="70dp"
+                                    android:layout_alignParentTop="true"
+                                    android:background="@drawable/black_gradient_top"></View>
+                                <View
+                                    android:layout_width="match_parent"
                                     android:layout_height="150dp"
                                     android:layout_alignParentBottom="true"
-                                    android:background="@drawable/black_gradient"></View>
+                                    android:background="@drawable/black_gradient_bottom"></View>
                                 <ProgressBar
                                     android:id="@+id/progressBackdrop"
                                     android:layout_width="wrap_content"

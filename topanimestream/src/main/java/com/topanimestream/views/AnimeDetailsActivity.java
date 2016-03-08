@@ -2,7 +2,6 @@ package com.topanimestream.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -28,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -46,11 +44,10 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.topanimestream.App;
-import com.topanimestream.custom.DrawGradient;
+import com.topanimestream.models.Favorite;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.ImageUtils;
@@ -96,6 +93,8 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     FrameLayout episodefragContainer;
 
     EpisodeListFragment fragmentEpisodesList;
+    MenuItem menuItemAddFavorite;
+    MenuItem menuItemRemoveFavorite;
 
     private Target target = new Target() {
         @Override
@@ -230,133 +229,77 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.episodes, menu);
-
+        getMenuInflater().inflate(R.menu.anime_details, menu);
+        menuItemAddFavorite = menu.findItem(R.id.action_addfavorite);
+        menuItemRemoveFavorite = menu.findItem(R.id.action_removefavorite);
+        CheckIsFavorite();
         return true;
+    }
+
+    public void CheckIsFavorite()
+    {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "MyFavorites?$filter=AnimeId%20eq%20" + anime.getAnimeId(), Favorite.class, new ODataUtils.EntityCallback<ArrayList<Favorite>>() {
+            @Override
+            public void onSuccess(ArrayList<Favorite> favorites, OdataRequestInfo info) {
+                if(favorites.size() > 0) {
+                    menuItemAddFavorite.setVisible(false);
+                    menuItemRemoveFavorite.setVisible(true);
+                }
+                else{
+                    menuItemAddFavorite.setVisible(true);
+                    menuItemRemoveFavorite.setVisible(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_moreoptions:
-                final Item[] items = {
-                        new Item(anime.isFavorite() ? getString(R.string.remove_favorite) : getString(R.string.action_favorite), anime.isFavorite() ? R.drawable.ic_action_star : R.drawable.ic_action_star_empty),
-                        new Item(getString(R.string.add_vote), R.drawable.ic_vote),
-                        new Item(getString(R.string.reviews), R.drawable.ic_review)
-                        //new Item(getString(R.string.recommendations), R.drawable.ic_recommendation)
-                };
+            case R.id.action_addfavorite:
+                menuItemAddFavorite.setVisible(false);
+                menuItemRemoveFavorite.setVisible(true);
 
-                ListAdapter adapter = new ArrayAdapter<Item>(
-                        this,
-                        android.R.layout.select_dialog_item,
-                        android.R.id.text1,
-                        items){
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        //User super class to create the View
-                        View v = super.getView(position, convertView, parent);
-                        TextView tv = (TextView)v.findViewById(android.R.id.text1);
-
-                        //Put the image on the TextView
-                        tv.setCompoundDrawablesWithIntrinsicBounds(items[position].icon, 0, 0, 0);
-
-                        //Add margin between image and text (support various screen densities)
-                        int dp5 = (int) (5 * getResources().getDisplayMetrics().density + 0.5f);
-                        tv.setCompoundDrawablePadding(dp5);
-
-                        return v;
+                String jsonBodyAdd = "{animeId:" + anime.getAnimeId() + "}";
+                ODataUtils.Post(getString(R.string.odata_path) + "Favorites/AddToMyFavorites", jsonBodyAdd, new ODataUtils.Callback() {
+                    @Override
+                    public void onSuccess() {
                     }
-                };
 
-
-                new AlertDialog.Builder(AnimeDetailsActivity.this)
-                        .setTitle(getString(R.string.choose_option))
-                        .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int item) {
-                                String selectedItem = items[item].toString();
-                                if (selectedItem.equals(getString(R.string.action_favorite))) {
-                                    AsyncTaskTools.execute(new AddFavoriteTask(anime.getAnimeId()));
-                                } else if (selectedItem.equals(getString(R.string.remove_favorite))) {
-                                    AsyncTaskTools.execute(new RemoveFavoriteTask(anime.getAnimeId()));
-                                } else if (selectedItem.equals(getString(R.string.add_vote))) {
-                                    final Dialog dialogVote = new Dialog(AnimeDetailsActivity.this);
-                                    dialogVote.setContentView(R.layout.vote_dialog);
-                                    dialogVote.setTitle(getString(R.string.vote));
-                                    RatingBar rtbCurrentRating = (RatingBar) dialogVote.findViewById(R.id.rtbCurrentRating);
-                                    final RatingBar rtbUserRating = (RatingBar) dialogVote.findViewById(R.id.rtbUserRating);
-                                    Button btnCancel = (Button) dialogVote.findViewById(R.id.btnCancel);
-                                    Button btnDelete = (Button) dialogVote.findViewById(R.id.btnDelete);
-                                    Button btnSave = (Button) dialogVote.findViewById(R.id.btnSave);
-                                    TextView lblVoteCount = (TextView) dialogVote.findViewById(R.id.lblVoteCount);
-
-                                    lblVoteCount.setText("(" + anime.getVoteCount() + " " + getString(R.string.votes) + ")");
-
-                                    if (anime.getRating() != null)
-                                        rtbCurrentRating.setRating((float) Utils.roundToHalf(anime.getRating() != 0 ? anime.getRating() / 2 : anime.getRating()));
-
-                                    if (currentUserVote != null) {
-                                        rtbUserRating.setRating(currentUserVote.getValue() / 2);
-                                        btnDelete.setVisibility(View.VISIBLE);
-                                    } else
-                                        btnDelete.setVisibility(View.GONE);
-
-                                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            dialogVote.dismiss();
-                                        }
-                                    });
-
-                                    btnDelete.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    switch (which){
-                                                        case DialogInterface.BUTTON_POSITIVE:
-                                                            AsyncTaskTools.execute(new RemoveVoteTask());
-                                                            dialog.dismiss();
-                                                            dialogVote.dismiss();
-
-                                                            break;
-
-                                                        case DialogInterface.BUTTON_NEGATIVE:
-                                                            dialog.dismiss();
-                                                            dialogVote.dismiss();
-                                                            break;
-                                                    }
-                                                }
-                                            };
-
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(AnimeDetailsActivity.this);
-                                            builder.setMessage(getString(R.string.really_sure_delete_vote)).setPositiveButton(getString(R.string.yes), dialogClickListener)
-                                                    .setNegativeButton(getString(R.string.no), dialogClickListener).show();
-
-                                            dialog.dismiss();
-                                        }
-                                    });
-
-                                    btnSave.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            AsyncTaskTools.execute(new VoteTask((int) (rtbUserRating.getRating() * 2)));
-                                            dialogVote.dismiss();
-                                        }
-                                    });
-
-                                    dialogVote.show();
-                                } else if (selectedItem.equals(getString(R.string.reviews))) {
-                                    Intent intent = new Intent(AnimeDetailsActivity.this, ReviewsActivity.class);
-                                    intent.putExtra("currentUserReview", currentUserReview);
-                                    intent.putExtra("animeId", anime.getAnimeId());
-                                    startActivity(intent);
-
-                                } else if (selectedItem.equals(getString(R.string.recommendations))) {
-
-                                }
+                    @Override
+                    public void onFailure(Exception e) {
+                        AnimeDetailsActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_adding_favorite), Toast.LENGTH_LONG).show();
                             }
-                        }).show();
+                        });
+                    }
+                });
 
+                break;
+            case R.id.action_removefavorite:
+                menuItemAddFavorite.setVisible(true);
+                menuItemRemoveFavorite.setVisible(false);
+                String jsonBodyRemove = "{animeId:" + anime.getAnimeId() + "}";
+                ODataUtils.Post(getString(R.string.odata_path) + "Favorites/RemoveFromMyFavorites", jsonBodyRemove, new ODataUtils.Callback() {
+                    @Override
+                    public void onSuccess() {
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        AnimeDetailsActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_removing_favorite), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
                 break;
         }
 

@@ -325,4 +325,6 @@
     <string name="added">Added</string>
     <string name="error_deleting_favorite">An error has occurred while deleting the favorite.</string>
     <string name="not_available_topanimestream">Not available on TopAnimeStream</string>
+    <string name="error_adding_favorite">An error has occurred while adding the favorite.</string>
+    <string name="error_removing_favorite">An error has occurred while removing the favorite.</string>
 </resources>

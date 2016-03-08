@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+    <item android:id="@+id/action_addfavorite"
+        android:title="Favorite"
+        android:visible="false"
+        android:icon="@drawable/ic_favorite_border_white_36dp"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/action_removefavorite"
+        android:title="Favorite"
+        android:visible="false"
+        android:icon="@drawable/ic_favorite_white_36dp"
+        app:showAsAction="always"/>
+</menu>
