@@ -203,7 +203,7 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
         public void onClick(View view) {
             if (mItemClickListener != null) {
                 int position = getAdapterPosition();
-                Episode episode = getItem(position);
+                Episode episode = getItem(position - (useHeader() ? 1 : 0));
                 mItemClickListener.onItemClick(view, episode, position);
             }
         }

@@ -177,11 +177,11 @@ public class ReviewsActivity extends TASBaseActivity implements AdapterView.OnIt
                         return errors;
                     if (jsonUserReview.getJSONArray("value").length() > 0) {
                         currentUserReview = gson.fromJson(jsonUserReview.getJSONArray("value").getJSONObject(0).toString(), Review.class);
-                        AnimeDetailsActivity.currentUserReview = currentUserReview;
+                        //AnimeDetailsActivity.currentUserReview = currentUserReview;
                     }
                     else
                     {
-                        AnimeDetailsActivity.currentUserReview = null;
+                        //AnimeDetailsActivity.currentUserReview = null;
                         currentUserReview = null;
                     }
 

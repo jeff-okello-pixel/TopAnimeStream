@@ -156,6 +156,8 @@ public class EpisodeListFragment extends Fragment  {
                     isEndOfList = true;
 
                 mAdapter.addItems(episodes);
+
+                callback.EpisodesLoaded(episodes);
             }
 
             @Override
@@ -170,6 +172,7 @@ public class EpisodeListFragment extends Fragment  {
     public interface EpisodeListCallback
     {
         void OnEpisodeSelected(Episode episode, ArrayList<Episode> episodes);
+        void EpisodesLoaded(ArrayList<Episode> episodes);
     }
 
 }

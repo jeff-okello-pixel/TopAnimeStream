@@ -1,8 +1,5 @@
 package com.topanimestream.views;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -10,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -23,25 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 
 import com.squareup.picasso.Picasso;
@@ -49,31 +30,18 @@ import com.squareup.picasso.Target;
 import com.topanimestream.App;
 import com.topanimestream.models.Favorite;
 import com.topanimestream.models.OdataRequestInfo;
-import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.models.WatchedVideo;
 import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.ToolbarUtils;
-import com.topanimestream.utilities.Utils;
-import com.topanimestream.utilities.WcfDataServiceUtility;
 import com.topanimestream.managers.AnimationManager;
-import com.topanimestream.managers.DialogManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.R;
-import com.topanimestream.models.Item;
-import com.topanimestream.models.Recommendation;
-import com.topanimestream.models.Review;
-import com.topanimestream.models.Vote;
-import com.topanimestream.views.profile.LoginActivity;
-
 import butterknife.Bind;
 
 public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeListFragment.EpisodeListCallback, View.OnClickListener {
     private Anime anime;
-    private Vote currentUserVote;
-    public static Review currentUserReview;
-    private Recommendation currentUserRecommendation;
-
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
@@ -95,6 +63,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     EpisodeListFragment fragmentEpisodesList;
     MenuItem menuItemAddFavorite;
     MenuItem menuItemRemoveFavorite;
+    Episode userCurrentEpisode;
 
     private Target target = new Target() {
         @Override
@@ -145,13 +114,16 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
         fabPlay.setOnClickListener(this);
 
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction trans = fm.beginTransaction();
-        trans.add(episodefragContainer.getId(), EpisodeListFragment.newInstance(anime), "frag_episodes");
-        trans.commit();
-        fm.executePendingTransactions();
-
-
         fragmentEpisodesList = (EpisodeListFragment) fm.findFragmentByTag("frag_episodes");
+
+        if(fragmentEpisodesList == null) {
+            FragmentTransaction trans = fm.beginTransaction();
+            trans.add(episodefragContainer.getId(), EpisodeListFragment.newInstance(anime), "frag_episodes");
+            trans.commit();
+            fm.executePendingTransactions();
+            fragmentEpisodesList = (EpisodeListFragment) fm.findFragmentByTag("frag_episodes");
+        }
+
         fragmentEpisodesList.setEpisodeListCallback(this);
 
         Configuration configuration = getResources().getConfiguration();
@@ -163,9 +135,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
         ViewGroup.LayoutParams params = appbar.getLayoutParams();
         params.height = (int)Math.round((heightScreenPixels / 5) * 2.5);
         appbar.setLayoutParams(params);
-
-
-        currentUserReview = null;
 
         toolbar.setTitle(anime.getName());
         setSupportActionBar(toolbar);
@@ -193,6 +162,21 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
         builder.build()
                 .load(ImageUtils.resizeImage(App.getContext().getString(R.string.image_host_path) + anime.getBackdropPath(), 600))
                 .into(target);
+
+        ODataUtils.GetEntity(getString(R.string.odata_path) + "MyInstantWatch(animeId=" + anime.getAnimeId() + ",episodeId=null)?$expand=Episode", WatchedVideo.class, new ODataUtils.EntityCallback<WatchedVideo>() {
+            @Override
+            public void onSuccess(WatchedVideo watchedVideo, OdataRequestInfo info) {
+                if(watchedVideo != null && watchedVideo.getEpisode() != null)
+                {
+                    userCurrentEpisode = watchedVideo.getEpisode();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
 
 
     }
@@ -317,11 +301,27 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
+    public void EpisodesLoaded(ArrayList<Episode> episodes) {
+        if (episodes != null && episodes.size() > 0) {
+            if(userCurrentEpisode == null)
+                userCurrentEpisode = episodes.get(0);
+            anime.setEpisodes(episodes);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == MainActivity.UpdateWatchCode)
         {
-            setResult(MainActivity.UpdateWatchCode, intent);
+            if(!anime.isMovie()) {
+                if (data != null) {
+                    WatchedVideo watchedVideo = data.getParcelableExtra("watchedvideo");
+                    if (watchedVideo != null)
+                        userCurrentEpisode = watchedVideo.getEpisode();
+                }
+            }
+            setResult(MainActivity.UpdateWatchCode, data);
         }
     }
 
@@ -329,363 +329,10 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     public void onClick(View view) {
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
-        //TODO implement watchlist and get episode from there
-        intent.putExtra("episodeToPlay", new Episode());
+        intent.putExtra("episodeToPlay", userCurrentEpisode);
         startActivityForResult(intent, MainActivity.UpdateWatchCode);
     }
 
-    private class RemoveVoteTask extends AsyncTask<Void, Void, String> {
-        private Dialog busyDialog;
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String method = "RemoveVote";
-        private String URL;
-
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.removing_vote), AnimeDetailsActivity.this);
-            URL = getString(R.string.odata_path);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if (!App.IsNetworkConnected()) {
-                return getString(R.string.error_internet_connection);
-            }
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            request.addProperty("animeId", anime.getAnimeId());
-            envelope = Utils.addAuthentication(envelope);
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            SoapPrimitive result = null;
-            try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive) envelope.getResponse();
-                return "success";
-            } catch (Exception e) {
-
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result == null) {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_removing_vote), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_removed), Toast.LENGTH_LONG).show();
-                    currentUserVote = null;
-                    AsyncTaskTools.execute(new AnimeDetailsTask(true));
-                }
-
-
-            } catch (Exception e)//catch all exception, handle orientation change
-            {
-                e.printStackTrace();
-            }
-            DialogManager.dismissBusyDialog(busyDialog);
-
-        }
-
-    }
-    private class VoteTask extends AsyncTask<Void, Void, String> {
-        private Dialog busyDialog;
-        private int userVote;
-        public VoteTask(int UserVote)
-        {
-            userVote = UserVote;
-        }
-        private String URL;
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String method = "Vote";
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_vote), AnimeDetailsActivity.this);
-            URL = getString(R.string.odata_path);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if (!App.IsNetworkConnected()) {
-                return getString(R.string.error_internet_connection);
-            }
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            request.addProperty("animeId", anime.getAnimeId());
-            request.addProperty("value", userVote);
-            envelope = Utils.addAuthentication(envelope);
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            SoapPrimitive result = null;
-            try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive) envelope.getResponse();
-                return "success";
-            } catch (Exception e) {
-
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result == null) {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_adding_vote), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.vote_added), Toast.LENGTH_LONG).show();
-                    AsyncTaskTools.execute(new AnimeDetailsTask(true));
-                }
-
-            } catch (Exception e)//catch all exception, handle orientation change
-            {
-                e.printStackTrace();
-            }
-            DialogManager.dismissBusyDialog(busyDialog);
-
-        }
-
-    }
-    private class RemoveFavoriteTask extends AsyncTask<Void, Void, String> {
-        private Dialog busyDialog;
-        private int animeId;
-
-        public RemoveFavoriteTask(int animeId) {
-            this.animeId = animeId;
-        }
-
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String URL;
-        private String method = "RemoveFromFavorite";
-
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.deleting_from_favorites), AnimeDetailsActivity.this);
-            URL = getString(R.string.odata_path);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if (!App.IsNetworkConnected()) {
-                return getString(R.string.error_internet_connection);
-            }
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            request.addProperty("animeId", animeId);
-            envelope = Utils.addAuthentication(envelope);
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            SoapPrimitive result = null;
-            try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive) envelope.getResponse();
-                return null;
-            } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
-                }
-
-                e.printStackTrace();
-            }
-            return getString(R.string.error_remove_favorite);
-        }
-
-        @Override
-        protected void onPostExecute(String error) {
-            DialogManager.dismissBusyDialog(busyDialog);
-            if (error != null) {
-                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-            } else {
-                anime.setIsFavorite(false);
-                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.toast_remove_favorite), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    private class AddFavoriteTask extends AsyncTask<Void, Void, String> {
-        private Dialog busyDialog;
-        private int animeId;
-
-        public AddFavoriteTask(int animeId) {
-            this.animeId = animeId;
-        }
-
-        private static final String NAMESPACE = "http://tempuri.org/";
-        final String SOAP_ACTION = "http://tempuri.org/IAnimeService/";
-        private String URL;
-        private String method = "AddToFavorite";
-
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.adding_to_favorites), AnimeDetailsActivity.this);
-            URL = getString(R.string.odata_path);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if (!App.IsNetworkConnected()) {
-                return getString(R.string.error_internet_connection);
-            }
-            SoapObject request = new SoapObject(NAMESPACE, method);
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            request.addProperty("animeId", animeId);
-            envelope = Utils.addAuthentication(envelope);
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-            SoapPrimitive result = null;
-            try {
-                androidHttpTransport.call(SOAP_ACTION + method, envelope);
-                result = (SoapPrimitive) envelope.getResponse();
-                return null;
-            } catch (Exception e) {
-                if (e instanceof SoapFault) {
-                    return e.getMessage();
-                }
-
-                e.printStackTrace();
-            }
-            return getString(R.string.error_remove_favorite);
-        }
-
-        @Override
-        protected void onPostExecute(String error) {
-            DialogManager.dismissBusyDialog(busyDialog);
-            if (error != null) {
-                Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-            } else {
-                anime.setIsFavorite(true);
-                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.toast_add_favorite), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    private void GetAnimeDetails()
-    {
-        ODataUtils.GetEntity(getString(R.string.odata_path) + "Animes(" + anime.getAnimeId() + ")?$expand=AnimeSources,Genres,AnimeInformations,Status", Anime.class, new ODataUtils.EntityCallback<Anime>() {
-            @Override
-            public void onSuccess(Anime anime, OdataRequestInfo info) {
-
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-            }
-        });
-    }
-    private class AnimeDetailsTask extends AsyncTask<Void, Void, String> {
-        private String userReviewUrl;
-        private String userRecommendationUrl;
-        private String userVoteUrl;
-        private String animeDetailUrl;
-        private Dialog busyDialog;
-        private boolean isReload;
-        public AnimeDetailsTask(boolean IsReload)
-        {
-            this.isReload = IsReload;
-
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-            busyDialog = DialogManager.showBusyDialog(getString(R.string.loading_anime_details), AnimeDetailsActivity.this);
-            userVoteUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Votes").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            userRecommendationUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Recommendations").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).build();
-            userReviewUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntity("Reviews").formatJson().filter("AccountId%20eq%20" + App.currentUser.getAccountId() + "%20and%20AnimeId%20eq%20" + anime.getAnimeId()).expand("Account").build();
-            animeDetailUrl = new WcfDataServiceUtility(getString(R.string.odata_path)).getEntitySpecificRow("Animes", anime.getAnimeId(), false).expand("AnimeSources,Genres,AnimeInformations,Status").formatJson().build();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            if (!App.IsNetworkConnected()) {
-                return getString(R.string.error_internet_connection);
-            }
-
-            try {
-
-                Gson gson = new Gson();
-                JSONObject jsonVote = Utils.GetJson(userVoteUrl);
-                String errors = Utils.checkDataServiceErrors(jsonVote, getString(R.string.error_loading_anime_details));
-                if(errors != null)
-                    return errors;
-                if(jsonVote.getJSONArray("value").length() > 0)
-                {
-                    currentUserVote = gson.fromJson(jsonVote.getJSONArray("value").getJSONObject(0).toString(), Vote.class);
-                }
-
-                JSONObject jsonReview = Utils.GetJson(userReviewUrl);
-                errors = Utils.checkDataServiceErrors(jsonReview, getString(R.string.error_loading_anime_details));
-                if(errors != null)
-                    return errors;
-                if(jsonReview.getJSONArray("value").length() > 0)
-                {
-                    currentUserReview = gson.fromJson(jsonReview.getJSONArray("value").getJSONObject(0).toString(), Review.class);
-                }
-
-                JSONObject jsonRecommendation = Utils.GetJson(userRecommendationUrl);
-                errors = Utils.checkDataServiceErrors(jsonRecommendation, getString(R.string.error_loading_anime_details));
-                if(errors != null)
-                    return errors;
-                if(jsonRecommendation.getJSONArray("value").length() > 0)
-                {
-                    currentUserRecommendation = gson.fromJson(jsonRecommendation.getJSONArray("value").getJSONObject(0).toString(), Recommendation.class);
-                }
-                if(isReload) {
-                    JSONObject jsonAnime = Utils.GetJson(animeDetailUrl);
-                    errors = Utils.checkDataServiceErrors(jsonAnime, getString(R.string.error_loading_anime_details));;
-                    if (errors != null)
-                        return errors;
-                    anime = gson.fromJson(jsonAnime.toString(), Anime.class);
-                }
-                return null;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return getString(R.string.error_loading_anime_details);
-        }
-
-        @Override
-        protected void onPostExecute(String error) {
-            if (error != null) {
-                if (error.equals("401")) {
-                    Toast.makeText(AnimeDetailsActivity.this, getString(R.string.have_been_logged_out), Toast.LENGTH_LONG).show();
-                    AnimeDetailsActivity.this.startActivity(new Intent(AnimeDetailsActivity.this, LoginActivity.class));
-                    AnimeDetailsActivity.this.finish();
-                } else {
-                    Toast.makeText(AnimeDetailsActivity.this, error, Toast.LENGTH_LONG).show();
-                }
-            }
-            else
-            {
-                if(isReload)
-                {
-                    /*
-                    if(!anime.isMovie()) {
-                        if (animeDetailsFragment != null)
-                            animeDetailsFragment.setAnime(anime);
-                    }
-                    else
-                    {
-                        if (animeDetailsMovieFragment != null)
-                            animeDetailsMovieFragment.setAnime(anime);
-                    }*/
-                }
-            }
-            DialogManager.dismissBusyDialog(busyDialog);
-        }
-    }
 
 
 }

@@ -47,8 +47,7 @@ import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
 import com.topanimestream.models.WatchedVideo;
 import com.topanimestream.models.subs.Caption;
-import com.topanimestream.models.subs.FormatASS;
-import com.topanimestream.models.subs.FormatSRT;
+import com.topanimestream.models.subs.FormatWebVTT;
 import com.topanimestream.models.subs.TimedTextObject;
 import com.topanimestream.preferences.Prefs;
 import com.topanimestream.utilities.AsyncTaskTools;
@@ -58,10 +57,6 @@ import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
-import com.topanimestream.utilities.WcfDataServiceUtility;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import butterknife.Bind;
 
@@ -236,14 +231,15 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         }
     }
     private void startSubtitles() {
+       txtSubtitle.setVisibility(View.VISIBLE);
        AsyncTaskTools.execute(
                new AsyncTask<Void, Void, Void>() {
                    @Override
                    protected Void doInBackground(Void... voids) {
                        try {
                            FileInputStream fileInputStream = new FileInputStream(mSubsFile);
-                           FormatSRT formatSRT = new FormatSRT();
-                           mSubs = formatSRT.parseFile(mSubsFile.toString(), FileUtils.inputstreamToCharsetString(fileInputStream).split("\n"));
+                           FormatWebVTT formatWebVTT = new FormatWebVTT();
+                           mSubs = formatWebVTT.parseFile(mSubsFile.toString(), FileUtils.inputstreamToCharsetString(fileInputStream).split("\n"));
                            checkForSubtitle = true;
                            (new Thread() {
                                @Override
@@ -253,12 +249,17 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                                            checkSubs();
                                            sleep(50);
                                        }
-                                       if(txtSubtitle != null)
-                                           txtSubtitle.setText("");
                                    }
                                    catch (Exception e) {
                                        e.printStackTrace();
                                    }
+                                   runOnUiThread(new Runnable() {
+
+                                       @Override
+                                       public void run() {
+                                           txtSubtitle.setVisibility(View.GONE);
+                                       }
+                                   });
 
                                    return;
                                }
@@ -379,10 +380,9 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                     TimedTextObject subtitleObject = null;
 
                     String inputString = FileUtils.inputstreamToCharsetString(input);
-                    String[] inputText = inputString.split("\n|\r\n");
-
-                    FormatSRT formatSRT = new FormatSRT();
-                    subtitleObject = formatSRT.parseFile(subUrl, inputText);
+                    String[] inputText = inputString.split("\n|\r\n\r\n");
+                    FormatWebVTT formatWebVTT = new FormatWebVTT();
+                    subtitleObject = formatWebVTT.parseFile(subUrl, inputText);
 
                     if (subtitleObject != null) {
                         subtitleObject.setOffset(3700);
@@ -640,7 +640,6 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
         if(currentEpisodeSubtitle == null || subtitle.getSubtitleId() == 0|| (subtitle.getSubtitleId() != currentEpisodeSubtitle.getSubtitleId())) {
             checkForSubtitle = false;
-            txtSubtitle.setText("");
             currentEpisodeSubtitle = subtitle;
 
             if(subtitle.getSubtitleId() != 0)
@@ -656,7 +655,6 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         if(stopSubtitles) {
             currentEpisodeSubtitle = null;
             checkForSubtitle = false;
-            txtSubtitle.setText("");
         }
         player = new MediaPlayer();
         player.setOnPreparedListener(this);
