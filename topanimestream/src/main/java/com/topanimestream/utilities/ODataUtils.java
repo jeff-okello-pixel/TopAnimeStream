@@ -1,19 +1,15 @@
 package com.topanimestream.utilities;
 
-import android.accounts.NetworkErrorException;
-import android.content.Entity;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.topanimestream.App;
-import com.topanimestream.R;
 import com.topanimestream.models.OdataRequestInfo;
 
 import org.json.JSONArray;
@@ -26,13 +22,13 @@ public class ODataUtils {
 
     public static <T> void PostWithEntityResponse(String url, String jsonBody, final Class<T> classType, final EntityCallback<T> callback)
     {
+        OkHttpClient client = App.getHttpClient();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, jsonBody);
 
-
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("Authorization", App.accessToken)
@@ -40,8 +36,13 @@ public class ODataUtils {
 
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
+            public void onFailure(Request request, final IOException e) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onFailure(e);
+                    }
+                });
             }
 
             @Override
@@ -52,28 +53,38 @@ public class ODataUtils {
                         Gson gson = App.getGson();
                         String json = response.body().string();
                         final OdataRequestInfo info = gson.fromJson(json, OdataRequestInfo.class);
-                        T result = gson.fromJson(json, classType);
-                        callback.onSuccess(result, info);
+                        final T result = gson.fromJson(json, classType);
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(result, info);
+                            }
+                        });
                         return;
                     }
+                    onFailure(request, new IOException("Failed to post/fetch the data."));
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
-                    callback.onFailure(e);
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(e);
+                        }
+                    });
                 }
-                callback.onFailure(new NetworkErrorException("Failed to post/fetch the data."));
             }
         });
     }
     public static void Post(String url, String jsonBody, final Callback callback)
     {
+        OkHttpClient client = App.getHttpClient();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, jsonBody);
 
-
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("Authorization", App.accessToken)
@@ -81,8 +92,13 @@ public class ODataUtils {
 
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
+            public void onFailure(Request request, final IOException e) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onFailure(e);
+                    }
+                });
             }
 
             @Override
@@ -90,64 +106,93 @@ public class ODataUtils {
 
                 try {
                     if (response.isSuccessful()) {
-                        callback.onSuccess();
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess();
+                            }
+                        });
                         return;
                     }
+                    onFailure(request, new IOException("Failed to fetch the data."));
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
-                    callback.onFailure(e);
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(e);
+                        }
+                    });
                 }
-                callback.onFailure(new NetworkErrorException("Failed to post/fetch the data."));
             }
         });
     }
     public static void DeleteEntity(final String url, final Callback callback)
     {
-        Request request = new Request.Builder()
+        OkHttpClient client = App.getHttpClient();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        final Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", App.accessToken)
                 .delete()
                 .build();
 
-        OkHttpClient client = App.getHttpClient();
-
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
+            public void onFailure(Request request, final IOException e) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onFailure(e);
+                    }
+                });
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
-                        callback.onSuccess();
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess();
+                            }
+                        });
                         return;
                     }
-
+                    onFailure(request, new IOException("Failed to fetch the data."));
+                } catch (final Exception e) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(e);
+                        }
+                    });;
                 }
-                catch (Exception e)
-                {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Failed to fetch the data."));
             }
         });
     }
     public static <T> void GetEntity(String url, final Class<T> classType, final EntityCallback<T> callback)
     {
-        Request request = new Request.Builder()
+        OkHttpClient client = App.getHttpClient();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        final Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", App.accessToken)
                 .build();
 
-        OkHttpClient client = App.getHttpClient();
-
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
+            public void onFailure(Request request, final IOException e) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onFailure(e);
+                    }
+                });
             }
 
             @Override
@@ -157,30 +202,38 @@ public class ODataUtils {
                         Gson gson = App.getGson();
                         String json = response.body().string();
                         final OdataRequestInfo info = gson.fromJson(json, OdataRequestInfo.class);
-                        T result = gson.fromJson(json, classType);
-                        callback.onSuccess(result, info);
+                        final T result = gson.fromJson(json, classType);
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(result, info);
+                            }
+                        });
                         return;
                     }
-
+                    onFailure(request, new IOException("Failed to fetch the data."));
+                } catch (final Exception e) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(e);
+                        }
+                    });
                 }
-                catch (Exception e)
-                {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Failed to fetch the data."));
             }
         });
     }
 
     public static <T> void GetEntityList(String url, final Class<T> classType, final EntityCallback<ArrayList<T>> callback)
     {
+        OkHttpClient client = App.getHttpClient();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+
         final Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", App.accessToken)
                 .build();
 
-        OkHttpClient client = App.getHttpClient();
-        final Handler mainHandler = new Handler(Looper.getMainLooper());
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
             public void onFailure(Request request, final IOException e) {
@@ -205,7 +258,6 @@ public class ODataUtils {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             genericList.add(gson.fromJson(jsonArray.get(i).toString(), classType));
                         }
-
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -215,7 +267,6 @@ public class ODataUtils {
 
                         return;
                     }
-
                     onFailure(request, new IOException("Failed to fetch the data."));
                 } catch (final Exception e) {
                     mainHandler.post(new Runnable() {
@@ -226,6 +277,7 @@ public class ODataUtils {
                     });
 
                 }
+
             }
         });
     }
