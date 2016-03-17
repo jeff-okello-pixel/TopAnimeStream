@@ -74,6 +74,15 @@ public class TimedTextObject {
         return new FormatSRT().toFile(this);
     }
 
+    /**
+     * Method to generate the .WebVTT file
+     *
+     * @return an array of strings where each String represents a line
+     */
+    public String[] toWebVTT() {
+        return new FormatWebVTT().toFile(this);
+    }
+
 
     /**
      * Method to generate the .ASS file

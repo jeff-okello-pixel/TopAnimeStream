@@ -327,4 +327,5 @@
     <string name="not_available_topanimestream">Not available on TopAnimeStream</string>
     <string name="error_adding_favorite">An error has occurred while adding the favorite.</string>
     <string name="error_removing_favorite">An error has occurred while removing the favorite.</string>
+    <string name="error_saving_prefs">An error has occurred while saving your preferences.</string>
 </resources>

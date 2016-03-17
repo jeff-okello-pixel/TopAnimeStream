@@ -361,7 +361,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                         //Remove characters from the anime name.
                         fileName = anime.getName().substring(0, anime.getName().length() - characterToRemove) + "-" + currentEpisode.getEpisodeNumber() + "-" + currentEpisodeSubtitle.getLanguage().getISO639();
                     }
-                    fileName = fileName + ".srt";
+                    fileName = fileName + ".webvtt";
                     final File srtPath = new File(subsDirectory, fileName);
 
                     if (srtPath.exists()) {
@@ -380,13 +380,13 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                     TimedTextObject subtitleObject = null;
 
                     String inputString = FileUtils.inputstreamToCharsetString(input);
-                    String[] inputText = inputString.split("\n|\r\n\r\n");
+                    String[] inputText = inputString.split("\n|\r\n");
                     FormatWebVTT formatWebVTT = new FormatWebVTT();
                     subtitleObject = formatWebVTT.parseFile(subUrl, inputText);
 
                     if (subtitleObject != null) {
                         subtitleObject.setOffset(3700);
-                        FileUtils.saveStringFile(subtitleObject.toSRT(), srtPath);
+                        FileUtils.saveStringFile(subtitleObject.toWebVTT(), srtPath);
                     }
                     return null;
                 }

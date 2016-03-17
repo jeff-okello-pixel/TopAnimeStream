@@ -20,8 +20,11 @@ import com.topanimestream.dialogfragments.NumberPickerDialogFragment;
 import com.topanimestream.dialogfragments.StringArraySelectorDialogFragment;
 import com.topanimestream.managers.DialogManager;
 import com.topanimestream.managers.VersionManager;
+import com.topanimestream.models.Account;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.preferences.PrefItem;
 import com.topanimestream.preferences.Prefs;
+import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
@@ -73,43 +76,6 @@ public class PreferencesActivity extends TASBaseActivity
 
     private void refreshItems() {
         mPrefItems = new ArrayList<>();
-        mPrefItems.add(getString(R.string.general));
-
-        /*
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_language, R.string.app_language, Prefs.LOCALE, "",
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(final PrefItem item) {
-                        int currentPosition = 0;
-                        String currentValue = Utils.ToLanguageStringDisplay(String.valueOf(item.getValue()));
-
-                        final String[] languages = getResources().getStringArray(R.array.languages);
-                        currentPosition = Arrays.asList(languages).indexOf(currentValue);
-                        DialogManager.OpenListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition, PreferencesActivity.this,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int position) {
-
-                                        item.saveValue(Utils.ToLanguageId(languages[position]));
-
-                                        dialog.dismiss();
-                                        App.setLocale();
-                                        App.languageChanged = true;
-                                        Utils.restartActivity(PreferencesActivity.this);
-                                    }
-                                });
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        String langCode = item.getValue().toString();
-                        return Utils.ToLanguageStringDisplay(langCode);
-
-                    }
-                }));*/
-
-
         mPrefItems.add(getString(R.string.videos));
         mPrefItems.add(new PrefItem(this, R.drawable.ic_hdtv, R.string.default_quality, Prefs.DEFAULT_VIDEO_QUALITY, "1080p",
                 new PrefItem.OnClickListener() {
@@ -124,8 +90,9 @@ public class PreferencesActivity extends TASBaseActivity
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
-
-                                        item.saveValue(qualities[position]);
+                                        String selectedQuality = qualities[position];
+                                        item.saveValue(selectedQuality);
+                                        UpdatePref("PreferredVideoQuality", selectedQuality.substring(0, selectedQuality.length() - 1));
                                         dialog.dismiss();
                                     }
                                 });
@@ -143,22 +110,23 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public void onClick(final PrefItem item) {
                         int currentPosition = 0;
-                        String currentLanguageId = item.getValue().toString();
+                        String currentLanguage = item.getValue().toString();
 
-                        if(currentLanguageId.equals("1"))
+                        if(currentLanguage.equals("en"))
                             currentPosition = 0;
-                        else if(currentLanguageId.equals("3"))
+                        else if(currentLanguage.equals("ja"))
                             currentPosition = 1;
 
                         final String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
 
-                        DialogManager.OpenListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,PreferencesActivity.this,
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), languages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition, PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
-
-                                        item.saveValue(getResources().getStringArray(R.array.videoLanguagesArrayValues)[position]);
-                                        Toast.makeText(PreferencesActivity.this,getString(R.string.if_default_language_not_available), Toast.LENGTH_LONG).show();
+                                        String selectedLanguage = (position == 0 ? "en" : "ja");
+                                        item.saveValue(selectedLanguage);
+                                        UpdatePref("PreferredAudioLang", selectedLanguage);
+                                        Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_language_not_available), Toast.LENGTH_LONG).show();
                                         dialog.dismiss();
                                     }
                                 });
@@ -168,9 +136,9 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public String get(PrefItem item) {
                         String langCode = item.getValue().toString();
-                        if(langCode.equals("1"))
+                        if(langCode.equals("en"))
                             return getString(R.string.language_english);
-                        else if(langCode.equals("3"))
+                        else if(langCode.equals("ja"))
                             return getString(R.string.language_japanese);
 
                         return "";
@@ -183,12 +151,12 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public void onClick(final PrefItem item) {
                         int currentPosition = 0;
-                        String currentLanguageId = item.getValue().toString();
-                        if(currentLanguageId.equals("0"))
+                        String currentLanguage = item.getValue().toString();
+                        if(currentLanguage.equals(getString(R.string.none)))
                             currentPosition = 0;
-                        else if(currentLanguageId.equals("1"))
+                        else if(currentLanguage.equals("en"))
                             currentPosition = 1;
-                        else if(currentLanguageId.equals("3"))
+                        else if(currentLanguage.equals("ja"))
                             currentPosition = 2;
                         String[] menuLanguages = new String[3];
                         menuLanguages[0] = getString(R.string.none);
@@ -196,16 +164,17 @@ public class PreferencesActivity extends TASBaseActivity
                         String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
                         menuLanguages[1] = languages[0]; //English
                         menuLanguages[2] = languages[1]; //Japanese
-                        DialogManager.OpenListSelectionDialog(item.getTitle(), menuLanguages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,PreferencesActivity.this,
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), menuLanguages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition, PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
-                                        if(position != 0) {
-                                            item.saveValue(getResources().getStringArray(R.array.videoLanguagesArrayValues)[position - 1]);
+                                        if (position != 0) {
+                                            String selectedLanguage = (position == 1 ? "en" : "ja");
+                                            item.saveValue(selectedLanguage);
+                                            UpdatePref("PreferredSubtitleLang", selectedLanguage);
                                             Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_subtitle_not_available), Toast.LENGTH_LONG).show();
-                                        }
-                                        else
-                                            item.saveValue("0");
+                                        } else
+                                            item.saveValue(getString(R.string.none));
 
 
                                         dialog.dismiss();
@@ -217,11 +186,11 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public String get(PrefItem item) {
                         String langCode = item.getValue().toString();
-                        if(langCode.equals("0"))
+                        if(langCode.equals(getString(R.string.none)))
                             return getString(R.string.none);
-                        else if(langCode.equals("1"))
+                        else if(langCode.equals("en"))
                             return getString(R.string.language_english);
-                        else if(langCode.equals("3"))
+                        else if(langCode.equals("ja"))
                             return getString(R.string.language_japanese);
 
                         return "";
@@ -335,39 +304,6 @@ public class PreferencesActivity extends TASBaseActivity
                         return Integer.toString((int) item.getValue());
                     }
                 }));
-        mPrefItems.add(getString(R.string.updates));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_auto_updates, R.string.auto_check_for_updates, Prefs.AUTO_CHECK_UPDATE, true,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(PrefItem item) {
-                        item.saveValue(!(boolean) item.getValue());
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        boolean enabled = (boolean) item.getValue();
-                        return enabled ? getString(R.string.enabled) : getString(R.string.disabled);
-                    }
-                }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_check_updates, R.string.check_for_updates,Prefs.LAST_CHECK_FOR_UPDATE, 1,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(PrefItem item) {
-                        VersionManager.checkUpdate(PreferencesActivity.this, true);
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        long timeStamp = Long.parseLong(PrefUtils.get(PreferencesActivity.this, Prefs.LAST_CHECK_FOR_UPDATE, "0"));
-                        Calendar cal = Calendar.getInstance(Locale.getDefault());
-                        cal.setTimeInMillis(timeStamp);
-                        String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM, Locale.getDefault()).format(timeStamp);
-                        String date = DateFormat.format("dd-MM-yyy", cal).toString();
-                        return getString(R.string.last_check) + ": " + date + " " + time;
-                    }
-                }));
 
         if (recyclerView.getAdapter() != null && mLayoutManager != null) {
             int position = mLayoutManager.findFirstVisibleItemPosition();
@@ -408,6 +344,28 @@ public class PreferencesActivity extends TASBaseActivity
             }
         }
         return b;
+    }
+
+    private void UpdatePref(String prefName, final String value)
+    {
+        String jsonBody = "{" + prefName + ": \"" + value + "\"}";
+        ODataUtils.PatchWithEntityResponse(getString(R.string.odata_path) + "Accounts(" + App.currentUser.getAccountId() + ")", jsonBody, com.topanimestream.models.Account.class, new ODataUtils.EntityCallback<com.topanimestream.models.Account>() {
+
+            @Override
+            public void onSuccess(Account account, OdataRequestInfo info) {
+                if(account != null) {
+                    App.currentUser.setPreferredAudioLang(account.getPreferredAudioLang());
+                    App.currentUser.setPreferredSubtitleLang(account.getPreferredSubtitleLang());
+                    App.currentUser.setPreferredVideoQuality(account.getPreferredVideoQuality());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(PreferencesActivity.this, getString(R.string.error_saving_prefs), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 

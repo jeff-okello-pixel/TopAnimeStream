@@ -2,11 +2,6 @@ package com.topanimestream.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.topanimestream.App;
-import com.topanimestream.R;
-import com.topanimestream.utilities.ImageUtils;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -27,6 +22,7 @@ public class Account implements Parcelable {
     private String PreferredVideoQuality;
     private String PreferredAudioLang;
     private String PreferredSubtitleLang;
+    private boolean IsHistoryPlaybackEnabled;
 
     public Account() {
     }
@@ -47,6 +43,15 @@ public class Account implements Parcelable {
         PreferredVideoQuality = in.readString();
         PreferredAudioLang = in.readString();
         PreferredSubtitleLang = in.readString();
+        IsHistoryPlaybackEnabled = in.readByte() != 0;
+    }
+
+    public boolean isHistoryPlaybackEnabled() {
+        return IsHistoryPlaybackEnabled;
+    }
+
+    public void setIsHistoryPlaybackEnabled(boolean isHistoryPlaybackEnabled) {
+        IsHistoryPlaybackEnabled = isHistoryPlaybackEnabled;
     }
 
     public String getBackdrop() {
@@ -199,6 +204,7 @@ public class Account implements Parcelable {
         dest.writeString(PreferredVideoQuality);
         dest.writeString(PreferredAudioLang);
         dest.writeString(PreferredSubtitleLang);
+        dest.writeByte((byte) (IsHistoryPlaybackEnabled ? 1 : 0));
     }
     public static final Creator<Account> CREATOR = new Creator<Account>() {
         public Account createFromParcel(Parcel in) {

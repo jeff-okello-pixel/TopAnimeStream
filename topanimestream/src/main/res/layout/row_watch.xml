@@ -17,7 +17,8 @@
             android:orientation="horizontal">
             <android.support.percent.PercentRelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
                 <RelativeLayout
                     android:id="@+id/btnEdit"

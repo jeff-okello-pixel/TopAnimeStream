@@ -32,20 +32,29 @@ public class FormatWebVTT extends TimedTextFileFormat {
         tto.fileName = fileName;
 
         int lineCounter = 0;
-        int stringIndex = 1;//first line is WebVtt declaration.
+        int stringIndex = 0;
         String line;
+
+
         try {
+            //first line is WebVtt declaration.
             line = getLine(inputString, stringIndex++);
+            lineCounter++;
+            if(!line.toLowerCase().equals("webvtt"))
+                tto.warnings += "No WebVtt declaration found. It might be the wrong format...\n\n";
+            else {
+                line = getLine(inputString, stringIndex++); //should be an empty string
+                lineCounter++;
+            }
+
             while (line != null && stringIndex < inputString.length) {
                 line = line.trim();
-                lineCounter++;
+
                 //if its a blank line, ignore it, otherwise...
                 if (!line.isEmpty()) {
 
                     //we go to next line, here the begin and end time should be found
                     try {
-                        lineCounter++;
-                        line = getLine(inputString, stringIndex++).trim();
                         String start = line.substring(0, 12);
                         String end = line.substring(line.length() - 12, line.length());
                         Time time = new Time("hh:mm:ss.ms", start);

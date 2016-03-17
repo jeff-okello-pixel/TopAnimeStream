@@ -128,6 +128,65 @@ public class ODataUtils {
             }
         });
     }
+
+    public static <T> void PatchWithEntityResponse(final String url, String jsonBody, final Class<T> classType, final EntityCallback<T> callback)
+    {
+        OkHttpClient client = App.getHttpClient();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, jsonBody);
+
+        final Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", App.accessToken)
+                .addHeader("X-HTTP-Method-Override", "PATCH")
+                .addHeader("Prefer", "return=representation")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
+            @Override
+            public void onFailure(Request request, final IOException e) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onFailure(e);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        Gson gson = App.getGson();
+                        String json = response.body().string();
+                        final OdataRequestInfo info = gson.fromJson(json, OdataRequestInfo.class);
+                        final T result = gson.fromJson(json, classType);
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(result, info);
+                            }
+                        });
+                        return;
+                    }
+                    onFailure(request, new IOException("Failed to patch/fetch the data."));
+                }
+                catch (final Exception e)
+                {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure(e);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public static void DeleteEntity(final String url, final Callback callback)
     {
         OkHttpClient client = App.getHttpClient();
