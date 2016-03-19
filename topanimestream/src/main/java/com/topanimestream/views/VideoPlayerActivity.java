@@ -245,12 +245,11 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                                @Override
                                public void run() {
                                    try {
-                                       while(checkForSubtitle) {
+                                       while (checkForSubtitle) {
                                            checkSubs();
                                            sleep(50);
                                        }
-                                   }
-                                   catch (Exception e) {
+                                   } catch (Exception e) {
                                        e.printStackTrace();
                                    }
                                    runOnUiThread(new Runnable() {
@@ -297,9 +296,9 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.EntityCallback<ArrayList<Source>>() {
             @Override
             public void onSuccess(ArrayList<Source> newSources, OdataRequestInfo info) {
-                String defaultLanguageId = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_LANGUAGE, "3");
-                String defaultQuality = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_QUALITY, "1080p");
-                String defaultSubtitle = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
+                String defaultLanguageId = Utils.ToLanguageId(App.currentUser.getPreferredAudioLang());
+                String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
+                String defaultSubtitle = Utils.ToLanguageId(App.currentUser.getPreferredSubtitleLang());
 
                 sources = newSources;
 
@@ -612,7 +611,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     @Override
     public int GetCurrentSubtitlePosition() {
         if(currentEpisodeSubtitle == null)
-            return -1;
+            return 0;
 
         for(int i = 0; i < subtitles.size(); i++)
         {
@@ -622,7 +621,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
             }
         }
 
-        return -1;
+        return 0;
     }
 
     @Override
@@ -699,7 +698,8 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
         if(subtitleLanguage != null)
         {
-            String defaultSubtitleLanguage = PrefUtils.get(VideoPlayerActivity.this, Prefs.DEFAULT_VIDEO_SUBTITLE_LANGUAGE, "1");
+            String defaultSubtitleLanguage = Utils.ToLanguageId(App.currentUser.getPreferredSubtitleLang());
+
             if(!subtitleLanguage.equals(defaultSubtitleLanguage))
             {
                 Toast.makeText(VideoPlayerActivity.this, getString(R.string.subtitles_reset_default), Toast.LENGTH_LONG).show();

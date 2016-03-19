@@ -177,13 +177,16 @@ public class Utils {
     }
 
     public static String ToLanguageId(String language) {
-        language = language.toLowerCase();
-        if (language.equals("en") || language.equals("english"))
+        if (language.equalsIgnoreCase("en") || language.equalsIgnoreCase("english"))
             return "1";
-        else if (language.equals("fr") || language.equals("français"))
+        else if (language.equalsIgnoreCase("fr") || language.equalsIgnoreCase("français"))
             return "2";
-        else if (language.equals("es") || language.equals("español"))
+        else if (language.equalsIgnoreCase("ja") || language.equalsIgnoreCase("japanese"))
+            return "3";
+        else if (language.equalsIgnoreCase("es") || language.equalsIgnoreCase("español"))
             return "4";
+        else if(language.equalsIgnoreCase("none"))
+            return "0";
 
 
         return null;

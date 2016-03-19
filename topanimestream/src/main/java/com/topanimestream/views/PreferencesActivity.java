@@ -82,16 +82,17 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public void onClick(final PrefItem item) {
                         int currentPosition = 0;
-                        String currentValue = item.getValue().toString();
+                        String currentValue = App.currentUser.getPreferredVideoQuality();
 
                         final String[] qualities = getResources().getStringArray(R.array.qualitiesArray);
-                        currentPosition = Arrays.asList(qualities).indexOf(currentValue);
-                        DialogManager.OpenListSelectionDialog(item.getTitle(), qualities, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition,PreferencesActivity.this,
+                        currentPosition = Arrays.asList(qualities).indexOf(currentValue + "p");
+                        DialogManager.OpenListSelectionDialog(item.getTitle(), qualities, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition, PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
                                         String selectedQuality = qualities[position];
-                                        item.saveValue(selectedQuality);
+                                        App.currentUser.setPreferredVideoQuality(selectedQuality.substring(0, selectedQuality.length() - 1));
+                                        item.saveValue(selectedQuality.substring(0, selectedQuality.length() - 1));
                                         UpdatePref("PreferredVideoQuality", selectedQuality.substring(0, selectedQuality.length() - 1));
                                         dialog.dismiss();
                                     }
@@ -101,7 +102,7 @@ public class PreferencesActivity extends TASBaseActivity
                 new PrefItem.SubTitleGenerator() {
                     @Override
                     public String get(PrefItem item) {
-                        return item.getValue().toString();
+                        return App.currentUser.getPreferredVideoQuality() + "p";
 
                     }
                 }));
@@ -110,11 +111,11 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public void onClick(final PrefItem item) {
                         int currentPosition = 0;
-                        String currentLanguage = item.getValue().toString();
+                        String currentLanguage = App.currentUser.getPreferredAudioLang();
 
-                        if(currentLanguage.equals("en"))
+                        if (currentLanguage.equals("en"))
                             currentPosition = 0;
-                        else if(currentLanguage.equals("ja"))
+                        else if (currentLanguage.equals("ja"))
                             currentPosition = 1;
 
                         final String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
@@ -124,9 +125,11 @@ public class PreferencesActivity extends TASBaseActivity
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
                                         String selectedLanguage = (position == 0 ? "en" : "ja");
+                                        App.currentUser.setPreferredAudioLang(selectedLanguage);
                                         item.saveValue(selectedLanguage);
                                         UpdatePref("PreferredAudioLang", selectedLanguage);
-                                        Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_language_not_available), Toast.LENGTH_LONG).show();
+                                        if(!selectedLanguage.equalsIgnoreCase("ja"))
+                                            Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_language_not_available), Toast.LENGTH_LONG).show();
                                         dialog.dismiss();
                                     }
                                 });
@@ -135,10 +138,10 @@ public class PreferencesActivity extends TASBaseActivity
                 new PrefItem.SubTitleGenerator() {
                     @Override
                     public String get(PrefItem item) {
-                        String langCode = item.getValue().toString();
-                        if(langCode.equals("en"))
+                        String langCode = App.currentUser.getPreferredAudioLang();
+                        if (langCode.equals("en"))
                             return getString(R.string.language_english);
-                        else if(langCode.equals("ja"))
+                        else if (langCode.equals("ja"))
                             return getString(R.string.language_japanese);
 
                         return "";
@@ -151,32 +154,28 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public void onClick(final PrefItem item) {
                         int currentPosition = 0;
-                        String currentLanguage = item.getValue().toString();
-                        if(currentLanguage.equals(getString(R.string.none)))
+                        String currentLanguage = App.currentUser.getPreferredSubtitleLang();
+                        if (currentLanguage.equalsIgnoreCase(getString(R.string.none)))
                             currentPosition = 0;
-                        else if(currentLanguage.equals("en"))
+                        else if (currentLanguage.equalsIgnoreCase("en"))
                             currentPosition = 1;
-                        else if(currentLanguage.equals("ja"))
-                            currentPosition = 2;
-                        String[] menuLanguages = new String[3];
+
+                        String[] menuLanguages = new String[2];
                         menuLanguages[0] = getString(R.string.none);
 
                         String[] languages = getResources().getStringArray(R.array.videoLanguagesArray);
                         menuLanguages[1] = languages[0]; //English
-                        menuLanguages[2] = languages[1]; //Japanese
                         DialogManager.OpenListSelectionDialog(item.getTitle(), menuLanguages, StringArraySelectorDialogFragment.SINGLE_CHOICE, currentPosition, PreferencesActivity.this,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int position) {
-                                        if (position != 0) {
-                                            String selectedLanguage = (position == 1 ? "en" : "ja");
-                                            item.saveValue(selectedLanguage);
-                                            UpdatePref("PreferredSubtitleLang", selectedLanguage);
+                                        String selectedLanguage = position == 0 ? "none" : "en";
+
+                                        App.currentUser.setPreferredSubtitleLang(selectedLanguage);
+                                        item.saveValue(selectedLanguage);
+                                        UpdatePref("PreferredSubtitleLang", selectedLanguage);
+                                        if(!selectedLanguage.equalsIgnoreCase("none"))
                                             Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_subtitle_not_available), Toast.LENGTH_LONG).show();
-                                        } else
-                                            item.saveValue(getString(R.string.none));
-
-
                                         dialog.dismiss();
                                     }
                                 });
@@ -185,13 +184,11 @@ public class PreferencesActivity extends TASBaseActivity
                 new PrefItem.SubTitleGenerator() {
                     @Override
                     public String get(PrefItem item) {
-                        String langCode = item.getValue().toString();
-                        if(langCode.equals(getString(R.string.none)))
+                        String langCode = App.currentUser.getPreferredSubtitleLang();
+                        if (langCode.equals("none"))
                             return getString(R.string.none);
-                        else if(langCode.equals("en"))
+                        else if (langCode.equals("en"))
                             return getString(R.string.language_english);
-                        else if(langCode.equals("ja"))
-                            return getString(R.string.language_japanese);
 
                         return "";
 

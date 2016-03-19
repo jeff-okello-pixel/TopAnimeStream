@@ -452,7 +452,8 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                             if (position != mCallback.GetCurrentSubtitlePosition()) {
                                 mCallback.SubtitleSelected(selectedSub);
                             } else {
-                                Toast.makeText(mContext, mContext.getString(R.string.already_have) + selectedSub.getLanguage().getName() + selectedSub.getSpecification(), Toast.LENGTH_LONG).show();
+                                if(selectedSub.getSubtitleId() != 0)
+                                    Toast.makeText(mContext, mContext.getString(R.string.already_have) + selectedSub.getLanguage().getName() + selectedSub.getSpecification(), Toast.LENGTH_LONG).show();
                             }
                             dialog.dismiss();
                         }
