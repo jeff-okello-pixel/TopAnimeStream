@@ -1,5 +1,6 @@
 package com.topanimestream.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +40,15 @@ public class AnimeSearchActivity extends TASBaseActivity {
                 AnimeListFragment.newInstance("Search", AnimeListFragment.Mode.SEARCH, "", "", 0);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mFragment).commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == MainActivity.UpdateWatchCode)
+        {
+            setResult(MainActivity.UpdateWatchCode, data);
+        }
     }
 
     @Override

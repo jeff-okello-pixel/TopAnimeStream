@@ -305,7 +305,7 @@ public class AnimeListFragment extends Fragment {
             CallService(url);
         }
         else if(mMode == Mode.SEARCH) {
-            String url = getString(R.string.odata_path) + "Animes?$filter=startswith(tolower(OriginalName),%20%27" + searchQuery.toLowerCase() + "%27)&$orderby=IsAvailable%20desc&$top=30&$count=true";
+            String url = getString(R.string.odata_path) + "Animes?$expand=Genres,AnimeInformations,Status&$filter=startswith(tolower(OriginalName),%20%27" + searchQuery.toLowerCase() + "%27)&$orderby=IsAvailable%20desc&$top=30&$count=true";
             CallService(url);
         }
     }

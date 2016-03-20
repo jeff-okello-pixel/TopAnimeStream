@@ -683,7 +683,12 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     public void QualitySelected(String quality) {
         videoTime = player.getCurrentPosition();
         ResetMediaPlayer(false);
-        SelectSourceAndPlay(currentVideoLanguageId, quality, String.valueOf(currentEpisodeSubtitle.getLanguageId()), false);
+        String subtitleLanguage = null;
+        if(currentEpisodeSubtitle != null)
+        {
+            subtitleLanguage = String.valueOf(currentEpisodeSubtitle.getLanguageId());
+        }
+        SelectSourceAndPlay(currentVideoLanguageId, quality, (subtitleLanguage != null ? subtitleLanguage : "0"), false);
     }
 
     @Override
