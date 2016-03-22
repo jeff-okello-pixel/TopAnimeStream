@@ -89,6 +89,7 @@
 
                     <SeekBar
                         android:id="@+id/mediacontroller_progress"
+                        style="@android:style/Widget.Holo.SeekBar"
                         android:layout_width="0dip"
                         android:layout_weight="1"
                         android:layout_height="32dip" />

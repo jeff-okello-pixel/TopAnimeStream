@@ -78,6 +78,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     private double lastSubtitleTime;
     private int videoTime = -1;
     private boolean finishCalled = false;
+    private boolean shouldResetVideo = false;
     public static File getStorageLocation(Context context) {
         return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
     }
@@ -132,8 +133,20 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         if(!finishCalled)
             SaveWatchTime();
 
-        checkForSubtitle = false;
+        shouldResetVideo = true;
+
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(shouldResetVideo) {
+            ResetMediaPlayer(false);
+            GetSourcesAndSubs();
+            shouldResetVideo = false;
+        }
+
     }
 
     @Override
@@ -482,7 +495,9 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-    	player.setDisplay(holder);
+        try {
+            player.setDisplay(holder);
+        }catch(Exception e){}
 
     }
 
@@ -647,10 +662,14 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
     }
     public void ResetMediaPlayer(boolean stopSubtitles)
     {
-        if(player != null) {
-            player.stop();
+        try {
+            if (player != null && player.isPlaying())
+                player.stop();
+        }catch(IllegalStateException e){}
+
+        if(player != null)
             player.release();
-        }
+
         if(stopSubtitles) {
             currentEpisodeSubtitle = null;
             checkForSubtitle = false;

@@ -15,11 +15,9 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
-        <item name="android:seekBarStyle">@style/SeekBarAppTheme</item>
         <item name="colorPrimary">#245169</item>
         <item name="colorPrimaryDark">#245169</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -125,5 +123,11 @@
     </style>
 
     <style name="ButtonBarButton" />
+
+    <style name="SeekBarAppTheme" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/apptheme_scrubber_control_selector_holo_light</item>
+    </style>
 
 </resources>
