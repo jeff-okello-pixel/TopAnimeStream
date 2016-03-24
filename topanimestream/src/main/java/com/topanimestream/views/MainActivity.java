@@ -71,6 +71,7 @@ import com.topanimestream.utilities.AsyncTaskTools;
 import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.NetworkUtil;
 import com.topanimestream.utilities.ODataUtils;
+import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.ToolbarUtils;
 import com.topanimestream.utilities.Utils;
@@ -137,6 +138,18 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     @Bind(R.id.progressBarWatched)
     ProgressBar progressBarWatched;
+
+    @Bind(R.id.txtContinueWatching)
+    TextView txtContinueWatching;
+
+    @Bind(R.id.txtNoAnimeWatched)
+    TextView txtNoAnimeWatched;
+
+    @Bind(R.id.layContinueWatching)
+    RelativeLayout layContinueWatching;
+
+    @Bind(R.id.imgPlay)
+    ImageView imgPlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,12 +244,16 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             TextView txtAbout = (TextView) header.findViewById(R.id.txtAbout);
 
             Picasso.with(this)
-                    .load(getString(R.string.image_host_path) + App.currentUser.getProfilePic())
+                    .load(getString(R.string.image_host_path) + (!TextUtils.isEmpty(App.currentUser.getProfilePic()) ? App.currentUser.getProfilePic() : "64/12/7/default_profile_picture.jpg"))
                     .into(imgHeaderProfilePic);
 
-            Picasso.with(this)
-                    .load(getString(R.string.image_host_path) + App.currentUser.getBackdrop())
-                    .into(imgHeaderBackground);
+            if(!TextUtils.isEmpty(App.currentUser.getBackdrop())) {
+                Picasso.with(this)
+                        .load(getString(R.string.image_host_path) + App.currentUser.getBackdrop())
+                        .into(imgHeaderBackground);
+            } else {
+                imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.tas_background));
+            }
 
             txtUsername.setText(App.currentUser.getUsername().substring(0, 1).toUpperCase() + App.currentUser.getUsername().substring(1));
             txtJoinedDate.setText("Since: " + DateUtils.getRelativeTimeSpanString(App.currentUser.getAddedDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));
@@ -267,6 +284,17 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     private void UpdateRecentlyWatched(final WatchedVideo watchedVideo)
     {
+        if(txtNoAnimeWatched.getVisibility() == View.VISIBLE){
+            int marginInDp = PixelUtils.getPixelsFromDp(this, 10);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) layContinueWatching.getLayoutParams();
+            params.setMargins(marginInDp, 0, 0, 0);
+            layContinueWatching.setLayoutParams(params);
+            txtNoAnimeWatched.setVisibility(View.GONE);
+            imgPlay.setVisibility(View.VISIBLE);
+            txtContinueWatching.setVisibility(View.VISIBLE);
+            layRecentlyWatched.setClickable(true);
+        }
+
         progressBarWatched.setVisibility(View.VISIBLE);
         Picasso.with(MainActivity.this)
                 .load(getString(R.string.image_host_path) + ImageUtils.resizeImage(watchedVideo.getAnime().getBackdropPath(), 500))
@@ -318,13 +346,20 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             public void onSuccess(ArrayList<WatchedVideo> watchedVideos, OdataRequestInfo info) {
                 if(watchedVideos.size() > 0) {
                     final WatchedVideo watchedVideo = watchedVideos.get(0);
-
                     UpdateRecentlyWatched(watchedVideo);
 
                 }
                 else
                 {
-                    layRecentlyWatched.setVisibility(View.GONE);
+                    layRecentlyWatched.setClickable(false);
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) layContinueWatching.getLayoutParams();
+                    params.setMargins(0, 0, 0, 0);
+                    layContinueWatching.setLayoutParams(params);
+                    progressBarWatched.setVisibility(View.GONE);
+                    imgPlay.setVisibility(View.GONE);
+                    txtContinueWatching.setVisibility(View.GONE);
+                    txtNoAnimeWatched.setVisibility(View.VISIBLE);
+                    imgWatchedBackdrop.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.tas_background));
                 }
 
             }

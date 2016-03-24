@@ -48,14 +48,14 @@
                                 android:layout_centerVertical="true"
                                 android:src="@drawable/ic_play"/>
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
+                            <RelativeLayout
+                                android:id="@+id/layContinueWatching"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:layout_alignParentLeft="true"
                                 android:layout_toLeftOf="@id/imgPlay"
-                                android:layout_marginLeft="10dp"
-                                android:orientation="vertical">
+                                android:layout_marginLeft="10dp">
                                     <TextView
                                         android:id="@+id/txtContinueWatching"
                                         android:layout_width="wrap_content"
@@ -67,11 +67,23 @@
 
                                     <TextView
                                         android:id="@+id/txtWatchedTitle"
+                                        android:layout_below="@id/txtContinueWatching"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textSize="20sp"
                                         style="@style/TextViewWhite" />
-                            </LinearLayout>
+
+                                    <TextView
+                                        android:id="@+id/txtNoAnimeWatched"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:gravity="center"
+                                        android:visibility="gone"
+                                        style="@style/TextViewWhite"
+                                        android:textSize="20sp"
+                                        android:text="@string/no_anime_watched"/>
+                            </RelativeLayout>
 
                             <ProgressBar
                                 android:id="@+id/progressBarWatched"

@@ -329,4 +329,5 @@
     <string name="error_adding_favorite">An error has occurred while adding the favorite.</string>
     <string name="error_removing_favorite">An error has occurred while removing the favorite.</string>
     <string name="error_saving_prefs">An error has occurred while saving your preferences.</string>
+    <string name="no_anime_watched">You haven\'t watch any anime yet! \nWatch one now!</string>
 </resources>
