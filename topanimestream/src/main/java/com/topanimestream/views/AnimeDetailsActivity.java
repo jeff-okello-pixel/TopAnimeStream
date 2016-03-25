@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -111,7 +112,14 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("Anime");
 
-        fabPlay.setOnClickListener(this);
+        if(anime.isAvailable())
+            fabPlay.setOnClickListener(this);
+        else {
+            CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fabPlay.getLayoutParams();
+            p.setAnchorId(View.NO_ID);
+            fabPlay.setLayoutParams(p);
+            fabPlay.setVisibility(View.GONE);
+        }
 
         FragmentManager fm = getSupportFragmentManager();
         fragmentEpisodesList = (EpisodeListFragment) fm.findFragmentByTag("frag_episodes");

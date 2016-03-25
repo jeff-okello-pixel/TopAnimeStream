@@ -150,7 +150,7 @@ public class EpisodeListFragment extends Fragment  {
                 isLoading = false;
                 mAdapter.removeLoading();
 
-                int currentItemCount = mAdapter.getItemCount();
+                int currentItemCount = mAdapter.getItemCount() - (mAdapter.useHeader() ? 1 : 0);
 
                 if(info.getCount() == currentItemCount + episodes.size())
                     isEndOfList = true;

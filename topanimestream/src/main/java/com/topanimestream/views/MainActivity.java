@@ -587,7 +587,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                 return true;
             case R.id.action_search:
-                startActivity(new Intent(MainActivity.this, AnimeSearchActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, AnimeSearchActivity.class), MainActivity.UpdateWatchCode);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,13 +24,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
-    private final Context context;
+    private final Context mContext;
     private ArrayList<EpisodeItem> mItems = new ArrayList<>();
     private EpisodeListAdapter.OnItemClickListener mItemClickListener;
     private Anime anime;
     public static final int TYPE_NORMAL = 0, TYPE_LOADING = 1, TYPE_UNAVAILABLE = 2;
     public EpisodeListAdapter(Context context, Anime anime) {
-        this.context = context;
+        this.mContext = context;
         this.anime = anime;
         addItems(anime.getEpisodes());
     }
@@ -81,6 +82,11 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
     public void onBindHeaderView(RecyclerView.ViewHolder viewHolder, int position) {
         final HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
         headerViewHolder.txtSysnopsis.setText(anime.getSynopsis());
+
+        if(anime.isAvailable())
+            headerViewHolder.txtAnimeUnavailable.setVisibility(View.GONE);
+        else
+            headerViewHolder.txtAnimeUnavailable.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -102,16 +108,14 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
     public RecyclerView.ViewHolder onCreateBasicItemViewHolder(ViewGroup parent, int viewType) {
         View v;
         switch (viewType) {
-            case TYPE_LOADING:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_loading, parent, false);
-                return new EpisodeListAdapter.SimpleHolder(v);
             case TYPE_NORMAL:
+            case TYPE_UNAVAILABLE:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode, parent, false);
                 return new EpisodeListAdapter.EpisodeViewHolder(v);
-            case TYPE_UNAVAILABLE:
+            case TYPE_LOADING:
             default:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_episode_unavailable, parent, false);
-                return new EpisodeListAdapter.UnavailableHolder(v);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_loading, parent, false);
+                return new EpisodeListAdapter.SimpleHolder(v);
 
         }
     }
@@ -119,16 +123,18 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
     @Override
     public void onBindBasicItemView(RecyclerView.ViewHolder holder, int position) {
         Episode episode = getItem(position);
-        switch(getBasicItemType(position))
+        int itemType = getBasicItemType(position);
+        switch(itemType)
         {
             case TYPE_NORMAL:
+            case TYPE_UNAVAILABLE:
                 final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
-                Picasso .with(context)
-                        .load(context.getString(R.string.image_host_path) + ImageUtils.resizeImage(episode.getScreenshotHD(), 250))
+                Picasso .with(mContext)
+                        .load(mContext.getString(R.string.image_host_path) + ImageUtils.resizeImage(episode.getScreenshotHD(), 250))
                         .into(episodeHolder.imgScreenshot);
 
                 episodeHolder.txtEpisodeName.setText(episode.getEpisodeName(Languages.English));
-                episodeHolder.txtEpisodeNumber.setText(context.getString(R.string.episode) + " " + episode.getEpisodeNumber());
+                episodeHolder.txtEpisodeNumber.setText(mContext.getString(R.string.episode) + " " + episode.getEpisodeNumber());
 
                 if(episode.getAiredDate() != null) {
                     long now = System.currentTimeMillis();
@@ -137,12 +143,14 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
                 }
                 else
                 {
-                    episodeHolder.txtReleasedDate.setText(context.getString(R.string.unknown_aired_date));
+                    episodeHolder.txtReleasedDate.setText(mContext.getString(R.string.unknown_aired_date));
                 }
-                break;
-            case TYPE_UNAVAILABLE:
-                final UnavailableHolder unavailableHolder = (UnavailableHolder) holder;
-                //TODO bind views
+
+                if(itemType == TYPE_UNAVAILABLE)
+                    episodeHolder.txtEpisodeUnavailable.setVisibility(View.VISIBLE);
+                else
+                    episodeHolder.txtEpisodeUnavailable.setVisibility(View.GONE);
+
                 break;
             case TYPE_LOADING:
                 break;
@@ -156,10 +164,13 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
 
     @Override
     public int getBasicItemType(int position) {
-        if(mItems.get(position).isLoadingItem)
+        EpisodeItem episodeItem = mItems.get(position);
+        if(episodeItem.isLoadingItem)
             return TYPE_LOADING;
-        else
+        else if(episodeItem.episode.isAvailable())
             return TYPE_NORMAL;
+        else
+            return TYPE_UNAVAILABLE;
     }
 
 
@@ -192,6 +203,9 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
         @Bind(R.id.txtReleasedDate)
         TextView txtReleasedDate;
 
+        @Bind(R.id.txtEpisodeUnavailable)
+        TextView txtEpisodeUnavailable;
+
         public EpisodeViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -204,7 +218,10 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
             if (mItemClickListener != null) {
                 int position = getAdapterPosition();
                 Episode episode = getItem(position - (useHeader() ? 1 : 0));
-                mItemClickListener.onItemClick(view, episode, position);
+                if(episode.isAvailable())
+                    mItemClickListener.onItemClick(view, episode, position);
+                else
+                    Toast.makeText(mContext, mContext.getString(R.string.the_episode_unavailable), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -236,6 +253,9 @@ public class EpisodeListAdapter extends HeaderRecyclerViewAdapter {
     class HeaderViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.expand_text_view)
         ExpandableTextView txtSysnopsis;
+
+        @Bind(R.id.txtAnimeUnavailable)
+        TextView txtAnimeUnavailable;
 
         View itemView;
 
