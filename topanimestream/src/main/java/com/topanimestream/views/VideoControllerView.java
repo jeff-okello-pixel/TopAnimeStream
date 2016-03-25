@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -36,10 +37,13 @@ import android.widget.Toast;
 import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.adapters.PlayerEpisodesAdapter;
+import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.models.Language;
+import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.Subtitle;
+import com.topanimestream.utilities.ODataUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -80,7 +84,6 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private boolean             drawerIsOpened;
     private ListView            leftDrawerEpisodes;
     private Float               layBottomAlpha = 1.0f;// used for older devices
-    private ArrayList<Episode>  episodes;
     private Episode             currentEpisode;
     private ArrayList<Subtitle> currentVideoSubtitles = new ArrayList<Subtitle>();
     private ArrayList<Source>   currentVideoSources = new ArrayList<Source>();
@@ -89,14 +92,22 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
     private MenuItem            menuSubtitles;
     private MenuItem            menuLanguage;
     private MenuItem            menuSettings;
-
-    public VideoControllerView(Context context, boolean useFastForward, ArrayList<Episode> episodes, Episode currentEpisode) {
+    private boolean             isLoading;
+    private Anime               anime;
+    private int                 currentLimit;
+    private int                 currentSkip;
+    PlayerEpisodesAdapter       adapter;
+    private boolean             isEndOfList;
+    public VideoControllerView(Context context, boolean useFastForward, Episode currentEpisode, Anime anime, int currentSkip, int currentLimit) {
         super(context);
         mContext = context;
         mUseFastForward = useFastForward;
-        this.episodes = episodes;
         this.currentEpisode = currentEpisode;
         this.currentSelectedLanguage = new Language(3, "Japanese", "ja");
+        this.anime = anime;
+        //The skip and limit from the anime details.
+        this.currentLimit = currentLimit;
+        this.currentSkip = currentSkip;
         Log.i(TAG, TAG);
     }
 
@@ -162,12 +173,12 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
             leftDrawerEpisodes = (ListView) v.findViewById(R.id.leftDrawerEpisodes);
 
             if (mDrawerLayout != null) {
-                if(episodes != null && episodes.size() > 0) {
+                if(anime.getEpisodes() != null && anime.getEpisodes().size() > 0) {
                     if(leftDrawerEpisodes != null) {
                         leftDrawerEpisodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Episode selectedEpisode = episodes.get(position);
+                                Episode selectedEpisode = anime.getEpisodes().get(position);
                                 if(currentEpisode != null && currentEpisode.getEpisodeId() != selectedEpisode.getEpisodeId()) {
                                     currentEpisode = selectedEpisode;
                                     currentVideoSubtitles = null;
@@ -183,7 +194,7 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                             }
                         });
 
-                        PlayerEpisodesAdapter adapter = new PlayerEpisodesAdapter(mContext, episodes);
+                        adapter = new PlayerEpisodesAdapter(mContext, anime.getEpisodes());
                         leftDrawerEpisodes.setAdapter(adapter);
                         for(int i = 0; i < adapter.getCount(); i++)
                         {
@@ -194,6 +205,28 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
                                 break;
                             }
                         }
+
+                        leftDrawerEpisodes.setOnScrollListener(new AbsListView.OnScrollListener() {
+                            @Override
+                            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+                            }
+
+                            @Override
+                            public void onScroll(AbsListView view, int firstVisibleItem,
+                                                 int visibleItemCount, int totalItemCount) {
+
+                                if(firstVisibleItem + visibleItemCount == totalItemCount - 6 && totalItemCount != 0)
+                                {
+
+                                    if(isLoading == false && !isEndOfList)
+                                    {
+                                        currentSkip += currentLimit;
+                                        GetEpisodes();
+                                    }
+                                }
+                            }
+                        });
 
                     }
                     mDrawerLayout.setDrawerListener(new DrawerListener());
@@ -282,6 +315,31 @@ public class VideoControllerView extends FrameLayout implements View.OnTouchList
 
         installPrevNextListeners();
     }
+
+    public void GetEpisodes()
+    {
+        isLoading = true;
+        ODataUtils.GetEntityList(mContext.getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links&$orderby=Order%20desc&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", Episode.class, new ODataUtils.EntityCallback<ArrayList<Episode>>() {
+            @Override
+            public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
+                isLoading = false;
+
+                int currentItemCount = adapter.getCount();
+
+                if (info.getCount() == currentItemCount + episodes.size())
+                    isEndOfList = true;
+
+                adapter.addItems(episodes);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                isLoading = false;
+            }
+        });
+    }
+
+
     //called from the activity
     public void ShowMenuItems(boolean showSubtitles)
     {

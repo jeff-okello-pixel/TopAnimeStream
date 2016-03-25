@@ -154,6 +154,13 @@ public class Anime implements Parcelable, Comparator<Anime> {
     public void setAnimeSources(ArrayList<AnimeSource> animeSources) {
         this.AnimeSources = animeSources;
     }
+    public void addEpisodes(ArrayList<Episode> episodes){
+        if(Episodes == null){
+            Episodes = new ArrayList<>();
+        }
+
+        Episodes.addAll(episodes);
+    }
 
     public ArrayList<AnimeInformation> getAnimeInformations() {
         return this.AnimeInformations;

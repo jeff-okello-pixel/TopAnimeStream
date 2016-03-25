@@ -111,32 +111,35 @@ public class EpisodeListFragment extends Fragment  {
         final View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        if (savedInstanceState != null) {
-            anime = savedInstanceState.getParcelable("anime");
-        }
-        else {
-            anime = getArguments().getParcelable("anime");
-        }
-
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mRecyclerView.addOnScrollListener(mScrollListener);
+
+
+        if (savedInstanceState != null) {
+            anime = savedInstanceState.getParcelable("anime");
+            currentSkip = savedInstanceState.getInt("skip");
+        }
+        else
+            anime = getArguments().getParcelable("anime");
 
         //adapter should only ever be created once on fragment initialise.
         mAdapter = new EpisodeListAdapter(getActivity(), anime);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
-        //initial data
-        GetEpisodes();
+        if(savedInstanceState == null)
+            GetEpisodes();//initial data
 
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        anime.setEpisodes(mAdapter.getItems());
         outState.putParcelable("anime", anime);
+        outState.putInt("skip", currentSkip);
         super.onSaveInstanceState(outState);
     }
 
@@ -144,7 +147,7 @@ public class EpisodeListFragment extends Fragment  {
     {
         isLoading = true;
         mAdapter.addLoading();
-        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links&$orderby=Order&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", Episode.class, new ODataUtils.EntityCallback<ArrayList<Episode>>() {
+        ODataUtils.GetEntityList(getString(R.string.odata_path) + "Episodes?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=EpisodeInformations,Links&$orderby=Order%20desc&$top=" + currentLimit + "&$skip=" + currentSkip + "&$count=true", Episode.class, new ODataUtils.EntityCallback<ArrayList<Episode>>() {
             @Override
             public void onSuccess(ArrayList<Episode> episodes, OdataRequestInfo info) {
                 isLoading = false;

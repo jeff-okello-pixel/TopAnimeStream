@@ -59,6 +59,7 @@ public class AnimeSearchActivity extends TASBaseActivity {
     private SearchView.OnQueryTextListener mSearchListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
+            s = s.trim();
             if (null == mFragment) return false;//fragment not added yet.
             mFragment.triggerSearch(s);
             mSearchview.clearFocus();

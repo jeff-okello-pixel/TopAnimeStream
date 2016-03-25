@@ -118,7 +118,9 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
         Bundle bundle = getIntent().getExtras();
         anime = bundle.getParcelable("anime");
         currentEpisode = bundle.getParcelable("episodeToPlay");
-        controller = new VideoControllerView(VideoPlayerActivity.this, true, anime.getEpisodes(), currentEpisode);
+        int currentSkip = bundle.getInt("skip");
+        int currentLimit = bundle.getInt("limit");
+        controller = new VideoControllerView(VideoPlayerActivity.this, true, currentEpisode, anime, currentSkip, currentLimit);
 
         if(currentEpisode != null)
         {

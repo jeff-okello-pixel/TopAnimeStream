@@ -45,6 +45,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         return context;
     }
     public static Gson mGson;
+    public static boolean shouldUpdateFavorites = false;
 
     @Override
     public void onCreate() {

@@ -75,6 +75,16 @@ public class PlayerEpisodesAdapter extends BaseAdapter {
         return vi;
     }
 
+    public void addItems(ArrayList<Episode> items) {
+        if (items != null) {
+            for (Episode item : items) {
+                values.add(item);
+            }
+            notifyDataSetChanged();
+        }
+    }
+
+
     public void clear() {
         values.clear();
         notifyDataSetChanged();

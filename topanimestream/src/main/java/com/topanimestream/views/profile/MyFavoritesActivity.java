@@ -69,6 +69,7 @@ public class MyFavoritesActivity extends TASBaseActivity {
     private int currentLimit = 40;
     private boolean isEndOfList = false;
     private boolean isLoading = false;
+    final static public int UpdateFavoritesCode = 1001;
 
     private ArrayList<Favorite> mItems = new ArrayList<>();
     private LinearLayoutManager mLayoutManager;
@@ -192,9 +193,14 @@ public class MyFavoritesActivity extends TASBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if(requestCode == MainActivity.UpdateWatchCode)
-        {
             setResult(MainActivity.UpdateWatchCode, intent);
+
+        if(App.shouldUpdateFavorites){
+            App.shouldUpdateFavorites = false;
+            mAdapter.clear();
+            GetFavorites();
         }
+
     }
 
 

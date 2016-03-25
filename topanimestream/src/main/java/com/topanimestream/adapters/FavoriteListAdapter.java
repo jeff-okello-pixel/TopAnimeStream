@@ -90,6 +90,11 @@ public class FavoriteListAdapter extends RecyclerSwipeAdapter {
         }
     }
 
+    public void clear(){
+        mItems.clear();
+        notifyDataSetChanged();
+    }
+
     public void addItems(ArrayList<Favorite> items) {
         if (items != null) {
             for (Favorite item : items) {

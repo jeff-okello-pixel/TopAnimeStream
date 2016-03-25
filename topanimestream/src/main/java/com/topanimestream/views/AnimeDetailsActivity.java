@@ -272,7 +272,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
                         });
                     }
                 });
-
+                App.shouldUpdateFavorites = true;
                 break;
             case R.id.action_removefavorite:
                 menuItemAddFavorite.setVisible(true);
@@ -292,6 +292,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
                         });
                     }
                 });
+                App.shouldUpdateFavorites = true;
                 break;
         }
 
@@ -305,6 +306,8 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
         intent.putExtra("episodeToPlay", episodeToPlay);
+        intent.putExtra("skip", fragmentEpisodesList.currentSkip);
+        intent.putExtra("limit", fragmentEpisodesList.currentLimit);
         startActivityForResult(intent, MainActivity.UpdateWatchCode);
     }
 
@@ -338,6 +341,8 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
         Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
         intent.putExtra("anime", anime);
         intent.putExtra("episodeToPlay", userCurrentEpisode);
+        intent.putExtra("skip", fragmentEpisodesList.currentSkip);
+        intent.putExtra("limit", fragmentEpisodesList.currentLimit);
         startActivityForResult(intent, MainActivity.UpdateWatchCode);
     }
 
