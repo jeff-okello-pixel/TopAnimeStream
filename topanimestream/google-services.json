@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_id": "topanimestream-81668",
+    "project_number": "486716922523",
+    "name": "TopAnimeStream"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486716922523:android:e8c8e9f18fba80f2",
+        "client_id": "android:com.topanimestream",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.topanimestream",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-72758906-2"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
