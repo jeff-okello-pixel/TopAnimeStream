@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.topanimestream"
-    android:versionCode="4"
-    android:versionName="4" >
+    android:versionCode="1"
+    android:versionName="1" >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -13,7 +13,7 @@
         android:name="com.topanimestream.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="TopAnime\nStream"
+        android:label="TopAnimeStream"
         android:largeHeap="true"
         android:theme="@style/AppBaseTheme" >
         <provider

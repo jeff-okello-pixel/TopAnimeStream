@@ -128,7 +128,7 @@ public class PreferencesActivity extends TASBaseActivity
                                         App.currentUser.setPreferredAudioLang(selectedLanguage);
                                         item.saveValue(selectedLanguage);
                                         UpdatePref("PreferredAudioLang", selectedLanguage);
-                                        if(!selectedLanguage.equalsIgnoreCase("ja"))
+                                        if (!selectedLanguage.equalsIgnoreCase("ja"))
                                             Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_language_not_available), Toast.LENGTH_LONG).show();
                                         dialog.dismiss();
                                     }
@@ -174,7 +174,7 @@ public class PreferencesActivity extends TASBaseActivity
                                         App.currentUser.setPreferredSubtitleLang(selectedLanguage);
                                         item.saveValue(selectedLanguage);
                                         UpdatePref("PreferredSubtitleLang", selectedLanguage);
-                                        if(!selectedLanguage.equalsIgnoreCase("none"))
+                                        if (!selectedLanguage.equalsIgnoreCase("none"))
                                             Toast.makeText(PreferencesActivity.this, getString(R.string.if_default_subtitle_not_available), Toast.LENGTH_LONG).show();
                                         dialog.dismiss();
                                     }
@@ -299,6 +299,40 @@ public class PreferencesActivity extends TASBaseActivity
                     @Override
                     public String get(PrefItem item) {
                         return Integer.toString((int) item.getValue());
+                    }
+                }));
+
+        mPrefItems.add(getString(R.string.updates));
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_auto_updates, R.string.auto_check_for_updates, Prefs.AUTO_CHECK_UPDATE, true,
+                new PrefItem.OnClickListener() {
+                    @Override
+                    public void onClick(PrefItem item) {
+                        item.saveValue(!(boolean) item.getValue());
+                    }
+                },
+                new PrefItem.SubTitleGenerator() {
+                    @Override
+                    public String get(PrefItem item) {
+                        boolean enabled = (boolean) item.getValue();
+                        return enabled ? getString(R.string.enabled) : getString(R.string.disabled);
+                    }
+                }));
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_check_updates, R.string.check_for_updates,Prefs.LAST_CHECK_FOR_UPDATE, 1,
+                new PrefItem.OnClickListener() {
+                    @Override
+                    public void onClick(PrefItem item) {
+                        VersionManager.checkUpdate(PreferencesActivity.this, true);
+                    }
+                },
+                new PrefItem.SubTitleGenerator() {
+                    @Override
+                    public String get(PrefItem item) {
+                        long timeStamp = Long.parseLong(PrefUtils.get(PreferencesActivity.this, Prefs.LAST_CHECK_FOR_UPDATE, "0"));
+                        Calendar cal = Calendar.getInstance(Locale.getDefault());
+                        cal.setTimeInMillis(timeStamp);
+                        String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM, Locale.getDefault()).format(timeStamp);
+                        String date = DateFormat.format("dd-MM-yyy", cal).toString();
+                        return getString(R.string.last_check) + ": " + date + " " + time;
                     }
                 }));
 

@@ -181,7 +181,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             spinnerOrderByValue = getString(R.string.most_popular);
             filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
 
-            if (PrefUtils.get(this, Prefs.SHOW_UPDATE, true)) {
+            if (PrefUtils.get(this, Prefs.AUTO_CHECK_UPDATE, true)) {
                 VersionManager.checkUpdate(this, false);
             }
         }
