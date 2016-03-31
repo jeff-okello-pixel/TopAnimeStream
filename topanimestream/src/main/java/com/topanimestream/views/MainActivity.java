@@ -157,6 +157,9 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
         setSupportActionBar(toolbar);
         ToolbarUtils.updateToolbarHeight(this, toolbar);
 
+        App app = (App) getApplication();
+        app.getDefaultTracker();
+
         FetchRecentlyWatched();
 
         tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.updates)};
@@ -181,9 +184,8 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             spinnerOrderByValue = getString(R.string.most_popular);
             filterToDataServiceQuery(spinnerOrderByValue, spinnerStatusValue, spinnerDubbedSubbedValue, spinnerCategoryValue);
 
-            if (PrefUtils.get(this, Prefs.AUTO_CHECK_UPDATE, true)) {
-                VersionManager.checkUpdate(this, false);
-            }
+            if (PrefUtils.get(this, Prefs.AUTO_CHECK_UPDATE, true))
+                    VersionManager.checkUpdate(this, false);
         }
 
         /*
@@ -197,6 +199,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
         listView.setAdapter(menuAdapter);
 */
+
         if (mDrawerLayout != null) {
             mDrawerLayout.setDrawerListener(new DrawerListener());
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);

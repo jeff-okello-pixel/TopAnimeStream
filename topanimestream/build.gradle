@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.hugo'
-apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -48,5 +47,6 @@ dependencies {
     compile 'com.ms-square:expandableTextView:0.1.4'
     compile "com.daimajia.swipelayout:library:1.1.8@aar"
     compile 'com.android.support:percent:23.1.0'
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
 }
+apply plugin: 'com.google.gms.google-services'

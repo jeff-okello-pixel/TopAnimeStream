@@ -21,4 +21,5 @@ public class Prefs {
     public static final String SHOW_UPDATE = "show_update";
     public static final String USERNAME = "username";
     public static final String PLAY_INTERNAL = "username";
+    public static final String LAST_UPDATE_CHECK_VERSION = "last_update_check_version";
 }

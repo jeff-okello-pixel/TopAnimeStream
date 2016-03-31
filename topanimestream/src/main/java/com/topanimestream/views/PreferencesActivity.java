@@ -317,7 +317,7 @@ public class PreferencesActivity extends TASBaseActivity
                         return enabled ? getString(R.string.enabled) : getString(R.string.disabled);
                     }
                 }));
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_check_updates, R.string.check_for_updates,Prefs.LAST_CHECK_FOR_UPDATE, 1,
+        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_check_updates, R.string.check_for_updates, Prefs.LAST_CHECK_FOR_UPDATE, 1,
                 new PrefItem.OnClickListener() {
                     @Override
                     public void onClick(PrefItem item) {
@@ -327,12 +327,17 @@ public class PreferencesActivity extends TASBaseActivity
                 new PrefItem.SubTitleGenerator() {
                     @Override
                     public String get(PrefItem item) {
-                        long timeStamp = Long.parseLong(PrefUtils.get(PreferencesActivity.this, Prefs.LAST_CHECK_FOR_UPDATE, "0"));
-                        Calendar cal = Calendar.getInstance(Locale.getDefault());
-                        cal.setTimeInMillis(timeStamp);
-                        String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM, Locale.getDefault()).format(timeStamp);
-                        String date = DateFormat.format("dd-MM-yyy", cal).toString();
-                        return getString(R.string.last_check) + ": " + date + " " + time;
+                        long timeStamp = PrefUtils.get(PreferencesActivity.this, Prefs.LAST_CHECK_FOR_UPDATE, 0L);
+                        if (timeStamp != 0) {
+                            Calendar cal = Calendar.getInstance(Locale.getDefault());
+                            cal.setTimeInMillis(timeStamp);
+                            String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM, Locale.getDefault()).format(timeStamp);
+                            String date = DateFormat.format("dd-MM-yyy", cal).toString();
+                            return getString(R.string.last_check) + ": " + date + " " + time;
+                        }
+                        else
+                            return getString(R.string.last_check) + ": " + getString(R.string.never);
+
                     }
                 }));
 

@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -26,6 +27,8 @@ import com.topanimestream.utilities.PixelUtils;
 import com.topanimestream.utilities.PrefUtils;
 import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 public class App extends Application implements NetworkChangeReceiver.NetworkEvent {
     public static int networkConnection;
@@ -45,6 +48,7 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         return context;
     }
     public static Gson mGson;
+    private Tracker mTracker;
     public static boolean shouldUpdateFavorites = false;
 
     @Override
@@ -82,6 +86,20 @@ public class App extends Application implements NetworkChangeReceiver.NetworkEve
         currentLanguageId = "1";
         //setLocale();
     }
+
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            analytics.enableAutoActivityReports(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker(R.xml.app_tracker);
+            mTracker.enableAutoActivityTracking(true);
+            mTracker.enableExceptionReporting(true);
+        }
+        return mTracker;
+    }
+
+
 
 
     public static void setLocale() {

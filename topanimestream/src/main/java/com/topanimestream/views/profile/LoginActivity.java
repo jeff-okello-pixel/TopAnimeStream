@@ -80,7 +80,6 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_awesome_login);
 
-
         shouldCloseOnly = getIntent().getBooleanExtra("ShouldCloseOnly", false);
 
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/toony_loons.ttf");
@@ -149,15 +148,13 @@ public class LoginActivity extends TASBaseActivity implements View.OnClickListen
                 layLogin.setVisibility(View.VISIBLE);
                 break;
             case R.id.btnPasswordRecovery:
-                String passwordRecoveryUrl = getString(R.string.topanimestream_website);
-                passwordRecoveryUrl += lang + "/forgot-password";
+                String passwordRecoveryUrl = getString(R.string.topanimestream_website) + "forgot-password";
                 Intent intentPasswordRecovery = new Intent(Intent.ACTION_VIEW);
                 intentPasswordRecovery.setData(Uri.parse(passwordRecoveryUrl));
                 startActivity(intentPasswordRecovery);
                 break;
             case R.id.btnRegister:
-                String registerUrl = getString(R.string.topanimestream_website);
-                registerUrl += lang + "/register";
+                String registerUrl = getString(R.string.topanimestream_website) + "register";
                 Intent intentRegister = new Intent(Intent.ACTION_VIEW);
                 intentRegister.setData(Uri.parse(registerUrl));
                 startActivity(intentRegister);

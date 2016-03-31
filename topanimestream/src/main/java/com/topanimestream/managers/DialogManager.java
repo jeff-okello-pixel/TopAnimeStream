@@ -126,6 +126,11 @@ public class DialogManager {
         builder.setPositiveButton(context.getString(R.string.update_now),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        /*
+                        Intent intentDownload = new Intent(Intent.ACTION_VIEW);
+                        intentDownload.setData(Uri.parse(pkg.getApkUrl()));
+                        context.startActivity(intentDownload);*/
+
                         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(pkg.getApkUrl()));
                         request.setDescription(context.getString(R.string.new_version_downloading));
                         request.setTitle(context.getString(R.string.title_topanimestream_update));
@@ -140,7 +145,7 @@ public class DialogManager {
                         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                         manager.enqueue(request);
                         dialog.dismiss();
-                        prefs.edit().putBoolean("ShowUpdate", false);
+                        PrefUtils.save(context, Prefs.SHOW_UPDATE, false);
 
                     }
                 }
@@ -148,7 +153,7 @@ public class DialogManager {
         builder.setNeutralButton(context.getString(R.string.remind_me_later),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        prefs.edit().putBoolean("ShowUpdate", true);
+                        PrefUtils.save(context, Prefs.SHOW_UPDATE, true);
                     }
                 }
         );
@@ -157,7 +162,7 @@ public class DialogManager {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        prefs.edit().putBoolean("ShowUpdate", false).commit();
+                        PrefUtils.save(context, Prefs.SHOW_UPDATE, false);
                     }
                 }
         );

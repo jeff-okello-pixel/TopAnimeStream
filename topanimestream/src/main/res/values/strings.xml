@@ -332,4 +332,5 @@
     <string name="no_anime_watched">You haven\'t watch any anime yet! \nWatch one now!</string>
     <string name="the_episode_unavailable">The episode is unavailable</string>
     <string name="anime_not_available">The anime is not available yet.</string>
+    <string name="never">never</string>
 </resources>
