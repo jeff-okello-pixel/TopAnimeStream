@@ -246,21 +246,28 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
             TextView txtJoinedDate = (TextView) header.findViewById(R.id.txtJoinedDate);
             TextView txtAbout = (TextView) header.findViewById(R.id.txtAbout);
 
-            Picasso.with(this)
-                    .load(getString(R.string.image_host_path) + (!TextUtils.isEmpty(App.currentUser.getProfilePic()) ? App.currentUser.getProfilePic() : "64/12/7/default_profile_picture.jpg"))
-                    .into(imgHeaderProfilePic);
+            if(App.currentUser != null) {
 
-            if(!TextUtils.isEmpty(App.currentUser.getBackdrop())) {
                 Picasso.with(this)
-                        .load(getString(R.string.image_host_path) + App.currentUser.getBackdrop())
-                        .into(imgHeaderBackground);
-            } else {
-                imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.tas_background));
-            }
+                        .load(getString(R.string.image_host_path) + (!TextUtils.isEmpty(App.currentUser.getProfilePic()) ? App.currentUser.getProfilePic() : "64/12/7/default_profile_picture.jpg"))
+                        .into(imgHeaderProfilePic);
 
-            txtUsername.setText(App.currentUser.getUsername().substring(0, 1).toUpperCase() + App.currentUser.getUsername().substring(1));
-            txtJoinedDate.setText("Since: " + DateUtils.getRelativeTimeSpanString(App.currentUser.getAddedDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));
-            txtAbout.setText(App.currentUser.getAbout());
+                if (!TextUtils.isEmpty(App.currentUser.getBackdrop())) {
+                    Picasso.with(this)
+                            .load(getString(R.string.image_host_path) + App.currentUser.getBackdrop())
+                            .into(imgHeaderBackground);
+                } else {
+                    imgHeaderBackground.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.tas_background));
+                }
+
+                txtUsername.setText(App.currentUser.getUsername().substring(0, 1).toUpperCase() + App.currentUser.getUsername().substring(1));
+                txtJoinedDate.setText("Since: " + DateUtils.getRelativeTimeSpanString(App.currentUser.getAddedDate().getTime(), System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL));
+                txtAbout.setText(App.currentUser.getAbout());
+            }
+            else{
+                finish();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
         }
 
         SetViewPager();
