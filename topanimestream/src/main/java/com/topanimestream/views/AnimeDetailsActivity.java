@@ -29,9 +29,14 @@ import java.util.ArrayList;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.topanimestream.App;
+import com.topanimestream.beaming.BeamManager;
 import com.topanimestream.models.Favorite;
 import com.topanimestream.models.OdataRequestInfo;
+import com.topanimestream.models.Source;
+import com.topanimestream.models.Subtitle;
 import com.topanimestream.models.WatchedVideo;
+import com.topanimestream.parallel.ParallelCallback;
+import com.topanimestream.parallel.ParentCallback;
 import com.topanimestream.utilities.ImageUtils;
 import com.topanimestream.utilities.ODataUtils;
 import com.topanimestream.utilities.ToolbarUtils;
@@ -39,6 +44,8 @@ import com.topanimestream.managers.AnimationManager;
 import com.topanimestream.models.Anime;
 import com.topanimestream.models.Episode;
 import com.topanimestream.R;
+import com.topanimestream.utilities.Utils;
+
 import butterknife.Bind;
 
 public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeListFragment.EpisodeListCallback, View.OnClickListener {
@@ -65,6 +72,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     MenuItem menuItemAddFavorite;
     MenuItem menuItemRemoveFavorite;
     Episode userCurrentEpisode;
+    ArrayList<Source> sources = new ArrayList();
+    ArrayList<Subtitle> subtitles = new ArrayList();
+    boolean sourceAndSubsLoadIndicator;
 
     private Target target = new Target() {
         @Override
@@ -338,12 +348,73 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
-        intent.putExtra("anime", anime);
-        intent.putExtra("episodeToPlay", userCurrentEpisode);
-        intent.putExtra("skip", fragmentEpisodesList.currentSkip);
-        intent.putExtra("limit", fragmentEpisodesList.currentLimit);
-        startActivityForResult(intent, MainActivity.UpdateWatchCode);
+        BeamManager bm = BeamManager.getInstance(AnimeDetailsActivity.this);
+        if(bm.isConnected()) {
+            GetSourcesAndSubs();
+        }
+        else {
+            Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
+            intent.putExtra("anime", anime);
+            intent.putExtra("episodeToPlay", userCurrentEpisode);
+            intent.putExtra("skip", fragmentEpisodesList.currentSkip);
+            intent.putExtra("limit", fragmentEpisodesList.currentLimit);
+            startActivityForResult(intent, MainActivity.UpdateWatchCode);
+        }
+    }
+
+    public void GetSourcesAndSubs()
+    {
+        final ParallelCallback<ArrayList<Source>> sourceCallback = new ParallelCallback();
+        final ParallelCallback<ArrayList<Subtitle>> subsCallback = new ParallelCallback();
+        new ParentCallback(sourceCallback, subsCallback) {
+            @Override
+            protected void handleSuccess() {
+                sources = sourceCallback.getData();
+                subtitles = subsCallback.getData();
+
+                String defaultLanguageId = Utils.ToLanguageId(App.currentUser.getPreferredAudioLang());
+                String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
+                String defaultSubtitle = Utils.ToLanguageId(App.currentUser.getPreferredSubtitleLang());
+
+
+            }
+        };
+        sourceAndSubsLoadIndicator = false;
+        String getSourcesUrl;
+        String getSubsUrl;
+
+        if(!anime.isMovie()) {
+            getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=" + userCurrentEpisode.getEpisodeId() + ")?$expand=Link($expand=Language)";
+            getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + userCurrentEpisode.getEpisodeId() + "&$expand=Language";
+        }
+        else {
+            getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=null)?$expand=Link($expand=Language)";
+            getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=Language";
+        }
+
+        ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.EntityCallback<ArrayList<Source>>() {
+            @Override
+            public void onSuccess(ArrayList<Source> newSources, OdataRequestInfo info) {
+                sourceCallback.onSuccess(sources);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_loading_sources), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        ODataUtils.GetEntityList(getSubsUrl, Subtitle.class, new ODataUtils.EntityCallback<ArrayList<Subtitle>>() {
+            @Override
+            public void onSuccess(ArrayList<Subtitle> newSubtitles, OdataRequestInfo info) {
+                subsCallback.onSuccess(subtitles);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_loading_subtitles), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 

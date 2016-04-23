@@ -5,12 +5,18 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.topanimestream.R;
+import com.topanimestream.beaming.BeamManager;
+import com.topanimestream.dialogfragments.BeamDeviceSelectorDialogFragment;
+
 import butterknife.ButterKnife;
 
-public class TASBaseActivity extends AppCompatActivity {
+public class TASBaseActivity extends AppCompatActivity implements BeamManager.BeamListener {
+
+    protected Boolean mShowCasting = false;
 
     protected void onCreate(Bundle savedInstanceState, int layoutId) {
         super.onCreate(savedInstanceState);
@@ -36,16 +42,51 @@ public class TASBaseActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.activity_base, menu);
+
+        BeamManager beamManager = BeamManager.getInstance(this);
+        Boolean castingVisible = mShowCasting && beamManager.hasCastDevices();
+        MenuItem item = menu.findItem(R.id.action_casting);
+        item.setVisible(castingVisible);
+        item.setIcon(beamManager.isConnected() ? R.drawable.ic_av_beam_connected : R.drawable.ic_av_beam_disconnected);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onHomePressed();
                 return true;
+            case R.id.action_casting:
+                BeamDeviceSelectorDialogFragment.show(getFragmentManager());
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BeamManager.getInstance(this).addListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BeamManager.getInstance(this).removeListener(this);
+    }
 
 
+    @Override
+    public void updateBeamIcon() {
+        supportInvalidateOptionsMenu();
+    }
 
+    public void setShowCasting(boolean b) {
+        mShowCasting = b;
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+//To be deleted later... changed by networkutils...
 public class NetworkUtil {
     public static int TYPE_WIFI = 1;
     public static int TYPE_MOBILE = 2;

@@ -48,5 +48,6 @@ dependencies {
     compile "com.daimajia.swipelayout:library:1.1.8@aar"
     compile 'com.android.support:percent:23.1.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    compile 'com.koushikdutta.async:androidasync:2.1.6'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -333,4 +333,12 @@
     <string name="the_episode_unavailable">The episode is unavailable</string>
     <string name="anime_not_available">The anime is not available yet.</string>
     <string name="never">never</string>
+    <string name="unkown_error">An unknown error has occurred, please try again.</string>
+    <string name="pairing_tv">Pairing with TV</string>
+    <string name="confirm_tv">Please confirm the connection on your TV</string>
+    <string name="enter_pairing_code">Enter Pairing Code on TV</string>
+    <string name="beaming">Beaming</string>
+    <string name="connected_to">Connected to</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="select_beaming">Select device for beaming</string>
 </resources>
