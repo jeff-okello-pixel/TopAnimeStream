@@ -375,7 +375,7 @@ public class VideoPlayerActivity extends TASBaseActivity implements SurfaceHolde
                         //Remove characters from the anime name.
                         fileName = anime.getName().substring(0, anime.getName().length() - characterToRemove) + "-" + currentEpisode.getEpisodeNumber() + "-" + currentEpisodeSubtitle.getLanguage().getISO639();
                     }
-                    fileName = fileName + ".webvtt";
+                    fileName = fileName + ".vtt";
                     final File srtPath = new File(subsDirectory, fileName);
 
                     if (srtPath.exists()) {

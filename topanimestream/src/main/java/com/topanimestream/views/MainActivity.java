@@ -164,6 +164,8 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
         tabTitles = new String[]{getString(R.string.tab_serie), getString(R.string.tab_movie), getString(R.string.updates)};
 
+        setShowCasting(true);
+
         //fill default filter dialog spinner values
         if (savedInstanceState != null) {
             drawerIsOpened = savedInstanceState.getBoolean("drawerIsOpened");
@@ -542,6 +544,7 @@ public class MainActivity extends TASBaseActivity implements OnItemClickListener
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }

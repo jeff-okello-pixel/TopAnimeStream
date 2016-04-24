@@ -55,8 +55,11 @@ import com.topanimestream.App;
 import com.topanimestream.R;
 import com.topanimestream.beaming.server.BeamServer;
 import com.topanimestream.beaming.server.BeamServerService;
+import com.topanimestream.models.StreamInfo;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -87,7 +90,7 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
     private EditText mInput;
     private AlertDialog mPairingAlertDialog;
     private AlertDialog mPairingCodeDialog;
-    //private StreamInfo mStreamInfo;
+    private StreamInfo mStreamInfo;
 
     private BeamManager(Context context) {
         mContext = context;
@@ -213,11 +216,11 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
         mLaunchSession.close(null);
         mLaunchSession = null;
 
-        //mStreamInfo = null;
+        mStreamInfo = null;
 
         return true;
     }
-/*
+
     public void playVideo(StreamInfo info) {
         playVideo(info, null);
     }
@@ -227,13 +230,14 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
 
         mStreamInfo = info;
 
-        String location = info.getVideoLocation();
+        String location = "https://lh3.googleusercontent.com/FKgmLEDRhnxHp0dPAtgi9bcOBB11-BKvzP5ITgw5oXjqoqdlfy0yFhKxxo0xAL_Q5i8=m37";
         if(!location.startsWith("http")) {
             BeamServer.setCurrentVideo(location);
             location = BeamServer.getVideoURL();
         }
 
         String subsLocation = null;
+        /*
         if(info.getSubtitleLanguage() != null && !info.getSubtitleLanguage().isEmpty() && !info.getSubtitleLanguage().equals("no-subs")) {
             File srtFile = new File(SubsProvider.getStorageLocation(mContext), mStreamInfo.getMedia().videoId + "-" + mStreamInfo.getSubtitleLanguage() + ".srt");
             BeamServer.setCurrentSubs(srtFile);
@@ -244,8 +248,7 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
             }
         } else {
             BeamServer.removeSubs();
-        }
-
+        }*/
         try {
             URL url = new URL(location);
             URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
@@ -260,10 +263,12 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
             e.printStackTrace();
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        String title = info.getTitle();
-        String imageUrl = info.getImageUrl() == null ? "https://butterproject.org/images/header-logo.png" : info.getImageUrl();
+        String title = "test";
+        String imageUrl = "https://butterproject.org/images/header-logo.png";
 
         //String url, String mimeType, String title, String description, String iconSrc, boolean shouldLoop, LaunchListener listener
         if (mCurrentDevice != null) {
@@ -279,14 +284,13 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
 
                 @Override
                 public void onError(ServiceCommandError error) {
-                    Timber.e(error.getMessage());
                     if (listener != null)
                         listener.onError(error);
                 }
             });
         }
     }
-*/
+
     public void connect(ConnectableDevice castingDevice) {
         if (castingDevice == mCurrentDevice) return;
 

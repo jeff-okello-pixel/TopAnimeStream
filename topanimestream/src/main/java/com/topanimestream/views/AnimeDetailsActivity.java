@@ -75,6 +75,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     ArrayList<Source> sources = new ArrayList();
     ArrayList<Subtitle> subtitles = new ArrayList();
     boolean sourceAndSubsLoadIndicator;
+    BeamManager bm;
 
     private Target target = new Target() {
         @Override
@@ -348,7 +349,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
 
     @Override
     public void onClick(View view) {
-        BeamManager bm = BeamManager.getInstance(AnimeDetailsActivity.this);
+        bm = BeamManager.getInstance(AnimeDetailsActivity.this);
         if(bm.isConnected()) {
             GetSourcesAndSubs();
         }
@@ -376,7 +377,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
                 String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
                 String defaultSubtitle = Utils.ToLanguageId(App.currentUser.getPreferredSubtitleLang());
 
-
+                bm.playVideo(null);
             }
         };
         sourceAndSubsLoadIndicator = false;
