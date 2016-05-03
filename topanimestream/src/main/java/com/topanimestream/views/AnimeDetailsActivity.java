@@ -30,6 +30,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.topanimestream.App;
 import com.topanimestream.beaming.BeamManager;
+import com.topanimestream.beaming.CastManager;
 import com.topanimestream.models.Favorite;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
@@ -74,8 +75,6 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     Episode userCurrentEpisode;
     ArrayList<Source> sources = new ArrayList();
     ArrayList<Subtitle> subtitles = new ArrayList();
-    boolean sourceAndSubsLoadIndicator;
-    BeamManager bm;
 
     private Target target = new Target() {
         @Override
@@ -326,7 +325,7 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     public void EpisodesLoaded(ArrayList<Episode> episodes) {
         if (episodes != null && episodes.size() > 0) {
             if(userCurrentEpisode == null)
-                userCurrentEpisode = episodes.get(0);
+                userCurrentEpisode = episodes.get(episodes.size() - 1); //last one (first episode)
             anime.setEpisodes(episodes);
         }
     }
@@ -349,9 +348,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
 
     @Override
     public void onClick(View view) {
-        bm = BeamManager.getInstance(AnimeDetailsActivity.this);
+        BeamManager bm = BeamManager.getInstance(AnimeDetailsActivity.this);
         if(bm.isConnected()) {
-            GetSourcesAndSubs();
+            CastManager.StartCasting(bm, anime, userCurrentEpisode, this);
         }
         else {
             Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
@@ -362,62 +361,5 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
             startActivityForResult(intent, MainActivity.UpdateWatchCode);
         }
     }
-
-    public void GetSourcesAndSubs()
-    {
-        final ParallelCallback<ArrayList<Source>> sourceCallback = new ParallelCallback();
-        final ParallelCallback<ArrayList<Subtitle>> subsCallback = new ParallelCallback();
-        new ParentCallback(sourceCallback, subsCallback) {
-            @Override
-            protected void handleSuccess() {
-                sources = sourceCallback.getData();
-                subtitles = subsCallback.getData();
-
-                String defaultLanguageId = Utils.ToLanguageId(App.currentUser.getPreferredAudioLang());
-                String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
-                String defaultSubtitle = Utils.ToLanguageId(App.currentUser.getPreferredSubtitleLang());
-
-                bm.playVideo(null);
-            }
-        };
-        sourceAndSubsLoadIndicator = false;
-        String getSourcesUrl;
-        String getSubsUrl;
-
-        if(!anime.isMovie()) {
-            getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=" + userCurrentEpisode.getEpisodeId() + ")?$expand=Link($expand=Language)";
-            getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "%20and%20EpisodeId%20eq%20" + userCurrentEpisode.getEpisodeId() + "&$expand=Language";
-        }
-        else {
-            getSourcesUrl = getString(R.string.odata_path) + "GetSources(animeId=" + anime.getAnimeId() + ",episodeId=null)?$expand=Link($expand=Language)";
-            getSubsUrl = getString(R.string.odata_path) + "Subtitles?$filter=AnimeId%20eq%20" + anime.getAnimeId() + "&$expand=Language";
-        }
-
-        ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.EntityCallback<ArrayList<Source>>() {
-            @Override
-            public void onSuccess(ArrayList<Source> newSources, OdataRequestInfo info) {
-                sourceCallback.onSuccess(sources);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_loading_sources), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        ODataUtils.GetEntityList(getSubsUrl, Subtitle.class, new ODataUtils.EntityCallback<ArrayList<Subtitle>>() {
-            @Override
-            public void onSuccess(ArrayList<Subtitle> newSubtitles, OdataRequestInfo info) {
-                subsCallback.onSuccess(subtitles);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(AnimeDetailsActivity.this, getString(R.string.error_loading_subtitles), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-
 
 }

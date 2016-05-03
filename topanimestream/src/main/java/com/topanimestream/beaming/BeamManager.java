@@ -53,7 +53,6 @@ import com.connectsdk.service.command.ServiceCommandError;
 import com.connectsdk.service.sessions.LaunchSession;
 import com.topanimestream.App;
 import com.topanimestream.R;
-import com.topanimestream.beaming.server.BeamServer;
 import com.topanimestream.beaming.server.BeamServerService;
 import com.topanimestream.models.StreamInfo;
 
@@ -135,7 +134,7 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
                         })
                         .create();
 
-        // CastService.setApplicationID(Constants.CAST_ID); Do not use since suspended by Google
+        CastService.setApplicationID("147D9B58");
         DiscoveryManager.init(App.getContext());
         mDiscoveryManager = DiscoveryManager.getInstance();
 
@@ -230,15 +229,10 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
 
         mStreamInfo = info;
 
-        String location = "https://lh3.googleusercontent.com/FKgmLEDRhnxHp0dPAtgi9bcOBB11-BKvzP5ITgw5oXjqoqdlfy0yFhKxxo0xAL_Q5i8=m37";
-        if(!location.startsWith("http")) {
-            BeamServer.setCurrentVideo(location);
-            location = BeamServer.getVideoURL();
-        }
-
+        String location = "https://lh3.googleusercontent.com/2L18r9F4hDmPAyU5TMJUn47kBBlCx6INUe0_IccsLUg=m37";
         String subsLocation = null;
         /*
-        if(info.getSubtitleLanguage() != null && !info.getSubtitleLanguage().isEmpty() && !info.getSubtitleLanguage().equals("no-subs")) {
+        if(info.getSubtitleLanguage() != null && -!info.getSubtitleLanguage().isEmpty() && !info.getSubtitleLanguage().equals("no-subs")) {
             File srtFile = new File(SubsProvider.getStorageLocation(mContext), mStreamInfo.getMedia().videoId + "-" + mStreamInfo.getSubtitleLanguage() + ".srt");
             BeamServer.setCurrentSubs(srtFile);
             if(mCurrentDevice.hasCapability(MediaPlayer.Subtitles_Vtt)) {
@@ -268,7 +262,7 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
         }
 
         String title = "test";
-        String imageUrl = "https://butterproject.org/images/header-logo.png";
+        String imageUrl = "http://www.topanimestream.com/ImageHost/26/4/A_Channel_poster.jpg?width=400";
 
         //String url, String mimeType, String title, String description, String iconSrc, boolean shouldLoop, LaunchListener listener
         if (mCurrentDevice != null) {
