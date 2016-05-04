@@ -3,6 +3,9 @@ package com.topanimestream.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.topanimestream.App;
+import com.topanimestream.R;
+
 public class Subtitle implements Parcelable {
     private int SubtitleId;
     private String FileName;
@@ -160,4 +163,12 @@ public class Subtitle implements Parcelable {
             return new Subtitle[size];
         }
     };
+
+    @Override
+    public String toString() {
+        if(getSubtitleId() != 0)
+            return getLanguage().getName();
+        else
+            return App.getContext().getString(R.string.none);
+    }
 }

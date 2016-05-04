@@ -118,4 +118,9 @@ public class Language implements Parcelable {
             return new Language[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return Name;
+    }
 }

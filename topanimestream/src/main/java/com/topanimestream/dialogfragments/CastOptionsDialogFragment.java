@@ -5,10 +5,12 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.topanimestream.App;
@@ -23,7 +25,6 @@ import com.topanimestream.models.Subtitle;
 import com.topanimestream.parallel.ParallelCallback;
 import com.topanimestream.parallel.ParentCallback;
 import com.topanimestream.utilities.ODataUtils;
-import com.topanimestream.utilities.Utils;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -42,6 +43,12 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
 
     @Bind(R.id.spinnerQualities)
     Spinner spinnerQualities;
+
+    @Bind(R.id.layCastOptions)
+    LinearLayout layCastOptions;
+
+    @Bind(R.id.progressBarLoading)
+    ProgressBar progressBarLoading;
 
     ArrayList<Source> sources;
     ArrayList<Language> languages;
@@ -91,6 +98,20 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
         }
     }
 
+    public void RefreshAvailableQualities(Language language){
+
+        ArrayList<Source> goodSources = new ArrayList<>();
+        for(Source source:sources)
+        {
+            if(source.getLink().getLanguageId() == language.getLanguageId())
+            {
+                goodSources.add(source);
+            }
+        }
+
+        ArrayAdapter qualityAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, goodSources);
+        spinnerQualities.setAdapter(qualityAdapter);
+    }
     public void GetSourcesAndSubs()
     {
         final ParallelCallback<ArrayList<Source>> sourceCallback = new ParallelCallback();
@@ -100,6 +121,8 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
             protected void handleSuccess() {
                 sources = sourceCallback.getData();
                 subtitles = subsCallback.getData();
+
+                subtitles.add(0, new Subtitle());
 
                 for(Source source:sources)
                 {
@@ -116,12 +139,34 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
                         languages.add(source.getLink().getLanguage());
                 }
 
-                String defaultLanguageId = Utils.ToLanguageId(App.currentUser.getPreferredAudioLang());
+
+
+                String defaultLanguage = App.currentUser.getPreferredAudioLang();
                 String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
-                String defaultSubtitle = Utils.ToLanguageId(App.currentUser.getPreferredSubtitleLang());
-                ArrayAdapter languageAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, languages);
+                String defaultSubtitle = App.currentUser.getPreferredSubtitleLang();
+
+                final ArrayAdapter languageAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, languages);
                 spinnerLanguages.setAdapter(languageAdapter);
-                bm.playVideo(null);
+                spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                        RefreshAvailableQualities((Language)languageAdapter.getItem(position));
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                        //What to do here?
+                    }
+                });
+                spinnerLanguages.setSelection(languageAdapter.getPosition(defaultLanguage));
+
+                ArrayAdapter subtitlesAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, subtitles);
+                spinnerSubtitles.setSelection(subtitlesAdapter.getPosition(defaultSubtitle));
+                spinnerSubtitles.setAdapter(subtitlesAdapter);
+
+                progressBarLoading.setVisibility(View.GONE);
+                layCastOptions.setVisibility(View.VISIBLE);
+                //bm.playVideo(null);
             }
         };
 
