@@ -3,6 +3,8 @@ package com.topanimestream.dialogfragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,11 +25,20 @@ import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
 import com.topanimestream.models.StreamInfo;
 import com.topanimestream.models.Subtitle;
+import com.topanimestream.models.subs.FormatWebVTT;
+import com.topanimestream.models.subs.TimedTextObject;
 import com.topanimestream.parallel.ParallelCallback;
 import com.topanimestream.parallel.ParentCallback;
+import com.topanimestream.utilities.AsyncTaskTools;
+import com.topanimestream.utilities.FileUtils;
 import com.topanimestream.utilities.ODataUtils;
+import com.topanimestream.utilities.StorageUtils;
 import com.topanimestream.utilities.Utils;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -59,6 +70,10 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
     Anime anime;
     Episode userCurrentEpisode;
     BeamManager bm;
+
+    public static File getStorageLocation(Context context) {
+        return new File(StorageUtils.getIdealCacheDirectory(context).toString() + "/subs/");
+    }
 
     public static CastOptionsDialogFragment newInstance(Anime anime, Episode userCurrentEpisode) {
         CastOptionsDialogFragment dialogFragment = new CastOptionsDialogFragment();
@@ -98,7 +113,7 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
             case R.id.btnCast:
                 Source sourceToPlay = null;
                 String language = spinnerLanguages.getSelectedItem().toString();
-                String subtitle = spinnerSubtitles.getSelectedItem().toString();
+                Subtitle subtitle = (Subtitle) spinnerSubtitles.getSelectedItem();
                 String quality = spinnerQualities.getSelectedItem().toString();
 
                 for(Source source:sources)
@@ -110,11 +125,19 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
                     }
                 }
 
-                //TODO build streaminfo
-                StreamInfo streamInfo = new StreamInfo();
+                if(subtitle.getSubtitleId() == 0)
+                {
+                    StreamInfo streamInfo = new StreamInfo(anime.getName(),
+                            getString(R.string.image_host_path) + anime.getPosterPath(),
+                            sourceToPlay,
+                            subtitle.toString(),
+                            null);
 
-                //TODO download subtitle
-                bm.playVideo();
+                    bm.playVideo(streamInfo);
+                }
+                else
+                    AsyncTaskTools.execute(new SubtitleTask(subtitle, sourceToPlay));
+
                 break;
         }
     }
@@ -195,6 +218,101 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
         spinnerQualities.setSelection(defaultQualityIndex);
 
     }
+
+    private class SubtitleTask extends AsyncTask<Void, Void, String> {
+        String fileName;
+        Subtitle subtitle;
+        Source sourceToPlay;
+        public SubtitleTask(Subtitle subtitle, Source source) {
+            this.subtitle = subtitle;
+            this.sourceToPlay = source;
+        }
+        private String subUrl;
+
+        @Override
+        protected void onPreExecute() {
+            subUrl = getString(R.string.odata_path) + "GetSubtitle(subtitleId=" + subtitle.getSubtitleId() + ")";
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(!App.IsNetworkConnected())
+            {
+                return getString(R.string.error_internet_connection);
+            }
+            InputStream input = null;
+            HttpURLConnection connection = null;
+            try
+            {
+                final File subsDirectory = getStorageLocation(getActivity());
+                if(!anime.isMovie())
+                    fileName = anime.getName() + "-" + userCurrentEpisode.getEpisodeNumber() + "-" + subtitle.getLanguage().getISO639() + subtitle.getSpecification().replace(" ", "-");
+                else
+                    fileName = anime.getName() + "-"  + subtitle.getLanguage().getISO639();
+
+                //http://stackoverflow.com/questions/13204807/max-file-name-length-in-android
+                //We need to make sure the fileName is not over 127 characters
+                if(fileName.length() > 127) {
+                    int characterToRemove = fileName.length() - 127;
+                    //Remove characters from the anime name.
+                    fileName = anime.getName().substring(0, anime.getName().length() - characterToRemove) + "-" + userCurrentEpisode.getEpisodeNumber() + "-" + subtitle.getLanguage().getISO639();
+                }
+                fileName = fileName + ".vtt";
+                final File srtPath = new File(subsDirectory, fileName);
+
+                if (srtPath.exists()) {
+                    return null;
+                }
+                URL url = new URL(subUrl);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    return getString(R.string.error_downloading_subtitle);
+                }
+
+                input = connection.getInputStream();
+
+                TimedTextObject subtitleObject = null;
+
+                String inputString = FileUtils.inputstreamToCharsetString(input);
+                String[] inputText = inputString.split("\n|\r\n");
+                FormatWebVTT formatWebVTT = new FormatWebVTT();
+                subtitleObject = formatWebVTT.parseFile(subUrl, inputText);
+
+                if (subtitleObject != null) {
+                    subtitleObject.setOffset(3700);
+                    FileUtils.saveStringFile(subtitleObject.toWebVTT(), srtPath);
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return getString(R.string.error_downloading_subtitle);
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            if(error != null)
+            {
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                File mSubsFile = new File(getStorageLocation(getActivity()), fileName);
+
+                StreamInfo streamInfo = new StreamInfo(anime.getName(),
+                        getString(R.string.image_host_path) + anime.getPosterPath(),
+                        sourceToPlay,
+                        subtitle.toString(),
+                        mSubsFile.getAbsolutePath());
+
+                bm.playVideo(streamInfo);
+            }
+        }
+    }
     public void GetSourcesAndSubs()
     {
         final ParallelCallback<ArrayList<Source>> sourceCallback = new ParallelCallback();
@@ -240,7 +358,7 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
                 spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                        RefreshAvailableQualities((Language)languageAdapter.getItem(position));
+                        RefreshAvailableQualities((Language) languageAdapter.getItem(position));
                     }
 
                     @Override

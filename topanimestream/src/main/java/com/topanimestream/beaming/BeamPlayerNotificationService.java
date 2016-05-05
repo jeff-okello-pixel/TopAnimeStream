@@ -114,16 +114,16 @@ public class BeamPlayerNotificationService extends Service {
     }
 
     private void buildNotification( NotificationCompat.Action action ) {
-        /*
+
         if(mManager.getStreamInfo() == null)
-            return;*/
+            return;
 
         NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle();
 
         Intent intent = new Intent(this, BeamPlayerNotificationService.class);
         intent.setAction( ACTION_STOP );
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
-        /*
+
         NotificationCompat.Builder builder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(mManager.getStreamInfo().getTitle() == null ? "Video" : mManager.getStreamInfo().getTitle())
@@ -147,7 +147,7 @@ public class BeamPlayerNotificationService extends Service {
 
         Notification notification = builder.build();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify( NOTIFICATION_ID, notification );*/
+        notificationManager.notify( NOTIFICATION_ID, notification );
     }
 
     public static void cancelNotification() {
@@ -176,7 +176,7 @@ public class BeamPlayerNotificationService extends Service {
             mManager.addDeviceListener(mDeviceListener);
 
             mMediaControl.getPlayState(mPlayStateListener);
-/*
+
             if(mManager.getStreamInfo().getImageUrl() != null)
                 Picasso.with(this).load(mManager.getStreamInfo().getImageUrl()).resize(400, 400).centerInside().into(new Target() {
                     @Override
@@ -197,7 +197,7 @@ public class BeamPlayerNotificationService extends Service {
                     @Override
                     public void onPrepareLoad(Drawable placeHolderDrawable) {
                     }
-                });*/
+                });
 
         }
     }

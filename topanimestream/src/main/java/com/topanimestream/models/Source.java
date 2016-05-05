@@ -1,6 +1,9 @@
 package com.topanimestream.models;
 
-public class Source{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Source implements Parcelable{
     private int SourceId;
     private int LinkId;
     private String Url;
@@ -8,6 +11,14 @@ public class Source{
     private Link Link;
 
     public Source(){}
+
+    public Source(Parcel in) {
+        SourceId = in.readInt();
+        LinkId = in.readInt();
+        Url = in.readString();
+        Quality = in.readString();
+        Link = in.readParcelable(Link.class.getClassLoader());
+    }
 
     public Link getLink() {
         return Link;
@@ -53,4 +64,28 @@ public class Source{
     public String toString() {
         return getQuality();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(SourceId);
+        dest.writeInt(LinkId);
+        dest.writeString(Url);
+        dest.writeString(Quality);
+        dest.writeParcelable(Link, flags);
+    }
+
+    public static final Creator<Source> CREATOR = new Creator<Source>() {
+        public Source createFromParcel(Parcel in) {
+            return new Source(in);
+        }
+
+        public Source[] newArray(int size) {
+            return new Source[size];
+        }
+    };
 }

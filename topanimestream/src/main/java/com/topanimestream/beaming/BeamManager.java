@@ -53,6 +53,7 @@ import com.connectsdk.service.command.ServiceCommandError;
 import com.connectsdk.service.sessions.LaunchSession;
 import com.topanimestream.App;
 import com.topanimestream.R;
+import com.topanimestream.beaming.server.BeamServer;
 import com.topanimestream.beaming.server.BeamServerService;
 import com.topanimestream.models.StreamInfo;
 
@@ -229,11 +230,11 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
 
         mStreamInfo = info;
 
-        String location = "https://lh3.googleusercontent.com/2L18r9F4hDmPAyU5TMJUn47kBBlCx6INUe0_IccsLUg=m37";
+        String location = info.getSource().getUrl();
         String subsLocation = null;
-        /*
-        if(info.getSubtitleLanguage() != null && -!info.getSubtitleLanguage().isEmpty() && !info.getSubtitleLanguage().equals("no-subs")) {
-            File srtFile = new File(SubsProvider.getStorageLocation(mContext), mStreamInfo.getMedia().videoId + "-" + mStreamInfo.getSubtitleLanguage() + ".srt");
+
+        if(info.getSubtitleLanguage() != null && !info.getSubtitleLanguage().isEmpty() && !info.getSubtitleLanguage().equalsIgnoreCase("none")) {
+            File srtFile = new File(info.getSubtitleLocation());
             BeamServer.setCurrentSubs(srtFile);
             if(mCurrentDevice.hasCapability(MediaPlayer.Subtitles_Vtt)) {
                 subsLocation = BeamServer.getSubsURL(BeamServer.VTT);
@@ -242,7 +243,7 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
             }
         } else {
             BeamServer.removeSubs();
-        }*/
+        }
         try {
             URL url = new URL(location);
             URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
@@ -261,13 +262,10 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
             e.printStackTrace();
         }
 
-        String title = "test";
-        String imageUrl = "http://www.topanimestream.com/ImageHost/26/4/A_Channel_poster.jpg?width=400";
-
         //String url, String mimeType, String title, String description, String iconSrc, boolean shouldLoop, LaunchListener listener
         if (mCurrentDevice != null) {
-            MediaInfo mediaInfo = new MediaInfo(location, subsLocation, "video/mp4", title, "");
-            mediaInfo.addImages(new ImageInfo(imageUrl));
+            MediaInfo mediaInfo = new MediaInfo(location, subsLocation, "video/mp4", info.getTitle(), "");
+            mediaInfo.addImages(new ImageInfo(info.getImageUrl()));
             mCurrentDevice.getCapability(MediaPlayer.class).playMedia(mediaInfo, false, new MediaPlayer.LaunchListener() {
                 @Override
                 public void onSuccess(MediaPlayer.MediaLaunchObject object) {
@@ -341,10 +339,10 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
     public void removeDeviceListener(ConnectableDeviceListener listener) {
         mDeviceListeners.remove(listener);
     }
-/*
+
     public StreamInfo getStreamInfo() {
         return mStreamInfo;
-    }*/
+    }
 
     @Override
     public void onDeviceReady(ConnectableDevice device) {
