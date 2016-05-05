@@ -21,10 +21,13 @@ import com.topanimestream.models.Episode;
 import com.topanimestream.models.Language;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
+import com.topanimestream.models.StreamInfo;
 import com.topanimestream.models.Subtitle;
 import com.topanimestream.parallel.ParallelCallback;
 import com.topanimestream.parallel.ParentCallback;
 import com.topanimestream.utilities.ODataUtils;
+import com.topanimestream.utilities.Utils;
+
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -93,24 +96,104 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.btnCast:
-                //start casting.
+                Source sourceToPlay = null;
+                String language = spinnerLanguages.getSelectedItem().toString();
+                String subtitle = spinnerSubtitles.getSelectedItem().toString();
+                String quality = spinnerQualities.getSelectedItem().toString();
+
+                for(Source source:sources)
+                {
+                    if(source.getLink().getLanguage().getName().equalsIgnoreCase(language) &&
+                       source.getQuality().equalsIgnoreCase(quality))
+                    {
+                        sourceToPlay = source;
+                    }
+                }
+
+                //TODO build streaminfo
+                StreamInfo streamInfo = new StreamInfo();
+
+                //TODO download subtitle
+                bm.playVideo();
                 break;
         }
     }
 
     public void RefreshAvailableQualities(Language language){
-
-        ArrayList<Source> goodSources = new ArrayList<>();
+        String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
+        ArrayList<Source> goodLanguageSources = new ArrayList<>();
+        Source defaultSource = null;
         for(Source source:sources)
         {
             if(source.getLink().getLanguageId() == language.getLanguageId())
             {
-                goodSources.add(source);
+                goodLanguageSources.add(source);
             }
         }
 
-        ArrayAdapter qualityAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, goodSources);
+        for(Source source:goodLanguageSources)
+        {
+            if(source.getQuality().equals(defaultQuality))
+            {
+                defaultSource = source;
+                break;
+            }
+        }
+
+        if(defaultSource == null)
+        {
+            for(Source source:goodLanguageSources)
+            {
+                if(source.getQuality().equals("1080p"))
+                {
+                    defaultSource = source;
+                    break;
+                }
+            }
+
+            if(defaultSource == null)
+            {
+                for(Source source:goodLanguageSources)
+                {
+                    if(source.getQuality().equals("720p"))
+                    {
+                        defaultSource = source;
+                        break;
+                    }
+                }
+            }
+
+            if(defaultSource == null)
+            {
+                for(Source source:goodLanguageSources)
+                {
+                    if(source.getQuality().equals("360p"))
+                    {
+                        defaultSource = source;
+                        break;
+                    }
+                }
+            }
+
+            if(defaultSource == null)
+            {
+                //What?! set anything
+                defaultSource = sources.get(0);
+            }
+        }
+
+        int defaultQualityIndex = -1;
+        for(int i = 0; i < goodLanguageSources.size(); i++){
+            if(goodLanguageSources.get(i).toString().equalsIgnoreCase(defaultQuality))
+            {
+                defaultQualityIndex = i;
+                break;
+            }
+        }
+        ArrayAdapter qualityAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, goodLanguageSources);
         spinnerQualities.setAdapter(qualityAdapter);
+        spinnerQualities.setSelection(defaultQualityIndex);
+
     }
     public void GetSourcesAndSubs()
     {
@@ -121,6 +204,7 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
             protected void handleSuccess() {
                 sources = sourceCallback.getData();
                 subtitles = subsCallback.getData();
+                languages = new ArrayList<>();
 
                 subtitles.add(0, new Subtitle());
 
@@ -140,12 +224,18 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
                 }
 
 
+                String defaultLanguage = Utils.ToLanguageStringDisplay(App.currentUser.getPreferredAudioLang());
+                String defaultSubtitle = Utils.ToLanguageStringDisplay(App.currentUser.getPreferredSubtitleLang());
 
-                String defaultLanguage = App.currentUser.getPreferredAudioLang();
-                String defaultQuality = App.currentUser.getPreferredVideoQuality() + "p";
-                String defaultSubtitle = App.currentUser.getPreferredSubtitleLang();
-
-                final ArrayAdapter languageAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, languages);
+                int defaultLanguageIndex = -1;
+                for(int i = 0; i < languages.size(); i++)
+                {
+                    if(languages.get(i).toString().equalsIgnoreCase(defaultLanguage)) {
+                        defaultLanguageIndex = i;
+                        break;
+                    }
+                }
+                final ArrayAdapter languageAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, languages);
                 spinnerLanguages.setAdapter(languageAdapter);
                 spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -158,11 +248,25 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
                         //What to do here?
                     }
                 });
-                spinnerLanguages.setSelection(languageAdapter.getPosition(defaultLanguage));
+                spinnerLanguages.setSelection(defaultLanguageIndex);
 
-                ArrayAdapter subtitlesAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, subtitles);
-                spinnerSubtitles.setSelection(subtitlesAdapter.getPosition(defaultSubtitle));
+                ArrayAdapter subtitlesAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, subtitles);
                 spinnerSubtitles.setAdapter(subtitlesAdapter);
+
+                int defaultSubtitleIndex = -1;
+                for(int i = 0; i < subtitles.size(); i++) {
+                    if (subtitles.get(i).getSubtitleId() == 0) {
+                        if (defaultSubtitle.equalsIgnoreCase("none")) {
+                            defaultSubtitleIndex = i;
+                            break;
+                        }
+                    }
+                    else if (subtitles.get(i).getLanguage().toString().equalsIgnoreCase(defaultSubtitle)) {
+                        defaultSubtitleIndex = i;
+                        break;
+                    }
+                }
+                spinnerSubtitles.setSelection(defaultSubtitleIndex);
 
                 progressBarLoading.setVisibility(View.GONE);
                 layCastOptions.setVisibility(View.VISIBLE);
@@ -185,7 +289,7 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
         ODataUtils.GetEntityList(getSourcesUrl, Source.class, new ODataUtils.EntityCallback<ArrayList<Source>>() {
             @Override
             public void onSuccess(ArrayList<Source> newSources, OdataRequestInfo info) {
-                sourceCallback.onSuccess(sources);
+                sourceCallback.onSuccess(newSources);
             }
 
             @Override
@@ -197,7 +301,7 @@ public class CastOptionsDialogFragment extends DialogFragment implements View.On
         ODataUtils.GetEntityList(getSubsUrl, Subtitle.class, new ODataUtils.EntityCallback<ArrayList<Subtitle>>() {
             @Override
             public void onSuccess(ArrayList<Subtitle> newSubtitles, OdataRequestInfo info) {
-                subsCallback.onSuccess(subtitles);
+                subsCallback.onSuccess(newSubtitles);
             }
 
             @Override

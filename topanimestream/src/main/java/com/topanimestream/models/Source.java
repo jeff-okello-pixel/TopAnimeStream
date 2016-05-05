@@ -48,4 +48,9 @@ public class Source{
     public void setQuality(String quality) {
         Quality = quality;
     }
+
+    @Override
+    public String toString() {
+        return getQuality();
+    }
 }

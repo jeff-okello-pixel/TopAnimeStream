@@ -191,24 +191,28 @@ public class Utils {
 
         return null;
     }
-    public static String ToLanguageStringDisplay(String id) {
-        if (id.equals("1"))
+    public static String ToLanguageStringDisplay(String lang) {
+        if (lang.equalsIgnoreCase("1") || lang.equalsIgnoreCase("en"))
             return "English";
-        else if (id.equals("2"))
-            return "Français";
-        else if (id.equals("4"))
-            return "Español";
+        else if (lang.equalsIgnoreCase("2")|| lang.equalsIgnoreCase("fr"))
+            return "French";
+        else if (lang.equalsIgnoreCase("3") || lang.equalsIgnoreCase("ja"))
+            return "Japanese";
+        else if (lang.equalsIgnoreCase("4")|| lang.equalsIgnoreCase("es"))
+            return "Spanish";
 
 
         return null;
     }
 
     public static String ToLanguageString(String id) {
-        if (id.equals("1"))
+        if (id.equalsIgnoreCase("1"))
             return "en";
-        else if (id.equals("2"))
+        else if (id.equalsIgnoreCase("2"))
             return "fr";
-        else if (id.equals("4"))
+        else if (id.equalsIgnoreCase("3"))
+            return "ja";
+        else if (id.equalsIgnoreCase("4"))
             return "es";
 
 

@@ -16,8 +16,9 @@
             backward-compatibility can go here.
         -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <!--
         <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
-        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>-->
         <item name="colorPrimary">#245169</item>
         <item name="colorPrimaryDark">#245169</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -95,7 +96,7 @@
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorAccent">@android:color/white</item>
     </style>
-
+<!--
     <style name="SpinnerAppTheme" parent="android:Widget.Spinner">
         <item name="android:background">@drawable/apptheme_spinner_background_holo_light</item>
         <item name="android:dropDownSelector">@drawable/apptheme_list_selector_holo_light</item>
@@ -103,7 +104,7 @@
 
     <style name="SpinnerDropDownItemAppTheme" parent="android:Widget.DropDownItem.Spinner">
         <item name="android:checkMark">@drawable/apptheme_btn_radio_holo_light</item>
-    </style>
+    </style>-->
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>

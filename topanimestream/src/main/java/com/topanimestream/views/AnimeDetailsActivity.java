@@ -31,6 +31,7 @@ import com.squareup.picasso.Target;
 import com.topanimestream.App;
 import com.topanimestream.beaming.BeamManager;
 import com.topanimestream.beaming.CastManager;
+import com.topanimestream.dialogfragments.CastOptionsDialogFragment;
 import com.topanimestream.models.Favorite;
 import com.topanimestream.models.OdataRequestInfo;
 import com.topanimestream.models.Source;
@@ -349,8 +350,9 @@ public class AnimeDetailsActivity extends TASBaseActivity implements EpisodeList
     @Override
     public void onClick(View view) {
         BeamManager bm = BeamManager.getInstance(AnimeDetailsActivity.this);
-        if(bm.isConnected()) {
-            CastManager.StartCasting(bm, anime, userCurrentEpisode, this);
+        if(!bm.isConnected()) {
+            CastOptionsDialogFragment dialogFragment = CastOptionsDialogFragment.newInstance(anime, userCurrentEpisode);
+            dialogFragment.show(getFragmentManager(), "cast_options");
         }
         else {
             Intent intent = new Intent(AnimeDetailsActivity.this, VideoPlayerActivity.class);
